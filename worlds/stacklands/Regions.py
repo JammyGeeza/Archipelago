@@ -22,7 +22,7 @@ def create_region(name: str, world: MultiWorld, player: int, options: Stacklands
         for location in locations:
             
             # If goal is 'Kill the Demon', skip the 'Kill the Demon Lord' location
-            if options.pause_enabled.value == False and location == "Kill the Demon Lord":
+            if options.goal.value == 0 and location == "Kill the Demon Lord":
                 continue
 
             # If pausing is disabled in options, skip pause location
