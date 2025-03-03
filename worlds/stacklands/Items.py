@@ -39,9 +39,11 @@ items_table: List[ItemData] = [
     { "name": "Idea: Chicken", "classification": ItemClassification.filler, "count": 1 },
     { "name": "Idea: Club", "classification": ItemClassification.filler, "count": 1 },
     { "name": "Idea: Coin Chest", "classification": ItemClassification.useful, "count": 1 }, # Storage is useful
+    { "name": "Idea: Cooked Meat", "classification": ItemClassification.progression, "count": 1 },
     { "name": "Idea: Crane", "classification": ItemClassification.useful, "count": 1 }, # Useful for automation
     { "name": "Idea: Dustbin", "classification": ItemClassification.filler, "count": 1 }, 
     { "name": "Idea: Farm", "classification": ItemClassification.progression, "count": 1 },
+    { "name": "Idea: Frittata", "classification": ItemClassification.progression, "count": 1 },
     { "name": "Idea: Fruit Salad", "classification": ItemClassification.useful, "count": 1 }, # Food types are useful
     { "name": "Idea: Garden", "classification": ItemClassification.progression, "count": 1 },
     { "name": "Idea: Growth", "classification": ItemClassification.progression, "count": 1 },
@@ -60,6 +62,7 @@ items_table: List[ItemData] = [
     { "name": "Idea: Magic Wand", "classification": ItemClassification.progression, "count": 1 },
     { "name": "Idea: Market", "classification": ItemClassification.progression, "count": 1 },
     { "name": "Idea: Milkshake", "classification": ItemClassification.useful, "count": 1 }, # Food types are useful
+    { "name": "Idea: Omelette", "classification": ItemClassification.progression, "count": 1 },
     { "name": "Idea: Offspring", "classification": ItemClassification.progression, "count": 1 },
     { "name": "Idea: Pickaxe", "classification": ItemClassification.useful, "count": 1 }, # Getting resources faster is useful
     { "name": "Idea: Plank", "classification": ItemClassification.progression, "count": 1 },
