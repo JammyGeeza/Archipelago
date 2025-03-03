@@ -179,10 +179,14 @@ def set_all_rules(world: MultiWorld, player: int):
                            and state.stacklands_can_make_campfire(player))
     
     set_rule(world.get_location("Cook an Omelette", player),
-             lambda state: state.has("Curious Cuisine Booster Pack", player) and state.stacklands_can_make_campfire(player))
+             lambda state: state.has("Idea: Omelette", player)
+                           and state.has_any(set(["Reap & Sow Booster Pack", "Curious Cuisine Booster Pack"]), player) # Can get eggs from either pack
+                           and state.stacklands_can_make_campfire(player))
     
-    set_rule(world.get_location("Cook an Omelette", player),
-             lambda state: state.has("Curious Cuisine Booster Pack", player) and state.stacklands_can_make_campfire(player))
+    set_rule(world.get_location("Cook a Frittata", player),
+             lambda state: state.has("Idea: Frittata", player)
+                           and state.has("Curious Cuisine Booster Pack", player) # Can get potatoes and eggs from Curious Cuisine
+                           and state.stacklands_can_make_campfire(player))
     
     # 'Discovery' Category
     set_rule(world.get_location("Explore a Forest", player),
@@ -198,8 +202,8 @@ def set_all_rules(world: MultiWorld, player: int):
              lambda state: state.has("Explorers Booster Pack", player))
              
     set_rule(world.get_location("Get a Dog", player),
-             lambda state: (state.has_any(set(["Explorers Booster Pack", "The Armory Booster Pack"]), player))
-                            and state.stacklands_access_to_basic_pack(player)) # <- To help prevent above packs spawning before Humble Beginnings, otherwise game is locked)
+             lambda state: (state.has_any(set(["Explorers Booster Pack", "The Armory Booster Pack"]), player)
+                            and state.stacklands_access_to_basic_pack(player))) # <- To help prevent above packs spawning before Humble Beginnings, otherwise game is locked)
              
     set_rule(world.get_location("Train an Explorer", player),
              lambda state: (state.has("Explorers Booster Pack", player))
