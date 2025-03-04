@@ -52,7 +52,7 @@ items_table: List[ItemData] = [
     { "name": "Idea: House", "classification": ItemClassification.progression, "count": 1 },
     { "name": "Idea: Iron Bar", "classification": ItemClassification.progression, "count": 1 },
     { "name": "Idea: Iron Mine", "classification": ItemClassification.progression, "count": 1 }, # Getting resources faster is useful
-    { "name": "Idea: Iron Shield", "classification": ItemClassification.filler, "count": 1 },
+    { "name": "Idea: Iron Shield", "classification": ItemClassification.useful, "count": 1 }, # Useful for fighting Demon
     { "name": "Idea: Lumber Camp", "classification": ItemClassification.progression, "count": 1 },
     { "name": "Idea: Magic Blade", "classification": ItemClassification.useful, "count": 1 }, # Useful for fighting Demon
     { "name": "Idea: Magic Glue", "classification": ItemClassification.filler, "count": 1 },
@@ -74,7 +74,7 @@ items_table: List[ItemData] = [
     { "name": "Idea: Slingshot", "classification": ItemClassification.filler, "count": 1 },
     { "name": "Idea: Smelter", "classification": ItemClassification.progression, "count": 1 },
     { "name": "Idea: Smithy", "classification": ItemClassification.progression, "count": 1 },
-    { "name": "Idea: Spear", "classification": ItemClassification.useful, "count": 1 }, # Useful for completing 'Train Militia' or 'Combat Level 20' but there are other options
+    { "name": "Idea: Spear", "classification": ItemClassification.progression, "count": 1 }, # Useful for completing 'Train Militia' or 'Combat Level 20' but there are other options
     { "name": "Idea: Spiked Plank", "classification": ItemClassification.filler, "count": 1 },
     { "name": "Idea: Stew", "classification": ItemClassification.useful, "count": 1 }, # Food types are useful
     { "name": "Idea: Stick", "classification": ItemClassification.progression, "count": 1 },
