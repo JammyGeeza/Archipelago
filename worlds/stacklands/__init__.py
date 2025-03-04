@@ -31,11 +31,11 @@ class StacklandsWorld(World):
     def __init(self, multiworld, player):
         super(StacklandsWorld, self).__init(multiworld, player)
 
-    # def generate_early(self):
-    #     self.basic_pack: bool = self.options.basic_pack.value
-    #     self.death_link: bool = self.options.death_link.value
-    #     self.goal: int = self.options.goal.value
-    #     self.pause_enabled: bool = self.options.pause_enabled.value
+    def generate_early(self):
+        self.basic_pack: bool = self.options.basic_pack.value
+        self.death_link: bool = self.options.death_link.value
+        self.goal: int = self.options.goal.value
+        self.pause_enabled: bool = self.options.pause_enabled.value
     
     def create_event(self, event: str):
         return StacklandsItem(event, ItemClassification.progression_skip_balancing, None, self.player)

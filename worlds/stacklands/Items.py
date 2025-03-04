@@ -88,15 +88,16 @@ items_table: List[ItemData] = [
     { "name": "Idea: Wooden Shield", "classification": ItemClassification.useful, "count": 1 }, # Useful for 'Combat level 20' but are other things available
     
     # Equipment
-    { "name": "Club", "classification": ItemClassification.filler, "count": 1 },
-    { "name": "Magic Wand", "classification": ItemClassification.filler, "count": 1 },
-    { "name": "Spear", "classification": ItemClassification.filler, "count": 1 },
-    { "name": "Sword", "classification": ItemClassification.filler, "count": 1 },
-    { "name": "Wooden Shield", "classification": ItemClassification.filler, "count": 1 },
+    # { "name": "Club", "classification": ItemClassification.filler, "count": 1 },
+    # { "name": "Magic Wand", "classification": ItemClassification.filler, "count": 1 },
+    # { "name": "Spear", "classification": ItemClassification.filler, "count": 1 },
+    # { "name": "Sword", "classification": ItemClassification.filler, "count": 1 },
+    # { "name": "Wooden Shield", "classification": ItemClassification.filler, "count": 1 },
     
     # Resources
+    { "name": "Berry x5", "classification": ItemClassification.filler, "count": 1 },
     { "name": "Flint x5", "classification": ItemClassification.filler, "count": 1 },
-    { "name": "Iron Ore x5", "classification": ItemClassification.filler, "count": 1 },
+    # { "name": "Iron Ore x5", "classification": ItemClassification.filler, "count": 1 },
     { "name": "Poop x5", "classification": ItemClassification.filler, "count": 1 }, # Could add something like a 'Get Pooped' "trap" item that spawns a whole bunch of poop, toggle-able in options
     { "name": "Stone x5", "classification": ItemClassification.filler, "count": 1 },
     { "name": "Wood x5", "classification": ItemClassification.filler, "count": 1 }
@@ -139,8 +140,8 @@ def create_all_items(world: MultiWorld, player: int, options: StacklandsOptions)
     for item in items_table:
         
         # Exclude Humble Beginnings if 'basic pack' option is true
-        # if options.basic_pack.value and item["name"] == "Humble Beginnings Booster Pack":
-        #     continue
+        if options.basic_pack.value and item["name"] == "Humble Beginnings Booster Pack":
+            continue
 
         for _ in range(item["count"]):
             world.itempool.append(create_item(player, item))

@@ -5,7 +5,7 @@ from worlds.generic.Rules import set_rule
 class StacklandsLogic(LogicMixin):
 
     def stacklands_access_enemies(self, player: int) -> bool:
-        return self.stacklands_access_humble_beginnings(player) and self.has_any(set(["Explorers Booster Pack", "The Armory Booster Pack"], player))
+        return self.stacklands_access_humble_beginnings(player) and self.has_any(set(["Explorers Booster Pack", "The Armory Booster Pack"]), player)
 
     def stacklands_access_humble_beginnings(self, player: int) -> bool:
         return self.can_reach_location("Buy the Humble Beginnings Pack", player)
@@ -23,7 +23,7 @@ def set_all_rules(world: MultiWorld, player: int):
     
     # 'Welcome' Category
     set_rule(world.get_location("Buy the Humble Beginnings Pack", player),
-             lambda state: state.has("Humble Beginnings Booster Pack", player))
+             lambda state: bool(world.worlds[player].options.basic_pack.value) or state.has("Humble Beginnings Booster Pack", player))
     
     set_rule(world.get_location("Harvest a Tree using a Villager", player),
              lambda state: state.stacklands_access_humble_beginnings(player))
@@ -76,29 +76,29 @@ def set_all_rules(world: MultiWorld, player: int):
     # 'Power & Skill' Category
     set_rule(world.get_location("Train Militia", player),
              lambda state: (state.has("Idea: Spear", player) and state.can_reach_location("Make a Stick from Wood", player)) # <- Self-craft the spear 
-                           or state.stacklands_access_to_enemies(player)) # <- Get weapons from enemy drop
+                           or state.stacklands_access_enemies(player)) # <- Get weapons from enemy drop
 
     set_rule(world.get_location("Kill a Rat", player),
-             lambda state: state.stacklands_access_to_humble_beginnings(player)) # <- Rats can drop from Humble Beginnings / Strange Portal
+             lambda state: state.stacklands_access_humble_beginnings(player)) # <- Rats can drop from Humble Beginnings / Strange Portal
     
     set_rule(world.get_location("Kill a Skeleton", player),
-             lambda state: state.can_reach_location("Find the Catacombs", player) or state.stacklands_access_to_enemies(player)) # Skeletons from enemy packs or catacombs / graveyard / strange portal
+             lambda state: state.can_reach_location("Find the Catacombs", player) or state.stacklands_access_enemies(player)) # Skeletons from enemy packs or catacombs / graveyard / strange portal
     
     # 'Strengthen Up' Category
     set_rule(world.get_location("Make a Villager wear a Rabbit Hat", player),
-             lambda state: state.stacklands_access_to_humble_beginnings(player))
+             lambda state: state.stacklands_access_humble_beginnings(player))
     
     set_rule(world.get_location("Build a Smithy", player),
              lambda state: state.has("Idea: Smithy", player) and state.can_reach_location("Get an Iron Bar", player))
     
     set_rule(world.get_location("Train a Wizard", player),
              lambda state: (state.has("Idea: Magic Wand", player) and state.can_reach_location("Make a Stick from Wood", player))
-                           or state.stacklands_access_to_enemies(player))
+                           or state.stacklands_access_enemies(player))
     
     set_rule(world.get_location("Have a Villager with Combat Level 20", player), 
              lambda state: state.can_reach_location("Make a Villager wear a Rabbit Hat", player)
                            and (state.can_reach_location("Train Militia", player) or state.can_reach_location("Train a Wizard", player))
-                           or state.stacklands_access_to_enemies(player))
+                           or state.stacklands_access_enemies(player))
     
     set_rule(world.get_location("Train a Ninja", player),
              lambda state: state.has("Idea: Throwing Stars", player) 
@@ -130,30 +130,30 @@ def set_all_rules(world: MultiWorld, player: int):
              lambda state: state.has("Explorers Booster Pack", player) and state.stacklands_access_humble_beginnings(player))
              
     set_rule(world.get_location("Open a Treasure Chest", player),
-             lambda state: state.stacklands_access_to_basic_pack(player)) # <- Can get early from travelling cart / graveyard / catacombs
+             lambda state: state.stacklands_access_humble_beginnings(player)) # <- Can get early from travelling cart / graveyard / catacombs
              
     set_rule(world.get_location("Find a Graveyard", player),
              lambda state: state.can_reach_location("Get a Second Villager", player)) # <- Graveyard can be made with 2x corpses
              
     set_rule(world.get_location("Get a Dog", player),
              lambda state: state.can_reach_location("Find the Catacombs", player)  # <- Wolf can be found in catacombs / strange portal
-                           or state.stacklands_access_to_enemies(player)) # <- Wolf can be found in enemy packs
+                           or state.stacklands_access_enemies(player)) # <- Wolf can be found in enemy packs
              
     set_rule(world.get_location("Train an Explorer", player),
-             lambda state: state.stacklands_access_to_basic_pack(player)) # <- Map can be found from Travelling Cart / Old Tome
+             lambda state: state.stacklands_access_humble_beginnings(player)) # <- Map can be found from Travelling Cart / Old Tome
              
     # 'Ways and Means' Category
     set_rule(world.get_location("Have 5 Ideas", player),
-             lambda state: state.stacklands_access_to_basic_pack(player) and state.count_group("All Ideas", player) >= 5)
+             lambda state: state.stacklands_access_humble_beginnings(player) and state.count_group("All Ideas", player) >= 5)
     
     set_rule(world.get_location("Have 10 Ideas", player),
-             lambda state: state.stacklands_access_to_basic_pack(player) and state.count_group("All Ideas", player) >= 10)
+             lambda state: state.stacklands_access_humble_beginnings(player) and state.count_group("All Ideas", player) >= 10)
     
     set_rule(world.get_location("Have 10 Wood", player),
-             lambda state: state.stacklands_access_to_basic_pack(player))
+             lambda state: state.stacklands_access_humble_beginnings(player))
              
     set_rule(world.get_location("Have 10 Stone", player),
-             lambda state: state.stacklands_access_to_basic_pack(player))
+             lambda state: state.stacklands_access_humble_beginnings(player))
              
     set_rule(world.get_location("Get an Iron Bar", player),
              lambda state: state.has("Idea: Iron Bar", player) 
@@ -161,7 +161,7 @@ def set_all_rules(world: MultiWorld, player: int):
                            and (state.can_reach_location("Build a Mine", player) or state.has_any(set(["Logic and Reason Booster Pack", "Order and Structure Booster Pack"]), player)))
              
     set_rule(world.get_location("Have 5 Food", player),
-             lambda state: state.stacklands_access_to_basic_pack(player))
+             lambda state: state.stacklands_access_humble_beginnings(player))
              
     set_rule(world.get_location("Have 10 Food", player),
              lambda state: state.can_reach_location("Have 5 Food", player))
@@ -169,7 +169,7 @@ def set_all_rules(world: MultiWorld, player: int):
     set_rule(world.get_location("Have 20 Food", player),
              lambda state: state.can_reach_location("Have 10 Food", player)
                            and (state.can_reach_location("Build a Shed", player) # <- Player can build shed to allow more basic food on the board
-                           or (state.stacklands_access_to_basic_pack(player) and state.has("Curious Cuisine Booster Pack", player)))) # <- Or player has access to better foods
+                           or (state.stacklands_access_humble_beginnings(player) and state.has("Curious Cuisine Booster Pack", player)))) # <- Or player has access to better foods
              
     set_rule(world.get_location("Have 50 Food", player), 
              lambda state: state.can_reach_location("Have 20 Food", player)) # <- If player can gather 20, they should be able to gather 50

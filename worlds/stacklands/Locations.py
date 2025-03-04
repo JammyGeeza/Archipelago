@@ -85,10 +85,10 @@ locations_table: List[LocationData] = [
     # 'Construction' Category
     {"name": "Have 3 Houses",                                       "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
     {"name": "Build a Shed",                                        "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    {"name": "Build a Quarry",                                      "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    {"name": "Build a Lumber Camp",                                 "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    {"name": "Build a Farm",                                        "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    {"name": "Build a Brickyard",                                   "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
+    {"name": "Build a Quarry",                                      "region": "Mainland",   "classification": LocationProgressType.PRIORITY },
+    {"name": "Build a Lumber Camp",                                 "region": "Mainland",   "classification": LocationProgressType.PRIORITY },
+    {"name": "Build a Farm",                                        "region": "Mainland",   "classification": LocationProgressType.PRIORITY },
+    {"name": "Build a Brickyard",                                   "region": "Mainland",   "classification": LocationProgressType.PRIORITY },
     {"name": "Sell a Card at a Market",                             "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
     
     # 'Longevity' Category
@@ -98,10 +98,10 @@ locations_table: List[LocationData] = [
     {"name": "Reach Moon 36",                                       "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
 
     # 'Side Quests' Category
-    {"name": "Build a Garden",                                      "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    {"name": "Build a Sawmill",                                     "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    {"name": "Build a Mine",                                        "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    {"name": "Build a Smelter",                                     "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
+    {"name": "Build a Garden",                                      "region": "Mainland",   "classification": LocationProgressType.PRIORITY },
+    {"name": "Build a Sawmill",                                     "region": "Mainland",   "classification": LocationProgressType.PRIORITY },
+    {"name": "Build a Mine",                                        "region": "Mainland",   "classification": LocationProgressType.PRIORITY },
+    {"name": "Build a Smelter",                                     "region": "Mainland",   "classification": LocationProgressType.PRIORITY },
 ]
 
 base_id: int = 91000
