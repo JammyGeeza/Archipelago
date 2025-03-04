@@ -51,7 +51,7 @@ items_table: List[ItemData] = [
     { "name": "Idea: Hotpot", "classification": ItemClassification.useful, "count": 1 }, # Useful for keeping enough food, but not required
     { "name": "Idea: House", "classification": ItemClassification.progression, "count": 1 },
     { "name": "Idea: Iron Bar", "classification": ItemClassification.progression, "count": 1 },
-    { "name": "Idea: Iron Mine", "classification": ItemClassification.useful, "count": 1 }, # Getting resources faster is useful
+    { "name": "Idea: Iron Mine", "classification": ItemClassification.progression, "count": 1 }, # Getting resources faster is useful
     { "name": "Idea: Iron Shield", "classification": ItemClassification.filler, "count": 1 },
     { "name": "Idea: Lumber Camp", "classification": ItemClassification.progression, "count": 1 },
     { "name": "Idea: Magic Blade", "classification": ItemClassification.useful, "count": 1 }, # Useful for fighting Demon
@@ -69,7 +69,7 @@ items_table: List[ItemData] = [
     { "name": "Idea: Quarry", "classification": ItemClassification.progression, "count": 1 },
     { "name": "Idea: Resource Chest", "classification": ItemClassification.useful, "count": 1 }, # Storage is useful
     { "name": "Idea: Resource Magnet", "classification": ItemClassification.filler, "count": 1 },
-    { "name": "Idea: Sawmill", "classification": ItemClassification.useful, "count": 1 }, # Getting resources faster is useful
+    { "name": "Idea: Sawmill", "classification": ItemClassification.progression, "count": 1 }, # Getting resources faster is useful
     { "name": "Idea: Shed", "classification": ItemClassification.progression, "count": 1 },
     { "name": "Idea: Slingshot", "classification": ItemClassification.filler, "count": 1 },
     { "name": "Idea: Smelter", "classification": ItemClassification.progression, "count": 1 },
@@ -138,9 +138,9 @@ def create_item(player: int, item: ItemData) -> StacklandsItem:
 def create_all_items(world: MultiWorld, player: int, options: StacklandsOptions):
     for item in items_table:
         
-        # Exclude Hunble Beginnings if 'basic pack' option is true
-        if options.basic_pack and item["name"] == "Humble Beginnings Booster Pack":
-            continue
+        # Exclude Humble Beginnings if 'basic pack' option is true
+        # if options.basic_pack.value and item["name"] == "Humble Beginnings Booster Pack":
+        #     continue
 
         for _ in range(item["count"]):
             world.itempool.append(create_item(player, item))

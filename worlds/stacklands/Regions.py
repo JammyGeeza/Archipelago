@@ -1,6 +1,6 @@
 from typing import List, TypedDict
 from BaseClasses import Entrance, MultiWorld, Region
-from .Locations import StacklandsLocation, locations_table, lookup_name_to_id as locations_lookup_name_to_id
+from .Locations import LocationData, StacklandsLocation, locations_table, lookup_name_to_id as locations_lookup_name_to_id
 from .Options import StacklandsOptions
 
 class RegionData(TypedDict):
@@ -12,42 +12,46 @@ regions_table: List[RegionData] = [
     { "name": "Mainland", "exits": [ "Island" ] },
     { "name": "Island", "exits": None }
 ]
-    
+
 # Create a region
-def create_region(name: str, world: MultiWorld, player: int, options: StacklandsOptions, locations: List[str]=None, exits: List[str]=None):
+def create_region(world: MultiWorld, player: int, options: StacklandsOptions, name: str, locations: List[LocationData]=None, exits: List[str]=None):
+    # Create region
     region = Region(name, player, world)
-    
+
     if locations:
-        # Add locations to region
         for location in locations:
-            
+
             # If goal is 'Kill the Demon', skip the 'Kill the Demon Lord' location
-            if options.goal.value == 0 and location == "Kill the Demon Lord":
+            if options.goal.value == 0 and location["name"] == "Kill the Demon Lord":
                 continue
 
             # If pausing is disabled in options, skip pause location
-            if options.pause_enabled.value == False and location == "Pause using the play icon in the top right corner":
+            if options.pause_enabled.value == False and location["name"] == "Pause using the play icon in the top right corner":
                 continue
 
-            loc_id = locations_lookup_name_to_id[location]
-            loc_obj = StacklandsLocation(player, location, loc_id, region)
+            # Create location and add to region
+            loc_id = locations_lookup_name_to_id[location["name"]]
+            loc_obj = StacklandsLocation(player, location["name"], loc_id, region)
+            loc_obj.progress_type = location["classification"]
             region.locations.append(loc_obj)
-            
+
     if exits:
         for ext in exits:
             region.exits.append(Entrance(player, getConnectionName(name, ext), region))
-            
+
     return region
 
 # Create all regions
 def create_all_regions(world: MultiWorld, player: int, options: StacklandsOptions):
+
     # Cycle through regions in json
     for region in regions_table:
-        reg_obj = create_region(region["name"], world, player, options, [location["name"] for location in locations_table if location["region"] == region["name"]], region["exits"])
+        locs = [location for location in locations_table if location["region"] == region["name"]]
+        reg_obj = create_region(world, player, options, region["name"], locs, region["exits"])
         world.regions += [ reg_obj ]
     
     # Create default region
-    menu = create_region("Menu", world, player, options, None, [ "Mainland" ])
+    menu = create_region(world, player, options, "Menu", None, [ "Mainland" ])
     world.regions += [ menu ]
     
     # Connect default region to main

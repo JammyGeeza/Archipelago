@@ -30,12 +30,18 @@ class StacklandsWorld(World):
     
     def __init(self, multiworld, player):
         super(StacklandsWorld, self).__init(multiworld, player)
+
+    # def generate_early(self):
+    #     self.basic_pack: bool = self.options.basic_pack.value
+    #     self.death_link: bool = self.options.death_link.value
+    #     self.goal: int = self.options.goal.value
+    #     self.pause_enabled: bool = self.options.pause_enabled.value
     
     def create_event(self, event: str):
         return StacklandsItem(event, ItemClassification.progression_skip_balancing, None, self.player)
     
     # Create all items
-    def create_items(self):
+    def create_items(self) -> None:
         create_all_items(self.multiworld, self.player, self.options)
     
     # Create all regions (and place all locations within each region)
@@ -45,10 +51,10 @@ class StacklandsWorld(World):
     # Fill the slot data
     def fill_slot_data(self) -> Dict[str, Any]:
         return {
-            "BasicPack": bool(self.options.basic_pack.value),
-            "DeathLink": bool(self.options.death_link.value),
-            "Goal": bool(self.options.goal.value),
-            "PauseEnabled": bool(self.options.pause_enabled.value)
+            "BasicPack": self.basic_pack,
+            "DeathLink": self.death_link,
+            "Goal": self.goal,
+            "PauseEnabled": self.pause_enabled
         }
     
     # Set all access rules
