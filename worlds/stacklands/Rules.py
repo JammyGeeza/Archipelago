@@ -1,15 +1,5 @@
 from BaseClasses import MultiWorld
-from worlds.AutoWorld import LogicMixin
 from worlds.generic.Rules import set_rule
-
-class StacklandsLogic(LogicMixin):
-
-    def stacklands_access_enemies(self, player: int) -> bool:
-        return self.stacklands_access_humble_beginnings(player) and self.has_any(set(["Explorers Booster Pack", "The Armory Booster Pack"]), player)
-
-    def stacklands_access_humble_beginnings(self, player: int) -> bool:
-        return self.can_reach_location("Buy the Humble Beginnings Pack", player)
-
 
 # Set all region and location rules
 def set_all_rules(world: MultiWorld, player: int):
@@ -23,7 +13,7 @@ def set_all_rules(world: MultiWorld, player: int):
 
     # Coins
     set_rule(world.get_location("Have 10 Coins", player),
-             lambda state: state.has("Humble Beginnings Booster Pack", player))
+             lambda state: state.can_reach_location("Buy the Humble Beginnings Pack", player))
     
     set_rule(world.get_location("Have 30 Coins", player),
              lambda state: state.has("Idea: Coin Chest", player) and
@@ -34,17 +24,17 @@ def set_all_rules(world: MultiWorld, player: int):
 
     # Ideas
     set_rule(world.get_location("Have 5 Ideas", player),
-             lambda state: state.count_group("Mainland Ideas", player) >= 5)
+             lambda state: state.count_group("All Ideas", player) >= 5)
     
     set_rule(world.get_location("Have 10 Ideas", player),
-             lambda state: state.count_group("Mainland Ideas", player) >= 10)
+             lambda state: state.count_group("All Ideas", player) >= 10)
     
     # Moons
     set_rule(world.get_location("Reach Moon 6", player),
-             lambda state: state.has("Humble Beginnings Booster Pack", player))
+             lambda state: state.can_reach_location("Buy the Humble Beginnings Pack", player))
     
     set_rule(world.get_location("Reach Moon 12", player), # Trialling this to help release un-required boosters
-             lambda state: state.has("Seeking Wisdom Booster Pack") and
+             lambda state: state.has("Seeking Wisdom Booster Pack", player) and
                            state.can_reach_location("Reach Moon 6", player))
     
     set_rule(world.get_location("Buy something from a Travelling Cart", player),
@@ -59,23 +49,27 @@ def set_all_rules(world: MultiWorld, player: int):
                            state.can_reach_location("Reach Moon 24", player))
     
     # Miscellaneous
+    set_rule(world.get_location("Buy the Humble Beginnings Pack", player),
+             lambda state: world.worlds[player].options.basic_pack.value == True or 
+                           state.has("Humble Beginnings Booster Pack", player))
+
     set_rule(world.get_location("Sell a Card at a Market", player),
              lambda state: state.has_all(set(["Idea: Market", "Idea: Brick", "Idea: Plank"]), player))
 
     # 'Combat' Path
     set_rule(world.get_location("Make a Villager wear a Rabbit Hat", player),
-             lambda state: state.has("Humble Beginnings Booster Pack", player))
+             lambda state: state.can_reach_location("Buy the Humble Beginnings Pack", player))
     
     set_rule(world.get_location("Kill a Rat", player),
              lambda state: state.can_reach_location("Make a Villager wear a Rabbit Hat", player))
     
     set_rule(world.get_location("Train Militia", player), # Trialling this
-             lambda state: state.has("Explorers Booster Pack") and
+             lambda state: state.has("Explorers Booster Pack", player) and
                            state.has_any(set(["Idea: Slingshot", "Idea: Spear"]), player) and
                            state.can_reach_location("Kill a Rat", player))
     
     set_rule(world.get_location("Train a Wizard", player), # Trialling this
-             lambda state: state.has("Explorers Booster Pack") and
+             lambda state: state.has("Explorers Booster Pack", player) and
                            state.has("Idea: Magic Wand", player) and
                            state.can_reach_location("Kill a Rat", player))
     
@@ -95,7 +89,8 @@ def set_all_rules(world: MultiWorld, player: int):
 
     # 'Cooking' Path
     set_rule(world.get_location("Make a Stick from Wood", player),
-             lambda state: state.has_all(set(["Idea: Stick", "Humble Beginnings Booster Pack"]), player))
+             lambda state: state.has("Idea: Stick", player) and
+                           state.can_reach_location("Buy the Humble Beginnings Pack", player))
     
     set_rule(world.get_location("Start a Campfire", player),
              lambda state: state.has("Idea: Campfire", player) and
@@ -115,11 +110,11 @@ def set_all_rules(world: MultiWorld, player: int):
     
     # 'Exploring' Path
     set_rule(world.get_location("Find a Graveyard", player),
-             lambda state: state.has("Humble Beginnings Booster Pack", player)) # <- Created with 2x Corpse
+             lambda state: state.has("Explorers Booster Pack", player) and
+                           state.can_reach_location("Buy the Humble Beginnings Pack", player))
     
     set_rule(world.get_location("Find the Catacombs", player),
-             lambda state: state.has("Explorers Booster Pack", player) and
-                           state.can_reach_location("Find a Graveyard", player)) # <- Can be Found from Graveyard
+             lambda state: state.can_reach_location("Find a Graveyard", player)) # <- Can be Found from Graveyard
 
     set_rule(world.get_location("Open a Treasure Chest", player),
              lambda state: state.can_reach_location("Find the Catacombs", player))
@@ -141,7 +136,7 @@ def set_all_rules(world: MultiWorld, player: int):
     
     # 'Farming' Path
     set_rule(world.get_location("Have 5 Food", player),
-             lambda state: state.has("Humble Beginnings Booster Pack", player))
+             lambda state: state.can_reach_location("Buy the Humble Beginnings Pack", player))
     
     set_rule(world.get_location("Grow a Berry Bush using Soil", player),
              lambda state: state.has("Idea: Growth", player) and
@@ -170,7 +165,8 @@ def set_all_rules(world: MultiWorld, player: int):
     
     # 'Metal' Path
     set_rule(world.get_location("Build a Mine", player),
-             lambda state: state.has_all(set(["Idea: Iron Mine", "Humble Beginnings Booster Pack"]), player))
+             lambda state: state.has("Idea: Iron Mine", player) and
+                           state.can_reach_location("Buy the Humble Beginnings Pack", player))
     
     set_rule(world.get_location("Build a Smelter", player),
              lambda state: state.has_all(set(["Idea: Smelter", "Idea: Brick", "Idea: Plank"]), player) and
@@ -186,7 +182,7 @@ def set_all_rules(world: MultiWorld, player: int):
     
     # 'Stone' Path
     set_rule(world.get_location("Have 10 Stone", player),
-             lambda state: state.has("Humble Beginnings Booster Pack", player))
+             lambda state: state.can_reach_location("Buy the Humble Beginnings Pack", player))
     
     set_rule(world.get_location("Build a Quarry", player),
              lambda state: state.has_all(set(["Idea: Quarry", "Idea: Brick"]), player) and
@@ -199,7 +195,7 @@ def set_all_rules(world: MultiWorld, player: int):
 
     # 'Villager' Path
     set_rule(world.get_location("Get a Second Villager", player),
-             lambda state: state.has("Humble Beginnings Boster Pack")) # <- Second villager obtained from humble beginnings
+             lambda state: state.can_reach_location("Buy the Humble Beginnings Pack", player))
 
     set_rule(world.get_location("Build a House", player),
              lambda state: state.has("Idea: House", player) 
@@ -217,7 +213,7 @@ def set_all_rules(world: MultiWorld, player: int):
 
     # 'Wood' Path
     set_rule(world.get_location("Harvest a Tree using a Villager", player),
-             lambda state: state.stacklands_access_humble_beginnings(player))
+             lambda state: state.can_reach_location("Buy the Humble Beginnings Pack", player))
     
     set_rule(world.get_location("Have 10 Wood", player),
              lambda state: state.can_reach_location("Harvest a Tree using a Villager", player))
@@ -233,7 +229,7 @@ def set_all_rules(world: MultiWorld, player: int):
     
     # 'Goal' Path (Other paths converge here)
     set_rule(world.get_location("Build a Temple", player), # Trialling this
-             lambda state: state.has("Idea: Temple") and
+             lambda state: state.has("Idea: Temple", player) and
                            state.can_reach_location("Get 3 Villagers", player) and # <- 'House' is included as part of this path
                            state.can_reach_location("Get an Iron Bar", player) and # <- 'Smelter' is included as part of this path
                            state.can_reach_location("Build a Quarry", player) and # <- 'Brick' is included as part of this path
@@ -249,5 +245,7 @@ def set_all_rules(world: MultiWorld, player: int):
     set_rule(world.get_location("Kill the Demon", player),
              lambda state: state.can_reach_location("Bring the Goblet to the Temple", player))
     
-    set_rule(world.get_location("Kill the Demon Lord", player),
-             lambda state: state.can_reach_location("Kill the Demon", player))
+    # Include this rule if demon lord is the goal
+    if world.worlds[player].options.goal == 1:
+        set_rule(world.get_location("Kill the Demon Lord", player),
+                lambda state: state.can_reach_location("Kill the Demon", player))
