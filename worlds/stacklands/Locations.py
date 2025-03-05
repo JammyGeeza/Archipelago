@@ -94,8 +94,8 @@ locations_table: List[LocationData] = [
     # 'Longevity' Category
     {"name": "Reach Moon 6",                                        "region": "Mainland",   "classification": LocationProgressType.PRIORITY },
     {"name": "Reach Moon 12",                                       "region": "Mainland",   "classification": LocationProgressType.PRIORITY },
-    {"name": "Reach Moon 24",                                       "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    {"name": "Reach Moon 36",                                       "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
+    {"name": "Reach Moon 24",                                       "region": "Mainland",   "classification": LocationProgressType.EXCLUDED },
+    {"name": "Reach Moon 36",                                       "region": "Mainland",   "classification": LocationProgressType.EXCLUDED },
 
     # 'Side Quests' Category
     {"name": "Build a Garden",                                      "region": "Mainland",   "classification": LocationProgressType.PRIORITY },
