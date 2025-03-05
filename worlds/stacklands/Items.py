@@ -37,18 +37,18 @@ items_table: List[ItemData] = [
     { "name": "Idea: Campfire", "classification": ItemClassification.progression, "count": 1 },
     { "name": "Idea: Chainmail Armor", "classification": ItemClassification.useful, "count": 1 }, # Useful for fighting Demon
     { "name": "Idea: Chicken", "classification": ItemClassification.filler, "count": 1 },
-    { "name": "Idea: Club", "classification": ItemClassification.filler, "count": 1 },
-    { "name": "Idea: Coin Chest", "classification": ItemClassification.useful, "count": 1 }, # Storage is useful
+    { "name": "Idea: Club", "classification": ItemClassification.useful, "count": 1 }, # Useful as additional fighting class
+    { "name": "Idea: Coin Chest", "classification": ItemClassification.progression, "count": 1 }, # Storage is useful
     { "name": "Idea: Cooked Meat", "classification": ItemClassification.progression, "count": 1 },
-    { "name": "Idea: Crane", "classification": ItemClassification.useful, "count": 1 }, # Useful for automation
+    { "name": "Idea: Crane", "classification": ItemClassification.filler, "count": 1 },
     { "name": "Idea: Dustbin", "classification": ItemClassification.filler, "count": 1 }, 
     { "name": "Idea: Farm", "classification": ItemClassification.progression, "count": 1 },
     { "name": "Idea: Frittata", "classification": ItemClassification.progression, "count": 1 },
-    { "name": "Idea: Fruit Salad", "classification": ItemClassification.useful, "count": 1 }, # Food types are useful
+    { "name": "Idea: Fruit Salad", "classification": ItemClassification.filler, "count": 1 },
     { "name": "Idea: Garden", "classification": ItemClassification.progression, "count": 1 },
     { "name": "Idea: Growth", "classification": ItemClassification.progression, "count": 1 },
     { "name": "Idea: Hammer", "classification": ItemClassification.useful, "count": 1 }, # Building faster is useful
-    { "name": "Idea: Hotpot", "classification": ItemClassification.useful, "count": 1 }, # Useful for keeping enough food, but not required
+    { "name": "Idea: Hotpot", "classification": ItemClassification.filler, "count": 1 },
     { "name": "Idea: House", "classification": ItemClassification.progression, "count": 1 },
     { "name": "Idea: Iron Bar", "classification": ItemClassification.progression, "count": 1 },
     { "name": "Idea: Iron Mine", "classification": ItemClassification.progression, "count": 1 }, # Getting resources faster is useful
@@ -61,7 +61,7 @@ items_table: List[ItemData] = [
     { "name": "Idea: Magic Tome", "classification": ItemClassification.filler, "count": 1 },
     { "name": "Idea: Magic Wand", "classification": ItemClassification.progression, "count": 1 },
     { "name": "Idea: Market", "classification": ItemClassification.progression, "count": 1 },
-    { "name": "Idea: Milkshake", "classification": ItemClassification.useful, "count": 1 }, # Food types are useful
+    { "name": "Idea: Milkshake", "classification": ItemClassification.filler, "count": 1 },
     { "name": "Idea: Omelette", "classification": ItemClassification.progression, "count": 1 },
     { "name": "Idea: Offspring", "classification": ItemClassification.progression, "count": 1 },
     { "name": "Idea: Pickaxe", "classification": ItemClassification.useful, "count": 1 }, # Getting resources faster is useful
@@ -71,14 +71,14 @@ items_table: List[ItemData] = [
     { "name": "Idea: Resource Magnet", "classification": ItemClassification.filler, "count": 1 },
     { "name": "Idea: Sawmill", "classification": ItemClassification.progression, "count": 1 }, # Getting resources faster is useful
     { "name": "Idea: Shed", "classification": ItemClassification.progression, "count": 1 },
-    { "name": "Idea: Slingshot", "classification": ItemClassification.filler, "count": 1 },
+    { "name": "Idea: Slingshot", "classification": ItemClassification.progression, "count": 1 },
     { "name": "Idea: Smelter", "classification": ItemClassification.progression, "count": 1 },
     { "name": "Idea: Smithy", "classification": ItemClassification.progression, "count": 1 },
     { "name": "Idea: Spear", "classification": ItemClassification.progression, "count": 1 }, # Useful for completing 'Train Militia' or 'Combat Level 20' but there are other options
     { "name": "Idea: Spiked Plank", "classification": ItemClassification.filler, "count": 1 },
-    { "name": "Idea: Stew", "classification": ItemClassification.useful, "count": 1 }, # Food types are useful
+    { "name": "Idea: Stew", "classification": ItemClassification.filler, "count": 1 }, # Food types are useful
     { "name": "Idea: Stick", "classification": ItemClassification.progression, "count": 1 },
-    { "name": "Idea: Stove", "classification": ItemClassification.useful, "count": 1 }, # Useful for keeping enough food, but not required
+    { "name": "Idea: Stove", "classification": ItemClassification.progression, "count": 1 }, # Useful for keeping enough food, but not required
     { "name": "Idea: Sword", "classification": ItemClassification.useful, "count": 1 }, # Useful for completing 'Train Militia' or 'Combat Level 20' but there are other options
     { "name": "Idea: Temple", "classification": ItemClassification.progression, "count": 1 },
     { "name": "Idea: Throwing Stars", "classification": ItemClassification.progression, "count": 1 },
@@ -97,8 +97,8 @@ items_table: List[ItemData] = [
     # Resources
     { "name": "Berry x5", "classification": ItemClassification.filler, "count": 1 },
     { "name": "Flint x5", "classification": ItemClassification.filler, "count": 1 },
-    # { "name": "Iron Ore x5", "classification": ItemClassification.filler, "count": 1 },
-    { "name": "Poop x5", "classification": ItemClassification.filler, "count": 1 }, # Could add something like a 'Get Pooped' "trap" item that spawns a whole bunch of poop, toggle-able in options
+    { "name": "Iron Ore x5", "classification": ItemClassification.filler, "count": 1 },
+    { "name": "Poop x5", "classification": ItemClassification.filler, "count": 1 },
     { "name": "Stone x5", "classification": ItemClassification.filler, "count": 1 },
     { "name": "Wood x5", "classification": ItemClassification.filler, "count": 1 }
     
