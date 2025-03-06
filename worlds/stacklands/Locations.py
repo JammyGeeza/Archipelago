@@ -1,131 +1,128 @@
-from typing import Dict, Optional, NamedTuple
-from BaseClasses import Location, LocationProgressType
+from typing import Dict, List, NamedTuple
+from BaseClasses import Location, LocationProgressType, Region
+
+class LocationData(NamedTuple):
+    name: str
+    region: str
+    progress_type: LocationProgressType
+    event: bool = False
 
 class StacklandsLocation(Location):
     game = "Stacklands"
 
-class LocationData(NamedTuple):
-    code: Optional[int]
-    region: str
-    progress_type: LocationProgressType =  LocationProgressType.DEFAULT
-    event: bool = False
+    def __init__(self, player: int, loc: LocationData, code: int = None, region: Region = None):
+        super(StacklandsLocation, self).__init__(
+            player,
+            loc.name,
+            code,
+            region
+        )
+
+        # Set progress type
+        self.progress_type = loc.progress_type
 
 # Locations table
-location_table: Dict[str, LocationData] = {
+location_table: List[LocationData] = [
 
-    # Locations
-    "Open the Booster Pack":                LocationData(91001, "Mainland"),
-    "Make a Stick from Wood":               LocationData(91002, "Mainland"),
-    "Start a Campfire":                     LocationData(91003, "Mainland"),
-    "Build a Smelter":                      LocationData(91004, "Mainland"),
-    "Build a Sawmill":                      LocationData(91005, "Mainland"),
-    "Task 1":                               LocationData(91006, "Mainland"),
-    "Task 2":                               LocationData(91007, "Mainland"),
-    "Task 3":                               LocationData(91008, "Mainland"),
-    "Task 4":                               LocationData(91009, "Mainland"),
-    "Task 5":                               LocationData(91010, "Mainland"),
-    "Task 6":                               LocationData(91011, "Mainland"),
-    "Bring the Goblet to the Temple":       LocationData(91012, "Mainland"),
+    # 'Welcome' Category
+    LocationData("Open the Booster Pack"                               , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Drag the Villager on top of the Berry Bush"          , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Mine a Rock using a Villager"                        , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Sell a Card"                                         , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Buy the Humble Beginnings Pack"                      , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Harvest a Tree using a Villager"                     , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Make a Stick from Wood"                              , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Pause using the play icon in the top right corner"   , "Mainland", LocationProgressType.EXCLUDED),
+    LocationData("Grow a Berry Bush using Soil"                        , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Build a House"                                       , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Get a Second Villager"                               , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Create Offspring"                                    , "Mainland", LocationProgressType.DEFAULT),
+    
+    # 'The Grand Scheme' Category
+    LocationData("Get 3 Villagers"                                     , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Find the Catacombs"                                  , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Find a mysterious artifact"                          , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Build a Temple"                                      , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Bring the Goblet to the Temple"                      , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Kill the Demon"                                      , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Kill the Demon Lord"                                 , "Mainland", LocationProgressType.DEFAULT),
+    
+    # 'Power & Skill' Category
+    LocationData("Train Militia"                                       , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Kill a Rat"                                          , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Kill a Skeleton"                                     , "Mainland", LocationProgressType.DEFAULT),
+    
+    # 'Strengthening Up' Category
+    LocationData("Make a Villager wear a Rabbit Hat"                   , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Build a Smithy"                                      , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Train a Wizard"                                      , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Have a Villager with Combat Level 20"                , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Train a Ninja"                                       , "Mainland", LocationProgressType.DEFAULT),
+    
+    # 'Potluck' Category
+    LocationData("Start a Campfire"                                    , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Cook Raw Meat"                                       , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Cook an Omelette"                                    , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Cook a Frittata"                                     , "Mainland", LocationProgressType.DEFAULT),
+    
+    # 'Discovery' Category
+    LocationData("Explore a Forest"                                    , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Explore a Mountain"                                  , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Open a Treasure Chest"                               , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Find a Graveyard"                                    , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Get a Dog"                                           , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Train an Explorer"                                   , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Buy something from a Travelling Cart"                , "Mainland", LocationProgressType.DEFAULT),
+    
+    # 'Ways and Means' Category
+    LocationData("Have 5 Ideas"                                        , "Mainland", LocationProgressType.EXCLUDED),
+    LocationData("Have 10 Ideas"                                       , "Mainland", LocationProgressType.EXCLUDED),
+    LocationData("Have 10 Wood"                                        , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Have 10 Stone"                                       , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Get an Iron Bar"                                     , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Have 5 Food"                                         , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Have 10 Food"                                        , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Have 20 Food"                                        , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Have 50 Food"                                        , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Have 10 Coins"                                       , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Have 30 Coins"                                       , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Have 50 Coins"                                       , "Mainland", LocationProgressType.DEFAULT),
+    
+    # 'Construction' Category
+    LocationData("Have 3 Houses"                                       , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Build a Shed"                                        , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Build a Quarry"                                      , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Build a Lumber Camp"                                 , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Build a Farm"                                        , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Build a Brickyard"                                   , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Sell a Card at a Market"                             , "Mainland", LocationProgressType.DEFAULT),
+    
+    # 'Longevity' Category
+    LocationData("Reach Moon 6"                                        , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Reach Moon 12"                                       , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Reach Moon 24"                                       , "Mainland", LocationProgressType.EXCLUDED),
+    LocationData("Reach Moon 36"                                       , "Mainland", LocationProgressType.EXCLUDED),
 
-    # Events
-    "Ability to Build Campfire":            LocationData(None, "Mainland", event=True),
-    "Ability to Build Sawmill":             LocationData(None, "Mainland", event=True),
-    "Ability to Build Smelter":             LocationData(None, "Mainland", event=True),
-    "Defeat Boss":                          LocationData(None, "Mainland", event=True),
+    # 'Side Quests' Category
+    LocationData("Build a Garden"                                      , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Build a Sawmill"                                     , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Build a Mine"                                        , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Build a Smelter"                                     , "Mainland", LocationProgressType.DEFAULT),
+
+    # Event location
+    LocationData("Complete the Goal"                                   , "Mainland", LocationProgressType.DEFAULT, True),
+]
+
+event_table: Dict[str, str] = {
+    "Complete the Goal", "Victory"
 }
 
+base_id: int = 92000
+current_id: int = base_id
 
-# locations_table: List[LocationData] = [
-    
-    # Mainland Quests
-    
-    # 'Welcome' Category
-    # {"name": "Open the Booster Pack",                               "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    # {"name": "Drag the Villager on top of the Berry Bush",          "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    # {"name": "Mine a Rock using a Villager",                        "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    # {"name": "Sell a Card",                                         "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    # {"name": "Buy the Humble Beginnings Pack",                      "region": "Mainland",   "classification": LocationProgressType.PRIORITY },
-    # {"name": "Harvest a Tree using a Villager",                     "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    # {"name": "Make a Stick from Wood",                              "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    # {"name": "Pause using the play icon in the top right corner",   "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    # {"name": "Grow a Berry Bush using Soil",                        "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    # {"name": "Build a House",                                       "region": "Mainland",   "classification": LocationProgressType.PRIORITY },
-    # {"name": "Get a Second Villager",                               "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    # {"name": "Create Offspring",                                    "region": "Mainland",   "classification": LocationProgressType.PRIORITY },
-    
-    # # 'The Grand Scheme' Category
-    # # {"name": "Unlock All Packs", "region": "Mainland"}, <- Can ONLY be unlocked by receiving all packs from checks, seems pointless? (Also this quest triggers when Order and Structure pack is unlocked, so usually triggers far too early)
-    # {"name": "Get 3 Villagers",                                     "region": "Mainland",   "classification": LocationProgressType.PRIORITY },
-    # {"name": "Find the Catacombs",                                  "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    # {"name": "Find a mysterious artifact",                          "region": "Mainland",   "classification": LocationProgressType.PRIORITY },
-    # {"name": "Build a Temple",                                      "region": "Mainland",   "classification": LocationProgressType.PRIORITY },
-    # {"name": "Bring the Goblet to the Temple",                      "region": "Mainland",   "classification": LocationProgressType.PRIORITY },
-    # {"name": "Kill the Demon",                                      "region": "Mainland",   "classification": LocationProgressType.PRIORITY },
-    # {"name": "Kill the Demon Lord",                                 "region": "Mainland",   "classification": LocationProgressType.PRIORITY },
-    
-    # # 'Power & Skill' Category
-    # {"name": "Train Militia",                                       "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    # {"name": "Kill a Rat",                                          "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    # {"name": "Kill a Skeleton",                                     "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    
-    # # 'Strengthening Up' Category
-    # # {"name": "Train an Archer", "region": "Mainland"}, <- Bow / Crossbow require Rope (from Island) or is a chance drop from Elf Archer - seems unfair.
-    # {"name": "Make a Villager wear a Rabbit Hat",                   "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    # {"name": "Build a Smithy",                                      "region": "Mainland",   "classification": LocationProgressType.PRIORITY },
-    # {"name": "Train a Wizard",                                      "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    # # {"name": "Equip an Archer with a Quiver", "region": "Mainland"}, <- Is a chance drop from Elf Archer - seems unfair.
-    # {"name": "Have a Villager with Combat Level 20",                "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    # {"name": "Train a Ninja",                                       "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    
-    # # 'Potluck' Category
-    # {"name": "Start a Campfire",                                    "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    # {"name": "Cook Raw Meat",                                       "region": "Mainland",   "classification": LocationProgressType.PRIORITY },
-    # {"name": "Cook an Omelette",                                    "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    # {"name": "Cook a Frittata",                                     "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    
-    # # 'Discovery' Category
-    # {"name": "Explore a Forest",                                    "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    # {"name": "Explore a Mountain",                                  "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    # {"name": "Open a Treasure Chest",                               "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    # {"name": "Find a Graveyard",                                    "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    # {"name": "Get a Dog",                                           "region": "Mainland",   "classification": LocationProgressType.EXCLUDED },
-    # {"name": "Train an Explorer",                                   "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    # {"name": "Buy something from a Travelling Cart",                "region": "Mainland",   "classification": LocationProgressType.EXCLUDED },
-    
-    # # 'Ways and Means' Category
-    # {"name": "Have 5 Ideas",                                        "region": "Mainland",   "classification": LocationProgressType.EXCLUDED },
-    # {"name": "Have 10 Ideas",                                       "region": "Mainland",   "classification": LocationProgressType.EXCLUDED },
-    # {"name": "Have 10 Wood",                                        "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    # {"name": "Have 10 Stone",                                       "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    # {"name": "Get an Iron Bar",                                     "region": "Mainland",   "classification": LocationProgressType.PRIORITY },
-    # {"name": "Have 5 Food",                                         "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    # {"name": "Have 10 Food",                                        "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    # {"name": "Have 20 Food",                                        "region": "Mainland",   "classification": LocationProgressType.EXCLUDED },
-    # {"name": "Have 50 Food",                                        "region": "Mainland",   "classification": LocationProgressType.EXCLUDED },
-    # {"name": "Have 10 Coins",                                       "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    # {"name": "Have 30 Coins",                                       "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    # {"name": "Have 50 Coins",                                       "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    
-    # # 'Construction' Category
-    # {"name": "Have 3 Houses",                                       "region": "Mainland",   "classification": LocationProgressType.EXCLUDED },
-    # {"name": "Build a Shed",                                        "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    # {"name": "Build a Quarry",                                      "region": "Mainland",   "classification": LocationProgressType.PRIORITY },
-    # {"name": "Build a Lumber Camp",                                 "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    # {"name": "Build a Farm",                                        "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    # {"name": "Build a Brickyard",                                   "region": "Mainland",   "classification": LocationProgressType.PRIORITY },
-    # {"name": "Sell a Card at a Market",                             "region": "Mainland",   "classification": LocationProgressType.EXCLUDED },
-    
-    # # 'Longevity' Category
-    # {"name": "Reach Moon 6",                                        "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    # {"name": "Reach Moon 12",                                       "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    # {"name": "Reach Moon 24",                                       "region": "Mainland",   "classification": LocationProgressType.EXCLUDED },
-    # {"name": "Reach Moon 36",                                       "region": "Mainland",   "classification": LocationProgressType.EXCLUDED },
+name_to_id = {}
 
-    # # 'Side Quests' Category
-    # {"name": "Build a Garden",                                      "region": "Mainland",   "classification": LocationProgressType.PRIORITY },
-    # {"name": "Build a Sawmill",                                     "region": "Mainland",   "classification": LocationProgressType.PRIORITY },
-    # {"name": "Build a Mine",                                        "region": "Mainland",   "classification": LocationProgressType.DEFAULT  },
-    # {"name": "Build a Smelter",                                     "region": "Mainland",   "classification": LocationProgressType.PRIORITY },
-# ]
-
-
+# Create location lookup
+for location in location_table:
+    name_to_id[location.name] = current_id if not location.event else None
+    current_id += 1

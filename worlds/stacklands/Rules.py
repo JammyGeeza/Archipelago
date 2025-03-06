@@ -32,50 +32,259 @@ def set_rules(world: MultiWorld, player: int):
     region_checks = {
         "Mainland": lambda state: True
     }
-    
-    ### Mainland Rules ###
 
-    # Should be Sphere 1(?)
+    # Get relevant options
+    goal = world.worlds[player].options.goal.value
+    pause_enabled = world.worlds[player].options.pause_enabled.value
+
+    # Amounts
+    set_rule(world.get_location("Have 10 Coins", player),
+             lambda state: state.can_reach_location("Buy the Humble Beginnings Pack", player))
+    
+    set_rule(world.get_location("Have 30 Coins", player),
+             lambda state: state.sl_has_idea("Coin Chest", player) and # <- Shed for helping with storage space >= 30 Coins
+                           state.can_reach_location("Have 10 Coins", player))
+    
+    set_rule(world.get_location("Have 50 Coins", player), 
+             lambda state: state.can_reach_location("Have 30 Coins", player))
+
+    set_rule(world.get_location("Have 5 Food", player),
+             lambda state: state.can_reach_location("Buy the Humble Beginnings Pack", player))
+    
+    set_rule(world.get_location("Have 10 Food", player),
+             lambda state: state.can_reach_location("Have 5 Food", player))
+    
+    set_rule(world.get_location("Have 20 Food", player),
+             lambda state: state.can_reach_location("Build a Shed", player) and # <- Shed for helping with storage space >= 20 food
+                           state.can_reach_location("Have 10 Food", player))
+    
+    set_rule(world.get_location("Have 50 Food", player),
+             lambda state: state.can_reach_location("Have 20 Food", player))
+    
+    set_rule(world.get_location("Have 3 Houses", player),
+             lambda state: state.can_reach_location("Build a House", player))
+    
+    set_rule(world.get_location("Have 5 Ideas", player),
+             lambda state: state.count_group("All Ideas", player) >= 5)
+    
+    set_rule(world.get_location("Have 10 Ideas", player),
+             lambda state: state.count_group("All Ideas", player) >= 10)
+    
+    set_rule(world.get_location("Have 10 Stone", player),
+             lambda state: state.can_reach_location("Buy the Humble Beginnings Pack", player))
+    
+    set_rule(world.get_location("Have 10 Wood", player),
+             lambda state: state.can_reach_location("Buy the Humble Beginnings Pack", player))
+    
+    # Durations
+    set_rule(world.get_location("Reach Moon 6", player),
+             lambda state: state.can_reach_location("Buy the Humble Beginnings Pack", player))
+    
+    set_rule(world.get_location("Reach Moon 12", player),
+             lambda state: state.sl_has_pack("Seeking Wisdom", player) and # <- Trialling to help increase chance of unrequired pack drops
+                           state.can_reach_location("Reach Moon 6", player))
+    
+    set_rule(world.get_location("Reach Moon 24", player),
+             lambda state: state.sl_has_pack("Logic and Reason", player) and # <- Trialling to help increase chance of unrequired pack drops
+                           state.can_reach_location("Reach Moon 12", player))
+    
+    set_rule(world.get_location("Reach Moon 24", player),
+             lambda state: state.can_reach_location("Reach Moon 36", player)) # <- Trialling to help increase chance of unrequired pack drops
+
+    # Miscellaneous
+    set_rule(world.get_location("Buy the Humble Beginnings Pack", player),
+             lambda state: state.sl_has_pack("Humble Beginnings", player))
+    
+    set_rule(world.get_location("Sell a Card at a Market", player),
+             lambda state: state.sl_has_all_ideas(["Market", "Brick", "Plank"], player) and
+                           state.can_reach_location("Buy the Humble Beginnings Pack", player))
+    
+    
+    
+    # 'Starting' Path - Quests that can be achieved immediately
     set_rule(world.get_location("Open the Booster Pack", player), lambda state: True)
-
-    # Should be Sphere 2(?)
-    set_rule(world.get_location("Make a Stick from Wood", player), lambda state: state.sl_has_idea("Stick", player))
-
-    # Should be Sphere 3(?)
-    set_rule(world.get_location("Start a Campfire", player), lambda state: state.sl_has_idea("Campfire", player) and state.can_reach_location("Make a Stick from Wood", player))
-
-    # Should be Sphere 2(?)
-    # set_rule(world.get_location("Make a Stick from Wood", player), lambda state: state.has("Idea: Stick", player))
-    # set_rule(world.get_location("Start a Campfire", player), lambda state: state.has_all(set(["Idea: Stick", "Idea: Campfire"]), player))
-    # set_rule(world.get_location("Task 1", player), lambda state: state.has_all(set(["Idea: Stick", "Idea: Campfire"]), player))
-
-    # set_rule(world.get_location("Ability to Build Campfire", player), lambda state: state.sl_has_all_ideas(["Stick", "Campfire"], player))
-
-    # Should be Sphere 3(?)
-    # set_rule(world.get_location("Task 1", player), lambda state: state.has("Campfire", player))
-    # set_rule(world.get_location("Task 2", player), lambda state: state.has("Campfire", player))
-    # set_rule(world.get_location("Build a Sawmill", player), lambda state: state.has("Campfire", player) and state.has_all(set(["Idea: Sawmill", "Idea: Plank"]), player))
-
-    # set_rule(world.get_location("Ability to Build Sawmill", player), lambda state: state.has("Campfire", player) and state.sl_has_all_ideas(["Sawmill", "Plank"], player))
     
-    # Should be Sphere 4(?)
-    # set_rule(world.get_location("Task 3", player), lambda state: lambda state: state.has("Sawmill", player))
-    # set_rule(world.get_location("Task 4", player), lambda state: lambda state: state.has("Sawmill", player))
-    # set_rule(world.get_location("Task 5", player), lambda state: lambda state: state.has("Sawmill", player))
-    # set_rule(world.get_location("Build a Smelter", player), lambda state: state.has("Sawmill", player) and state.has_all(set(["Idea: Smelter", "Idea: Brick", "Idea: Iron Bar"]), player))
-
-    # set_rule(world.get_location("Ability to Build Smelter", player), lambda state: state.has("Sawmill", player) and state.sl_has_all_ideas(["Smelter", "Brick", "Iron Bar"], player))
+    set_rule(world.get_location("Drag the Villager on top of the Berry Bush", player), lambda state: True)
     
-    # Should be Sphere 4(?)
-    set_rule(world.get_location("Bring the Goblet to the Temple", player), lambda state: state.can_reach_location("Start a Campfire", player))
-
-    # set_rule(world.get_location("Bring the Goblet to the Temple", player), 
-    #          lambda state: state.can_reach_location("Start a Capfire", player) and
-    #                        state.can_reach_location("Build a Sawmill", player) and
-    #                        state.can_reach_location("Build a Smelter", player))
-    # set_rule(world.get_location("Bring the Goblet to the Temple", player), lambda state: state.has_all(set(["Campfire", "Sawmill", "Smelter"]), player))
+    set_rule(world.get_location("Mine a Rock using a Villager", player), lambda state: True)
     
-    set_rule(world.get_location("Defeat Boss", player), lambda state: state.can_reach_location("Bring the Goblet to the Temple", player))
+    set_rule(world.get_location("Sell a Card", player), lambda state: True)
+
+    if pause_enabled: # <- Set location rule only if pausing is enabled
+        set_rule(world.get_location("Pause using the play icon in the top right corner", player),
+                    lambda state: True) 
+
+    # 'Combat' Path
+    set_rule(world.get_location("Train Militia", player),
+             lambda state: state.has_any(set(["Idea: Slingshot", "Idea: Spear"]), player) and
+                           state.sl_has_pack("Explorers", player) and
+                           state.can_reach_location("Buy the Humble Beginnings Pack", player))
+    
+    set_rule(world.get_location("Train a Wizard", player),
+             lambda state: state.sl_has_idea("Magic Wand", player) and
+                           state.sl_has_pack("Explorers", player) and
+                           state.can_reach_location("Buy the Humble Beginnings Pack", player))
+    
+    set_rule(world.get_location("Kill a Skeleton", player), # <- Minimum requirement for goal path (trialling this)
+             lambda state: state.sl_has_pack("The Armory", player) and
+                           state.can_reach_location("Train Militia", player) and
+                           state.can_reach_location("Train a Wizard", player))
+    
+    set_rule(world.get_location("Train a Ninja", player), # <- Not required for goal path, but useful
+             lambda state: state.sl_has_idea("Throwing Stars", player) and
+                           state.can_reach_location("Kill a Skeleton", player))
+
+    set_rule(world.get_location("Have a Villager with Combat Level 20", player), # <- Not required for goal path
+             lambda state: state.can_reach_location("Buy the Humble Beginnings Pack", player))
+
+    set_rule(world.get_location("Make a Villager wear a Rabbit Hat", player), # <- Not required for goal path
+             lambda state: state.can_reach_location("Buy the Humble Beginnings Pack", player))
+    
+    set_rule(world.get_location("Kill a Rat", player),  # <- Not required for goal path
+             lambda state: state.can_reach_location("Buy the Humble Beginnings Pack", player))
+
+    # 'Cooking' Path
+    set_rule(world.get_location("Make a Stick from Wood", player),
+             lambda state: state.sl_has_idea("Stick", player) and
+                           state.can_reach_location("Buy the Humble Beginnings Pack", player))
+    
+    set_rule(world.get_location("Start a Campfire", player),
+             lambda state: state.sl_has_idea("Campfire", player) and
+                           state.can_reach_location("Make a Stick from Wood", player))
+    
+    set_rule(world.get_location("Cook Raw Meat", player),
+             lambda state: state.sl_has_idea("Cooked Meat", player) and
+                           state.sl_has_pack("Reap & Sow", player) and # <- To help balance booster pack progression
+                           state.can_reach_location("Start a Campfire", player))
+    
+    set_rule(world.get_location("Cook an Omelette", player), # <- Not required for goal path, but useful to have
+             lambda state: state.sl_has_all_ideas(["Omelette", "Stove"], player) and
+                           state.can_reach_location("Cook Raw Meat", player))
+    
+    set_rule(world.get_location("Cook a Frittata", player), # <- Not required for goal path, but useful to have
+             lambda state: state.sl_has_idea("Frittata", player) and
+                           state.sl_has_pack("Curious Cuisine", player) and # <- To help balance booster pack progression
+                           state.can_reach_location("Cook an Omelette", player))
+    
+    # 'Brick' Path
+    set_rule(world.get_location("Build a Quarry", player),
+             lambda state: state.sl_has_idea("Quarry", player) and
+                           state.can_reach_location("Buy the Humble Beginnings Pack", player))
+    
+    set_rule(world.get_location("Build a Brickyard", player),
+             lambda state: state.sl_has_idea("Brickyard", player) and
+                           state.can_reach_location("Get an Iron Bar", player) and # <- 'Brick' / 'Iron Bar' / 'Smelter' included in path
+                           state.can_reach_location("Build a Quarry", player))
+    
+    # 'Exploring' Path
+    set_rule(world.get_location("Find a Graveyard", player),
+             lambda state: state.sl_has_all_packs(["Humble Beginnings", "Explorers"], player))
+    
+    set_rule(world.get_location("Find a mysterious artifact", player), # <- Minimum requirement for goal path
+             lambda state: state.can_reach_location("Find a Graveyard", player))
+    
+    set_rule(world.get_location("Find the Catacombs", player), # <- Not required for goal path
+             lambda state: state.can_reach_location("Find a mysterious artifact", player))
+    
+    set_rule(world.get_location("Open a Treasure Chest", player), # <- Not required for goal path
+             lambda state: state.can_reach_location("Find a mysterious artifact", player))
+    
+    set_rule(world.get_location("Get a Dog", player), # <- Not required for goal path
+             lambda state: state.can_reach_location("Find a mysterious artifact", player))
+    
+    set_rule(world.get_location("Train an Explorer", player), # <- Not required for goal path
+             lambda state: state.can_reach_location("Find a mysterious artifact", player))
+    
+    set_rule(world.get_location("Explore a Forest", player), # <- Not required for goal path
+             lambda state: state.can_reach_location("Find a mysterious artifact", player))
+    
+    set_rule(world.get_location("Explore a Mountain", player), # <- Not required for goal path
+             lambda state: state.can_reach_location("Find a mysterious artifact", player))
+
+    # 'Farming' Path
+    set_rule(world.get_location("Grow a Berry Bush using Soil", player),
+             lambda state: state.sl_has_idea("Growth", player) and
+                           state.can_reach_location("Have 5 Food", player))
+    
+    set_rule(world.get_location("Build a Shed", player),
+             lambda state: state.sl_has_idea("Shed", player) and
+                           state.can_reach_location("Have 5 Food", player))
+    
+    set_rule(world.get_location("Build a Garden", player), # <- Minimum requirement for goal
+             lambda state: state.sl_has_idea("Garden", player) and
+                           state.sl_has_pack("Reap & Sow", player) and # <- To help balance booster pack progression
+                           state.can_reach_location("Build a Shed", player))
+    
+    set_rule(world.get_location("Build a Farm", player), # <- Not required for goal path, but useful to have
+             lambda state: state.sl_has_all_ideas(["Farm", "Brick", "Plank"], player) and
+                           state.can_reach_location("Build a Shed", player))
+
+    # 'Iron Bar' Path
+    set_rule(world.get_location("Build a Smelter", player),
+             lambda state: state.sl_has_all_ideas(["Smelter", "Brick", "Plank"], player) and
+                           state.sl_has_pack("Seeking Wisdom", player) and
+                           state.can_reach_location("Buy the Humble Beginnings Pack", player))
+    
+    set_rule(world.get_location("Get an Iron Bar", player),
+             lambda state: state.sl_has_idea("Iron Bar", player) and
+                           state.can_reach_location("Build a Smelter", player) and
+                           (state.can_reach_location("Build a Mine", player) or state.sl_has_pack("Order and Structure", player)))
+    
+    set_rule(world.get_location("Build a Smithy", player),
+             lambda state: state.sl_has_idea("Smithy", player) and
+                           state.can_reach_location("Get an Iron Bar", player))
+    
+    set_rule(world.get_location("Build a Mine", player), # <- Not required for goal path, but useful to have
+             lambda state: state.sl_has_idea("Iron Mine", player) and
+                           state.can_reach_location("Buy the Humble Beginnings Pack", player))
+    
+    # 'Villager' Path
+    set_rule(world.get_location("Get a Second Villager", player),
+             lambda state: state.can_reach_location("Buy the Humble Beginnings Pack", player))
+    
+    set_rule(world.get_location("Build a House", player),
+             lambda state: state.sl_has_idea("House", player) and state.can_reach_location("Get a Second Villager", player))
+    
+    set_rule(world.get_location("Create Offspring", player),
+             lambda state: state.sl_has_idea("Offspring", player) and state.can_reach_location("Build a House", player))
+    
+    set_rule(world.get_location("Get 3 Villagers", player),
+             lambda state: state.can_reach_location("Create Offspring", player) or state.can_reach_location("Get a Dog", player))
+    
+    # 'Plank' Path
+    set_rule(world.get_location("Harvest a Tree using a Villager", player),
+             lambda state: state.can_reach_location("Buy the Humble Beginnings Pack", player))
+    
+    set_rule(world.get_location("Build a Lumber Camp", player),
+             lambda state: state.sl_has_idea("Lumber Camp", player) and
+                           state.can_reach_location("Harvest a Tree using a Villager", player))
+    
+    set_rule(world.get_location("Build a Sawmill", player), # <- Not required for goal path
+             lambda state: state.sl_has_idea("Sawmill", player) and
+                           state.can_reach_location("Get an Iron Bar", player) and # <- 'Plank' / 'Iron Bar' / 'Smelter' included in path
+                           state.can_reach_location("Build a Lumber Camp", player))
+
+    # 'Goal' Path
+    set_rule(world.get_location("Build a Temple", player), 
+             lambda state: state.sl_has_idea("Temple", player) and
+                           state.can_reach_location("Create Offspring", player) and # <- 'House' is included in this path (and will provide 3x Villagers)
+                           state.can_reach_location("Get an Iron Bar", player)) # <- 'Smelter' / 'Iron Bar' / 'Plank' / 'Brick' are included in this path
+    
+    set_rule(world.get_location("Bring the Goblet to the Temple", player),
+             lambda state: state.can_reach_location("Build a Temple", player) and # <- Able to build the temple
+                           state.can_reach_location("Build a Garden", player) and # <- 'Shed' is included in this path
+                           state.can_reach_location("Cook Raw Meat", player) and # <- 'Stick' / 'Campfire' are included in this path
+                           state.can_reach_location("Find a mysterious artifact", player) and # <- Able to find the goblet
+                           state.can_reach_location("Kill a Skeleton", player)) # <- Access to 'The Armory' for equipment drops
+    
+    set_rule(world.get_location("Kill the Demon", player), lambda state: state.can_reach_location("Bring the Goblet to the Temple", player))
+
+    # If goal is 'Kill the Demon Lord' then also set that rule
+    if goal == 1:
+        set_rule(world.get_location("Kill the Demon Lord", player), lambda state: state.can_reach_location("Kill the Demon", player))
+
+    # Set the rule for the victory event
+    set_rule(world.get_location("Complete the Goal", player), lambda state: state.can_reach_location("Kill the Demon", player) if goal == 0 else state.can_reach_location("Kill the Demon Lord", player))
 
     # Completion event
     world.completion_condition[player] = lambda state: state.has("Victory", player)

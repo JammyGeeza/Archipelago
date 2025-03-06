@@ -1,7 +1,7 @@
 from typing import Dict, Any
 from .Options import StacklandsOptions
-from .Items import StacklandsItem, create_all_items, item_table
-from .Locations import location_table
+from .Items import StacklandsItem, create_all_items, item_table, group_table, name_to_id as item_lookup
+from .Locations import name_to_id as location_lookup
 from .Regions import create_all_regions
 from .Rules import set_rules
 from worlds.AutoWorld import World, WebWorld
@@ -19,12 +19,13 @@ class StacklandsWorld(World):
     game = "Stacklands"
     web = StacklandsWeb()
     topology_present = False
-    item_name_to_id = { name: data.code for name, data in item_table.items() }
-    location_name_to_id = { name: data.code for name, data in location_table.items() }
-    # item_name_groups = item_group_table
 
     options_dataclass = StacklandsOptions
     options: StacklandsOptions
+
+    item_name_to_id = item_lookup
+    location_name_to_id = location_lookup
+    item_name_groups = group_table
     
     required_client_version = (0, 1, 9)
     
@@ -33,7 +34,8 @@ class StacklandsWorld(World):
         create_all_items(self.multiworld, self.player)
 
     def create_item(self, name: str) -> Item:
-        return StacklandsItem(name, self.player)
+        item = next((item for item in item_table if item.name == name))
+        return StacklandsItem(name, item, self.player)
     
     # Create all regions (and place all locations within each region)
     def create_regions(self):
@@ -41,12 +43,9 @@ class StacklandsWorld(World):
     
     # Fill the slot data
     def fill_slot_data(self) -> Dict[str, Any]:
-        return {
-            "BasicPack": bool(self.options.basic_pack.value),
-            "DeathLink": bool(self.options.death_link.value),
-            "Goal": int(self.options.goal.value),
-            "PauseEnabled": bool(self.options.pause_enabled.value)
-        }
+        slot_data = {}
+        slot_data.update(self.options.as_dict("start_inventory", "death_link", "goal", "pause_enabled"))
+        return slot_data
     
     # Set all access rules
     def set_rules(self):
