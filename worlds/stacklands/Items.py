@@ -1,146 +1,154 @@
+import logging
+from typing import Dict, List, NamedTuple
 from BaseClasses import Item, ItemClassification, MultiWorld
-from .Options import StacklandsOptions
-from typing import Dict, List, Set, TypedDict
+
+class ItemData(NamedTuple):
+    name: str
+    classification: ItemClassification
+    event: bool = False
 
 class StacklandsItem(Item):
     game = "Stacklands"
-    
 
-class ItemData(TypedDict):
-    name: str
-    classification: ItemClassification
-    count: int
+    def __init__(self, code: int, item: ItemData, player: int = None):
+        super(StacklandsItem, self).__init__(
+            item.name,
+            item.classification,
+            code,
+            player
+        )
 
-items_table: List[ItemData] = [
-    
-    ### Mainland Items ###
-
+# Item mapping
+item_table: List[ItemData] = [
     # Booster Packs
-    { "name": "Humble Beginnings Booster Pack", "classification": ItemClassification.progression, "count": 1 },
-    { "name": "Seeking Wisdom Booster Pack", "classification": ItemClassification.progression, "count": 1 },
-    { "name": "Reap & Sow Booster Pack", "classification": ItemClassification.progression, "count": 1 },
-    { "name": "Curious Cuisine Booster Pack", "classification": ItemClassification.progression, "count": 1 },
-    { "name": "Logic and Reason Booster Pack", "classification": ItemClassification.progression, "count": 1 },
-    { "name": "The Armory Booster Pack", "classification": ItemClassification.progression, "count": 1 },
-    { "name": "Explorers Booster Pack", "classification": ItemClassification.progression, "count": 1 },
-    { "name": "Order and Structure Booster Pack", "classification": ItemClassification.progression, "count": 1 },
+    ItemData("Humble Beginnings Booster Pack"      , ItemClassification.progression),
+    ItemData("Seeking Wisdom Booster Pack"         , ItemClassification.progression),
+    ItemData("Reap & Sow Booster Pack"             , ItemClassification.progression),
+    ItemData("Curious Cuisine Booster Pack"        , ItemClassification.progression),
+    ItemData("Logic and Reason Booster Pack"       , ItemClassification.progression),
+    ItemData("The Armory Booster Pack"             , ItemClassification.progression),
+    ItemData("Explorers Booster Pack"              , ItemClassification.progression),
+    ItemData("Order and Structure Booster Pack"    , ItemClassification.progression),
     
     # Ideas
-    { "name": "Idea: Animal Pen", "classification": ItemClassification.filler, "count": 1 },
-    { "name": "Idea: Axe", "classification": ItemClassification.useful, "count": 1 }, # Getting resources faster is useful
-    { "name": "Idea: Bone Spear", "classification": ItemClassification.useful, "count": 1 }, # Useful for fighting Demon
-    { "name": "Idea: Boomerang", "classification": ItemClassification.useful, "count": 1 }, # Useful for fighting Demon
-    { "name": "Idea: Breeding Pen", "classification": ItemClassification.filler, "count": 1 },
-    { "name": "Idea: Brick", "classification": ItemClassification.progression, "count": 1 },
-    { "name": "Idea: Brickyard", "classification": ItemClassification.progression, "count": 1 },
-    { "name": "Idea: Butchery", "classification": ItemClassification.filler, "count": 1 },
-    { "name": "Idea: Campfire", "classification": ItemClassification.progression, "count": 1 },
-    { "name": "Idea: Chainmail Armor", "classification": ItemClassification.useful, "count": 1 }, # Useful for fighting Demon
-    { "name": "Idea: Chicken", "classification": ItemClassification.filler, "count": 1 },
-    { "name": "Idea: Club", "classification": ItemClassification.filler, "count": 1 },
-    { "name": "Idea: Coin Chest", "classification": ItemClassification.useful, "count": 1 }, # Storage is useful
-    { "name": "Idea: Cooked Meat", "classification": ItemClassification.progression, "count": 1 },
-    { "name": "Idea: Crane", "classification": ItemClassification.useful, "count": 1 }, # Useful for automation
-    { "name": "Idea: Dustbin", "classification": ItemClassification.filler, "count": 1 }, 
-    { "name": "Idea: Farm", "classification": ItemClassification.progression, "count": 1 },
-    { "name": "Idea: Frittata", "classification": ItemClassification.progression, "count": 1 },
-    { "name": "Idea: Fruit Salad", "classification": ItemClassification.useful, "count": 1 }, # Food types are useful
-    { "name": "Idea: Garden", "classification": ItemClassification.progression, "count": 1 },
-    { "name": "Idea: Growth", "classification": ItemClassification.progression, "count": 1 },
-    { "name": "Idea: Hammer", "classification": ItemClassification.useful, "count": 1 }, # Building faster is useful
-    { "name": "Idea: Hotpot", "classification": ItemClassification.useful, "count": 1 }, # Useful for keeping enough food, but not required
-    { "name": "Idea: House", "classification": ItemClassification.progression, "count": 1 },
-    { "name": "Idea: Iron Bar", "classification": ItemClassification.progression, "count": 1 },
-    { "name": "Idea: Iron Mine", "classification": ItemClassification.useful, "count": 1 }, # Getting resources faster is useful
-    { "name": "Idea: Iron Shield", "classification": ItemClassification.filler, "count": 1 },
-    { "name": "Idea: Lumber Camp", "classification": ItemClassification.progression, "count": 1 },
-    { "name": "Idea: Magic Blade", "classification": ItemClassification.useful, "count": 1 }, # Useful for fighting Demon
-    { "name": "Idea: Magic Glue", "classification": ItemClassification.filler, "count": 1 },
-    { "name": "Idea: Magic Ring", "classification": ItemClassification.filler, "count": 1 },
-    { "name": "Idea: Magic Staff", "classification": ItemClassification.useful, "count": 1 }, # Useful for fighting Demon / 'Train a Wizard' quest, but can create Magic Wand instead
-    { "name": "Idea: Magic Tome", "classification": ItemClassification.filler, "count": 1 },
-    { "name": "Idea: Magic Wand", "classification": ItemClassification.progression, "count": 1 },
-    { "name": "Idea: Market", "classification": ItemClassification.progression, "count": 1 },
-    { "name": "Idea: Milkshake", "classification": ItemClassification.useful, "count": 1 }, # Food types are useful
-    { "name": "Idea: Omelette", "classification": ItemClassification.progression, "count": 1 },
-    { "name": "Idea: Offspring", "classification": ItemClassification.progression, "count": 1 },
-    { "name": "Idea: Pickaxe", "classification": ItemClassification.useful, "count": 1 }, # Getting resources faster is useful
-    { "name": "Idea: Plank", "classification": ItemClassification.progression, "count": 1 },
-    { "name": "Idea: Quarry", "classification": ItemClassification.progression, "count": 1 },
-    { "name": "Idea: Resource Chest", "classification": ItemClassification.useful, "count": 1 }, # Storage is useful
-    { "name": "Idea: Resource Magnet", "classification": ItemClassification.filler, "count": 1 },
-    { "name": "Idea: Sawmill", "classification": ItemClassification.useful, "count": 1 }, # Getting resources faster is useful
-    { "name": "Idea: Shed", "classification": ItemClassification.progression, "count": 1 },
-    { "name": "Idea: Slingshot", "classification": ItemClassification.filler, "count": 1 },
-    { "name": "Idea: Smelter", "classification": ItemClassification.progression, "count": 1 },
-    { "name": "Idea: Smithy", "classification": ItemClassification.progression, "count": 1 },
-    { "name": "Idea: Spear", "classification": ItemClassification.useful, "count": 1 }, # Useful for completing 'Train Militia' or 'Combat Level 20' but there are other options
-    { "name": "Idea: Spiked Plank", "classification": ItemClassification.filler, "count": 1 },
-    { "name": "Idea: Stew", "classification": ItemClassification.useful, "count": 1 }, # Food types are useful
-    { "name": "Idea: Stick", "classification": ItemClassification.progression, "count": 1 },
-    { "name": "Idea: Stove", "classification": ItemClassification.useful, "count": 1 }, # Useful for keeping enough food, but not required
-    { "name": "Idea: Sword", "classification": ItemClassification.useful, "count": 1 }, # Useful for completing 'Train Militia' or 'Combat Level 20' but there are other options
-    { "name": "Idea: Temple", "classification": ItemClassification.progression, "count": 1 },
-    { "name": "Idea: Throwing Stars", "classification": ItemClassification.progression, "count": 1 },
-    { "name": "Idea: University", "classification": ItemClassification.filler, "count": 1 },
-    { "name": "Idea: Warehouse", "classification": ItemClassification.useful, "count": 1 }, # Higher card limit is useful
-    { "name": "Idea: Wizard Robe", "classification": ItemClassification.filler, "count": 1 },
-    { "name": "Idea: Wooden Shield", "classification": ItemClassification.useful, "count": 1 }, # Useful for 'Combat level 20' but are other things available
-    
-    # Equipment
-    { "name": "Club", "classification": ItemClassification.filler, "count": 1 },
-    { "name": "Magic Wand", "classification": ItemClassification.filler, "count": 1 },
-    { "name": "Spear", "classification": ItemClassification.filler, "count": 1 },
-    { "name": "Sword", "classification": ItemClassification.filler, "count": 1 },
-    { "name": "Wooden Shield", "classification": ItemClassification.filler, "count": 1 },
+    ItemData("Idea: Animal Pen"                    , ItemClassification.filler),
+    ItemData("Idea: Axe"                           , ItemClassification.useful), # Getting resources faster is useful
+    ItemData("Idea: Bone Spear"                    , ItemClassification.useful), # Useful for fighting Demon
+    ItemData("Idea: Boomerang"                     , ItemClassification.useful), # Useful for fighting Demon
+    ItemData("Idea: Breeding Pen"                  , ItemClassification.filler),
+    ItemData("Idea: Brick"                         , ItemClassification.progression),
+    ItemData("Idea: Brickyard"                     , ItemClassification.progression),
+    ItemData("Idea: Butchery"                      , ItemClassification.filler),
+    ItemData("Idea: Campfire"                      , ItemClassification.progression),
+    ItemData("Idea: Chainmail Armor"               , ItemClassification.useful), # Useful for fighting Demon
+    ItemData("Idea: Chicken"                       , ItemClassification.filler),
+    ItemData("Idea: Club"                          , ItemClassification.useful), # Useful as additional fighting class
+    ItemData("Idea: Coin Chest"                    , ItemClassification.progression), # Storage is useful
+    ItemData("Idea: Cooked Meat"                   , ItemClassification.progression),
+    ItemData("Idea: Crane"                         , ItemClassification.filler),
+    ItemData("Idea: Dustbin"                       , ItemClassification.filler), 
+    ItemData("Idea: Farm"                          , ItemClassification.progression),
+    ItemData("Idea: Frittata"                      , ItemClassification.progression),
+    ItemData("Idea: Fruit Salad"                   , ItemClassification.filler),
+    ItemData("Idea: Garden"                        , ItemClassification.progression),
+    ItemData("Idea: Growth"                        , ItemClassification.progression),
+    ItemData("Idea: Hammer"                        , ItemClassification.useful), # Building faster is useful
+    ItemData("Idea: Hotpot"                        , ItemClassification.filler),
+    ItemData("Idea: House"                         , ItemClassification.progression),
+    ItemData("Idea: Iron Bar"                      , ItemClassification.progression),
+    ItemData("Idea: Iron Mine"                     , ItemClassification.progression), # Getting resources faster is useful
+    ItemData("Idea: Iron Shield"                   , ItemClassification.useful), # Useful for fighting Demon
+    ItemData("Idea: Lumber Camp"                   , ItemClassification.progression),
+    ItemData("Idea: Magic Blade"                   , ItemClassification.useful), # Useful for fighting Demon
+    ItemData("Idea: Magic Glue"                    , ItemClassification.filler),
+    ItemData("Idea: Magic Ring"                    , ItemClassification.filler),
+    ItemData("Idea: Magic Staff"                   , ItemClassification.useful), # Useful for fighting Demon / 'Train a Wizard' quest, but can create Magic Wand instead
+    ItemData("Idea: Magic Tome"                    , ItemClassification.filler),
+    ItemData("Idea: Magic Wand"                    , ItemClassification.progression),
+    ItemData("Idea: Market"                        , ItemClassification.progression),
+    ItemData("Idea: Milkshake"                     , ItemClassification.filler),
+    ItemData("Idea: Omelette"                      , ItemClassification.progression),
+    ItemData("Idea: Offspring"                     , ItemClassification.progression),
+    ItemData("Idea: Pickaxe"                       , ItemClassification.useful), # Getting resources faster is useful
+    ItemData("Idea: Plank"                         , ItemClassification.progression),
+    ItemData("Idea: Quarry"                        , ItemClassification.progression),
+    ItemData("Idea: Resource Chest"                , ItemClassification.useful), # Storage is useful
+    ItemData("Idea: Resource Magnet"               , ItemClassification.filler),
+    ItemData("Idea: Sawmill"                       , ItemClassification.progression), # Getting resources faster is useful
+    ItemData("Idea: Shed"                          , ItemClassification.progression),
+    ItemData("Idea: Slingshot"                     , ItemClassification.progression),
+    ItemData("Idea: Smelter"                       , ItemClassification.progression),
+    ItemData("Idea: Smithy"                        , ItemClassification.progression),
+    ItemData("Idea: Spear"                         , ItemClassification.progression), # Useful for completing 'Train Militia' or 'Combat Level 20' but there are other options
+    ItemData("Idea: Spiked Plank"                  , ItemClassification.filler),
+    ItemData("Idea: Stew"                          , ItemClassification.filler), # Food types are useful
+    ItemData("Idea: Stick"                         , ItemClassification.progression),
+    ItemData("Idea: Stove"                         , ItemClassification.progression), # Useful for keeping enough food, but not required
+    ItemData("Idea: Sword"                         , ItemClassification.useful), # Useful for completing 'Train Militia' or 'Combat Level 20' but there are other options
+    ItemData("Idea: Temple"                        , ItemClassification.progression),
+    ItemData("Idea: Throwing Stars"                , ItemClassification.progression),
+    ItemData("Idea: University"                    , ItemClassification.filler),
+    ItemData("Idea: Warehouse"                     , ItemClassification.useful), # Higher card limit is useful
+    ItemData("Idea: Wizard Robe"                   , ItemClassification.filler),
+    ItemData("Idea: Wooden Shield"                 , ItemClassification.useful), # Useful for 'Combat level 20' but are other things available
     
     # Resources
-    { "name": "Flint x5", "classification": ItemClassification.filler, "count": 1 },
-    { "name": "Iron Ore x5", "classification": ItemClassification.filler, "count": 1 },
-    { "name": "Poop x5", "classification": ItemClassification.filler, "count": 1 }, # Could add something like a 'Get Pooped' "trap" item that spawns a whole bunch of poop, toggle-able in options
-    { "name": "Stone x5", "classification": ItemClassification.filler, "count": 1 },
-    { "name": "Wood x5", "classification": ItemClassification.filler, "count": 1 }
+    ItemData("Berry x5"                            , ItemClassification.filler),
+    ItemData("Flint x5"                            , ItemClassification.filler),
+    ItemData("Iron Ore x5"                         , ItemClassification.filler),
+    ItemData("Poop x5"                             , ItemClassification.filler),
+    ItemData("Stone x5"                            , ItemClassification.filler),
+    ItemData("Wood x5"                             , ItemClassification.filler),
     
-    # Traps (to be implemented..)
+    # Traps (to be implemented...)
     # - Spawn enemies onto the board?
     # - 'Get Pooped' item that spawns a bunch of poop?
+
+    ItemData("Victory"                             , ItemClassification.progression, True),
 ]
 
-item_group_table: Dict[str, Set[str]] = {
-    "All Ideas": set(item["name"] for item in items_table if item["name"].startswith("Idea:")),
-    "All Booster Packs": set(item["name"] for item in items_table if item["name"].endswith("Booster Pack")),
-    "Basic Booster Packs": {"Humble Beginnings Booster Pack", "Seeking Wisdom Booster Pack", "Reap & Sow Booster Pack"}
+# Event mapping table
+event_table: Dict[str, str] = {
+    "Complete the Goal": "Victory"
 }
-    
-# ID assignment
-base_id: int = 92000
+
+# Item group mapping table
+group_table: Dict[str, set[str]] = {
+    "All Ideas": set(item.name for item in item_table if item.name.startswith("Idea:")),
+    "All Booster Packs": set(item.name for item in item_table if item.name.endswith("Booster Pack")),
+}
+
+base_id: int = 91000
 current_id: int = base_id
 
-# Lookups
-lookup_id_to_name = {}
-lookup_name_to_id = {}   
+name_to_id = {}
 
-# Create item lookups
-for item in items_table:
-    
-    # Add to lookups
-    lookup_id_to_name[current_id] = item["name"]
-    lookup_name_to_id[item["name"]] = current_id
-    
-    # Increment ID
+# Create name-to-id lookup
+for item in item_table:
+    name_to_id[item.name] = current_id if not item.event else None
     current_id += 1
 
-# Create an item as a StacklandsItem object
-def create_item(player: int, item: ItemData) -> StacklandsItem:
-    return StacklandsItem(item["name"], item["classification"], lookup_name_to_id[item["name"]], player=player)
+# Create all items
+def create_all_items(world: MultiWorld, player: int) -> None:
+    pool = []
 
-# Add all items to the item pool
-def create_all_items(world: MultiWorld, player: int, options: StacklandsOptions):
-    for item in items_table:
-        
-        # Exclude Hunble Beginnings if 'basic pack' option is true
-        if options.basic_pack and item["name"] == "Humble Beginnings Booster Pack":
-            continue
+    # Get list of items to exclude if in starting inventory
+    exclude = [item for item in world.precollected_items[player]]
 
-        for _ in range(item["count"]):
-            world.itempool.append(create_item(player, item))
+    # Gather items
+    for item in item_table:
+
+        # If item is not an event...
+        if not item.event:
+            item_obj = StacklandsItem(name_to_id[item.name], item, player)
+
+            # If item is not in starting inventory, add to pool
+            if item_obj not in exclude:
+                pool.append(item_obj)
+
+    # Add all items to pool
+    world.itempool += pool
+
+    # Add victory event item
+    for event, item in event_table.items():
+        world.get_location(event, player).place_locked_item(Item(item, ItemClassification.progression, None, player))

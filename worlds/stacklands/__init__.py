@@ -1,11 +1,11 @@
 from typing import Dict, Any
 from .Options import StacklandsOptions
-from .Items import StacklandsItem, create_all_items, item_group_table, lookup_name_to_id as items_lookup_name_to_id
-from .Locations import lookup_name_to_id as locations_lookup_name_to_id
+from .Items import StacklandsItem, create_all_items, item_table, group_table, name_to_id as item_lookup
+from .Locations import name_to_id as location_lookup
 from .Regions import create_all_regions
-from .Rules import set_all_rules
+from .Rules import set_rules
 from worlds.AutoWorld import World, WebWorld
-from BaseClasses import Item, ItemClassification, Location, Region
+from BaseClasses import Item
 
 class StacklandsWeb(WebWorld):
     theme = "jungle"
@@ -18,39 +18,35 @@ class StacklandsWorld(World):
     
     game = "Stacklands"
     web = StacklandsWeb()
-    
-    item_name_to_id = items_lookup_name_to_id
-    location_name_to_id = locations_lookup_name_to_id
-    item_name_groups = item_group_table
+    topology_present = False
 
     options_dataclass = StacklandsOptions
     options: StacklandsOptions
+
+    item_name_to_id = item_lookup
+    location_name_to_id = location_lookup
+    item_name_groups = group_table
     
     required_client_version = (0, 1, 9)
     
-    def __init(self, multiworld, player):
-        super(StacklandsWorld, self).__init(multiworld, player)
-    
-    def create_event(self, event: str):
-        return StacklandsItem(event, ItemClassification.progression_skip_balancing, None, self.player)
-    
     # Create all items
     def create_items(self):
-        create_all_items(self.multiworld, self.player, self.options)
+        create_all_items(self.multiworld, self.player)
+
+    def create_item(self, name: str) -> Item:
+        item = next((item for item in item_table if item.name == name))
+        return StacklandsItem(name, item, self.player)
     
     # Create all regions (and place all locations within each region)
-    def create_regions(self) -> None:
-        create_all_regions(self.multiworld, self.player, self.options)
+    def create_regions(self):
+        create_all_regions(self.multiworld, self.player)
     
     # Fill the slot data
     def fill_slot_data(self) -> Dict[str, Any]:
-        return {
-            "BasicPack": bool(self.options.basic_pack.value),
-            "DeathLink": bool(self.options.death_link.value),
-            "Goal": bool(self.options.goal.value),
-            "PauseEnabled": bool(self.options.pause_enabled.value)
-        }
+        slot_data = {}
+        slot_data.update(self.options.as_dict("start_inventory", "death_link", "goal", "pause_enabled"))
+        return slot_data
     
     # Set all access rules
     def set_rules(self):
-        set_all_rules(self.multiworld, self.player)
+        set_rules(self.multiworld, self.player)
