@@ -1,11 +1,10 @@
 from typing import Dict, List, NamedTuple
-from BaseClasses import Location, LocationProgressType, Region
+from BaseClasses import MultiWorld, Location, LocationProgressType, Region
 
 class LocationData(NamedTuple):
     name: str
     region: str
     progress_type: LocationProgressType
-    event: bool = False
 
 class StacklandsLocation(Location):
     game = "Stacklands"
@@ -44,20 +43,21 @@ location_table: List[LocationData] = [
     LocationData("Find a mysterious artifact"                          , "Mainland", LocationProgressType.DEFAULT),
     LocationData("Build a Temple"                                      , "Mainland", LocationProgressType.DEFAULT),
     LocationData("Bring the Goblet to the Temple"                      , "Mainland", LocationProgressType.DEFAULT),
-    LocationData("Kill the Demon"                                      , "Mainland", LocationProgressType.DEFAULT),
-    LocationData("Kill the Demon Lord"                                 , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Kill the Demon"                                      , "Mainland", LocationProgressType.DEFAULT), # <- Will be a check if 'Kill the Demon Lord' is the goal
     
     # 'Power & Skill' Category
     LocationData("Train Militia"                                       , "Mainland", LocationProgressType.DEFAULT),
     LocationData("Kill a Rat"                                          , "Mainland", LocationProgressType.DEFAULT),
     LocationData("Kill a Skeleton"                                     , "Mainland", LocationProgressType.DEFAULT),
     
-    # 'Strengthening Up' Category
+    # 'Strengthen Up' Category
+    LocationData("Train an Archer"                                     , "Mainland", LocationProgressType.EXCLUDED), # <- Achievable mostly through RNG
     LocationData("Make a Villager wear a Rabbit Hat"                   , "Mainland", LocationProgressType.DEFAULT),
     LocationData("Build a Smithy"                                      , "Mainland", LocationProgressType.DEFAULT),
     LocationData("Train a Wizard"                                      , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Equip an Archer with a Quiver"                       , "Mainland", LocationProgressType.EXCLUDED), # <- Achievable mostly through RNG
     LocationData("Have a Villager with Combat Level 20"                , "Mainland", LocationProgressType.DEFAULT),
-    LocationData("Train a Ninja"                                       , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Train a Ninja"                                       , "Mainland", LocationProgressType.DEFAULT), 
     
     # 'Potluck' Category
     LocationData("Start a Campfire"                                    , "Mainland", LocationProgressType.DEFAULT),
@@ -100,21 +100,14 @@ location_table: List[LocationData] = [
     # 'Longevity' Category
     LocationData("Reach Moon 6"                                        , "Mainland", LocationProgressType.DEFAULT),
     LocationData("Reach Moon 12"                                       , "Mainland", LocationProgressType.DEFAULT),
-    LocationData("Reach Moon 24"                                       , "Mainland", LocationProgressType.EXCLUDED),
-    LocationData("Reach Moon 36"                                       , "Mainland", LocationProgressType.EXCLUDED),
-
-    # 'Side Quests' Category
-    LocationData("Build a Garden"                                      , "Mainland", LocationProgressType.DEFAULT),
-    LocationData("Build a Sawmill"                                     , "Mainland", LocationProgressType.DEFAULT),
-    LocationData("Build a Mine"                                        , "Mainland", LocationProgressType.DEFAULT),
-    LocationData("Build a Smelter"                                     , "Mainland", LocationProgressType.DEFAULT),
-
-    # Event location
-    LocationData("Complete the Goal"                                   , "Mainland", LocationProgressType.DEFAULT, True),
+    LocationData("Reach Moon 24"                                       , "Mainland", LocationProgressType.EXCLUDED), # <- Reaching higher moons for important items is arduous
+    LocationData("Reach Moon 36"                                       , "Mainland", LocationProgressType.EXCLUDED), # <- Reaching higher moons for important items is arduous
 ]
 
-event_table: Dict[str, str] = {
-    "Complete the Goal", "Victory"
+# Goal table ('Goal' option value mapped to goal name)
+goal_table: Dict[int, LocationData] = {
+    0   : LocationData("Kill the Demon",        "Mainland", LocationProgressType.DEFAULT),
+    1   : LocationData("Kill the Demon Lord",   "Mainland", LocationProgressType.DEFAULT)
 }
 
 base_id: int = 92000
@@ -122,7 +115,7 @@ current_id: int = base_id
 
 name_to_id = {}
 
-# Create location lookup
+# Create locations lookup
 for location in location_table:
-    name_to_id[location.name] = current_id if not location.event else None
+    name_to_id[location.name] = current_id
     current_id += 1

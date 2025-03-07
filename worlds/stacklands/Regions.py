@@ -1,45 +1,75 @@
 import logging
-from typing import List
+from typing import Dict, List, NamedTuple, Optional
 from BaseClasses import Entrance, MultiWorld, Region
-from .Locations import LocationData, StacklandsLocation, location_table, name_to_id as location_lookup
+from .Locations import LocationData, StacklandsLocation, goal_table, location_table, name_to_id as location_lookup
+
+class RegionData(NamedTuple):
+    locations: List[LocationData]
+    exits: List[str]
+
+# Regions table
+region_table: Dict[str, RegionData] = {
+    "Menu"      : RegionData([loc for loc in location_table if loc.region == "Menu"]        , [ "Start" ]),
+    "Mainland"  : RegionData([loc for loc in location_table if loc.region == "Mainland"]    , [ "Rowboat"]),
+    "Island"    : RegionData([loc for loc in location_table if loc.region == "Island"]      , [])
+}
 
 # Create a region
-def create_region(world: MultiWorld, player: int, name: str, locations: List[LocationData]=None, exits: List[str]=None) -> Region:
+def create_region(world: MultiWorld, player: int, name: str) -> Region:
     
+    # Create region object
+    region = Region(name, player, world)
+    region_data = region_table[name]
+
     # Get relevant options
     pause_enabled = world.worlds[player].options.pause_enabled.value
     goal = world.worlds[player].options.goal.value
 
-    region = Region(name, player, world)
+    # Get the goal data (if it exists in this region)
+    goal_data = goal_table[goal] if goal_table[goal].region == name else None
 
-    if locations:
-        for location in locations:
+    # Cycle through all location checks
+    if region_data.locations:
+        for loc in region_data.locations:
 
-            # Skip this location if pausing is not enabled
-            if not pause_enabled and location.name == "Pause using the play icon in the top right corner":
-                continue
-            
-            # Skip this location if the goal is set to 'Kill the Demon'
-            if goal == 0 and location.name == "Kill the Demon Lord":
+            # Skip this check if pausing is not enabled, as it becomes unachievable
+            if not pause_enabled and loc.name == "Pause using the play icon in the top right corner":
                 continue
 
-            loc_obj = StacklandsLocation(player, location, location_lookup[location.name], region)
+            # Skip this check if the goal is set to 'Kill the Demon'
+            if goal == 0 and loc.name == "Kill the Demon":
+                continue
+
+            # Add location check to region
+            loc_obj = StacklandsLocation(player, loc, location_lookup[loc.name], region)
             region.locations.append(loc_obj)
 
-    if exits:
-        for exit in exits:
+    # Add exits to region, if provided
+    if region_data.exits:
+        for exit in region_data.exits:
             region.exits.append(Entrance(player, exit, region))
+
+    # Add goal to region, if provided
+    if goal_data:
+        goal_obj = StacklandsLocation(player, goal_data, None, region)
+        region.locations.append(goal_obj)   
 
     return region
 
 # Create all regions
 def create_all_regions(world: MultiWorld, player: int):
 
+    # Get the goal from options
+    goal = world.worlds[player].options.goal.value
+    goal_evt = goal_table[goal]
+
+    # Create regions
     world.regions += [
-        create_region(world, player, "Menu", None, [ "Start" ]),
-        create_region(world, player, "Mainland", [location for location in location_table if location.region == "Mainland"])
+        create_region(world, player, "Menu"),
+        create_region(world, player, "Mainland"),
+        create_region(world, player, "Island")
     ]
 
-    # Connect menu region to entrance of mainland
+    # Connect exits to regions
     world.get_entrance("Start", player).connect(world.get_region("Mainland", player))
-        
+    world.get_entrance("Rowboat", player).connect(world.get_region("Island", player))

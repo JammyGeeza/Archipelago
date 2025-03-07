@@ -1,11 +1,11 @@
 import logging
 from typing import Dict, List, NamedTuple
 from BaseClasses import Item, ItemClassification, MultiWorld
+from .Locations import goal_table
 
 class ItemData(NamedTuple):
     name: str
     classification: ItemClassification
-    event: bool = False
 
 class StacklandsItem(Item):
     game = "Stacklands"
@@ -41,9 +41,10 @@ item_table: List[ItemData] = [
     ItemData("Idea: Butchery"                      , ItemClassification.filler),
     ItemData("Idea: Campfire"                      , ItemClassification.progression),
     ItemData("Idea: Chainmail Armor"               , ItemClassification.useful), # Useful for fighting Demon
+    ItemData("Idea: Charcoal"                      , ItemClassification.useful), # Useful for removing poison and making Magic Glue
     ItemData("Idea: Chicken"                       , ItemClassification.filler),
     ItemData("Idea: Club"                          , ItemClassification.useful), # Useful as additional fighting class
-    ItemData("Idea: Coin Chest"                    , ItemClassification.progression), # Storage is useful
+    ItemData("Idea: Coin Chest"                    , ItemClassification.progression),
     ItemData("Idea: Cooked Meat"                   , ItemClassification.progression),
     ItemData("Idea: Crane"                         , ItemClassification.filler),
     ItemData("Idea: Dustbin"                       , ItemClassification.filler), 
@@ -81,7 +82,7 @@ item_table: List[ItemData] = [
     ItemData("Idea: Smithy"                        , ItemClassification.progression),
     ItemData("Idea: Spear"                         , ItemClassification.progression), # Useful for completing 'Train Militia' or 'Combat Level 20' but there are other options
     ItemData("Idea: Spiked Plank"                  , ItemClassification.filler),
-    ItemData("Idea: Stew"                          , ItemClassification.filler), # Food types are useful
+    ItemData("Idea: Stew"                          , ItemClassification.filler),
     ItemData("Idea: Stick"                         , ItemClassification.progression),
     ItemData("Idea: Stove"                         , ItemClassification.progression), # Useful for keeping enough food, but not required
     ItemData("Idea: Sword"                         , ItemClassification.useful), # Useful for completing 'Train Militia' or 'Combat Level 20' but there are other options
@@ -92,25 +93,30 @@ item_table: List[ItemData] = [
     ItemData("Idea: Wizard Robe"                   , ItemClassification.filler),
     ItemData("Idea: Wooden Shield"                 , ItemClassification.useful), # Useful for 'Combat level 20' but are other things available
     
-    # Resources
+    # Resources / Junk
+    ItemData("Apple Tree x3"                       , ItemClassification.filler),
     ItemData("Berry x5"                            , ItemClassification.filler),
+    ItemData("Berry Bush x3"                       , ItemClassification.filler),
+    ItemData("Coin x5"                             , ItemClassification.filler),
+    ItemData("Coin x10"                            , ItemClassification.filler),
+    ItemData("Coin x25"                            , ItemClassification.filler),
+    ItemData("Egg x5"                              , ItemClassification.filler),
     ItemData("Flint x5"                            , ItemClassification.filler),
+    ItemData("Iron Deposit x3"                     , ItemClassification.filler),
     ItemData("Iron Ore x5"                         , ItemClassification.filler),
-    ItemData("Poop x5"                             , ItemClassification.filler),
+    ItemData("Milk x5"                             , ItemClassification.filler),
+    ItemData("Rock x3"                             , ItemClassification.filler),
+    ItemData("Stick x5"                            , ItemClassification.filler),
     ItemData("Stone x5"                            , ItemClassification.filler),
+    ItemData("Tree x3"                             , ItemClassification.filler),
     ItemData("Wood x5"                             , ItemClassification.filler),
     
     # Traps (to be implemented...)
-    # - Spawn enemies onto the board?
-    # - 'Get Pooped' item that spawns a bunch of poop?
-
-    ItemData("Victory"                             , ItemClassification.progression, True),
+    ItemData("Get Gooped!"                         , ItemClassification.trap),
+    ItemData("Get Pooped!"                         , ItemClassification.trap),
+    
+    # Additional idea - spawn enemies onto the board?
 ]
-
-# Event mapping table
-event_table: Dict[str, str] = {
-    "Complete the Goal": "Victory"
-}
 
 # Item group mapping table
 group_table: Dict[str, set[str]] = {
@@ -125,30 +131,31 @@ name_to_id = {}
 
 # Create name-to-id lookup
 for item in item_table:
-    name_to_id[item.name] = current_id if not item.event else None
+    name_to_id[item.name] = current_id
     current_id += 1
 
 # Create all items
 def create_all_items(world: MultiWorld, player: int) -> None:
-    pool = []
+    # Get goal
+    goal = world.worlds[player].options.goal.value
+    include_traps = world.worlds[player].options.include_traps.value
 
     # Get list of items to exclude if in starting inventory
     exclude = [item for item in world.precollected_items[player]]
 
     # Gather items
+    pool = []
     for item in item_table:
+        # Create item object
+        item_obj = StacklandsItem(name_to_id[item.name], item, player)
 
-        # If item is not an event...
-        if not item.event:
-            item_obj = StacklandsItem(name_to_id[item.name], item, player)
+        # If item is not in starting inventory and not a trap item if traps are disabled
+        if item_obj not in exclude and (include_traps == True or item.classification != ItemClassification.trap):
+            pool.append(item_obj)
 
-            # If item is not in starting inventory, add to pool
-            if item_obj not in exclude:
-                pool.append(item_obj)
-
-    # Add all items to pool
+    # Add all valid items to pool
     world.itempool += pool
 
-    # Add victory event item
-    for event, item in event_table.items():
-        world.get_location(event, player).place_locked_item(Item(item, ItemClassification.progression, None, player))
+    # Add victory item to goal event
+    goal_data = goal_table[goal]
+    world.get_location(goal_data.name, player).place_locked_item(Item("Victory", ItemClassification.progression, None, player))
