@@ -1,6 +1,7 @@
 import logging
 from typing import Dict, List, NamedTuple
 from BaseClasses import Item, ItemClassification, MultiWorld
+from .Locations import goal_table
 
 class ItemData(NamedTuple):
     name: str
@@ -103,14 +104,7 @@ item_table: List[ItemData] = [
     # Traps (to be implemented...)
     # - Spawn enemies onto the board?
     # - 'Get Pooped' item that spawns a bunch of poop?
-
-    ItemData("Victory"                             , ItemClassification.progression, True),
 ]
-
-# Event mapping table
-event_table: Dict[str, str] = {
-    "Complete the Goal": "Victory"
-}
 
 # Item group mapping table
 group_table: Dict[str, set[str]] = {
@@ -125,30 +119,30 @@ name_to_id = {}
 
 # Create name-to-id lookup
 for item in item_table:
-    name_to_id[item.name] = current_id if not item.event else None
+    name_to_id[item.name] = current_id
     current_id += 1
 
 # Create all items
 def create_all_items(world: MultiWorld, player: int) -> None:
-    pool = []
-
+    # Get goal
+    goal = world.worlds[player].options.goal.value
+    
     # Get list of items to exclude if in starting inventory
     exclude = [item for item in world.precollected_items[player]]
 
     # Gather items
+    pool = []
     for item in item_table:
+        # Create item object
+        item_obj = StacklandsItem(name_to_id[item.name], item, player)
 
-        # If item is not an event...
-        if not item.event:
-            item_obj = StacklandsItem(name_to_id[item.name], item, player)
+        # If item is not in starting inventory, add to pool
+        if item_obj not in exclude:
+            pool.append(item_obj)
 
-            # If item is not in starting inventory, add to pool
-            if item_obj not in exclude:
-                pool.append(item_obj)
-
-    # Add all items to pool
+    # Add all valid items to pool
     world.itempool += pool
 
-    # Add victory event item
-    for event, item in event_table.items():
-        world.get_location(event, player).place_locked_item(Item(item, ItemClassification.progression, None, player))
+    # Add victory item to goal event
+    goal_data = goal_table[goal]
+    world.get_location(goal_data.name, player).place_locked_item(Item("Victory", ItemClassification.progression, None, player))

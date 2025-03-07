@@ -208,7 +208,7 @@ def set_rules(world: MultiWorld, player: int):
     
     set_rule(world.get_location("Build a Shed", player),
              lambda state: state.sl_has_idea("Shed", player) and
-                           state.can_reach_location("Have 5 Food", player))
+                           state.can_reach_location("Grow a Berry Bush using Soil", player))
     
     set_rule(world.get_location("Build a Garden", player), # <- Minimum requirement for goal
              lambda state: state.sl_has_idea("Garden", player) and
@@ -217,7 +217,7 @@ def set_rules(world: MultiWorld, player: int):
     
     set_rule(world.get_location("Build a Farm", player), # <- Not required for goal path, but useful to have
              lambda state: state.sl_has_all_ideas(["Farm", "Brick", "Plank"], player) and
-                           state.can_reach_location("Build a Shed", player))
+                           state.can_reach_location("Build a Garden", player))
 
     # 'Iron Bar' Path
     set_rule(world.get_location("Build a Smelter", player),
@@ -277,14 +277,15 @@ def set_rules(world: MultiWorld, player: int):
                            state.can_reach_location("Find a mysterious artifact", player) and # <- Able to find the goblet
                            state.can_reach_location("Kill a Skeleton", player)) # <- Access to 'The Armory' for equipment drops
     
-    set_rule(world.get_location("Kill the Demon", player), lambda state: state.can_reach_location("Bring the Goblet to the Temple", player))
-
-    # If goal is 'Kill the Demon Lord' then also set that rule
+    set_rule(world.get_location("Kill the Demon", player), # <- Will be an Event if Goal is 'Kill the Demon' or a Location Check if Goal is 'Kill the Demon Lord'
+                     lambda state: state.can_reach_location("Bring the Goblet to the Temple", player))
+    
     if goal == 1:
-        set_rule(world.get_location("Kill the Demon Lord", player), lambda state: state.can_reach_location("Kill the Demon", player))
-
-    # Set the rule for the victory event
-    set_rule(world.get_location("Complete the Goal", player), lambda state: state.can_reach_location("Kill the Demon", player) if goal == 0 else state.can_reach_location("Kill the Demon Lord", player))
-
-    # Completion event
+        # If Goal is 'Kill the Demon Lord' set the Event conditions and set access to post-Kill the Demon
+        set_rule(world.get_location("Kill the Demon Lord", player),
+                     lambda state: state.can_reach_location("Kill the Demon", player))
+    elif goal > 1:
+        raise Exception(f"Unhandled value for 'Goal' in Options: {goal}")
+    
+    # Set completion condition
     world.completion_condition[player] = lambda state: state.has("Victory", player)
