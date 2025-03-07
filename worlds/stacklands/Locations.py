@@ -5,7 +5,6 @@ class LocationData(NamedTuple):
     name: str
     region: str
     progress_type: LocationProgressType
-    # event: bool = False
 
 class StacklandsLocation(Location):
     game = "Stacklands"
@@ -52,13 +51,13 @@ location_table: List[LocationData] = [
     LocationData("Kill a Skeleton"                                     , "Mainland", LocationProgressType.DEFAULT),
     
     # 'Strengthen Up' Category
-    LocationData("Train an Archer"                                     , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Train an Archer"                                     , "Mainland", LocationProgressType.EXCLUDED), # <- Achievable mostly through RNG
     LocationData("Make a Villager wear a Rabbit Hat"                   , "Mainland", LocationProgressType.DEFAULT),
     LocationData("Build a Smithy"                                      , "Mainland", LocationProgressType.DEFAULT),
     LocationData("Train a Wizard"                                      , "Mainland", LocationProgressType.DEFAULT),
-    LocationData("Equip an Archer with a Quiver"                       , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Equip an Archer with a Quiver"                       , "Mainland", LocationProgressType.EXCLUDED), # <- Achievable mostly through RNG
     LocationData("Have a Villager with Combat Level 20"                , "Mainland", LocationProgressType.DEFAULT),
-    LocationData("Train a Ninja"                                       , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Train a Ninja"                                       , "Mainland", LocationProgressType.DEFAULT), 
     
     # 'Potluck' Category
     LocationData("Start a Campfire"                                    , "Mainland", LocationProgressType.DEFAULT),
@@ -101,14 +100,8 @@ location_table: List[LocationData] = [
     # 'Longevity' Category
     LocationData("Reach Moon 6"                                        , "Mainland", LocationProgressType.DEFAULT),
     LocationData("Reach Moon 12"                                       , "Mainland", LocationProgressType.DEFAULT),
-    LocationData("Reach Moon 24"                                       , "Mainland", LocationProgressType.EXCLUDED),
-    LocationData("Reach Moon 36"                                       , "Mainland", LocationProgressType.EXCLUDED),
-
-    # 'Side Quests' Category
-    LocationData("Build a Garden"                                      , "Mainland", LocationProgressType.DEFAULT),
-    LocationData("Build a Sawmill"                                     , "Mainland", LocationProgressType.DEFAULT),
-    LocationData("Build a Mine"                                        , "Mainland", LocationProgressType.DEFAULT),
-    LocationData("Build a Smelter"                                     , "Mainland", LocationProgressType.DEFAULT),
+    LocationData("Reach Moon 24"                                       , "Mainland", LocationProgressType.EXCLUDED), # <- Reaching higher moons for important items is arduous
+    LocationData("Reach Moon 36"                                       , "Mainland", LocationProgressType.EXCLUDED), # <- Reaching higher moons for important items is arduous
 ]
 
 # Goal table ('Goal' option value mapped to goal name)
