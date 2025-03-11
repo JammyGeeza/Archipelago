@@ -67,6 +67,7 @@ item_table: List[ItemData] = [
     ItemData("Idea: Magic Tome"                    , ItemClassification.filler),
     ItemData("Idea: Magic Wand"                    , ItemClassification.progression),
     ItemData("Idea: Market"                        , ItemClassification.progression),
+    ItemData("Idea: Mess Hall"                     , ItemClassification.filler),
     ItemData("Idea: Milkshake"                     , ItemClassification.filler),
     ItemData("Idea: Omelette"                      , ItemClassification.progression),
     ItemData("Idea: Offspring"                     , ItemClassification.progression),
@@ -74,7 +75,6 @@ item_table: List[ItemData] = [
     ItemData("Idea: Plank"                         , ItemClassification.progression),
     ItemData("Idea: Quarry"                        , ItemClassification.progression),
     ItemData("Idea: Resource Chest"                , ItemClassification.useful), # Storage is useful
-    ItemData("Idea: Resource Magnet"               , ItemClassification.filler),
     ItemData("Idea: Sawmill"                       , ItemClassification.progression), # Getting resources faster is useful
     ItemData("Idea: Shed"                          , ItemClassification.progression),
     ItemData("Idea: Slingshot"                     , ItemClassification.progression),
