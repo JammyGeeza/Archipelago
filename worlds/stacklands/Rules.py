@@ -99,6 +99,9 @@ def set_rules(world: MultiWorld, player: int):
              lambda state: state.sl_has_all_ideas(["Market", "Brick", "Plank"], player) and
                            state.can_reach_location("Buy the Humble Beginnings Pack", player))
     
+    set_rule(world.get_location("Unlock all Packs", player),
+             lambda state: state.has_group_unique("All Booster Packs", player, 8))
+    
     
     
     # 'Starting' Path - Quests that can be achieved immediately

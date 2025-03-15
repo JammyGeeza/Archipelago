@@ -38,6 +38,7 @@ location_table: List[LocationData] = [
     LocationData("Create Offspring"                                    , "Mainland", LocationProgressType.DEFAULT),
     
     # 'The Grand Scheme' Category
+    LocationData("Unlock all Packs"                                    , "Mainland", LocationProgressType.EXCLUDED), # <- Achievable only from receiving items from checks
     LocationData("Get 3 Villagers"                                     , "Mainland", LocationProgressType.DEFAULT),
     LocationData("Find the Catacombs"                                  , "Mainland", LocationProgressType.DEFAULT),
     LocationData("Find a mysterious artifact"                          , "Mainland", LocationProgressType.DEFAULT),
