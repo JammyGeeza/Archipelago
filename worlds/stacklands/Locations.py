@@ -103,12 +103,19 @@ location_table: List[LocationData] = [
     LocationData("Reach Moon 12"                                       , "Mainland", LocationProgressType.DEFAULT),
     LocationData("Reach Moon 24"                                       , "Mainland", LocationProgressType.EXCLUDED), # <- Reaching higher moons for important items is arduous
     LocationData("Reach Moon 36"                                       , "Mainland", LocationProgressType.EXCLUDED), # <- Reaching higher moons for important items is arduous
+
+    # 'The Dark Forest' Category
+    LocationData("Find the Dark Forest"                                , "The Dark Forest", LocationProgressType.DEFAULT),
+    LocationData("Complete the first wave"                             , "The Dark Forest", LocationProgressType.DEFAULT),
+    LocationData("Build a Stable Portal"                               , "The Dark Forest", LocationProgressType.DEFAULT),
+    LocationData("Get to wave 6"                                       , "The Dark Forest", LocationProgressType.DEFAULT),
+    LocationData("Fight the Wicked Witch"                              , "The Dark Forest", LocationProgressType.DEFAULT),
 ]
 
 # Goal table ('Goal' option value mapped to goal name)
 goal_table: Dict[int, LocationData] = {
     0   : LocationData("Kill the Demon",        "Mainland", LocationProgressType.DEFAULT),
-    1   : LocationData("Kill the Demon Lord",   "Mainland", LocationProgressType.DEFAULT)
+    1   : LocationData("Kill the Demon Lord",   "Mainland", LocationProgressType.DEFAULT),
 }
 
 base_id: int = 92000

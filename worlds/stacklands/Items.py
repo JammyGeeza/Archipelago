@@ -82,6 +82,7 @@ item_table: List[ItemData] = [
     ItemData("Idea: Smithy"                        , ItemClassification.progression),
     ItemData("Idea: Spear"                         , ItemClassification.progression), # Useful for completing 'Train Militia' or 'Combat Level 20' but there are other options
     ItemData("Idea: Spiked Plank"                  , ItemClassification.filler),
+    ItemData("Idea: Stable Portal"                 , ItemClassification.progression),
     ItemData("Idea: Stew"                          , ItemClassification.filler),
     ItemData("Idea: Stick"                         , ItemClassification.progression),
     ItemData("Idea: Stove"                         , ItemClassification.progression), # Useful for keeping enough food, but not required

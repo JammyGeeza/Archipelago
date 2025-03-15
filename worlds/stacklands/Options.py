@@ -11,6 +11,13 @@ class Goal(Choice):
     option_kill_the_demon_lord = 1
     default = 0
 
+class IncludeDarkForest(Toggle):
+    """
+    Should location checks for The Dark Forest be included?
+    """
+    display_name = "Include The Dark Forest"
+    default = 0
+
 class IncludeTraps(Toggle):
     """
     Should traps be included in the item pool?
@@ -30,5 +37,6 @@ class PauseEnabled(Toggle):
 class StacklandsOptions(PerGameCommonOptions):
     death_link: DeathLink
     goal: Goal
+    include_forest: IncludeDarkForest
     include_traps: IncludeTraps
     pause_enabled: PauseEnabled

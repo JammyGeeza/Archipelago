@@ -34,6 +34,7 @@ def set_rules(world: MultiWorld, player: int):
     }
 
     # Get relevant options
+    dark_forest = world.worlds[player].options.include_forest.value
     goal = world.worlds[player].options.goal.value
     pause_enabled = world.worlds[player].options.pause_enabled.value
 
@@ -105,13 +106,17 @@ def set_rules(world: MultiWorld, player: int):
     
     
     # 'Starting' Path - Quests that can be achieved immediately
-    set_rule(world.get_location("Open the Booster Pack", player), lambda state: True)
+    set_rule(world.get_location("Open the Booster Pack", player), 
+             lambda state: state.can_reach_region("Mainland", player))
     
-    set_rule(world.get_location("Drag the Villager on top of the Berry Bush", player), lambda state: True)
+    set_rule(world.get_location("Drag the Villager on top of the Berry Bush", player), 
+             lambda state: state.can_reach_region("Mainland", player))
     
-    set_rule(world.get_location("Mine a Rock using a Villager", player), lambda state: True)
+    set_rule(world.get_location("Mine a Rock using a Villager", player),
+             lambda state: state.can_reach_region("Mainland", player))
     
-    set_rule(world.get_location("Sell a Card", player), lambda state: True)
+    set_rule(world.get_location("Sell a Card", player), 
+             lambda state: state.can_reach_region("Mainland", player))
 
     if pause_enabled: # <- Set location rule only if pausing is enabled
         set_rule(world.get_location("Pause using the play icon in the top right corner", player),
@@ -257,6 +262,26 @@ def set_rules(world: MultiWorld, player: int):
              lambda state: state.sl_has_idea("Lumber Camp", player) and
                            state.sl_has_pack("Seeking Wisdom", player) and
                            state.can_reach_location("Harvest a Tree using a Villager", player))
+    
+    # 'The Dark Forest' Path - include if enabled
+    if dark_forest == True:
+        set_rule(world.get_location("Find the Dark Forest", player),
+             lambda state: state.can_reach_region("The Dark Forest", player))
+        
+        set_rule(world.get_location("Complete the first wave", player),
+             lambda state: state.can_reach_location("Find the Dark Forest", player))
+        
+        set_rule(world.get_location("Build a Stable Portal", player),
+             lambda state: state.sl_has_all_ideas(["Stable Portal", "Brick"], player) and
+                           state.can_reach_location("Complete the first wave", player))
+        
+        set_rule(world.get_location("Get to wave 6", player),
+             lambda state: state.can_reach_location("Kill a Skeleton", player) and # <- Train a N
+                           state.can_reach_location("Build a Stable Portal", player))
+        
+        set_rule(world.get_location("Fight the Wicked Witch", player),
+             lambda state: state.can_reach_location("Train a Ninja", player) and
+                           state.can_reach_location("Buy the Humble Beginnings Pack", player))
 
     # 'Goal' Path
     set_rule(world.get_location("Build a Temple", player), 
@@ -280,6 +305,14 @@ def set_rules(world: MultiWorld, player: int):
                      lambda state: state.can_reach_location("Kill the Demon", player))
     elif goal > 1:
         raise Exception(f"Unhandled value for 'Goal' in Options: {goal}")
+    
+    # Exits
+    set_rule(world.get_entrance("Portal", player), # <- Trialling as needing two villagers and at least some form of combat
+             lambda state: state.can_reach_location("Get a Second Villager", player) and
+                           state.can_reach_location("Train Militia", player))
+    
+    set_rule(world.get_entrance("Rowboat", player), # <- Rowboat received after killing the demon
+             lambda state: state.can_reach_location("Kill the Demon", player))
     
     # Set completion condition
     world.completion_condition[player] = lambda state: state.has("Victory", player)
