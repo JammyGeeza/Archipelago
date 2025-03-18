@@ -35,9 +35,7 @@ def set_rules(world: MultiWorld, player: int):
     }
 
     # Get relevant options
-    goal = world.worlds[player].options.goal.value
-    pause_enabled = world.worlds[player].options.pause_enabled.value
-    mobsanity = world.worlds[player].options.mobsanity.value
+    options = world.worlds[player].options
 
     # Amounts
     set_rule(world.get_location("Have 10 Coins", player),
@@ -113,8 +111,9 @@ def set_rules(world: MultiWorld, player: int):
     
     set_rule(world.get_location("Sell a Card", player), lambda state: True)
 
-    if pause_enabled: # <- Set location rule only if pausing is enabled
-        set_rule(world.get_location("Pause using the play icon in the top right corner", player),
+    if options.pausing_enabled.value: # <- Set location rule(s) only if pausing is enabled
+        for loc in [loc.name for loc in location_table if loc.check_type == CheckType.Pausing]:
+            set_rule(world.get_location(loc, player),
                     lambda state: True) 
 
     # 'Combat' Path
@@ -159,7 +158,7 @@ def set_rules(world: MultiWorld, player: int):
              lambda state: state.can_reach_location("Train an Archer", player))
     
     # Mobsanity
-    if mobsanity: # <- Set rules for mobsanity locations if enabled
+    if options.mobsanity_enabled.value: # <- Set rules for mobsanity locations if enabled
         for loc in [loc.name for loc in location_table if loc.check_type == CheckType.Mobsanity]:
             set_rule(world.get_location(loc, player),
                     lambda state: state.can_reach_location("Kill a Skeleton", player))
@@ -285,12 +284,12 @@ def set_rules(world: MultiWorld, player: int):
     set_rule(world.get_location("Kill the Demon", player), # <- Will be an Event if Goal is 'Kill the Demon' or a Location Check if Goal is 'Kill the Demon Lord'
                      lambda state: state.can_reach_location("Bring the Goblet to the Temple", player))
     
-    if goal == 1:
+    if options.goal.value == 1:
         # If Goal is 'Kill the Demon Lord' set the Event conditions and set access to post-Kill the Demon
         set_rule(world.get_location("Kill the Demon Lord", player),
                      lambda state: state.can_reach_location("Kill the Demon", player))
-    elif goal > 1:
-        raise Exception(f"Unhandled value for 'Goal' in Options: {goal}")
+    elif options.goal.value > 1:
+        raise Exception(f"Unhandled value for 'Goal' in Options: {options.goal.value}")
     
     # Set completion condition
     world.completion_condition[player] = lambda state: state.has("Victory", player)

@@ -5,6 +5,7 @@ from BaseClasses import MultiWorld, Location, LocationProgressType, Region
 class CheckType(Enum):
     Default = 0
     Mobsanity = 1
+    Pausing = 2
 
 class LocationData(NamedTuple):
     name: str
@@ -15,16 +16,16 @@ class LocationData(NamedTuple):
 class StacklandsLocation(Location):
     game = "Stacklands"
 
-    def __init__(self, player: int, loc: LocationData, code: int = None, region: Region = None):
-        super(StacklandsLocation, self).__init__(
-            player,
-            loc.name,
-            code,
-            region
-        )
+    # def __init__(self, player: int, loc: LocationData, code: int = None, region: Region = None):
+    #     super(StacklandsLocation, self).__init__(
+    #         player,
+    #         loc.name,
+    #         code,
+    #         region
+    #     )
 
-        # Set progress type
-        self.progress_type = loc.progress_type
+    #     # Set progress type
+    #     self.progress_type = loc.progress_type
 
 # Locations table
 location_table: List[LocationData] = [
@@ -37,37 +38,37 @@ location_table: List[LocationData] = [
     LocationData("Buy the Humble Beginnings Pack"                      , "Mainland"),
     LocationData("Harvest a Tree using a Villager"                     , "Mainland"),
     LocationData("Make a Stick from Wood"                              , "Mainland"),
-    LocationData("Pause using the play icon in the top right corner"   , "Mainland"         , LocationProgressType.EXCLUDED),
+    LocationData("Pause using the play icon in the top right corner"   , "Mainland",        check_type=CheckType.Pausing),
     LocationData("Grow a Berry Bush using Soil"                        , "Mainland"),
     LocationData("Build a House"                                       , "Mainland"),
     LocationData("Get a Second Villager"                               , "Mainland"),
-    LocationData("Create Offspring"                                    , "Mainland"),
+    LocationData("Create Offspring"                                    , "Mainland",        LocationProgressType.PRIORITY),
     
     # 'The Grand Scheme' Category
-    LocationData("Unlock all Packs"                                    , "Mainland"         , LocationProgressType.EXCLUDED), # <- Achievable only from receiving items from checks
+    LocationData("Unlock all Packs"                                    , "Mainland",        LocationProgressType.EXCLUDED), # <- Achievable only from receiving items from checks
     LocationData("Get 3 Villagers"                                     , "Mainland"),
     LocationData("Find the Catacombs"                                  , "Mainland"),
-    LocationData("Find a mysterious artifact"                          , "Mainland"),
-    LocationData("Build a Temple"                                      , "Mainland"),
+    LocationData("Find a mysterious artifact"                          , "Mainland",        LocationProgressType.PRIORITY),
+    LocationData("Build a Temple"                                      , "Mainland",        LocationProgressType.PRIORITY),
     LocationData("Bring the Goblet to the Temple"                      , "Mainland"),
-    LocationData("Kill the Demon"                                      , "Mainland"), # <- Will be a check if 'Kill the Demon Lord' is the goal
+    LocationData("Kill the Demon"                                      , "Mainland",        LocationProgressType.PRIORITY), # <- Will be a check if 'Kill the Demon Lord' is the goal
     
     # 'Power & Skill' Category
     LocationData("Train Militia"                                       , "Mainland"),
     LocationData("Kill a Rat"                                          , "Mainland"),
-    LocationData("Kill a Skeleton"                                     , "Mainland"),
+    LocationData("Kill a Skeleton"                                     , "Mainland",        LocationProgressType.PRIORITY),
     
     # 'Strengthen Up' Category
-    LocationData("Train an Archer"                                     , "Mainland"         , LocationProgressType.EXCLUDED), # <- Achievable mostly through RNG
+    LocationData("Train an Archer"                                     , "Mainland",        LocationProgressType.EXCLUDED), # <- Achievable mostly through RNG
     LocationData("Make a Villager wear a Rabbit Hat"                   , "Mainland"),
-    LocationData("Build a Smithy"                                      , "Mainland"),
+    LocationData("Build a Smithy"                                      , "Mainland",        LocationProgressType.PRIORITY),
     LocationData("Train a Wizard"                                      , "Mainland"),
-    LocationData("Equip an Archer with a Quiver"                       , "Mainland"         , LocationProgressType.EXCLUDED), # <- Achievable mostly through RNG
+    LocationData("Equip an Archer with a Quiver"                       , "Mainland",        LocationProgressType.EXCLUDED), # <- Achievable mostly through RNG
     LocationData("Have a Villager with Combat Level 20"                , "Mainland"),
     LocationData("Train a Ninja"                                       , "Mainland"), 
     
     # 'Potluck' Category
-    LocationData("Start a Campfire"                                    , "Mainland"),
+    LocationData("Start a Campfire"                                    , "Mainland",        LocationProgressType.PRIORITY),
     LocationData("Cook Raw Meat"                                       , "Mainland"),
     LocationData("Cook an Omelette"                                    , "Mainland"),
     LocationData("Cook a Frittata"                                     , "Mainland"),
@@ -82,11 +83,11 @@ location_table: List[LocationData] = [
     LocationData("Buy something from a Travelling Cart"                , "Mainland"),
     
     # 'Ways and Means' Category
-    LocationData("Have 5 Ideas"                                        , "Mainland"         , LocationProgressType.EXCLUDED), # <- Quite literally depends on receiving ideas from checks
-    LocationData("Have 10 Ideas"                                       , "Mainland"         , LocationProgressType.EXCLUDED), # <- Quite literally depends on receiving ideas from checks
+    LocationData("Have 5 Ideas"                                        , "Mainland",        LocationProgressType.EXCLUDED), # <- Quite literally depends on receiving ideas from checks
+    LocationData("Have 10 Ideas"                                       , "Mainland",        LocationProgressType.EXCLUDED), # <- Quite literally depends on receiving ideas from checks
     LocationData("Have 10 Wood"                                        , "Mainland"),
     LocationData("Have 10 Stone"                                       , "Mainland"),
-    LocationData("Get an Iron Bar"                                     , "Mainland"),
+    LocationData("Get an Iron Bar"                                     , "Mainland",        LocationProgressType.PRIORITY),
     LocationData("Have 5 Food"                                         , "Mainland"),
     LocationData("Have 10 Food"                                        , "Mainland"),
     LocationData("Have 20 Food"                                        , "Mainland"),
@@ -97,18 +98,25 @@ location_table: List[LocationData] = [
     
     # 'Construction' Category
     LocationData("Have 3 Houses"                                       , "Mainland"),
-    LocationData("Build a Shed"                                        , "Mainland"),
-    LocationData("Build a Quarry"                                      , "Mainland"),
-    LocationData("Build a Lumber Camp"                                 , "Mainland"),
+    LocationData("Build a Shed"                                        , "Mainland",        LocationProgressType.PRIORITY),
+    LocationData("Build a Quarry"                                      , "Mainland",        LocationProgressType.PRIORITY),
+    LocationData("Build a Lumber Camp"                                 , "Mainland",        LocationProgressType.PRIORITY),
     LocationData("Build a Farm"                                        , "Mainland"),
-    LocationData("Build a Brickyard"                                   , "Mainland"),
+    LocationData("Build a Brickyard"                                   , "Mainland",        LocationProgressType.PRIORITY),
     LocationData("Sell a Card at a Market"                             , "Mainland"),
     
     # 'Longevity' Category
     LocationData("Reach Moon 6"                                        , "Mainland"),
     LocationData("Reach Moon 12"                                       , "Mainland"),
-    LocationData("Reach Moon 24"                                       , "Mainland"         , LocationProgressType.EXCLUDED), # <- Reaching higher moons for important items is just a waiting game
-    LocationData("Reach Moon 36"                                       , "Mainland"         , LocationProgressType.EXCLUDED), # <- Reaching higher moons for important items is just a waiting game
+    LocationData("Reach Moon 24"                                       , "Mainland",        LocationProgressType.EXCLUDED), # <- Reaching higher moons for important items is just a waiting game
+    LocationData("Reach Moon 36"                                       , "Mainland",        LocationProgressType.EXCLUDED), # <- Reaching higher moons for important items is just a waiting game
+
+    # The Dark Forest
+    LocationData("Find the Dark Forest",                                "The Dark Forest",  LocationProgressType.PRIORITY),
+    LocationData("Complete the first wave",                             "The Dark Forest"),
+    LocationData("Build a Stable Portal",                               "The Dark Forest",  LocationProgressType.PRIORITY),
+    LocationData("Get to Wave 6",                                       "The Dark Forest"),
+    LocationData("Kill the Wicked Witch",                               "The Dark Forest",  LocationProgressType.PRIORITY),
 
     # Mobsanity
     LocationData("Kill a Bear"                                         , "Mainland"         , check_type=CheckType.Mobsanity),
@@ -140,7 +148,7 @@ location_table: List[LocationData] = [
 # Goal table ('Goal' option value mapped to goal name)
 goal_table: Dict[int, LocationData] = {
     0   : LocationData("Kill the Demon",        "Mainland"),
-    1   : LocationData("Kill the Demon Lord",   "Mainland")
+    1   : LocationData("Kill the Demon Lord",   "The Island") 
 }
 
 base_id: int = 92000
