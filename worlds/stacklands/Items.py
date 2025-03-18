@@ -137,8 +137,7 @@ for item in item_table:
 # Create all items
 def create_all_items(world: MultiWorld, player: int) -> None:
     # Get goal
-    goal = world.worlds[player].options.goal.value
-    include_traps = world.worlds[player].options.include_traps.value
+    options = world.worlds[player].options
 
     # Get list of items to exclude if in starting inventory
     exclude = [item for item in world.precollected_items[player]]
@@ -150,12 +149,12 @@ def create_all_items(world: MultiWorld, player: int) -> None:
         item_obj = StacklandsItem(name_to_id[item.name], item, player)
 
         # If item is not in starting inventory and not a trap item if traps are disabled
-        if item_obj not in exclude and (include_traps == True or item.classification != ItemClassification.trap):
+        if item_obj not in exclude and (options.traps_enabled.value or item.classification != ItemClassification.trap):
             pool.append(item_obj)
 
     # Add all valid items to pool
     world.itempool += pool
 
     # Add victory item to goal event
-    goal_data = goal_table[goal]
+    goal_data = goal_table[options.goal.value]
     world.get_location(goal_data.name, player).place_locked_item(Item("Victory", ItemClassification.progression, None, player))

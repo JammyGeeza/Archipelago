@@ -44,7 +44,7 @@ class StacklandsWorld(World):
     # Fill the slot data
     def fill_slot_data(self) -> Dict[str, Any]:
         slot_data = {}
-        slot_data.update(self.options.as_dict("start_inventory", "death_link", "goal", "mobsanity", "pause_enabled"))
+        slot_data.update(self.options.as_dict("death_link", "goal", "mobsanity_enabled", "pausing_enabled", "start_inventory"))
         return slot_data
     
     # Set all access rules
