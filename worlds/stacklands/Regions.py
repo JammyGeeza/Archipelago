@@ -1,7 +1,7 @@
 import logging
 from typing import Dict, List, NamedTuple, Optional
 from BaseClasses import Entrance, MultiWorld, Region
-from .Locations import LocationData, StacklandsLocation, goal_table, location_table, name_to_id as location_lookup
+from .Locations import CheckType, LocationData, StacklandsLocation, goal_table, location_table, name_to_id as location_lookup
 
 class RegionData(NamedTuple):
     locations: List[LocationData]
@@ -22,8 +22,9 @@ def create_region(world: MultiWorld, player: int, name: str) -> Region:
     region_data = region_table[name]
 
     # Get relevant options
-    pause_enabled = world.worlds[player].options.pause_enabled.value
     goal = world.worlds[player].options.goal.value
+    mobsanity = world.worlds[player].options.mobsanity.value
+    pause_enabled = world.worlds[player].options.pause_enabled.value
 
     # Get the goal data (if it exists in this region)
     goal_data = goal_table[goal] if goal_table[goal].region == name else None
@@ -31,6 +32,10 @@ def create_region(world: MultiWorld, player: int, name: str) -> Region:
     # Cycle through all location checks
     if region_data.locations:
         for loc in region_data.locations:
+
+            # Skip mobsanity checks if not enabled
+            if loc.check_type == CheckType.Mobsanity and mobsanity == False:
+                continue
 
             # Skip this check if pausing is not enabled, as it becomes unachievable
             if not pause_enabled and loc.name == "Pause using the play icon in the top right corner":

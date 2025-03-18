@@ -43,7 +43,7 @@ item_table: List[ItemData] = [
     ItemData("Idea: Chainmail Armor"               , ItemClassification.useful), # Useful for fighting Demon
     ItemData("Idea: Charcoal"                      , ItemClassification.useful), # Useful for removing poison and making Magic Glue
     ItemData("Idea: Chicken"                       , ItemClassification.filler),
-    ItemData("Idea: Club"                          , ItemClassification.useful), # Useful as additional fighting class
+    ItemData("Idea: Club"                          , ItemClassification.progression),
     ItemData("Idea: Coin Chest"                    , ItemClassification.progression),
     ItemData("Idea: Cooked Meat"                   , ItemClassification.progression),
     ItemData("Idea: Crane"                         , ItemClassification.filler),
@@ -58,7 +58,7 @@ item_table: List[ItemData] = [
     ItemData("Idea: House"                         , ItemClassification.progression),
     ItemData("Idea: Iron Bar"                      , ItemClassification.progression),
     ItemData("Idea: Iron Mine"                     , ItemClassification.progression), # Getting resources faster is useful
-    ItemData("Idea: Iron Shield"                   , ItemClassification.useful), # Useful for fighting Demon
+    ItemData("Idea: Iron Shield"                   , ItemClassification.progression),
     ItemData("Idea: Lumber Camp"                   , ItemClassification.progression),
     ItemData("Idea: Magic Blade"                   , ItemClassification.useful), # Useful for fighting Demon
     ItemData("Idea: Magic Glue"                    , ItemClassification.filler),
@@ -85,13 +85,13 @@ item_table: List[ItemData] = [
     ItemData("Idea: Stew"                          , ItemClassification.filler),
     ItemData("Idea: Stick"                         , ItemClassification.progression),
     ItemData("Idea: Stove"                         , ItemClassification.progression), # Useful for keeping enough food, but not required
-    ItemData("Idea: Sword"                         , ItemClassification.useful), # Useful for completing 'Train Militia' or 'Combat Level 20' but there are other options
+    ItemData("Idea: Sword"                         , ItemClassification.progression),
     ItemData("Idea: Temple"                        , ItemClassification.progression),
     ItemData("Idea: Throwing Stars"                , ItemClassification.progression),
     ItemData("Idea: University"                    , ItemClassification.filler),
     ItemData("Idea: Warehouse"                     , ItemClassification.useful), # Higher card limit is useful
     ItemData("Idea: Wizard Robe"                   , ItemClassification.filler),
-    ItemData("Idea: Wooden Shield"                 , ItemClassification.useful), # Useful for 'Combat level 20' but are other things available
+    ItemData("Idea: Wooden Shield"                 , ItemClassification.progression),
     
     # Resources / Junk
     ItemData("Apple Tree x3"                       , ItemClassification.filler),

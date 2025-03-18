@@ -2,9 +2,10 @@ from dataclasses import dataclass
 from Options import Choice, DeathLink, PerGameCommonOptions, Toggle
     
 # More options to be implemented in future...
+
 class Goal(Choice):
     """
-    What should the end-goal for your run be?
+    Select the end-goal for your run.
     """
     display_name = "Goal"
     option_kill_the_demon = 0
@@ -13,22 +14,30 @@ class Goal(Choice):
 
 class IncludeTraps(Toggle):
     """
-    Should traps be included in the item pool?
+    Include trap items in the item pool.
     """
     display_name = "Include Traps"
     default = 0
 
+class Mobsanity(Toggle):
+    """
+    Add checks to defeat every type of enemy.
+    """
+    display_name = "Mobsanity"
+    default = 0
+
 class PauseEnabled(Toggle):
     """
-    Should you be able to pause time manually?
+    Enable / Disable in-game pausing.
     If disabled, time will only be paused by cutscenes and end-of-moon routines.
     """
-    display_name = "Pausing Enabled"
+    display_name = "Enable Pausing"
     default = 1
 
 @dataclass
 class StacklandsOptions(PerGameCommonOptions):
     death_link: DeathLink
+    mobsanity: Mobsanity
     goal: Goal
     include_traps: IncludeTraps
     pause_enabled: PauseEnabled
