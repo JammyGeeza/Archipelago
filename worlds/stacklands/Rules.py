@@ -1,5 +1,6 @@
 from typing import List
 from BaseClasses import MultiWorld
+from .Locations import CheckType, location_table
 from worlds.AutoWorld import LogicMixin
 from worlds.generic.Rules import set_rule
 
@@ -36,6 +37,7 @@ def set_rules(world: MultiWorld, player: int):
     # Get relevant options
     goal = world.worlds[player].options.goal.value
     pause_enabled = world.worlds[player].options.pause_enabled.value
+    mobsanity = world.worlds[player].options.mobsanity.value
 
     # Amounts
     set_rule(world.get_location("Have 10 Coins", player),
@@ -102,8 +104,6 @@ def set_rules(world: MultiWorld, player: int):
     set_rule(world.get_location("Unlock all Packs", player),
              lambda state: state.has_group_unique("All Booster Packs", player, 8))
     
-    
-    
     # 'Starting' Path - Quests that can be achieved immediately
     set_rule(world.get_location("Open the Booster Pack", player), lambda state: True)
     
@@ -118,18 +118,31 @@ def set_rules(world: MultiWorld, player: int):
                     lambda state: True) 
 
     # 'Combat' Path
+    set_rule(world.get_location("Make a Villager wear a Rabbit Hat", player),
+             lambda state: state.can_reach_location("Buy the Humble Beginnings Pack", player))
+    
+    set_rule(world.get_location("Kill a Rat", player),
+             lambda state: state.sl_has_all_ideas(["Club", "Stick"], player) and
+                           state.can_reach_location("Make a Villager wear a Rabbit Hat", player))
+    
+    set_rule(world.get_location("Have a Villager with Combat Level 20", player),
+             lambda state: state.sl_has_all_ideas(["Plank", "Wooden Shield"], player) and
+                           state.can_reach_location("Kill a Rat", player))
+
     set_rule(world.get_location("Train Militia", player),
-             lambda state: state.has_any(set(["Idea: Slingshot", "Idea: Spear"]), player) and
+             lambda state: state.sl_has_all_ideas(["Slingshot", "Spear"], player) and
                            state.sl_has_pack("Explorers", player) and
-                           state.can_reach_location("Buy the Humble Beginnings Pack", player))
+                           state.can_reach_location("Have a Villager with Combat Level 20", player))
     
     set_rule(world.get_location("Train a Wizard", player),
              lambda state: state.sl_has_idea("Magic Wand", player) and
                            state.sl_has_pack("Explorers", player) and
-                           state.can_reach_location("Buy the Humble Beginnings Pack", player))
+                           state.can_reach_location("Have a Villager with Combat Level 20", player))
     
     set_rule(world.get_location("Kill a Skeleton", player), # <- Minimum requirement for goal path (trialling this)
-             lambda state: state.sl_has_pack("The Armory", player) and
+             lambda state: state.sl_has_all_ideas(["Iron Shield", "Sword"], player) and
+                           state.sl_has_pack("The Armory", player) and
+                           state.can_reach_location("Get an Iron Bar", player) and
                            state.can_reach_location("Train Militia", player) and
                            state.can_reach_location("Train a Wizard", player))
     
@@ -139,19 +152,17 @@ def set_rules(world: MultiWorld, player: int):
     
     set_rule(world.get_location("Train an Archer", player), # <- Not required for goal path
              lambda state: state.sl_has_pack("Explorers", player) and
+                           state.sl_has_pack("The Armory", player) and
                            state.can_reach_location("Buy the Humble Beginnings Pack", player))
     
     set_rule(world.get_location("Equip an Archer with a Quiver", player), # <- Not required for goal path
              lambda state: state.can_reach_location("Train an Archer", player))
     
-    set_rule(world.get_location("Make a Villager wear a Rabbit Hat", player), # <- Not required for goal path
-             lambda state: state.can_reach_location("Buy the Humble Beginnings Pack", player))
-
-    set_rule(world.get_location("Have a Villager with Combat Level 20", player), # <- Not required for goal path
-             lambda state: state.can_reach_location("Buy the Humble Beginnings Pack", player))
-    
-    set_rule(world.get_location("Kill a Rat", player),  # <- Not required for goal path
-             lambda state: state.can_reach_location("Buy the Humble Beginnings Pack", player))
+    # Mobsanity
+    if mobsanity: # <- Set rules for mobsanity locations if enabled
+        for loc in [loc.name for loc in location_table if loc.check_type == CheckType.Mobsanity]:
+            set_rule(world.get_location(loc, player),
+                    lambda state: state.can_reach_location("Kill a Skeleton", player))
 
     # 'Cooking' Path
     set_rule(world.get_location("Make a Stick from Wood", player),
