@@ -182,18 +182,18 @@ def set_rules(world: MultiWorld, player: int):
                          lambda state: state.can_reach_region("The Dark Forest", player))
                 
     # 'The Dark Forest' Path
-    set_rule(world.get_locations("Find the Dark Forest", player),
+    set_rule(world.get_location("Find the Dark Forest", player),
              lambda state: state.can_reach_location("Reach Moon 12", player))
     
-    set_rule(world.get_locations("Complete the first wave", player),
+    set_rule(world.get_location("Complete the first wave", player),
              lambda state: state.can_reach_location("Kill a Skeleton", player) and
                            state.can_reach_location("Find the Dark Forest", player))
     
-    set_rule(world.get_locations("Get to Wave 6", player),
+    set_rule(world.get_location("Get to Wave 6", player),
              lambda state: state.can_reach_location("Complete the first wave", player) and
                            state.can_reach_location("Create Offspring", player))
     
-    set_rule(world.get_locations("Kill the Wicked Witch", player),
+    set_rule(world.get_location("Kill the Wicked Witch", player),
              lambda state: state.can_reach_location("Get to Wave 6", player))
 
     # 'Cooking' Path
