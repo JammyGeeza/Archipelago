@@ -1,11 +1,18 @@
 import logging
+from enum import Enum
 from typing import Dict, List, NamedTuple
 from BaseClasses import Item, ItemClassification, MultiWorld
 from .Locations import goal_table
 
+class ItemType(Enum):
+    Default = 0
+    Junk = 1
+    Trap = 2
+
 class ItemData(NamedTuple):
     name: str
     classification: ItemClassification
+    type: ItemType
 
 class StacklandsItem(Item):
     game = "Stacklands"
@@ -20,102 +27,104 @@ class StacklandsItem(Item):
 
 # Item mapping
 item_table: List[ItemData] = [
+
     # Booster Packs
-    ItemData("Humble Beginnings Booster Pack"      , ItemClassification.progression),
-    ItemData("Seeking Wisdom Booster Pack"         , ItemClassification.progression),
-    ItemData("Reap & Sow Booster Pack"             , ItemClassification.progression),
-    ItemData("Curious Cuisine Booster Pack"        , ItemClassification.progression),
-    ItemData("Logic and Reason Booster Pack"       , ItemClassification.progression),
-    ItemData("The Armory Booster Pack"             , ItemClassification.progression),
-    ItemData("Explorers Booster Pack"              , ItemClassification.progression),
-    ItemData("Order and Structure Booster Pack"    , ItemClassification.progression),
+    ItemData("Humble Beginnings Booster Pack",      ItemClassification.progression,     ItemType.Default),
+    ItemData("Seeking Wisdom Booster Pack",         ItemClassification.progression,     ItemType.Default),
+    ItemData("Reap & Sow Booster Pack",             ItemClassification.progression,     ItemType.Default),
+    ItemData("Curious Cuisine Booster Pack",        ItemClassification.progression,     ItemType.Default),
+    ItemData("Logic and Reason Booster Pack",       ItemClassification.progression,     ItemType.Default),
+    ItemData("The Armory Booster Pack",             ItemClassification.progression,     ItemType.Default),
+    ItemData("Explorers Booster Pack",              ItemClassification.progression,     ItemType.Default),
+    ItemData("Order and Structure Booster Pack",    ItemClassification.progression,     ItemType.Default),
     
     # Ideas
-    ItemData("Idea: Animal Pen"                    , ItemClassification.filler),
-    ItemData("Idea: Axe"                           , ItemClassification.useful), # Getting resources faster is useful
-    ItemData("Idea: Bone Spear"                    , ItemClassification.useful), # Useful for fighting Demon
-    ItemData("Idea: Boomerang"                     , ItemClassification.useful), # Useful for fighting Demon
-    ItemData("Idea: Breeding Pen"                  , ItemClassification.filler),
-    ItemData("Idea: Brick"                         , ItemClassification.progression),
-    ItemData("Idea: Brickyard"                     , ItemClassification.progression),
-    ItemData("Idea: Butchery"                      , ItemClassification.filler),
-    ItemData("Idea: Campfire"                      , ItemClassification.progression),
-    ItemData("Idea: Chainmail Armor"               , ItemClassification.useful), # Useful for fighting Demon
-    ItemData("Idea: Charcoal"                      , ItemClassification.useful), # Useful for removing poison and making Magic Glue
-    ItemData("Idea: Chicken"                       , ItemClassification.filler),
-    ItemData("Idea: Club"                          , ItemClassification.progression),
-    ItemData("Idea: Coin Chest"                    , ItemClassification.progression),
-    ItemData("Idea: Cooked Meat"                   , ItemClassification.progression),
-    ItemData("Idea: Crane"                         , ItemClassification.filler),
-    ItemData("Idea: Dustbin"                       , ItemClassification.filler), 
-    ItemData("Idea: Farm"                          , ItemClassification.progression),
-    ItemData("Idea: Frittata"                      , ItemClassification.progression),
-    ItemData("Idea: Fruit Salad"                   , ItemClassification.filler),
-    ItemData("Idea: Garden"                        , ItemClassification.progression),
-    ItemData("Idea: Growth"                        , ItemClassification.progression),
-    ItemData("Idea: Hammer"                        , ItemClassification.useful), # Building faster is useful
-    ItemData("Idea: Hotpot"                        , ItemClassification.filler),
-    ItemData("Idea: House"                         , ItemClassification.progression),
-    ItemData("Idea: Iron Bar"                      , ItemClassification.progression),
-    ItemData("Idea: Iron Mine"                     , ItemClassification.progression), # Getting resources faster is useful
-    ItemData("Idea: Iron Shield"                   , ItemClassification.progression),
-    ItemData("Idea: Lumber Camp"                   , ItemClassification.progression),
-    ItemData("Idea: Magic Blade"                   , ItemClassification.useful), # Useful for fighting Demon
-    ItemData("Idea: Magic Glue"                    , ItemClassification.filler),
-    ItemData("Idea: Magic Ring"                    , ItemClassification.filler),
-    ItemData("Idea: Magic Staff"                   , ItemClassification.useful), # Useful for fighting Demon / 'Train a Wizard' quest, but can create Magic Wand instead
-    ItemData("Idea: Magic Tome"                    , ItemClassification.filler),
-    ItemData("Idea: Magic Wand"                    , ItemClassification.progression),
-    ItemData("Idea: Market"                        , ItemClassification.progression),
-    ItemData("Idea: Mess Hall"                     , ItemClassification.filler),
-    ItemData("Idea: Milkshake"                     , ItemClassification.filler),
-    ItemData("Idea: Omelette"                      , ItemClassification.progression),
-    ItemData("Idea: Offspring"                     , ItemClassification.progression),
-    ItemData("Idea: Pickaxe"                       , ItemClassification.useful), # Getting resources faster is useful
-    ItemData("Idea: Plank"                         , ItemClassification.progression),
-    ItemData("Idea: Quarry"                        , ItemClassification.progression),
-    ItemData("Idea: Resource Chest"                , ItemClassification.useful), # Storage is useful
-    ItemData("Idea: Sawmill"                       , ItemClassification.progression), # Getting resources faster is useful
-    ItemData("Idea: Shed"                          , ItemClassification.progression),
-    ItemData("Idea: Slingshot"                     , ItemClassification.progression),
-    ItemData("Idea: Smelter"                       , ItemClassification.progression),
-    ItemData("Idea: Smithy"                        , ItemClassification.progression),
-    ItemData("Idea: Spear"                         , ItemClassification.progression), # Useful for completing 'Train Militia' or 'Combat Level 20' but there are other options
-    ItemData("Idea: Spiked Plank"                  , ItemClassification.filler),
-    ItemData("Idea: Stew"                          , ItemClassification.filler),
-    ItemData("Idea: Stick"                         , ItemClassification.progression),
-    ItemData("Idea: Stove"                         , ItemClassification.progression), # Useful for keeping enough food, but not required
-    ItemData("Idea: Sword"                         , ItemClassification.progression),
-    ItemData("Idea: Temple"                        , ItemClassification.progression),
-    ItemData("Idea: Throwing Stars"                , ItemClassification.progression),
-    ItemData("Idea: University"                    , ItemClassification.filler),
-    ItemData("Idea: Warehouse"                     , ItemClassification.useful), # Higher card limit is useful
-    ItemData("Idea: Wizard Robe"                   , ItemClassification.filler),
-    ItemData("Idea: Wooden Shield"                 , ItemClassification.progression),
-    
-    # Resources / Junk
-    ItemData("Apple Tree x3"                       , ItemClassification.filler),
-    ItemData("Berry x5"                            , ItemClassification.filler),
-    ItemData("Berry Bush x3"                       , ItemClassification.filler),
-    ItemData("Coin x5"                             , ItemClassification.filler),
-    ItemData("Coin x10"                            , ItemClassification.filler),
-    ItemData("Coin x25"                            , ItemClassification.filler),
-    ItemData("Egg x5"                              , ItemClassification.filler),
-    ItemData("Flint x5"                            , ItemClassification.filler),
-    ItemData("Iron Deposit x3"                     , ItemClassification.filler),
-    ItemData("Iron Ore x5"                         , ItemClassification.filler),
-    ItemData("Milk x5"                             , ItemClassification.filler),
-    ItemData("Rock x3"                             , ItemClassification.filler),
-    ItemData("Stick x5"                            , ItemClassification.filler),
-    ItemData("Stone x5"                            , ItemClassification.filler),
-    ItemData("Tree x3"                             , ItemClassification.filler),
-    ItemData("Wood x5"                             , ItemClassification.filler),
-    
-    # Traps (to be implemented...)
-    ItemData("Get Gooped!"                         , ItemClassification.trap),
-    ItemData("Get Pooped!"                         , ItemClassification.trap),
-    
-    # Additional idea - spawn enemies onto the board?
+    ItemData("Idea: Animal Pen",                    ItemClassification.filler,          ItemType.Default),
+    ItemData("Idea: Axe",                           ItemClassification.useful,          ItemType.Default), # Getting resources faster is useful
+    ItemData("Idea: Bone Spear",                    ItemClassification.useful,          ItemType.Default), # Useful for fighting Demon
+    ItemData("Idea: Boomerang",                     ItemClassification.useful,          ItemType.Default), # Useful for fighting Demon
+    ItemData("Idea: Breeding Pen",                  ItemClassification.filler,          ItemType.Default),
+    ItemData("Idea: Brick",                         ItemClassification.progression,     ItemType.Default),
+    ItemData("Idea: Brickyard",                     ItemClassification.progression,     ItemType.Default),
+    ItemData("Idea: Butchery",                      ItemClassification.filler,          ItemType.Default),
+    ItemData("Idea: Campfire",                      ItemClassification.progression,     ItemType.Default),
+    ItemData("Idea: Chainmail Armor",               ItemClassification.useful,          ItemType.Default), # Useful for fighting Demon
+    ItemData("Idea: Charcoal",                      ItemClassification.useful,          ItemType.Default), # Useful for removing poison and making Magic Glue
+    ItemData("Idea: Chicken",                       ItemClassification.filler,          ItemType.Default),
+    ItemData("Idea: Club",                          ItemClassification.progression,     ItemType.Default),
+    ItemData("Idea: Coin Chest",                    ItemClassification.progression,     ItemType.Default),
+    ItemData("Idea: Cooked Meat",                   ItemClassification.progression,     ItemType.Default),
+    ItemData("Idea: Crane",                         ItemClassification.filler,          ItemType.Default),
+    ItemData("Idea: Dustbin",                       ItemClassification.filler,          ItemType.Default), 
+    ItemData("Idea: Farm",                          ItemClassification.progression,     ItemType.Default),
+    ItemData("Idea: Frittata",                      ItemClassification.progression,     ItemType.Default),
+    ItemData("Idea: Fruit Salad",                   ItemClassification.filler,          ItemType.Default),
+    ItemData("Idea: Garden",                        ItemClassification.progression,     ItemType.Default),
+    ItemData("Idea: Growth",                        ItemClassification.progression,     ItemType.Default),
+    ItemData("Idea: Hammer",                        ItemClassification.useful,          ItemType.Default), # Building faster is useful
+    ItemData("Idea: Hotpot",                        ItemClassification.filler,          ItemType.Default),
+    ItemData("Idea: House",                         ItemClassification.progression,     ItemType.Default),
+    ItemData("Idea: Iron Bar",                      ItemClassification.progression,     ItemType.Default),
+    ItemData("Idea: Iron Mine",                     ItemClassification.progression,     ItemType.Default), # Getting resources faster is useful
+    ItemData("Idea: Iron Shield",                   ItemClassification.progression,     ItemType.Default),
+    ItemData("Idea: Lumber Camp",                   ItemClassification.progression,     ItemType.Default),
+    ItemData("Idea: Magic Blade",                   ItemClassification.useful,          ItemType.Default), # Useful for fighting Demon
+    ItemData("Idea: Magic Glue",                    ItemClassification.filler,          ItemType.Default),
+    ItemData("Idea: Magic Ring",                    ItemClassification.filler,          ItemType.Default),
+    ItemData("Idea: Magic Staff",                   ItemClassification.useful,          ItemType.Default), # Useful for fighting Demon / 'Train a Wizard' quest, but can create Magic Wand instead
+    ItemData("Idea: Magic Tome",                    ItemClassification.filler,          ItemType.Default),
+    ItemData("Idea: Magic Wand",                    ItemClassification.progression,     ItemType.Default),
+    ItemData("Idea: Market",                        ItemClassification.progression,     ItemType.Default),
+    ItemData("Idea: Mess Hall",                     ItemClassification.filler,          ItemType.Default),
+    ItemData("Idea: Milkshake",                     ItemClassification.filler,          ItemType.Default),
+    ItemData("Idea: Omelette",                      ItemClassification.progression,     ItemType.Default),
+    ItemData("Idea: Offspring",                     ItemClassification.progression,     ItemType.Default),
+    ItemData("Idea: Pickaxe",                       ItemClassification.useful,          ItemType.Default), # Getting resources faster is useful
+    ItemData("Idea: Plank",                         ItemClassification.progression,     ItemType.Default),
+    ItemData("Idea: Quarry",                        ItemClassification.progression,     ItemType.Default),
+    ItemData("Idea: Resource Chest",                ItemClassification.useful,          ItemType.Default), # Storage is useful
+    ItemData("Idea: Sawmill",                       ItemClassification.progression,     ItemType.Default), # Getting resources faster is useful
+    ItemData("Idea: Shed",                          ItemClassification.progression,     ItemType.Default),
+    ItemData("Idea: Slingshot",                     ItemClassification.progression,     ItemType.Default),
+    ItemData("Idea: Smelter",                       ItemClassification.progression,     ItemType.Default),
+    ItemData("Idea: Smithy",                        ItemClassification.progression,     ItemType.Default),
+    ItemData("Idea: Spear",                         ItemClassification.progression,     ItemType.Default), # Useful for completing 'Train Militia' or 'Combat Level 20' but there are other options
+    ItemData("Idea: Spiked Plank",                  ItemClassification.filler,          ItemType.Default),
+    ItemData("Idea: Stable Portal",                 ItemClassification.progression,     ItemType.Default),
+    ItemData("Idea: Stew",                          ItemClassification.filler,          ItemType.Default),
+    ItemData("Idea: Stick",                         ItemClassification.progression,     ItemType.Default),
+    ItemData("Idea: Stove",                         ItemClassification.progression,     ItemType.Default), # Useful for keeping enough food, but not required
+    ItemData("Idea: Sword",                         ItemClassification.progression,     ItemType.Default),
+    ItemData("Idea: Temple",                        ItemClassification.progression,     ItemType.Default),
+    ItemData("Idea: Throwing Stars",                ItemClassification.progression,     ItemType.Default),
+    ItemData("Idea: University",                    ItemClassification.filler,          ItemType.Default),
+    ItemData("Idea: Warehouse",                     ItemClassification.useful,          ItemType.Default), # Higher card limit is useful
+    ItemData("Idea: Wizard Robe",                   ItemClassification.filler,          ItemType.Default),
+    ItemData("Idea: Wooden Shield",                 ItemClassification.progression,     ItemType.Default),
+
+    # Junk Items
+    ItemData("Apple Tree x3",                       ItemClassification.filler,          ItemType.Junk),
+    ItemData("Berry x5",                            ItemClassification.filler,          ItemType.Junk),
+    ItemData("Berry Bush x3",                       ItemClassification.filler,          ItemType.Junk),
+    ItemData("Coin x5",                             ItemClassification.filler,          ItemType.Junk),
+    ItemData("Coin x10",                            ItemClassification.filler,          ItemType.Junk),
+    ItemData("Coin x25",                            ItemClassification.filler,          ItemType.Junk),
+    ItemData("Egg x5",                              ItemClassification.filler,          ItemType.Junk),
+    ItemData("Flint x5",                            ItemClassification.filler,          ItemType.Junk),
+    ItemData("Iron Deposit x3",                     ItemClassification.filler,          ItemType.Junk),
+    ItemData("Iron Ore x5",                         ItemClassification.filler,          ItemType.Junk),
+    ItemData("Milk x5",                             ItemClassification.filler,          ItemType.Junk),
+    ItemData("Rock x3",                             ItemClassification.filler,          ItemType.Junk),
+    ItemData("Stick x5",                            ItemClassification.filler,          ItemType.Junk),
+    ItemData("Stone x5",                            ItemClassification.filler,          ItemType.Junk),
+    ItemData("Tree x3",                             ItemClassification.filler,          ItemType.Junk),
+    ItemData("Wood x5",                             ItemClassification.filler,          ItemType.Junk),
+
+    # Trap Items
+    ItemData("Get Gooped!",                         ItemClassification.trap,            ItemType.Trap),
+    ItemData("Get Pooped!",                         ItemClassification.trap,            ItemType.Trap),
+
+    # More trap items coming soon...
 ]
 
 # Item group mapping table
@@ -142,19 +151,27 @@ def create_all_items(world: MultiWorld, player: int) -> None:
     # Get list of items to exclude if in starting inventory
     exclude = [item for item in world.precollected_items[player]]
 
-    # Gather items
+    # Add items to pool (ignore junk items and include trap items if enabled)
     pool = []
-    for item in item_table:
-        # Create item object
+    for item in [item for item in item_table if item.type != ItemType.Junk and (options.traps_enabled.value or item.type != ItemType.Trap)]:
+        # Generate item object
         item_obj = StacklandsItem(name_to_id[item.name], item, player)
 
-        # If item is not in starting inventory and not a trap item if traps are disabled
-        if item_obj not in exclude and (options.traps_enabled.value or item.classification != ItemClassification.trap):
+        # If item is not in starting inventory, add to pool
+        if item_obj not in exclude:
             pool.append(item_obj)
 
-    # Add all valid items to pool
+    # Add all items to pool
     world.itempool += pool
 
-    # Add victory item to goal event
-    goal_data = goal_table[options.goal.value]
-    world.get_location(goal_data.name, player).place_locked_item(Item("Victory", ItemClassification.progression, None, player))
+    # Calculate how many junk items are required
+    junk: int = len(world.get_unfilled_locations(player)) - len(pool)
+    logging.info(f"Junk to add: {junk}")
+    
+    # If junk needed, randomly select junk items to fill gaps
+    if junk > 0:
+        junk_items = [junk_item for junk_item in item_table if junk_item.type == ItemType.Junk]
+
+        for _ in range(junk):
+            junk_item = world.random.choice(junk_items)
+            world.itempool.append(StacklandsItem(name_to_id[junk_item.name], junk_item, player))
