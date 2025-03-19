@@ -37,6 +37,15 @@ def set_rules(world: MultiWorld, player: int):
     # Get relevant options
     options = world.worlds[player].options
 
+    # Entrances
+    set_rule(world.get_entrance("Start", player),
+             lambda state: True)
+    
+    set_rule(world.get_entrance("Portal", player),
+             lambda state: state.sl_has_all_ideas(["Stable Portal", "Plank"], player) and
+                           state.can_reach_location("Kill a Skeleton", player) and
+                           state.can_reach_location("Reach Moon 12", player))
+
     # Amounts
     set_rule(world.get_location("Have 10 Coins", player),
              lambda state: state.can_reach_location("Buy the Humble Beginnings Pack", player))
@@ -159,9 +168,33 @@ def set_rules(world: MultiWorld, player: int):
     
     # Mobsanity
     if options.mobsanity_enabled.value: # <- Set rules for mobsanity locations if enabled
-        for loc in [loc.name for loc in location_table if loc.check_type == CheckType.Mobsanity]:
-            set_rule(world.get_location(loc, player),
-                    lambda state: state.can_reach_location("Kill a Skeleton", player))
+
+        for loc in [loc for loc in location_table if loc.check_type == CheckType.Mobsanity]:
+            
+            # Set access rules for Mainland mobs
+            if loc.region == "Mainland":
+                set_rule(world.get_location(loc.name, player),
+                         lambda state: state.can_reach_location("Kill a Skeleton", player))
+            
+            # Set access rules for Dark Forest mobs
+            if loc.region == "The Dark Forest":
+                set_rule(world.get_location(loc.name, player),
+                         lambda state: state.can_reach_region("The Dark Forest", player))
+                
+    # 'The Dark Forest' Path
+    set_rule(world.get_locations("Find the Dark Forest", player),
+             lambda state: state.can_reach_location("Reach Moon 12", player))
+    
+    set_rule(world.get_locations("Complete the first wave", player),
+             lambda state: state.can_reach_location("Kill a Skeleton", player) and
+                           state.can_reach_location("Find the Dark Forest", player))
+    
+    set_rule(world.get_locations("Get to Wave 6", player),
+             lambda state: state.can_reach_location("Complete the first wave", player) and
+                           state.can_reach_location("Create Offspring", player))
+    
+    set_rule(world.get_locations("Kill the Wicked Witch", player),
+             lambda state: state.can_reach_location("Get to Wave 6", player))
 
     # 'Cooking' Path
     set_rule(world.get_location("Make a Stick from Wood", player),

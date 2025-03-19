@@ -1,6 +1,6 @@
 import logging
 from typing import List, NamedTuple
-from BaseClasses import Entrance, LocationProgressType, MultiWorld, Region
+from BaseClasses import Entrance, Item, ItemClassification, LocationProgressType, MultiWorld, Region
 from .Locations import CheckType, LocationData, StacklandsLocation, goal_table, location_table, name_to_id as location_lookup
 
 class RegionData(NamedTuple):
@@ -53,9 +53,10 @@ def create_region(world: MultiWorld, player: int, region: RegionData) -> Region:
     # Get the goal data (if it exists in this region)
     goal = goal_table[options.goal.value] if goal_table[options.goal.value].region == region.name else None
 
-    # Add goal to region, if provided
+    # Add goal and victory item to region, if goal is within this region
     if goal:
         goal_obj = StacklandsLocation(player, goal.name, None, region_obj)
+        goal_obj.place_locked_item(Item("Victory", ItemClassification.progression, None, player))
         region_obj.locations.append(goal_obj)
 
     return region_obj
