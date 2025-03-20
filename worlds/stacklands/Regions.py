@@ -25,6 +25,8 @@ def create_region(world: MultiWorld, player: int, region: RegionData) -> Region:
     # Get relevant options
     options = world.worlds[player].options
 
+    logging.info(f"{region.name} locations: {str(len(region.locations))}")
+
     # Cycle through all location checks (skipping Dark Forest if not enables)
     for loc in region.locations:
 
@@ -40,9 +42,9 @@ def create_region(world: MultiWorld, player: int, region: RegionData) -> Region:
         if loc.name == "Kill the Demon" and options.goal.value == 0:
             continue
 
-        # Add location check to region (set dark forest progress types to excluded if not required)
+        # Add location check to region (set dark forest progress types to excluded if set to skippable in options)
         loc_obj = StacklandsLocation(player, loc.name, location_lookup[loc.name], region_obj)
-        loc_obj.progress_type = loc.progress_type if options.dark_forest_required.value or region.name != "The Dark Forest" else LocationProgressType.EXCLUDED
+        loc_obj.progress_type = LocationProgressType.EXCLUDED if options.dark_forest_skippable.value and region.name == "The Dark Forest" else loc.progress_type
         region_obj.locations.append(loc_obj)
 
     # Add exits to region, if provided
