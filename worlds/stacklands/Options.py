@@ -3,11 +3,11 @@ from Options import Choice, DeathLink, PerGameCommonOptions, Toggle
     
 # More options to be implemented in future...
 
-class DarkForestRequired(Toggle):
+class DarkForestSkippable(Toggle):
     """
-    Checks in The Dark Forest will be required for progression, otherwise they will only contain filler items.
+    Checks in The Dark Forest will be guaranteed to only contain junk / filler items.
     """
-    display_name = "Require checks in The Dark Forest"
+    display_name = "The Dark Forest is Skippable"
     default = 0
 
 class Goal(Choice):
@@ -43,7 +43,7 @@ class TrapsEnabled(Toggle):
 
 @dataclass
 class StacklandsOptions(PerGameCommonOptions):
-    dark_forest_required: DarkForestRequired
+    dark_forest_skippable: DarkForestSkippable
     death_link: DeathLink
     goal: Goal
     pausing_enabled: PausingEnabled
