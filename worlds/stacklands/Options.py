@@ -1,51 +1,50 @@
 from dataclasses import dataclass
 from Options import Choice, DeathLink, PerGameCommonOptions, Toggle
-    
-# More options to be implemented in future...
 
-class DarkForestSkippable(Toggle):
+class DarkForest(Toggle):
     """
-    Checks in The Dark Forest will be guaranteed to only contain junk / filler items.
+    Add checks for The Dark Forest to the check pool.
     """
-    display_name = "The Dark Forest is Skippable"
-    default = 0
+    display_name = "The Dark Forest"
+    default = 1
 
 class Goal(Choice):
     """
     Select the end-goal for your run.
+    (Currently only supports 'Kill the Demon' - more goals coming soon...)
     """
     display_name = "Goal"
     option_kill_the_demon = 0
-    option_kill_the_demon_lord = 1
     default = 0
 
-class MobsanityEnabled(Toggle):
+class Mobsanity(Toggle):
     """
-    Killing all enemy types are checks.
+    Add checks for killing one of each enemy type to the check pool.
     """
     display_name = "Mobsanity"
     default = 0
 
-class PausingEnabled(Toggle):
+class Pausing(Toggle):
     """
-    Enable / Disable in-game pausing.
+    Player is able to pause time.
     If disabled, time will only be paused by cutscenes and end-of-moon routines.
     """
-    display_name = "Enable Pausing"
+    display_name = "Pausing"
     default = 1
 
-class TrapsEnabled(Toggle):
+class Traps(Toggle):
     """
-    Add trap items to the item pool.
+    Add trap items to the item pool. 
+    (Currently only one trap item, more coming soon...)
     """
-    display_name = "Include Trap Items"
+    display_name = "Trap Items"
     default = 0
 
 @dataclass
 class StacklandsOptions(PerGameCommonOptions):
-    dark_forest_skippable: DarkForestSkippable
+    dark_forest: DarkForest
     death_link: DeathLink
     goal: Goal
-    pausing_enabled: PausingEnabled
-    mobsanity_enabled: MobsanityEnabled
-    traps_enabled: TrapsEnabled
+    pausing: Pausing
+    mobsanity: Mobsanity
+    traps: Traps
