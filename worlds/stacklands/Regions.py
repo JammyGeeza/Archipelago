@@ -25,26 +25,18 @@ def create_region(world: MultiWorld, player: int, region: RegionData) -> Region:
     # Get relevant options
     options = world.worlds[player].options
 
-    logging.info(f"{region.name} locations: {str(len(region.locations))}")
+    # Cycle through all valid location checks
+    for loc in [
+        loc for loc in region.locations if 
+        (options.dark_forest.value or loc.region != "The Dark Forest") and # Include Dark Forest checks if enabled in options
+        (options.mobsanity.value or loc.check_type != CheckType.Mobsanity) and # Include Mobsanity checks if enabled in options
+        (options.pausing.value or loc.name != "Pause using the play icon in the top right corner") and # Include Pausing check if enabled in options
+        (options.goal.value == 0 and loc.name != "Kill the Demon") # Exclude 'Kill the Demon' if goal is 'Kill the Demon' (as this will be an Event instead)
+    ]:
 
-    # Cycle through all location checks (skipping Dark Forest if not enables)
-    for loc in region.locations:
-
-        # Skip mobsanity check(s) if not enabled
-        if loc.check_type == CheckType.Mobsanity and not options.mobsanity_enabled.value:
-            continue
-
-        # Skip pausing check(s) if not enabled
-        if loc.check_type == CheckType.Pausing and not options.pausing_enabled.value:
-            continue
-
-        # Skip this check if the goal is set to 'Kill the Demon', as it will be an event instead.
-        if loc.name == "Kill the Demon" and options.goal.value == 0:
-            continue
-
-        # Add location check to region (set dark forest progress types to excluded if set to skippable in options)
+        # Add location check to region
         loc_obj = StacklandsLocation(player, loc.name, location_lookup[loc.name], region_obj)
-        loc_obj.progress_type = LocationProgressType.EXCLUDED if options.dark_forest_skippable.value and region.name == "The Dark Forest" else loc.progress_type
+        loc_obj.progress_type = loc.progress_type
         region_obj.locations.append(loc_obj)
 
     # Add exits to region, if provided
