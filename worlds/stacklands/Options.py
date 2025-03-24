@@ -11,10 +11,11 @@ class DarkForest(Toggle):
 class Goal(Choice):
     """
     Select the end-goal for your run.
-    (Currently only supports 'Kill the Demon' - more goals coming soon...)
+    (Currently only supports 'Kill the Demon' and 'Kill the Wicked Witch' - more goals coming soon...)
     """
     display_name = "Goal"
     option_kill_the_demon = 0
+    option_kill_the_wicked_witch = 1
     default = 0
 
 class Mobsanity(Toggle):

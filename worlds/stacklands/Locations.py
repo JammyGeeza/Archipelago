@@ -33,16 +33,16 @@ location_table: List[LocationData] = [
     LocationData("Grow a Berry Bush using Soil",                        "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
     LocationData("Build a House",                                       "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
     LocationData("Get a Second Villager",                               "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
-    LocationData("Create Offspring",                                    "Mainland",            CheckType.Default,        LocationProgressType.PRIORITY),  # <- Required, increase priority
+    LocationData("Create Offspring",                                    "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),  # <- Required, increase priority
 
     # 'The Grand Scheme' Category
     LocationData("Unlock all Packs",                                    "Mainland",            CheckType.Default,        LocationProgressType.EXCLUDED), # <- Achieved only by receiving items from checks, reduce priority
     LocationData("Get 3 Villagers",                                     "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
     LocationData("Find the Catacombs",                                  "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
-    LocationData("Find a mysterious artifact",                          "Mainland",            CheckType.Default,        LocationProgressType.PRIORITY), # <- Required, increase priority
-    LocationData("Build a Temple",                                      "Mainland",            CheckType.Default,        LocationProgressType.PRIORITY), # <- Required, increase priority
-    LocationData("Bring the Goblet to the Temple",                      "Mainland",            CheckType.Default,        LocationProgressType.EXCLUDED), # <- Achieved immediately between two quests above and one below, no need for important item here.
-    LocationData("Kill the Demon",                                      "Mainland",            CheckType.Default,        LocationProgressType.PRIORITY),  # <- Required, increase priority (if not the Goal)
+    LocationData("Find a mysterious artifact",                          "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT), 
+    LocationData("Build a Temple",                                      "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
+    LocationData("Bring the Goblet to the Temple",                      "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
+    LocationData("Kill the Demon",                                      "Mainland",            CheckType.Default,        LocationProgressType.EXCLUDED), # <- Don't force player to complete Demon if goal is Kill the Wicked Witch
 
     # 'Power & Skill' Category
     LocationData("Train Militia",                                       "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
@@ -52,7 +52,7 @@ location_table: List[LocationData] = [
     # 'Strengthen Up' Category
     LocationData("Train an Archer",                                     "Mainland",            CheckType.Default,        LocationProgressType.EXCLUDED), # <- Relies heavily on RNG, reduce priority
     LocationData("Make a Villager wear a Rabbit Hat",                   "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
-    LocationData("Build a Smithy",                                      "Mainland",            CheckType.Default,        LocationProgressType.PRIORITY), # <- Required, increase priority
+    LocationData("Build a Smithy",                                      "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
     LocationData("Train a Wizard",                                      "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
     LocationData("Equip an Archer with a Quiver",                       "Mainland",            CheckType.Default,        LocationProgressType.EXCLUDED), # <- Relies heavily on RNG, reduce priority
     LocationData("Have a Villager with Combat Level 20",                "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
@@ -76,20 +76,20 @@ location_table: List[LocationData] = [
     # 'Ways and Means' Category
     LocationData("Have 5 Ideas",                                        "Mainland",            CheckType.Default,        LocationProgressType.EXCLUDED), # <- Achieved only by receiving ideas from checks, reduce priority
     LocationData("Have 10 Ideas",                                       "Mainland",            CheckType.Default,        LocationProgressType.EXCLUDED), # <- Achieved only by receiving ideas from checks, reduce priority
-    LocationData("Have 10 Wood",                                        "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
-    LocationData("Have 10 Stone",                                       "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
-    LocationData("Get an Iron Bar",                                     "Mainland",            CheckType.Default,        LocationProgressType.PRIORITY), # <- Required, increase priority
-    LocationData("Have 5 Food",                                         "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
-    LocationData("Have 10 Food",                                        "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
-    LocationData("Have 20 Food",                                        "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
+    LocationData("Have 10 Wood",                                        "Mainland",            CheckType.Default,        LocationProgressType.EXCLUDED),
+    LocationData("Have 10 Stone",                                       "Mainland",            CheckType.Default,        LocationProgressType.EXCLUDED),
+    LocationData("Get an Iron Bar",                                     "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
+    LocationData("Have 5 Food",                                         "Mainland",            CheckType.Default,        LocationProgressType.EXCLUDED),
+    LocationData("Have 10 Food",                                        "Mainland",            CheckType.Default,        LocationProgressType.EXCLUDED),
+    LocationData("Have 20 Food",                                        "Mainland",            CheckType.Default,        LocationProgressType.EXCLUDED),
     LocationData("Have 50 Food",                                        "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
-    LocationData("Have 10 Coins",                                       "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
-    LocationData("Have 30 Coins",                                       "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
+    LocationData("Have 10 Coins",                                       "Mainland",            CheckType.Default,        LocationProgressType.EXCLUDED),
+    LocationData("Have 30 Coins",                                       "Mainland",            CheckType.Default,        LocationProgressType.EXCLUDED),
     LocationData("Have 50 Coins",                                       "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
 
     # 'Construction' Category
     LocationData("Have 3 Houses",                                       "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
-    LocationData("Build a Shed",                                        "Mainland",            CheckType.Default,        LocationProgressType.PRIORITY), # <- Required, increase priority
+    LocationData("Build a Shed",                                        "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
     LocationData("Build a Quarry",                                      "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
     LocationData("Build a Lumber Camp",                                 "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
     LocationData("Build a Farm",                                        "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
@@ -97,8 +97,8 @@ location_table: List[LocationData] = [
     LocationData("Sell a Card at a Market",                             "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
 
     # 'Longevity' Category
-    LocationData("Reach Moon 6",                                        "Mainland",            CheckType.Default,        LocationProgressType.EXCLUDED), # <- These quests shouldn't be a priority as duration is not required, reduce priority
-    LocationData("Reach Moon 12",                                       "Mainland",            CheckType.Default,        LocationProgressType.EXCLUDED), # <- These quests shouldn't be a priority as duration is not required, reduce priority
+    LocationData("Reach Moon 6",                                        "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT), 
+    LocationData("Reach Moon 12",                                       "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
     LocationData("Reach Moon 24",                                       "Mainland",            CheckType.Default,        LocationProgressType.EXCLUDED), # <- These quests shouldn't be a priority as duration is not required, reduce priority
     LocationData("Reach Moon 36",                                       "Mainland",            CheckType.Default,        LocationProgressType.EXCLUDED), # <- These quests shouldn't be a priority as duration is not required, reduce priority
 
@@ -110,7 +110,7 @@ location_table: List[LocationData] = [
     LocationData("Complete the first wave",                             "The Dark Forest",     CheckType.Default,        LocationProgressType.DEFAULT), 
     LocationData("Build a Stable Portal",                               "The Dark Forest",     CheckType.Default,        LocationProgressType.DEFAULT),
     LocationData("Get to Wave 6",                                       "The Dark Forest",     CheckType.Default,        LocationProgressType.DEFAULT), 
-    LocationData("Kill the Wicked Witch",                               "The Dark Forest",     CheckType.Default,        LocationProgressType.DEFAULT),
+    LocationData("Fight the Wicked Witch",                              "The Dark Forest",     CheckType.Default,        LocationProgressType.DEFAULT),
 
 #endregion
 
@@ -147,7 +147,8 @@ location_table: List[LocationData] = [
 
 # Goal table ('Goal' option value mapped to goal name)
 goal_table: Dict[int, LocationData] = {
-    0   : LocationData("Kill the Demon",    "Mainland",    CheckType.Default,    LocationProgressType.DEFAULT),
+    0   : LocationData("Kill the Demon",             "Mainland",           CheckType.Default,    LocationProgressType.DEFAULT),
+    1   : LocationData("Fight the Wicked Witch",     "The Dark Forest",    CheckType.Default,    LocationProgressType.DEFAULT),
 }
 
 base_id: int = 92000

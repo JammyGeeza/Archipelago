@@ -31,7 +31,8 @@ def create_region(world: MultiWorld, player: int, region: RegionData) -> Region:
         (options.dark_forest.value or loc.region != "The Dark Forest") and # Include Dark Forest checks if enabled in options
         (options.mobsanity.value or loc.check_type != CheckType.Mobsanity) and # Include Mobsanity checks if enabled in options
         (options.pausing.value or loc.name != "Pause using the play icon in the top right corner") and # Include Pausing check if enabled in options
-        (options.goal.value == 0 and loc.name != "Kill the Demon") # Exclude 'Kill the Demon' if goal is 'Kill the Demon' (as this will be an Event instead)
+        ((options.goal.value == 0 and loc.name != "Kill the Demon") or # Exclude 'Kill the Demon' if set as goal as this will be an Event instead
+        (options.goal.value == 1 and loc.name != "Fight the Wicked Witch")) # Exclude 'Fight the Wicked Witch' if set as goal, as it will be an Event instead
     ]:
 
         # Add location check to region
