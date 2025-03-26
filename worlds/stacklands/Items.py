@@ -145,6 +145,10 @@ item_table: List[ItemData] = [
 
     # Trap Items
     ItemData("Get Gooped!",                         1,    ItemClassification.trap,                                          ItemType.Trap),
+    ItemData("Rabbits!",                            1,    ItemClassification.trap,                                          ItemType.Trap),
+    ItemData("Rats!",                               1,    ItemClassification.trap,                                          ItemType.Trap),
+    ItemData("Small Slimes!",                       1,    ItemClassification.trap,                                          ItemType.Trap),
+    ItemData("Snakes!",                             1,    ItemClassification.trap,                                          ItemType.Trap),
 
     # More trap items coming soon...
 
