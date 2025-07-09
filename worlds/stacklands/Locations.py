@@ -24,16 +24,16 @@ location_table: List[LocationData] = [
     # 'Welcome' Category
     LocationData("Open the Booster Pack",                               "Mainland",            CheckType.Default,        LocationProgressType.EXCLUDED), # <- Prevent opening quests from flooding early spheres
     LocationData("Drag the Villager on top of the Berry Bush",          "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
-    LocationData("Mine a Rock using a Villager",                        "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
+    LocationData("Mine a Rock using a Villager",                        "Mainland",            CheckType.Default,        LocationProgressType.EXCLUDED),  # <- Prevent opening quests from flooding early spheres
     LocationData("Sell a Card",                                         "Mainland",            CheckType.Default,        LocationProgressType.EXCLUDED), # <- Prevent opening quests from flooding early spheres
-    LocationData("Buy the Humble Beginnings Pack",                      "Mainland",            CheckType.Default,        LocationProgressType.EXCLUDED), # <- Prevent opening quests from flooding early spheres
+    LocationData("Buy the Humble Beginnings Pack",                      "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT), 
     LocationData("Harvest a Tree using a Villager",                     "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
     LocationData("Make a Stick from Wood",                              "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
     LocationData("Pause using the play icon in the top right corner",   "Mainland",            CheckType.Default,        LocationProgressType.EXCLUDED), # <- Prevent opening quests from flooding early spheres
     LocationData("Grow a Berry Bush using Soil",                        "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
     LocationData("Build a House",                                       "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
     LocationData("Get a Second Villager",                               "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
-    LocationData("Create Offspring",                                    "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),  # <- Required, increase priority
+    LocationData("Create Offspring",                                    "Mainland",            CheckType.Default,        LocationProgressType.PRIORITY), # <- Required to help prevent stagnant game state, increase priority
 
     # 'The Grand Scheme' Category
     LocationData("Unlock all Packs",                                    "Mainland",            CheckType.Default,        LocationProgressType.EXCLUDED), # <- Achieved only by receiving items from checks, reduce priority
@@ -71,20 +71,20 @@ location_table: List[LocationData] = [
     LocationData("Find a Graveyard",                                    "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
     LocationData("Get a Dog",                                           "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
     LocationData("Train an Explorer",                                   "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
-    LocationData("Buy something from a Travelling Cart",                "Mainland",            CheckType.Default,        LocationProgressType.EXCLUDED), # <- Spawns Moon 19 or heavily RNG-based, reduce priority
+    LocationData("Buy something from a Travelling Cart",                "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
 
     # 'Ways and Means' Category
-    LocationData("Have 5 Ideas",                                        "Mainland",            CheckType.Default,        LocationProgressType.EXCLUDED), # <- Achieved only by receiving ideas from checks, reduce priority
-    LocationData("Have 10 Ideas",                                       "Mainland",            CheckType.Default,        LocationProgressType.EXCLUDED), # <- Achieved only by receiving ideas from checks, reduce priority
-    LocationData("Have 10 Wood",                                        "Mainland",            CheckType.Default,        LocationProgressType.EXCLUDED),
-    LocationData("Have 10 Stone",                                       "Mainland",            CheckType.Default,        LocationProgressType.EXCLUDED),
+    LocationData("Have 5 Ideas",                                        "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
+    LocationData("Have 10 Ideas",                                       "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
+    LocationData("Have 10 Wood",                                        "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
+    LocationData("Have 10 Stone",                                       "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
     LocationData("Get an Iron Bar",                                     "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
-    LocationData("Have 5 Food",                                         "Mainland",            CheckType.Default,        LocationProgressType.EXCLUDED),
-    LocationData("Have 10 Food",                                        "Mainland",            CheckType.Default,        LocationProgressType.EXCLUDED),
-    LocationData("Have 20 Food",                                        "Mainland",            CheckType.Default,        LocationProgressType.EXCLUDED),
+    LocationData("Have 5 Food",                                         "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
+    LocationData("Have 10 Food",                                        "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
+    LocationData("Have 20 Food",                                        "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
     LocationData("Have 50 Food",                                        "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
-    LocationData("Have 10 Coins",                                       "Mainland",            CheckType.Default,        LocationProgressType.EXCLUDED),
-    LocationData("Have 30 Coins",                                       "Mainland",            CheckType.Default,        LocationProgressType.EXCLUDED),
+    LocationData("Have 10 Coins",                                       "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
+    LocationData("Have 30 Coins",                                       "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
     LocationData("Have 50 Coins",                                       "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
 
     # 'Construction' Category
@@ -99,8 +99,8 @@ location_table: List[LocationData] = [
     # 'Longevity' Category
     LocationData("Reach Moon 6",                                        "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT), 
     LocationData("Reach Moon 12",                                       "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
-    LocationData("Reach Moon 24",                                       "Mainland",            CheckType.Default,        LocationProgressType.EXCLUDED), # <- These quests shouldn't be a priority as duration is not required, reduce priority
-    LocationData("Reach Moon 36",                                       "Mainland",            CheckType.Default,        LocationProgressType.EXCLUDED), # <- These quests shouldn't be a priority as duration is not required, reduce priority
+    LocationData("Reach Moon 24",                                       "Mainland",            CheckType.Default,        LocationProgressType.DEFAULT),
+    LocationData("Reach Moon 36",                                       "Mainland",            CheckType.Default,        LocationProgressType.EXCLUDED), # <- Long duration is not required, reduce priority
 
 #endregion
 
