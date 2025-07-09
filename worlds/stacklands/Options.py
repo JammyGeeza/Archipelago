@@ -1,34 +1,51 @@
 from dataclasses import dataclass
 from Options import Choice, DeathLink, PerGameCommonOptions, Toggle
-    
-# More options to be implemented in future...
+
+class DarkForest(Toggle):
+    """
+    Add checks for The Dark Forest to the check pool.
+    """
+    display_name = "The Dark Forest"
+    default = 1
+
 class Goal(Choice):
     """
-    What should the end-goal for your run be?
+    Select the end-goal for your run.
+    (Currently only supports 'Kill the Demon' and 'Kill the Wicked Witch' - more goals coming soon...)
     """
     display_name = "Goal"
     option_kill_the_demon = 0
-    option_kill_the_demon_lord = 1
+    option_kill_the_wicked_witch = 1
     default = 0
 
-class IncludeTraps(Toggle):
+class Mobsanity(Toggle):
     """
-    Should traps be included in the item pool?
+    Add checks for killing one of each enemy type to the check pool.
     """
-    display_name = "Include Traps"
+    display_name = "Mobsanity"
     default = 0
 
-class PauseEnabled(Toggle):
+class Pausing(Toggle):
     """
-    Should you be able to pause time manually?
+    Player is able to pause time.
     If disabled, time will only be paused by cutscenes and end-of-moon routines.
     """
-    display_name = "Pausing Enabled"
+    display_name = "Pausing"
     default = 1
+
+class Traps(Toggle):
+    """
+    Add trap items to the item pool. 
+    (Currently only one trap item, more coming soon...)
+    """
+    display_name = "Trap Items"
+    default = 0
 
 @dataclass
 class StacklandsOptions(PerGameCommonOptions):
+    dark_forest: DarkForest
     death_link: DeathLink
     goal: Goal
-    include_traps: IncludeTraps
-    pause_enabled: PauseEnabled
+    pausing: Pausing
+    mobsanity: Mobsanity
+    traps: Traps
