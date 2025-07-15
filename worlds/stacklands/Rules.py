@@ -1,6 +1,8 @@
 from typing import List
 from BaseClasses import MultiWorld
-from .Locations import CheckType, location_table
+from .Enums import GoalFlags, RegionFlags
+from .Locations import location_table
+from .Options import StacklandsOptions
 from worlds.AutoWorld import LogicMixin
 from worlds.generic.Rules import set_rule
 
@@ -64,14 +66,22 @@ class StacklandsLogic(LogicMixin):
 def set_rules(world: MultiWorld, player: int):
 
     # Get relevant options
-    options = world.worlds[player].options
+    options: StacklandsOptions = world.worlds[player].options
+
+    # Calculate selected boards
+    mainland_board_selected: bool = bool(options.boards.value & RegionFlags.Mainland)
+    forest_board_selected: bool = bool(options.boards.value & RegionFlags.Forest)
+
+    # Calculate selected goals
+    demon_goal_selected: bool = bool(options.goal.value & GoalFlags.Demon)
+    witch_goal_selected: bool = bool(options.goal.value & GoalFlags.Witch)
 
 #region 'Entrances'
 
     # Entrances
     set_rule(world.get_entrance("Start", player), lambda state: True)
 
-    set_rule(world.get_entrance("Portal", player),
+    set_rule(world.get_entrance("Strange Portal", player),
              lambda state: state.sl_phase_three(player)) # <- Player has access to basic equipment to fight mobs in Dark Forest
     
 #endregion
@@ -309,7 +319,7 @@ def set_rules(world: MultiWorld, player: int):
 #region 'The Dark Forest' Quests
 
     # Only apply rules if The Dark Forest is enabled
-    if options.dark_forest.value:
+    if forest_board_selected:
 
         set_rule(world.get_location("Find the Dark Forest", player),
                 lambda state: state.can_reach_region("The Dark Forest", player)) # <- Player has access to Basic Weapons / Offspring / Food
@@ -326,7 +336,7 @@ def set_rules(world: MultiWorld, player: int):
                               state.can_reach_region("The Dark Forest", player))  # <- Player can reach The Dark Forest
 
     # Apply rule for Wicked Witch if The Dark Forest is enabled or if it is set as the goal
-    if options.dark_forest.value or options.goal.value == 1:
+    if forest_board_selected or witch_goal_selected:
         set_rule(world.get_location("Fight the Wicked Witch", player),
                 lambda state: state.sl_phase_six(player) and # <- Player has access to advanced weapon
                               state.can_reach_region("The Dark Forest", player))  # <- Player can reach The Dark Forest
@@ -398,7 +408,7 @@ def set_rules(world: MultiWorld, player: int):
                  lambda state: state.can_reach_location("Get a Dog", player)) # <- Player is able to find and fight a Wolf instead of giving it a Bone
 
         # Only apply these rules if The Dark Forest is enabled
-        if options.dark_forest.value:
+        if forest_board_selected:
 
             set_rule(world.get_location("Kill a Dark Elf", player),
                  lambda state: state.can_reach_location("Get to Wave 6", player)) # <- Only found in The Dark Forest from Wave 4

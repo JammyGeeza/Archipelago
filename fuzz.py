@@ -4,6 +4,11 @@ import os
 ap_path = os.path.abspath(os.path.dirname(sys.argv[0]))
 sys.path.insert(0, ap_path)
 
+# Prevent multiprocess workers from spamming nonsense when KeyboardInterrupted
+# I can't wait for this to hide actual issues...
+if __name__ == "__mp_main__":
+    sys.stderr = None
+
 from worlds import AutoWorldRegister
 from Options import (
     get_option_groups,
@@ -13,6 +18,7 @@ from Options import (
     ItemSet,
     ItemDict,
     LocationSet,
+    NumericOption,
     OptionSet,
     FreeText,
     PlandoConnections,
@@ -23,11 +29,13 @@ from Options import (
 )
 from Utils import __version__, local_path
 import Utils
+import settings
 
 from Generate import main as GenMain
 from Main import main as ERmain
+from settings import get_settings
 from argparse import Namespace, ArgumentParser
-from concurrent.futures import ThreadPoolExecutor, TimeoutError
+from concurrent.futures import TimeoutError
 import ctypes
 import threading
 from contextlib import redirect_stderr, redirect_stdout
@@ -39,8 +47,10 @@ from multiprocessing import Pool
 import functools
 import logging
 import multiprocessing
+import platform
 import random
 import shutil
+import signal
 import string
 import tempfile
 import time
@@ -49,7 +59,69 @@ import yaml
 
 
 OUT_DIR = f"fuzz_output"
-ORIG_USER_PATH = Utils.user_path
+settings.no_gui = True
+settings.skip_autosave = True
+MP_HOOKS = []
+
+
+# We patch this because AP can't keep its hands to itself and has to start a thread to clean stuff up.
+# We could monkey patch the hell out of it but since it's an inner function, I feel like the complexity
+# of it is unreasonable compared to just reimplement a logger
+# especially since it allows us to not have to cheat user_path
+
+# Taken from https://github.com/ArchipelagoMW/Archipelago/blob/0.5.1.Hotfix1/Utils.py#L488
+# and removed everythinhg that had to do with files, typing and cleanup
+def patched_init_logging(
+        name,
+        loglevel = logging.INFO,
+        write_mode = "w",
+        log_format = "[%(name)s at %(asctime)s]: %(message)s",
+        exception_logger = None,
+        *args,
+        **kwargs
+):
+    loglevel: int = Utils.loglevel_mapping.get(loglevel, loglevel)
+    root_logger = logging.getLogger()
+    for handler in root_logger.handlers[:]:
+        root_logger.removeHandler(handler)
+        handler.close()
+    root_logger.setLevel(loglevel)
+
+    class Filter(logging.Filter):
+        def __init__(self, filter_name, condition) -> None:
+            super().__init__(filter_name)
+            self.condition = condition
+
+        def filter(self, record: logging.LogRecord) -> bool:
+            return self.condition(record)
+
+    stream_handler = logging.StreamHandler(sys.stdout)
+    stream_handler.addFilter(Filter("NoFile", lambda record: not getattr(record, "NoStream", False)))
+    root_logger.addHandler(stream_handler)
+
+    # Relay unhandled exceptions to logger.
+    if not getattr(sys.excepthook, "_wrapped", False):  # skip if already modified
+        orig_hook = sys.excepthook
+
+        def handle_exception(exc_type, exc_value, exc_traceback):
+            if issubclass(exc_type, KeyboardInterrupt):
+                sys.__excepthook__(exc_type, exc_value, exc_traceback)
+                return
+            logging.getLogger(exception_logger).exception("Uncaught exception",
+                                                          exc_info=(exc_type, exc_value, exc_traceback))
+            return orig_hook(exc_type, exc_value, exc_traceback)
+
+        handle_exception._wrapped = True
+
+        sys.excepthook = handle_exception
+
+    logging.info(
+        f"Archipelago ({__version__}) logging initialized"
+        f" on {platform.platform()}"
+        f" running Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
+    )
+
+Utils.init_logging = patched_init_logging
 
 
 def exception_in_causes(e, ty):
@@ -58,24 +130,6 @@ def exception_in_causes(e, ty):
     if e.__cause__ is not None:
         return exception_in_causes(e.__cause__, ty)
     return False
-
-
-executor = ThreadPoolExecutor(max_workers=1)
-def run_with_timeout(func, seconds, *args, **kwargs):
-    global executor
-    future = executor.submit(func, *args, **kwargs)
-    try:
-        return future.result(timeout=seconds)
-    except TimeoutError:
-        for thread in threading.enumerate():
-            if thread.name != "MainThread":
-                ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_long(thread.ident), ctypes.py_object(TimeoutError))
-
-        executor.shutdown(wait=True, cancel_futures=True)
-        executor = ThreadPoolExecutor(max_workers=1)
-        raise TimeoutError(
-            f"Function '{func.__name__}' timed out after {seconds} seconds"
-        )
 
 
 def world_from_apworld_name(apworld_name):
@@ -116,7 +170,7 @@ def generate_random_yaml(world_name, meta):
 
     game_name, world = world_from_apworld_name(world_name)
     if world is None:
-        raise Exception(f"Failed to resolve apworld from apworld name: {apworld_name}")
+        raise Exception(f"Failed to resolve apworld from apworld name: {world_name}")
 
     game_options = {}
     option_groups = get_option_groups(world)
@@ -174,7 +228,11 @@ def get_random_value(name, option):
         return option.default
 
     if issubclass(option, (Choice, Toggle)):
-        return random.choice(list(option.options.keys()))
+        valid_choices = [key for key in option.options.keys() if key not in option.aliases]
+        if not valid_choices:
+            valid_choices = list(option.options.keys())
+
+        return random.choice(valid_choices)
 
     if issubclass(option, Range):
         return random.randint(option.range_start, option.range_end)
@@ -196,6 +254,9 @@ def get_random_value(name, option):
             list(option.valid_keys), k=random.randint(0, len(option.valid_keys))
         )
 
+    if issubclass(option, NumericOption):
+        return option("random").value
+
     if issubclass(option, FreeText):
         return "".join(
             random.choice(string.ascii_letters) for i in range(random.randint(0, 255))
@@ -204,111 +265,145 @@ def get_random_value(name, option):
     return option.default
 
 
-def call_generate(yaml_path, output_path):
+def call_generate(yaml_path, args):
     from settings import get_settings
 
     settings = get_settings()
 
-    args = Namespace(
-        **{
-            "weights_file_path": settings.generator.weights_file_path,
-            "sameoptions": False,
-            "player_files_path": yaml_path,
-            "seed": random.randint(0, 1000000000),
-            "multi": 1,
-            "spoiler": 1,
-            "outputpath": output_path,
-            "race": False,
-            "meta_file_path": "meta-doesnt-exist.yaml",
-            "log_level": "info",
-            "yaml_output": 1,
-            "plando": [],
-            "skip_prog_balancing": False,
-            "skip_output": False,
-            "csv_output": False,
-            "log_time": False,
-        }
-    )
-    erargs, seed = GenMain(args)
-    ERmain(erargs, seed)
+    with tempfile.TemporaryDirectory(prefix="apfuzz") as output_path:
+        args = Namespace(
+            **{
+                "weights_file_path": settings.generator.weights_file_path,
+                "sameoptions": False,
+                "player_files_path": yaml_path,
+                "seed": random.randint(0, 1000000000),
+                "multi": 1,
+                "spoiler": 1,
+                "outputpath": output_path,
+                "race": False,
+                "meta_file_path": "meta-doesnt-exist.yaml",
+                "log_level": "info",
+                "yaml_output": 1,
+                "plando": [],
+                "skip_prog_balancing": False,
+                "skip_output": args.skip_output,
+                "csv_output": False,
+                "log_time": False,
+                "spoiler_only": False,
+            }
+        )
+        erargs, seed = GenMain(args)
+        ERmain(erargs, seed)
 
 
-def gen_wrapper(yaml_contents, apworld_name, timeout_s, i, dump_option_errors):
+def gen_wrapper(yaml_path, apworld_name, i, args, queue):
+    global MP_HOOKS
+
     out_buf = StringIO()
 
-    try:
-        # We don't care about the actual gen output, just trash it immediately after gen
-        output_path = tempfile.mkdtemp(prefix="apfuzz")
+    timer = None
+    if args.timeout > 0:
+        myself = os.getpid()
+        def stop():
+            queue.put_nowait((myself, apworld_name, i, yaml_path, out_buf))
+            queue.join()
+        timer = threading.Timer(args.timeout, stop)
+        timer.start()
 
-        # Override Utils.user path so we can customize the logs folder
-        # This is very important because every gen starts a thread that cleans all logs older than 7 days.
-        # This is not customizable in any way shape or form. By throwing logs files away, we prevent that thread
-        # from becoming more and more busy as gens go.
-        def my_user_path(name):
-            if name == "logs":
-                return output_path
-            return ORIG_USER_PATH(name)
 
-        Utils.user_path = my_user_path
+    raised = None
 
-        yaml_path_dir = tempfile.mkdtemp(prefix="apfuzz")
-        for nb, yaml_content in enumerate(yaml_contents):
-            yaml_path = os.path.join(yaml_path_dir, f"{i}-{nb}.yaml")
-            open(yaml_path, "wb").write(yaml_content.encode("utf-8"))
+    with redirect_stdout(out_buf), redirect_stderr(out_buf):
+        try:
+            # If we have hooks defined in args but they're not registered yet, register them
+            if args.hook and not MP_HOOKS:
+                for hook_class_path in args.hook:
+                    hook = find_hook(hook_class_path)
+                    hook.setup_worker(args)
+                    MP_HOOKS.append(hook)
 
-        with redirect_stdout(out_buf), redirect_stderr(out_buf):
-            run_with_timeout(call_generate, timeout_s, yaml_path_dir, output_path)
-        return GenOutcome.Success
-    except Exception as e:
-        is_timeout = isinstance(e, TimeoutError)
-        is_option_error = exception_in_causes(e, OptionError)
+            for hook in MP_HOOKS:
+                hook.before_generate()
 
-        if is_option_error and not dump_option_errors:
-            return GenOutcome.OptionError
+            call_generate(yaml_path.name, args)
+        except Exception as e:
+            raised = e
+        finally:
+            if timer is not None:
+                timer.cancel()
+                timer.join()
+            root_logger = logging.getLogger()
+            handlers = root_logger.handlers[:]
+            for handler in handlers:
+                root_logger.removeHandler(handler)
+                handler.close()
 
-        if is_option_error:
-            error_ty = "ignored"
-        elif is_timeout:
-            error_ty = "timeout"
-        else:
-            error_ty = "error"
+            for hook in MP_HOOKS:
+                hook.after_generate()
 
-        error_output_dir = os.path.join(OUT_DIR, error_ty, apworld_name, str(i))
-        os.makedirs(error_output_dir)
+            outcome = GenOutcome.Success
+            if raised:
+                is_timeout = isinstance(raised, TimeoutError)
+                is_option_error = exception_in_causes(raised, OptionError)
 
-        for nb, yaml_content in enumerate(yaml_contents):
-            error_yaml_path = os.path.join(error_output_dir, f"{i}-{nb}.yaml")
-            open(error_yaml_path, "wb").write(yaml_content.encode("utf-8"))
+                if is_timeout:
+                    outcome = GenOutcome.Timeout
+                elif is_option_error:
+                    outcome = GenOutcome.OptionError
+                else:
+                    outcome = GenOutcome.Failure
 
-        error_log_path = os.path.join(error_output_dir, f"{i}.log")
-        with open(error_log_path, "w") as fd:
-            fd.write(out_buf.getvalue())
+            for hook in MP_HOOKS:
+                outcome = hook.reclassify_outcome(outcome, raised)
 
-            if is_timeout:
-                fd.write(f"[...] Generation killed here after {timeout_s}s")
-                return GenOutcome.Timeout
+            if outcome == GenOutcome.Success:
+                return outcome
+
+            if outcome == GenOutcome.OptionError and not args.dump_ignored:
+                return outcome
+
+            if outcome == GenOutcome.Timeout:
+                extra = f"[...] Generation killed here after {args.timeout}s"
             else:
-                fd.write("".join(traceback.format_exception(e)))
+                extra = "".join(traceback.format_exception(raised))
 
-        return GenOutcome.OptionError if is_option_error else GenOutcome.Failure
-    finally:
-        root_logger = logging.getLogger()
-        handlers = root_logger.handlers[:]
-        for handler in handlers:
-            root_logger.removeHandler(handler)
-            handler.close()
+            dump_generation_output(outcome, apworld_name, i, yaml_path, out_buf, extra)
 
-        shutil.rmtree(output_path)
-        shutil.rmtree(yaml_path_dir)
+            return outcome
 
 
-class GenOutcome(Enum):
+def dump_generation_output(outcome, apworld_name, i, yamls_dir, out_buf, extra=None):
+    if outcome == GenOutcome.Success:
+        return
+
+    if outcome == GenOutcome.OptionError:
+        error_ty = "ignored"
+    elif outcome == GenOutcome.Timeout:
+        error_ty = "timeout"
+    else:
+        error_ty = "error"
+
+    error_output_dir = os.path.join(OUT_DIR, error_ty, apworld_name, str(i))
+    os.makedirs(error_output_dir)
+
+    for yaml_file in os.listdir(yamls_dir.name):
+        shutil.copy(os.path.join(yamls_dir.name, yaml_file), error_output_dir)
+
+    error_log_path = os.path.join(error_output_dir, f"{i}.log")
+    with open(error_log_path, "w") as fd:
+        fd.write(out_buf.getvalue())
+        if extra is not None:
+            fd.write(extra)
+
+
+class GenOutcome:
     Success = 0
     Failure = 1
     Timeout = 2
     OptionError = 3
 
 
+IS_TTY = sys.stdout.isatty()
 SUCCESS = 0
 FAILURE = 0
 TIMEOUTS = 0
@@ -316,30 +411,39 @@ OPTION_ERRORS = 0
 SUBMITTED = 0
 
 
-def success(result):
+def gen_callback(yamls_dir, args, outcome):
     global SUCCESS, FAILURE, SUBMITTED, OPTION_ERRORS, TIMEOUTS
-    if result == GenOutcome.Success:
+    SUBMITTED -= 1
+
+    if outcome == GenOutcome.Success:
         SUCCESS += 1
-        print(".", end="")
-    elif result == GenOutcome.Failure:
-        print("F", end="")
+        if IS_TTY:
+            print(".", end="")
+    elif outcome == GenOutcome.Failure:
         FAILURE += 1
-    elif result == GenOutcome.Timeout:
-        print("T", end="")
+        if IS_TTY:
+            print("F", end="")
+    elif outcome == GenOutcome.Timeout:
         TIMEOUTS += 1
-    elif result == GenOutcome.OptionError:
-        print("I", end="")
+        if IS_TTY:
+            print("T", end="")
+    elif outcome == GenOutcome.OptionError:
         OPTION_ERRORS += 1
+        if IS_TTY:
+            print("I", end="")
+
+    # If we're not on a TTY, print progress every once in a while
+    if not IS_TTY:
+        checks_done = SUCCESS + FAILURE + TIMEOUTS + OPTION_ERRORS
+        step = args.runs // 50
+        if step == 0 or (checks_done % step) == 0:
+            print(f"{checks_done} / {args.runs} done. {FAILURE} failures, {TIMEOUTS} timeouts, {OPTION_ERRORS} ignored.")
 
     sys.stdout.flush()
 
-    SUBMITTED -= 1
 
-
-def error(e):
-    import traceback
-
-    traceback.print_exception(e)
+def error(yamls_dir, args, raised):
+    return gen_callback(yamls_dir, args, GenOutcome.Failure)
 
 
 def print_status():
@@ -352,7 +456,56 @@ def print_status():
     print("Time taken:{:.2f}s".format(time.time() - START))
 
 
+def find_hook(hook_path):
+    modulepath, objectpath = hook_path.split(':')
+    obj = __import__(modulepath)
+    for inner in modulepath.split('.')[1:]:
+        obj = getattr(obj, inner)
+    for inner in objectpath.split('.'):
+        obj = getattr(obj, inner)
+
+    if not isinstance(obj, type):
+        raise RuntimeError("the hook argument should refer to a class in a module")
+
+    if issubclass(obj, BaseHook):
+        raise RuntimeError("the hook {} is not a subclass of `fuzz.BaseHook`)".format(hook_path))
+
+    return obj()
+
+
+class BaseHook:
+    def setup_main(self, args):
+        """
+        This function is guaranteed to only ever be called once, in the main process.
+        """
+        pass
+
+    def setup_worker(self, args):
+        """
+        This function is guaranteed to only ever be called once per worker process. It can be used to load extra apworlds for example.
+        """
+        pass
+
+    def reclassify_outcome(self, outcome, raised):
+        """
+        This function is called once after a generation outcome has been decided.
+        You can reclassify the outcome with this before it is returned to the main process by returning a new `GenOutcome`
+        Note that because timeouts are processed by the main process and not by the worker itself (as it is busy timing out),
+        this function can be called from both the main process and the workers.
+        """
+        return outcome
+
+    def before_generate(self):
+        pass
+
+    def after_generate(self):
+        pass
+
+    def finalize(self):
+        pass
+
 if __name__ == "__main__":
+    MAIN_HOOKS = []
 
     def main(p, args):
         global SUBMITTED
@@ -374,6 +527,12 @@ if __name__ == "__main__":
         if os.path.exists(OUT_DIR):
             shutil.rmtree(OUT_DIR)
         os.makedirs(OUT_DIR)
+
+        for hook_class_path in args.hook:
+            hook = find_hook(hook_class_path)
+            hook.setup_main(args)
+
+            MAIN_HOOKS.append(hook)
 
         sys.stdout.write("\x1b[2J\x1b[H")
         sys.stdout.flush()
@@ -397,6 +556,37 @@ if __name__ == "__main__":
             if yamls_per_run_bounds[0] >= yamls_per_run_bounds[1]:
                 raise Exception("Invalid range value passed for `yamls_per_run`.")
 
+        static_yamls = []
+        if args.with_static_worlds:
+            for yaml_file in os.listdir(args.with_static_worlds):
+                path = os.path.join(args.with_static_worlds, yaml_file)
+                if not os.path.isfile(path):
+                    continue
+                with open(path, "r") as fd:
+                    static_yamls.append(fd.read())
+
+
+        manager = multiprocessing.Manager()
+        queue = manager.Queue(1000)
+        def handle_timeouts():
+            while True:
+                try:
+                    pid, apworld_name, i, yamls_dir, out_buf = queue.get()
+                    os.kill(pid, signal.SIGTERM)
+
+                    extra = f"[...] Generation killed here after {args.timeout}s"
+                    outcome = GenOutcome.Timeout
+                    for hook in MAIN_HOOKS:
+                        outcome = hook.classify(outcome, TimeoutError())
+                    dump_generation_output(outcome, apworld_name, i, yamls_dir, out_buf, extra)
+                    gen_callback(yamls_dir, args, outcome)
+                except:
+                    break
+
+        timeout_handler = threading.Thread(target=handle_timeouts)
+        timeout_handler.daemon = True
+        timeout_handler.start()
+
         while i < args.runs:
             if apworld_name is None:
                 actual_apworld = random.choice(valid_worlds)
@@ -416,11 +606,22 @@ if __name__ == "__main__":
             ]
 
             SUBMITTED += 1
+
+            # We don't care about the actual gen output, just trash it immediately after gen
+            yamls_dir = tempfile.TemporaryDirectory(prefix="apfuzz")
+            for nb, yaml_content in enumerate(random_yamls):
+                yaml_path = os.path.join(yamls_dir.name, f"{i}-{nb}.yaml")
+                open(yaml_path, "wb").write(yaml_content.encode("utf-8"))
+
+            for nb, yaml_content in enumerate(static_yamls):
+                yaml_path = os.path.join(yamls_dir.name, f"static-{i}-{nb}.yaml")
+                open(yaml_path, "wb").write(yaml_content.encode("utf-8"))
+
             last_job = p.apply_async(
                 gen_wrapper,
-                args=(random_yamls, actual_apworld, args.timeout, i, args.dump_ignored),
-                callback=success,
-                error_callback=error,
+                args=(yamls_dir, actual_apworld, i, args, queue),
+                callback=functools.partial(gen_callback, yamls_dir, args), # The yamls_dir arg isn't used but we abuse functools.partial to keep the object and thus the tempdir alive
+                error_callback=functools.partial(error, yamls_dir, args),
             )
 
             while SUBMITTED >= args.jobs * 10:
@@ -437,14 +638,21 @@ if __name__ == "__main__":
     parser = ArgumentParser(prog="apfuzz")
     parser.add_argument("-g", "--game", default=None)
     parser.add_argument("-j", "--jobs", default=10, type=int)
-    parser.add_argument("-r", "--runs", type=int)
+    parser.add_argument("-r", "--runs", type=int, required=True)
     parser.add_argument("-n", "--yamls_per_run", default="1", type=str)
     parser.add_argument("-t", "--timeout", default=15, type=int)
     parser.add_argument("-m", "--meta", default=None, type=None)
     parser.add_argument("--dump-ignored", default=False, action="store_true")
+    parser.add_argument("--with-static-worlds", default=None)
+    parser.add_argument("--hook", action="append", default=[])
+    parser.add_argument("--skip-output", default=False, action="store_true")
 
     args = parser.parse_args()
 
+    # This is just to make sure that the host.yaml file exists by the time we fork
+    # so that a first run on a new installation doesn't throw out failures until
+    # the host.yaml from the first gen is written
+    get_settings()
     try:
         can_fork = hasattr(os, "fork")
         # fork here is way faster because it doesn't have to reload all worlds, but it's only available on some platforms
@@ -456,6 +664,12 @@ if __name__ == "__main__":
             main(p, args)
     except KeyboardInterrupt:
         pass
+    except Exception as e:
+        traceback.print_exc()
     finally:
         print_status()
-        executor.shutdown()
+
+        for hook in MAIN_HOOKS:
+            hook.finalize()
+
+        sys.exit((FAILURE + TIMEOUTS) != 0)

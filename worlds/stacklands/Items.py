@@ -1,8 +1,10 @@
 import logging
+from .Enums import ItemFlags, RegionFlags
+from .Options import StacklandsOptions
 from enum import Enum
 from typing import Dict, List, NamedTuple
 from BaseClasses import Item, ItemClassification, MultiWorld, LocationProgressType
-from .Locations import goal_table
+# from .Locations import goal_table
 
 class ItemRegion(Enum):
     Any = 0
@@ -12,8 +14,9 @@ class ItemRegion(Enum):
 
 class ItemData(NamedTuple):
     name: str
-    classification: ItemClassification
-    region: ItemRegion
+    region_flags: RegionFlags
+    item_flags: ItemFlags
+    classification_flags: ItemClassification
 
 class StacklandsItem(Item):
     game = "Stacklands"
@@ -21,7 +24,7 @@ class StacklandsItem(Item):
     def __init__(self, code: int, item: ItemData, player: int = None):
         super(StacklandsItem, self).__init__(
             item.name,
-            item.classification,
+            item.classification_flags,
             code,
             player
         )
@@ -32,86 +35,86 @@ item_table: List[ItemData] = [
 #region Mainland Items
 
     # Booster Packs
-    ItemData("Humble Beginnings Booster Pack",      ItemClassification.progression,                                ItemRegion.Mainland),
-    ItemData("Seeking Wisdom Booster Pack",         ItemClassification.progression,                                ItemRegion.Mainland),
-    ItemData("Reap & Sow Booster Pack",             ItemClassification.progression,                                ItemRegion.Mainland),
-    ItemData("Curious Cuisine Booster Pack",        ItemClassification.progression,                                ItemRegion.Mainland),
-    ItemData("Logic and Reason Booster Pack",       ItemClassification.progression,                                ItemRegion.Mainland),
-    ItemData("The Armory Booster Pack",             ItemClassification.progression,                                ItemRegion.Mainland),
-    ItemData("Explorers Booster Pack",              ItemClassification.progression,                                ItemRegion.Mainland),
-    ItemData("Order and Structure Booster Pack",    ItemClassification.progression,                                ItemRegion.Mainland),
+    ItemData("Humble Beginnings Booster Pack"       , RegionFlags.Mainland   , ItemFlags.Booster     , ItemClassification.progression),
+    ItemData("Seeking Wisdom Booster Pack"          , RegionFlags.Mainland   , ItemFlags.Booster     , ItemClassification.progression),
+    ItemData("Reap & Sow Booster Pack"              , RegionFlags.Mainland   , ItemFlags.Booster     , ItemClassification.progression),
+    ItemData("Curious Cuisine Booster Pack"         , RegionFlags.Mainland   , ItemFlags.Booster     , ItemClassification.progression),
+    ItemData("Logic and Reason Booster Pack"        , RegionFlags.Mainland   , ItemFlags.Booster     , ItemClassification.progression),
+    ItemData("The Armory Booster Pack"              , RegionFlags.Mainland   , ItemFlags.Booster     , ItemClassification.progression),
+    ItemData("Explorers Booster Pack"               , RegionFlags.Mainland   , ItemFlags.Booster     , ItemClassification.progression),
+    ItemData("Order and Structure Booster Pack"     , RegionFlags.Mainland   , ItemFlags.Booster     , ItemClassification.progression),
 
     # Progression
-    ItemData("Idea: Brick",                         ItemClassification.progression,                                ItemRegion.Mainland),
-    ItemData("Idea: Brickyard",                     ItemClassification.progression,                                ItemRegion.Mainland),
-    ItemData("Idea: Campfire",                      ItemClassification.progression,                                ItemRegion.Mainland),
-    ItemData("Idea: Cooked Meat",                   ItemClassification.progression,                                ItemRegion.Mainland),
-    ItemData("Idea: Farm",                          ItemClassification.progression,                                ItemRegion.Mainland),
-    ItemData("Idea: Frittata",                      ItemClassification.progression,                                ItemRegion.Mainland),
-    ItemData("Idea: Growth",                        ItemClassification.progression,                                ItemRegion.Mainland),
-    ItemData("Idea: House",                         ItemClassification.progression,                                ItemRegion.Mainland),
-    ItemData("Idea: Iron Bar",                      ItemClassification.progression,                                ItemRegion.Mainland),
-    ItemData("Idea: Iron Mine",                     ItemClassification.progression,                                ItemRegion.Mainland),
-    ItemData("Idea: Lumber Camp",                   ItemClassification.progression,                                ItemRegion.Mainland),
-    ItemData("Idea: Magic Wand",                    ItemClassification.progression,                                ItemRegion.Mainland),
-    ItemData("Idea: Market",                        ItemClassification.progression,                                ItemRegion.Mainland),
-    ItemData("Idea: Omelette",                      ItemClassification.progression,                                ItemRegion.Mainland),
-    ItemData("Idea: Offspring",                     ItemClassification.progression,                                ItemRegion.Mainland),
-    ItemData("Idea: Plank",                         ItemClassification.progression,                                ItemRegion.Mainland),
-    ItemData("Idea: Quarry",                        ItemClassification.progression,                                ItemRegion.Mainland),
-    ItemData("Idea: Shed",                          ItemClassification.progression,                                ItemRegion.Mainland),
-    ItemData("Idea: Slingshot",                     ItemClassification.progression,                                ItemRegion.Mainland),
-    ItemData("Idea: Smelter",                       ItemClassification.progression,                                ItemRegion.Mainland),
-    ItemData("Idea: Smithy",                        ItemClassification.progression,                                ItemRegion.Mainland),
-    ItemData("Idea: Spear",                         ItemClassification.progression,                                ItemRegion.Mainland),
-    ItemData("Idea: Stick",                         ItemClassification.progression,                                ItemRegion.Mainland),
-    ItemData("Idea: Sword",                         ItemClassification.progression,                                ItemRegion.Mainland),
-    ItemData("Idea: Temple",                        ItemClassification.progression,                                ItemRegion.Mainland),
-    ItemData("Idea: Throwing Stars",                ItemClassification.progression,                                ItemRegion.Mainland),
+    ItemData("Idea: Brick"                          , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.progression),
+    ItemData("Idea: Brickyard"                      , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.progression),
+    ItemData("Idea: Campfire"                       , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.progression),
+    ItemData("Idea: Cooked Meat"                    , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.progression),
+    ItemData("Idea: Farm"                           , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.progression),
+    ItemData("Idea: Frittata"                       , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.progression),
+    ItemData("Idea: Growth"                         , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.progression),
+    ItemData("Idea: House"                          , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.progression),
+    ItemData("Idea: Iron Bar"                       , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.progression),
+    ItemData("Idea: Iron Mine"                      , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.progression),
+    ItemData("Idea: Lumber Camp"                    , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.progression),
+    ItemData("Idea: Magic Wand"                     , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.progression),
+    ItemData("Idea: Market"                         , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.progression),
+    ItemData("Idea: Omelette"                       , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.progression),
+    ItemData("Idea: Offspring"                      , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.progression),
+    ItemData("Idea: Plank"                          , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.progression),
+    ItemData("Idea: Quarry"                         , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.progression),
+    ItemData("Idea: Shed"                           , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.progression),
+    ItemData("Idea: Slingshot"                      , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.progression),
+    ItemData("Idea: Smelter"                        , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.progression),
+    ItemData("Idea: Smithy"                         , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.progression),
+    ItemData("Idea: Spear"                          , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.progression),
+    ItemData("Idea: Stick"                          , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.progression),
+    ItemData("Idea: Sword"                          , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.progression),
+    ItemData("Idea: Temple"                         , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.progression),
+    ItemData("Idea: Throwing Stars"                 , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.progression),
 
     # Useful
-    ItemData("Idea: Axe",                           ItemClassification.useful,                                     ItemRegion.Mainland),
-    ItemData("Idea: Charcoal",                      ItemClassification.useful,                                     ItemRegion.Mainland),
-    ItemData("Idea: Coin Chest",                    ItemClassification.useful,                                     ItemRegion.Mainland),
-    ItemData("Idea: Hammer",                        ItemClassification.useful,                                     ItemRegion.Mainland),
-    ItemData("Idea: Iron Shield",                   ItemClassification.useful,                                     ItemRegion.Mainland),
-    ItemData("Idea: Pickaxe",                       ItemClassification.useful,                                     ItemRegion.Mainland),
-    ItemData("Idea: Resource Chest",                ItemClassification.useful,                                     ItemRegion.Mainland),
-    ItemData("Idea: Sawmill",                       ItemClassification.useful,                                     ItemRegion.Mainland),
-    ItemData("Idea: Warehouse",                     ItemClassification.useful,                                     ItemRegion.Mainland),
-    ItemData("Idea: Wooden Shield",                 ItemClassification.useful,                                     ItemRegion.Mainland),
+    ItemData("Idea: Axe"                            , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.useful     ),
+    ItemData("Idea: Charcoal"                       , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.useful     ),
+    ItemData("Idea: Coin Chest"                     , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.useful     ),
+    ItemData("Idea: Hammer"                         , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.useful     ),
+    ItemData("Idea: Iron Shield"                    , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.useful     ),
+    ItemData("Idea: Pickaxe"                        , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.useful     ),
+    ItemData("Idea: Resource Chest"                 , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.useful     ),
+    ItemData("Idea: Sawmill"                        , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.useful     ),
+    ItemData("Idea: Warehouse"                      , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.useful     ),
+    ItemData("Idea: Wooden Shield"                  , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.useful     ),
 
     # Filler
-    ItemData("Idea: Animal Pen",                    ItemClassification.filler,                                     ItemRegion.Mainland),
-    ItemData("Idea: Bone Spear",                    ItemClassification.filler,                                     ItemRegion.Mainland),
-    ItemData("Idea: Boomerang",                     ItemClassification.filler,                                     ItemRegion.Mainland),
-    ItemData("Idea: Breeding Pen",                  ItemClassification.filler,                                     ItemRegion.Mainland),
-    ItemData("Idea: Butchery",                      ItemClassification.filler,                                     ItemRegion.Mainland),
-    ItemData("Idea: Chainmail Armor",               ItemClassification.filler,                                     ItemRegion.Mainland),
-    ItemData("Idea: Chicken",                       ItemClassification.filler,                                     ItemRegion.Mainland),
-    ItemData("Idea: Club",                          ItemClassification.filler,                                     ItemRegion.Mainland),
-    ItemData("Idea: Crane",                         ItemClassification.filler,                                     ItemRegion.Mainland),
-    ItemData("Idea: Dustbin",                       ItemClassification.filler,                                     ItemRegion.Mainland), 
-    ItemData("Idea: Fruit Salad",                   ItemClassification.filler,                                     ItemRegion.Mainland),
-    ItemData("Idea: Garden",                        ItemClassification.filler,                                     ItemRegion.Mainland),
-    ItemData("Idea: Hotpot",                        ItemClassification.filler,                                     ItemRegion.Mainland),
-    ItemData("Idea: Magic Blade",                   ItemClassification.filler,                                     ItemRegion.Mainland),
-    ItemData("Idea: Magic Glue",                    ItemClassification.filler,                                     ItemRegion.Mainland),
-    ItemData("Idea: Magic Ring",                    ItemClassification.filler,                                     ItemRegion.Mainland),
-    ItemData("Idea: Magic Staff",                   ItemClassification.filler,                                     ItemRegion.Mainland),
-    ItemData("Idea: Magic Tome",                    ItemClassification.filler,                                     ItemRegion.Mainland),
-    ItemData("Idea: Mess Hall",                     ItemClassification.filler,                                     ItemRegion.Mainland),
-    ItemData("Idea: Milkshake",                     ItemClassification.filler,                                     ItemRegion.Mainland),
-    ItemData("Idea: Spiked Plank",                  ItemClassification.filler,                                     ItemRegion.Mainland),
-    ItemData("Idea: Stew",                          ItemClassification.filler,                                     ItemRegion.Mainland),
-    ItemData("Idea: Stove",                         ItemClassification.filler,                                     ItemRegion.Mainland),
-    ItemData("Idea: University",                    ItemClassification.filler,                                     ItemRegion.Mainland),
+    ItemData("Idea: Animal Pen"                     , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ),
+    ItemData("Idea: Bone Spear"                     , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ),
+    ItemData("Idea: Boomerang"                      , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ),
+    ItemData("Idea: Breeding Pen"                   , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ),
+    ItemData("Idea: Butchery"                       , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ),
+    ItemData("Idea: Chainmail Armor"                , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ),
+    ItemData("Idea: Chicken"                        , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ),
+    ItemData("Idea: Club"                           , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ),
+    ItemData("Idea: Crane"                          , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ),
+    ItemData("Idea: Dustbin"                        , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ), 
+    ItemData("Idea: Fruit Salad"                    , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ),
+    ItemData("Idea: Garden"                         , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ),
+    ItemData("Idea: Hotpot"                         , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ),
+    ItemData("Idea: Magic Blade"                    , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ),
+    ItemData("Idea: Magic Glue"                     , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ),
+    ItemData("Idea: Magic Ring"                     , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ),
+    ItemData("Idea: Magic Staff"                    , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ),
+    ItemData("Idea: Magic Tome"                     , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ),
+    ItemData("Idea: Mess Hall"                      , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ),
+    ItemData("Idea: Milkshake"                      , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ),
+    ItemData("Idea: Spiked Plank"                   , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ),
+    ItemData("Idea: Stew"                           , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ),
+    ItemData("Idea: Stove"                          , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ),
+    ItemData("Idea: University"                     , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ),
 
 #endregion
 
 #region The Dark Forest Items
 
-    ItemData("Idea: Stable Portal",                 ItemClassification.progression,                                ItemRegion.DarkForest),
+    ItemData("Idea: Stable Portal"                  , RegionFlags.Forest     , ItemFlags.Idea        , ItemClassification.progression),
 
 #endregion
 
@@ -123,33 +126,33 @@ item_table: List[ItemData] = [
 
 #region Junk Items
 
-    ItemData("Apple Tree",                          ItemClassification.filler,                                     ItemRegion.Any),
-    ItemData("Berry x3",                            ItemClassification.filler,                                     ItemRegion.Any),
-    ItemData("Berry Bush",                          ItemClassification.filler,                                     ItemRegion.Any),
-    ItemData("Coin",                                ItemClassification.filler,                                     ItemRegion.Any),
-    ItemData("Coin x5",                             ItemClassification.filler,                                     ItemRegion.Any),
-    ItemData("Coin x10",                            ItemClassification.filler,                                     ItemRegion.Any),
-    ItemData("Egg x3",                              ItemClassification.filler,                                     ItemRegion.Any),
-    ItemData("Flint x3",                            ItemClassification.filler,                                     ItemRegion.Any),
-    ItemData("Iron Deposit",                        ItemClassification.filler,                                     ItemRegion.Any),
-    ItemData("Iron Ore x3",                         ItemClassification.filler,                                     ItemRegion.Any),
-    ItemData("Milk x3",                             ItemClassification.filler,                                     ItemRegion.Any),
-    ItemData("Rock",                                ItemClassification.filler,                                     ItemRegion.Any),
-    ItemData("Stick x3",                            ItemClassification.filler,                                     ItemRegion.Any),
-    ItemData("Stone x3",                            ItemClassification.filler,                                     ItemRegion.Any),
-    ItemData("Tree",                                ItemClassification.filler,                                     ItemRegion.Any),
-    ItemData("Wood x3",                             ItemClassification.filler,                                     ItemRegion.Any),
+    ItemData("Apple Tree"                           , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ),
+    ItemData("Berry x3"                             , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ),
+    ItemData("Berry Bush"                           , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ),
+    ItemData("Coin"                                 , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ),
+    ItemData("Coin x5"                              , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ),
+    ItemData("Coin x10"                             , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ),
+    ItemData("Egg x3"                               , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ),
+    ItemData("Flint x3"                             , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ),
+    ItemData("Iron Deposit"                         , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ),
+    ItemData("Iron Ore x3"                          , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ),
+    ItemData("Milk x3"                              , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ),
+    ItemData("Rock"                                 , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ),
+    ItemData("Stick x3"                             , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ),
+    ItemData("Stone x3"                             , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ),
+    ItemData("Tree"                                 , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ),
+    ItemData("Wood x3"                              , RegionFlags.Mainland   , ItemFlags.Idea        , ItemClassification.filler     ),
 
 #endregion
 
 #region Trap Items
 
-    ItemData("Chickens",                            ItemClassification.trap,                                       ItemRegion.Any),
-    ItemData("Goop",                                ItemClassification.trap,                                       ItemRegion.Any),
-    ItemData("Rabbits",                             ItemClassification.trap,                                       ItemRegion.Any),
-    ItemData("Rat",                                 ItemClassification.trap,                                       ItemRegion.Any),
-    ItemData("Slime",                               ItemClassification.trap,                                       ItemRegion.Any),
-    ItemData("Snake",                               ItemClassification.trap,                                       ItemRegion.Any),
+    ItemData("Chickens"                             , RegionFlags.Mainland   , ItemFlags.Mob         , ItemClassification.trap       ),
+    ItemData("Goop"                                 , RegionFlags.Mainland   , ItemFlags.Mob         , ItemClassification.trap       ),
+    ItemData("Rabbits"                              , RegionFlags.Mainland   , ItemFlags.Mob         , ItemClassification.trap       ),
+    ItemData("Rat"                                  , RegionFlags.Mainland   , ItemFlags.Mob         , ItemClassification.trap       ),
+    ItemData("Slime"                                , RegionFlags.Mainland   , ItemFlags.Mob         , ItemClassification.trap       ),
+    ItemData("Snake"                                , RegionFlags.Mainland   , ItemFlags.Mob         , ItemClassification.trap       ),
 
     # More trap items coming soon...
 
@@ -159,18 +162,18 @@ item_table: List[ItemData] = [
 # Item group mapping table
 group_table: Dict[str, set[str]] = {
 
-    "All Ideas": set(item.name for item in item_table if item.name.startswith("Idea:")),
+    "All Ideas": set(item.name for item in item_table if item.item_flags == ItemFlags.Idea),
 
     # Mainland
-    "All Mainland Ideas": set(item.name for item in item_table if item.region == ItemRegion.Mainland and item.name.startswith("Idea:")),
-    "All Mainland Booster Packs": set(item.name for item in item_table if item.region == ItemRegion.Mainland and item.name.endswith("Booster Pack")),
+    "All Mainland Ideas": set(item.name for item in item_table if item.region_flags == RegionFlags.Mainland and item.item_flags == ItemFlags.Idea),
+    "All Mainland Booster Packs": set(item.name for item in item_table if item.region_flags == RegionFlags.Mainland and item.item_flags == ItemFlags.Booster),
 
     # Dark Forest
-    "All Dark Forest Ideas": set(item.name for item in item_table if item.region == ItemRegion.DarkForest and item.name.startswith("Idea:")),
+    "All Dark Forest Ideas": set(item.name for item in item_table if item.region_flags == RegionFlags.Forest and item.item_flags == ItemFlags.Idea),
     
     # The Island
-    # "All Island Ideas": set(item.name for item in item_table if item.region == ItemRegion.Island and item.name.startswith("Idea:")),
-    # "All Island Booster Packs": set(item.name for item in item_table if item.region == ItemRegion.Island and item.name.endswith("Booster Pack")),
+    # "All Island Ideas": set(item.name for item in item_table if item.region_flags == RegionFlags.Island and item.item_flags == ItemFlags.Idea),
+    # "All Island Booster Packs": set(item.name for item in item_table if item.region_flags == RegionFlags.Island and item.item_flags == ItemFlags.Booster),
 }
 
 base_id: int = 91000
@@ -183,113 +186,178 @@ for item in item_table:
     name_to_id[item.name] = current_id
     current_id += 1
 
-# Create all items
-def create_all_items(world: MultiWorld, player: int) -> None:
+def create_mainland_items(world: MultiWorld, player: int, options: StacklandsOptions):
 
-    # Get goal
-    options = world.worlds[player].options
+    # Prepare item pool
+    item_pool: List[Item] = []
 
-    # Get list of items to exclude if in starting inventory
-    exclude = [item for item in world.precollected_items[player]]
+    logging.info("----- Creating 'Mainland' Items -----")
 
-    logging.info(f"Adding progression and useful items to the pool...")
+    # If mainland board is selected in YAML
+    if options.boards.value & RegionFlags.Mainland:
 
-    # Add all progression and useful items to pool from all applicable regions
-    pool = []
-    for item in [
-        item for item in item_table if
-        (item.classification == ItemClassification.progression or item.classification == ItemClassification.useful) and
-        (
-            (item.region is ItemRegion.Any) or                                      # Item is for any region
-            (item.region is ItemRegion.Mainland) or                                 # Item is for Mainland
-            (options.dark_forest.value and item.region is ItemRegion.DarkForest)    # Item is for The Dark Forest and Dark Forest has been enabled
-        )
-    ]:
-        # Generate item object
-        item_obj = StacklandsItem(name_to_id[item.name], item, player)
+        # Get items from starting inventory
+        excluded_items: List[Item] = world.precollected_items[player]
 
-        # If item is not in starting inventory, add to pool
-        if item_obj not in exclude:
-            pool.append(item_obj)
+        # Get all items for region
+        region_items: List[ItemData] = [ item for item in item_table if item.region_flags is RegionFlags.Mainland ]
 
-    # Add items to item pool
-    world.itempool += pool
+        # Add progression and useful items for region to the pool
+        for item_data in [ item for item in region_items if item.classification_flags & (ItemClassification.progression | ItemClassification.useful) ]:
 
-    # Calculate how many locations there are left to fill
-    unfilled_count: int = len(world.get_unfilled_locations(player)) - len(pool)
+            # Generate AP item
+            item: StacklandsItem = StacklandsItem(name_to_id[item_data.name], item_data, player)
 
-    logging.info(f"There are {unfilled_count} locations left to fill")
+            # If item is not in the starting inventory, add it to the prospective item pool
+            if item not in excluded_items:
+                item_pool.append(item)
 
-    # If we have fewer items than locations, add trap items if enabled
-    if options.traps.value and unfilled_count > 0:
+    logging.info(f"Adding {len(item_pool)} items to the item pool")
 
-        logging.info(f"Adding trap items to the pool...")
+    # Add items to world item pool
+    world.itempool += item_pool
 
-        trap_pool = []
+def create_forest_items(world: MultiWorld, player: int, options: StacklandsOptions):
 
-        # Get all trap items
-        trap_items = [
-            item for item in item_table if
-            (item.classification == ItemClassification.trap) and
-            (
-                (item.region is ItemRegion.Any) or                                      # Item is for any region
-                (item.region is ItemRegion.Mainland) or                                 # Item is for Mainland
-                (options.dark_forest.value and item.region is ItemRegion.DarkForest)    # Item is for The Dark Forest and Dark Forest has been enabled
-            )
-        ]
+    # Prepare item pool
+    item_pool: List[Item] = []
 
-        # Shuffle list to prevent same traps being added each time (if this will fill the remaining locations)
-        world.random.shuffle(trap_items)
+    logging.info("----- Creating 'The Dark Forest' Items -----")
 
-        # Create and prepare each trap item
-        for trap_item in trap_items:
-            trap_pool.append(StacklandsItem(name_to_id[trap_item.name], trap_item, player))
-            unfilled_count -= 1
-            
-            # Bail out if no remaining unfilled locations
-            if unfilled_count == 0:
-                break
+    # If The Dark Forest board is selected in YAML
+    if options.boards.value & RegionFlags.Forest:
 
-        # Add trap items to pool
-        world.itempool += trap_pool
+        # Get items from starting inventory
+        excluded_items: List[Item] = world.precollected_items[player]
 
-    logging.info(f"There are {unfilled_count} locations left to fill")
+        # Get all items for region
+        region_items: List[ItemData] = [ item for item in item_table if item.region_flags is RegionFlags.Forest ]
 
-    # If any locations remain un-filled, add filler items until full
+        # Add progression and useful items for region to the pool
+        for item_data in [ item for item in region_items if item.classification_flags & (ItemClassification.progression | ItemClassification.useful) ]:
+
+            # Generate AP item
+            item: StacklandsItem = StacklandsItem(name_to_id[item_data.name], item_data, player)
+
+            # If item is not in the starting inventory, add it to the prospective item pool
+            if item not in excluded_items:
+                item_pool.append(item)
+
+    logging.info(f"Adding {len(item_pool)} items to the item pool")
+
+    # Add items to world item pool
+    world.itempool += item_pool
+
+def create_filler_items(world: MultiWorld, player: int, options: StacklandsOptions):
+
+    # Prepare item pool
+    item_pool: List[Item] = []
+
+    logging.info("----- Creating Trap / Filler Items -----")
+
+    # Calculate how many filler items to create
+    unfilled_count: int = len(world.get_unfilled_locations(player)) - len(world.itempool)
+
+    # If filler items need creating
     if unfilled_count > 0:
 
-        logging.info(f"Adding filler items to the pool...")
+        logging.info(f"There are currently {unfilled_count} un-filled locations")
 
-        junk_pool = []
+        # Get all filler and trap items
+        filler_items: List[ItemData] = [ item for item in item_table if item.classification_flags is ItemClassification.filler or item.classification_flags & ItemClassification.trap ]
 
-        # In the unlikely scenario that one cycle of all filler items isn't enough, allow it to repeat until full
-        while unfilled_count > 0:
+        # Calculate selected boards
+        mainland_selected: bool = bool(options.boards.value & RegionFlags.Mainland)
+        forest_selected: bool = bool(options.boards.value & RegionFlags.Forest)
 
-            # Get all junk / filler items
-            junk_items = [
-                item for item in item_table if
-                (item.classification == ItemClassification.filler) and
+        # If trap items are enabled
+        if options.traps.value:
+
+            logging.info("Adding trap items to the item pool...")
+
+            # Get trap items for selected boards
+            trap_items: List[ItemData] = [
+                item for item in filler_items if 
+                item.classification_flags & ItemClassification.trap and                 # Item is a trap item
                 (
-                    (item.region is ItemRegion.Any) or                                      # Item is for any region
-                    (item.region is ItemRegion.Mainland) or                                 # Item is for Mainland
-                    (options.dark_forest.value and item.region is ItemRegion.DarkForest)    # Item is for The Dark Forest and Dark Forest has been enabled
+                    (mainland_selected and item.region_flags & RegionFlags.Mainland)    # Item is for Mainland and that board is selected
+                    or (forest_selected and item.region_flags & RegionFlags.Forest)     # Item is for The Dark Forest and that board is selected
                 )
             ]
 
-            # Shuffle junk items to prevent same junk items being added each time
-            world.random.shuffle(junk_items)
+            # If there are fewer item slots than total trap items, shuffle them to make the limited selection random
+            if (unfilled_count < len(trap_items)):
+                world.random.shuffle(trap_items)
 
-            # Add filler items until full
-            for junk_item in junk_items:
-                junk_pool.append(StacklandsItem(name_to_id[junk_item.name], junk_item, player))
+            # Create and add trap items to the prospective pool
+            for trap_item in trap_items:
+
+                logging.info(f"Creating trap item '{trap_item.name}...")
+
+                trap: StacklandsItem = StacklandsItem(name_to_id[trap_item.name], trap_item, player)
+                item_pool.append(trap)
+                
+                # Decrement the unfilled count
                 unfilled_count -= 1
 
-                # Bail out if no remaining unfilled locations
+                # If no more filler items required, break from for loop
                 if unfilled_count == 0:
                     break
 
-        # Add all junk items to item pool
-        world.itempool += junk_pool
+        if unfilled_count > 0:
+
+            logging.info(f"There are currently {unfilled_count} un-filled locations")
+
+            junk_items: List[ItemData] = [
+                item for item in filler_items if
+                item.classification_flags is ItemClassification.filler and              # Item is a filler item
+                (
+                    (mainland_selected and item.region_flags & RegionFlags.Mainland)    # Item is for Mainland and that board is selected
+                    or (forest_selected and item.region_flags & RegionFlags.Forest)     # Item is for The Dark Forest and that board is selected
+                )
+            ]
+
+            logging.info("Adding junk items to the item pool...")
+
+            # Continue to fill pool until filled
+            while unfilled_count > 0:
+
+                # If there are fewer junk items than available slots, shuffle the list to make the limited selection random
+                if unfilled_count < len(junk_items):
+                    world.random.shuffle(junk_items)
+
+                # Create and add junk items to the prospective pool
+                for junk_item in junk_items:
+
+                    logging.info(f"Creating junk item '{junk_item.name}...")
+
+                    junk: StacklandsItem = StacklandsItem(name_to_id[junk_item.name], junk_item, player)
+                    item_pool.append(junk)
+                    
+                    # Decrement the unfilled count
+                    unfilled_count -= 1
+
+                    # If no more filler items required, break from for loop
+                    if unfilled_count == 0:
+                        break
+
+    # Add filler items to the item pool
+    world.itempool += item_pool
+
+# Create all items
+def create_all_items(world: MultiWorld, player: int) -> None:
+
+    # Get YAML options
+    options = world.worlds[player].options
+
+    # Add mainland progression / useful items
+    create_mainland_items(world, player, options)
+
+    # Add forest progression / useful items
+    create_forest_items(world, player, options)
+
+    # Add remaining trap / filler items
+    create_filler_items(world, player, options)
 
     logging.info(f"Total items: {len(world.itempool)}")
     logging.info(f"Total locations: {len(world.get_unfilled_locations())}")
