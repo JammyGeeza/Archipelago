@@ -248,54 +248,126 @@ def create_forest_items(world: MultiWorld, player: int, options: StacklandsOptio
     # Add items to world item pool
     world.itempool += item_pool
 
+def create_trap_items(world: MultiWorld, player: int, options: StacklandsOptions):
+
+    # Prepare trap pool
+    trap_pool: List[Item] = []
+
+    # If traps are enabled and the weighting is greater than 0%
+    if options.traps.value and options.trap_weighting.value > 0:
+
+        logging.info("----- Creating Trap Items -----")
+
+        # Calculate how many item slots need filling
+        unfilled_count: int = len(world.get_unfilled_locations(player)) - len(world.itempool)
+
+        # Check if there are available item slots
+        if unfilled_count > 0:
+
+            logging.info(f"There are {unfilled_count} item slots to be filled")
+
+            # Calculate how many trap items to create
+            trap_count: int = round(unfilled_count * options.trap_weighting.value / 100)
+
+            # Check that calculated trap count is one or more
+            if trap_count > 0:
+
+                # Calculate selected boards
+                mainland_selected: bool = bool(options.boards.value & RegionFlags.Mainland)
+                forest_selected: bool = bool(options.boards.value & RegionFlags.Forest)
+
+                # Get all filler and trap items
+                trap_items: List[ItemData] = [ 
+                    item for item in item_table if 
+                    item.classification_flags & ItemClassification.trap                     # Item is a trap
+                    and (
+                        (mainland_selected and item.region_flags & RegionFlags.Mainland)    # Item is for Mainland and that board is selected
+                        or (forest_selected and item.region_flags & RegionFlags.Forest)     # Item is for The Dark Forest and that board is selected
+                    )
+                ]
+
+                logging.info(f"Attempting to add {trap_count} trap items to the item pool (trap weighting {options.trap_weighting.value}%)...")
+
+                # Fill until trap count reached
+                while trap_count > 0:
+
+                    # Shuffle list    
+                    world.random.shuffle(trap_items)
+
+                    # Add trap items to trap pool
+                    for trap_item in trap_items:
+
+                        logging.info(f"Creating trap item '{trap_item.name}'...")
+
+                        trap: StacklandsItem = StacklandsItem(name_to_id[trap_item.name], trap_item, player)
+                        trap_pool.append(trap)
+                        
+                        # Decrement the trap count
+                        trap_count -= 1
+
+                        # If no more trap items required, break from for loop
+                        if trap_count == 0:
+                            break
+
+                logging.info(f"Added {len(trap_pool)} trap items to the item pool")
+
+            else:
+                logging.info("Trap count not high enough due to item slot availability and trap weighting - skipping...")
+
+        else:
+            logging.info("No unfilled item slots available for trap items - skipping...")
+
+    else:
+        logging.info("Trap item options are disabled - skipping...")
+
+    # Add trap items to item pool
+    world.itempool += trap_pool
+
 def create_filler_items(world: MultiWorld, player: int, options: StacklandsOptions):
 
     # Prepare item pool
-    item_pool: List[Item] = []
+    filler_pool: List[Item] = []
 
-    logging.info("----- Creating Trap / Filler Items -----")
+    logging.info("----- Creating Filler Items -----")
 
-    # Calculate how many filler items to create
+    # Calculate how many item slots need filling
     unfilled_count: int = len(world.get_unfilled_locations(player)) - len(world.itempool)
 
     # If filler items need creating
     if unfilled_count > 0:
 
-        logging.info(f"There are currently {unfilled_count} un-filled locations")
-
-        # Get all filler and trap items
-        filler_items: List[ItemData] = [ item for item in item_table if item.classification_flags is ItemClassification.filler or item.classification_flags & ItemClassification.trap ]
+        logging.info(f"There are {unfilled_count} item slots to be filled")
 
         # Calculate selected boards
         mainland_selected: bool = bool(options.boards.value & RegionFlags.Mainland)
         forest_selected: bool = bool(options.boards.value & RegionFlags.Forest)
 
-        # If trap items are enabled
-        if options.traps.value:
+        # Get all filler and trap items
+        filler_items: List[ItemData] = [ 
+            item for item in item_table if
+            item.classification_flags is ItemClassification.filler                  # Item is a filler item
+            and (
+                (mainland_selected and item.region_flags & RegionFlags.Mainland)    # Item is for Mainland and that board is selected
+                or (forest_selected and item.region_flags & RegionFlags.Forest)     # Item is for The Dark Forest and that board is selected
+            )
+        ]
 
-            logging.info("Adding trap items to the item pool...")
+        logging.info(f"Attempting to add {unfilled_count} filler items to the item pool...")
 
-            # Get trap items for selected boards
-            trap_items: List[ItemData] = [
-                item for item in filler_items if 
-                item.classification_flags & ItemClassification.trap and                 # Item is a trap item
-                (
-                    (mainland_selected and item.region_flags & RegionFlags.Mainland)    # Item is for Mainland and that board is selected
-                    or (forest_selected and item.region_flags & RegionFlags.Forest)     # Item is for The Dark Forest and that board is selected
-                )
-            ]
+        # Continue to fill pool until filled
+        while unfilled_count > 0:
 
-            # If there are fewer item slots than total trap items, shuffle them to make the limited selection random
-            if (unfilled_count < len(trap_items)):
-                world.random.shuffle(trap_items)
+            # If there are fewer junk items than available slots, shuffle the list to make the limited selection random
+            if unfilled_count < len(filler_items):
+                world.random.shuffle(filler_items)
 
-            # Create and add trap items to the prospective pool
-            for trap_item in trap_items:
+            # Create and add junk items to the prospective pool
+            for filler_item in filler_items:
 
-                logging.info(f"Creating trap item '{trap_item.name}...")
+                logging.info(f"Creating filler item '{filler_item.name}'...")
 
-                trap: StacklandsItem = StacklandsItem(name_to_id[trap_item.name], trap_item, player)
-                item_pool.append(trap)
+                junk: StacklandsItem = StacklandsItem(name_to_id[filler_item.name], filler_item, player)
+                filler_pool.append(junk)
                 
                 # Decrement the unfilled count
                 unfilled_count -= 1
@@ -304,45 +376,13 @@ def create_filler_items(world: MultiWorld, player: int, options: StacklandsOptio
                 if unfilled_count == 0:
                     break
 
-        if unfilled_count > 0:
+        logging.info(f"Added {len(filler_pool)} filler items to the item pool")
 
-            logging.info(f"There are currently {unfilled_count} un-filled locations")
-
-            junk_items: List[ItemData] = [
-                item for item in filler_items if
-                item.classification_flags is ItemClassification.filler and              # Item is a filler item
-                (
-                    (mainland_selected and item.region_flags & RegionFlags.Mainland)    # Item is for Mainland and that board is selected
-                    or (forest_selected and item.region_flags & RegionFlags.Forest)     # Item is for The Dark Forest and that board is selected
-                )
-            ]
-
-            logging.info("Adding junk items to the item pool...")
-
-            # Continue to fill pool until filled
-            while unfilled_count > 0:
-
-                # If there are fewer junk items than available slots, shuffle the list to make the limited selection random
-                if unfilled_count < len(junk_items):
-                    world.random.shuffle(junk_items)
-
-                # Create and add junk items to the prospective pool
-                for junk_item in junk_items:
-
-                    logging.info(f"Creating junk item '{junk_item.name}...")
-
-                    junk: StacklandsItem = StacklandsItem(name_to_id[junk_item.name], junk_item, player)
-                    item_pool.append(junk)
-                    
-                    # Decrement the unfilled count
-                    unfilled_count -= 1
-
-                    # If no more filler items required, break from for loop
-                    if unfilled_count == 0:
-                        break
+    else:
+        logging.info(f"No free slots for filler items - skipping...")
 
     # Add filler items to the item pool
-    world.itempool += item_pool
+    world.itempool += filler_pool
 
 # Create all items
 def create_all_items(world: MultiWorld, player: int) -> None:
@@ -355,6 +395,9 @@ def create_all_items(world: MultiWorld, player: int) -> None:
 
     # Add forest progression / useful items
     create_forest_items(world, player, options)
+
+    # Add trap items
+    create_trap_items(world, player, options)
 
     # Add remaining trap / filler items
     create_filler_items(world, player, options)

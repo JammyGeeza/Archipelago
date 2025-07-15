@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from .Enums import GoalFlags, RegionFlags
-from Options import Choice, DeathLink, PerGameCommonOptions, Toggle
+from Options import Choice, DeathLink, PerGameCommonOptions, Range, Toggle
 
 class Boards(Choice):
     """
@@ -8,6 +8,7 @@ class Boards(Choice):
 
     mainland_only               -> Include only Mainland
     mainland_and_dark_forest    -> Include both Mainland and The Dark Forest
+
     """
     # mainland_and_island         -> Include both Mainland and The Island
     # all                         -> Include Mainland, The Dark Forest and The Island
@@ -25,10 +26,14 @@ class Goal(Choice):
 
     kill_demon          -> Complete the 'Kill the Demon' quest (Mainland)
     kill_wicked_witch   -> Complete the 'Fight the Wicked Witch' quest (The Dark Forest)
-    both                -> Complete both the 'Kill the Demon' and 'Fight the Wicked Witch' quests
-    
-    NOTE: It is possible to select a goal for a board you have not selected in the 'boards' option - this will still work, but there will be no other location checks for that board in the check pool.
-          For example, selecting 'mainland_only' in 'boards' and selecting a goal of 'kill_wicked_witch' will work, but The Dark Forest will not contain any checks.
+
+    NOTE: 
+    Selecting a goal for a board you have NOT selected in the 'boards' option will still work, but will not
+    automatically include all quest checks for that board.
+
+    EXAMPLE:
+    Selecting 'mainland_only' in the 'boards' option and 'kill_wicked_witch' in the 'goal' option will allow you
+    to complete the goal in The Dark Forest, but no other Dark Forest quests will be included as checks.
     """
     display_name = "Goal"
     option_kill_demon = GoalFlags.Demon
@@ -39,7 +44,7 @@ class Goal(Choice):
 class Mobsanity(Toggle):
     """
     Add checks for killing one of each enemy type to the check pool.
-    NOTE: Will only include checks for enemies that are reachable within the boards you have selected in the 'boards' option.
+    Only includes checks for enemies that are reachable within the boards you have selected in the 'boards' option.
     """
     display_name = "Enable Mobsanity"
     default = 0
@@ -47,17 +52,39 @@ class Mobsanity(Toggle):
 class Pausing(Toggle):
     """
     The player keeps the ability to be able to pause time.
-    NOTE: If disabled, time can only be paused by cutscenes and end-of-moon routines.
+    If disabled, time will only be paused by cutscenes and end-of-moon routines.
     """
     display_name = "Enable Pausing"
     default = 1
 
 class Traps(Toggle):
     """
-    Add trap items to the item pool.
+    Include trap items as filler items in the item pool.
+
+    NOTE:
+    If 'false', the 'trap_weighting' option is not required and will be ignored.
     """
     display_name = "Trap Items"
     default = 0
+
+class TrapWeighting(Range):
+    """
+    The percentage of filler items that should be traps - ranges from 1 to 100
+
+    EXAMPLE:
+    If 10 filler items are required to fill all remaining locations then... 
+    10  -> 10% (1 / 10) of filler items will be traps.
+    30  -> 30% (3 / 10) of filler items will be traps.
+    50  -> 50% (5 / 10) of filler items will be traps.
+    100 -> 100% (10 / 10) of filler items will be traps.
+
+    NOTE:
+    If the 'traps' option is 'false', this setting is not required and will be ignored.
+    """
+    display_name = "Trap Weighting"
+    range_start = 1
+    range_end = 100
+    default = 25
 
 @dataclass
 class StacklandsOptions(PerGameCommonOptions):
@@ -67,3 +94,4 @@ class StacklandsOptions(PerGameCommonOptions):
     pausing: Pausing
     mobsanity: Mobsanity
     traps: Traps
+    trap_weighting: TrapWeighting
