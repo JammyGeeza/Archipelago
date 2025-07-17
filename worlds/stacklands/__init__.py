@@ -1,3 +1,4 @@
+import logging
 from typing import Dict, Any
 from .Options import StacklandsOptions
 from .Items import StacklandsItem, create_all_items, item_table, group_table, name_to_id as item_lookup
@@ -28,6 +29,32 @@ class StacklandsWorld(World):
     item_name_groups = group_table
     
     required_client_version = (0, 1, 9)
+
+    # trap_weights: Dict[str, int] = {}
+
+    def generate_early(self) -> None:
+
+        # Get trap item weights
+        self.multiworld.trap_weights = {
+            "Eat Trap": self.options.eat_trap_weight.value,
+            "Flip Trap": self.options.flip_trap_weight.value,
+            "Mob Trap": self.options.mob_trap_weight.value,
+            "Structure Trap": self.options.structure_trap_weight.value,
+        }
+        
+        # Get filler item weights
+        self.multiworld.filler_weights = {
+            "Random Idea": 20,
+            "Random Resource": 80,
+        }
+
+        logging.info("----- Trap Item Weights -----")
+        for key, val in self.multiworld.trap_weights.items():
+            logging.info(f"'{key}' weight: {val}")
+
+        logging.info("----- Filler Item Weights -----")
+        for key, val in self.multiworld.filler_weights.items():
+            logging.info(f"'{key}' weight: {val}")
     
     # Create all items
     def create_items(self):

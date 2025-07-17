@@ -81,22 +81,61 @@ class Traps(Toggle):
     display_name = "Trap Items"
     default = 0
 
-class TrapWeighting(Range):
+class TrapFill(Range):
     """
-    The percentage of filler items that should be traps - ranges from 1 to 100
-
-    EXAMPLE:
-    If 10 filler items are required to fill all remaining locations then... 
-    10  -> 10% (1 / 10) of filler items will be traps.
-    30  -> 30% (3 / 10) of filler items will be traps.
-    50  -> 50% (5 / 10) of filler items will be traps.
-    100 -> 100% (10 / 10) of filler items will be traps.
+    The percentage of filler items to be traps.
 
     NOTE:
-    If the 'traps' option is 'false', this setting is not required and will be ignored.
+    Only used if the 'traps' option is 'true', otherwise ignored.
     """
-    display_name = "Trap Weighting"
+    display_name = "Trap Fill Percentage"
     range_start = 1
+    range_end = 100
+    default = 25
+
+class TrapWeightEat(Range):
+    """
+    The weighting of Eat Traps in the trap pool.
+    Eat Traps will force an eating phase.
+    """
+    display_name = "Eat Trap Weighting"
+    range_start = 0
+    range_end = 100
+    default = 25
+
+class TrapWeightFlip(Range):
+    """
+    The weighting of Flip Traps in the trap pool.
+    Flip Traps will flip a random card to be face-down.
+    """
+    display_name = "Flip Trap Weighting"
+    range_start = 0
+    range_end = 100
+    default = 25
+
+class TrapWeightMob(Range):
+    """
+    The weighting of Mob Traps in the trap pool.
+    Mob Traps will spawn a random enemy.
+
+    NOTE:
+    Killing mob traps does not count towards Mobsanity checks.
+    """
+    display_name = "Mob Trap Weighting"
+    range_start = 0
+    range_end = 100
+    default = 25
+
+class TrapWeightStructure(Range):
+    """
+    The weighting of Structure Trap items in the trap pool.
+    Structure Traps will spawn a Strange Portal or Pirate Boat depending on the board you are currently on.
+
+    NOTE:
+    You cannot use Strange Portals from these traps to travel to The Dark Forest.
+    """
+    display_name = "Structure Trap Weighting"
+    range_start = 0
     range_end = 100
     default = 25
 
@@ -109,4 +148,8 @@ class StacklandsOptions(PerGameCommonOptions):
     pausing: Pausing
     mobsanity: Mobsanity
     traps: Traps
-    trap_weighting: TrapWeighting
+    trap_fill: TrapFill
+    eat_trap_weight: TrapWeightEat
+    flip_trap_weight: TrapWeightFlip
+    mob_trap_weight: TrapWeightMob
+    structure_trap_weight: TrapWeightStructure

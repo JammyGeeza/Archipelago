@@ -178,7 +178,7 @@ def create_forest_region(world: MultiWorld, player: int, options: StacklandsOpti
             check_pool += [ LocationData(
                 goal_check.name,
                 goal_check.region_flags,
-                CheckType.Goal,
+                CheckType.Check,
                 goal_check.option_flags,
                 goal_check.progress_type)
             ]

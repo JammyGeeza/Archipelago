@@ -14,7 +14,7 @@ class ItemType(IntEnum):
     Booster   = 0
     Idea      = 1
     Resource  = 2
-    Mob       = 3
+    Trap      = 3
     Structure = 4
     Buff      = 5
 
