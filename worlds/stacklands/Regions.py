@@ -1,5 +1,5 @@
 import logging
-from .Enums import CheckFlags, GoalFlags, RegionFlags
+from .Enums import CheckType, GoalFlags, OptionFlags, RegionFlags
 from typing import List, NamedTuple
 from BaseClasses import Entrance, Item, ItemClassification, LocationProgressType, MultiWorld, Region
 from .Options import StacklandsOptions
@@ -10,14 +10,14 @@ class RegionData(NamedTuple):
     locations: List[LocationData]
     exits: List[str]
 
-# Create a region
 def create_region(world: MultiWorld, player: int, region_data: RegionData) -> Region:
-    
+    """Create a region in the multiworld from the region data"""
+
     # Create region object
     region: Region = Region(region_data.name, player, world)
 
     # Get all locations that are not goals
-    for location_data in [ loc for loc in region_data.locations if not loc.check_flags & CheckFlags.Goal ]:
+    for location_data in [ loc for loc in region_data.locations if loc.check_type is CheckType.Check ]:
 
         logging.info(f"Creating '{location_data.name}' location in '{region.name}' region...")
 
@@ -26,7 +26,7 @@ def create_region(world: MultiWorld, player: int, region_data: RegionData) -> Re
         region.locations.append(location)
 
     # Get all locations that are goals
-    for goal_data in [ loc for loc in region_data.locations if loc.check_flags & CheckFlags.Goal ]:
+    for goal_data in [ loc for loc in region_data.locations if loc.check_type is CheckType.Goal ]:
 
         logging.info(f"Creating '{goal_data.name}' goal in '{region.name}' region...")
 
@@ -44,9 +44,9 @@ def create_region(world: MultiWorld, player: int, region_data: RegionData) -> Re
 
     return region
 
-# Create all regions
 def create_all_regions(world: MultiWorld, player: int):
-
+    """Create all regions for this apworld"""
+    
     # Get YAML Options
     options: StacklandsOptions = world.worlds[player].options
 
@@ -94,19 +94,19 @@ def create_mainland_region(world: MultiWorld, player: int, options: StacklandsOp
     # If mainland board has been selected
     if board_selected:
 
-        # Add all quest checks for Mainland to check pool
-        check_pool += [ loc for loc in board_checks if loc.check_flags is CheckFlags.NA ]
+        # Add all quest checks (not affected by options) for Mainland to check pool
+        check_pool += [ loc for loc in board_checks if loc.check_type is CheckType.Check and loc.option_flags is OptionFlags.NA ]
 
         # If pausing is enabled, add all Pausing quest checks for Mainland to check pool 
         if options.pausing.value:
-            check_pool += [ loc for loc in board_checks if loc.check_flags & CheckFlags.Pausing ]
+            check_pool += [ loc for loc in board_checks if loc.check_type is CheckType.Check and loc.option_flags & OptionFlags.Pausing ]
 
         # If mobsanity is enabled, add all mobsanity checks for Mainland to the check pool
         if options.mobsanity.value:
-            check_pool += [ loc for loc in board_checks if loc.check_flags & CheckFlags.Mobsanity ]
+            check_pool += [ loc for loc in board_checks if loc.check_type is CheckType.Check and loc.option_flags & OptionFlags.Mobsanity ]
 
     # Get goal check, if exists
-    if (goal_check:= next((loc for loc in board_checks if loc.check_flags & CheckFlags.Goal), None)) is not None:
+    if (goal_check:= next((loc for loc in board_checks if loc.check_type & CheckType.Goal), None)) is not None:
 
         logging.info(f"Goal found: {goal_check.name}")
 
@@ -120,9 +120,12 @@ def create_mainland_region(world: MultiWorld, player: int, options: StacklandsOp
             check_pool += [ LocationData(
                 goal_check.name,
                 goal_check.region_flags,
-                goal_check.check_flags & ~CheckFlags.Goal,
+                CheckType.Check,
+                goal_check.option_flags,
                 goal_check.progress_type)
             ]
+
+    logging.info(f"Mainland check pool: {len(check_pool)}")
 
     # Compile region data
     region_data: RegionData = RegionData("Mainland", check_pool, [ "Strange Portal" ])
@@ -154,14 +157,14 @@ def create_forest_region(world: MultiWorld, player: int, options: StacklandsOpti
     if board_selected:
         
         # Add all quest checks for Mainland to check pool
-        check_pool += [ loc for loc in board_checks if loc.check_flags is CheckFlags.NA ]
+        check_pool += [ loc for loc in board_checks if loc.check_type is CheckType.Check and loc.option_flags is OptionFlags.NA ]
 
         # If mobsanity is enabled, add all mobsanity checks for Mainland to the check pool
         if options.mobsanity.value:
-            check_pool += [ loc for loc in board_checks if loc.check_flags & CheckFlags.Mobsanity ]
+            check_pool += [ loc for loc in board_checks if loc.check_type is CheckType.Check and loc.option_flags & OptionFlags.Mobsanity ]
 
     # Get goal check, if exists
-    if (goal_check:= next((loc for loc in board_checks if loc.check_flags & CheckFlags.Goal), None)) is not None:
+    if (goal_check:= next((loc for loc in board_checks if loc.check_type is CheckType.Goal), None)) is not None:
 
         logging.info(f"Goal found: {goal_check.name}")
 
@@ -175,9 +178,12 @@ def create_forest_region(world: MultiWorld, player: int, options: StacklandsOpti
             check_pool += [ LocationData(
                 goal_check.name,
                 goal_check.region_flags,
-                goal_check.check_flags & ~CheckFlags.Goal,
+                CheckType.Goal,
+                goal_check.option_flags,
                 goal_check.progress_type)
             ]
+
+    logging.info(f"Dark Forest check pool: {len(check_pool)}")
 
     # Compile region data
     region_data: RegionData = RegionData("The Dark Forest", check_pool, [ ])

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from .Enums import GoalFlags, RegionFlags
+from .Enums import ExpansionType, GoalFlags, RegionFlags
 from Options import Choice, DeathLink, PerGameCommonOptions, Range, Toggle
 
 class Boards(Choice):
@@ -19,6 +19,20 @@ class Boards(Choice):
     # option_mainland_and_island = RegionFlags.Mainland | RegionFlags.Island
     # option_all = RegionFlags.All
     default = RegionFlags.Mainland | RegionFlags.Forest
+
+class BoardExpansionMode(Choice):
+    """
+    Select how board expansion works in the run.
+
+    ideas  -> Adds 'Idea: Shed' and 'Idea: Warehouse' to the item pool - build them yourself to expand the board as you like.
+    items  -> Ads 6x 'Board Size Increase' and 6x 'Card Limit Increase' to the item pool - each gives the size / card limit increase of one Warehouse.
+
+    """
+    display_name = "Board Expansion Mode"
+    option_ideas = ExpansionType.Ideas
+    option_items = ExpansionType.Items
+    default = ExpansionType.Items
+
 
 class Goal(Choice):
     """
@@ -89,6 +103,7 @@ class TrapWeighting(Range):
 @dataclass
 class StacklandsOptions(PerGameCommonOptions):
     boards: Boards
+    board_expansion_mode: BoardExpansionMode
     death_link: DeathLink
     goal: Goal
     pausing: Pausing
