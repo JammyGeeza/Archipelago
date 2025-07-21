@@ -46,8 +46,7 @@ class StacklandsLogic(LogicMixin):
                     if options.board_expansion_mode.value is ExpansionType.Ideas
                     else (
                         self.sl_has_idea("Campfire", player)                    # <- Player has campfire
-                        and self.sl_has_count("Board Size Increase", 1, player) # <- Player has at least one Board Size increase
-                        and self.sl_has_count("Card Limit Increase", 1, player) # <- Player has at least one Card Limit increase
+                        and self.sl_has_count("Board Expansion: Shed", 2, player) # <- Player has at least 2 Shed expansions
                     )
                 ) and
                 self.sl_has_pack("Seeking Wisdom", player)) # <- Player has access to more basic resources
@@ -63,10 +62,10 @@ class StacklandsLogic(LogicMixin):
                 self.sl_has_all_ideas(["Iron Mine", "Lumber Camp", "Quarry"], player) and # <- Player can create infinite basic resources
                 self.sl_has_pack("Logic and Reason", player)                              # <- Player has access to additional resources
                 and (
-                    options.board_expansion_mode.value is ExpansionType.Ideas  # Board Expansion Mode is 'Ideas'
-                    or (                                                       # OR
-                       self.sl_has_count("Board Size Increase", 2, player)     # Player has at least 2 board size increases
-                       and self.sl_has_count("Card Limit Increase", 2, player) # AND Player has at least 2 card limit increases
+                    options.board_expansion_mode.value is ExpansionType.Ideas          # Board Expansion Mode is 'Ideas'
+                    or (                                                               # OR
+                        self.sl_has_count("Board Expansion: Shed", 4, player)          # Player has at least 4 Shed expansions
+                        and self.sl_has_count("Board Expansion: Warehouse", 1, player) # AND Player has at least 1 Warehouse expansions
                     )
                 ))
     
@@ -80,10 +79,10 @@ class StacklandsLogic(LogicMixin):
                 self.sl_has_all_ideas(["Smithy", "Sword"], player) and # <- Player can make an advanced weapon
                 self.sl_has_pack("Order and Structure", player) # <- Player can find/fight harder enemies
                 and (
-                    options.board_expansion_mode.value is ExpansionType.Ideas  # Board Expansion Mode is 'Ideas'
-                    or (                                                       # OR
-                       self.sl_has_count("Board Size Increase", 3, player)     # Player has at least 3 board size increases
-                       and self.sl_has_count("Card Limit Increase", 3, player) # AND Player has at least 3 card limit increases
+                    options.board_expansion_mode.value is ExpansionType.Ideas         # Board Expansion Mode is 'Ideas'
+                    or (                                                              # OR
+                       self.sl_has_count("Board Expansion: Shed", 6, player)          # Player has at least 6 Shed expansions
+                       and self.sl_has_count("Board Expansion: Warehouse", 2, player) # AND Player has at least 2 Warehuse expansions
                     )
                 ))
  

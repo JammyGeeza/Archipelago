@@ -25,7 +25,7 @@ class BoardExpansionMode(Choice):
     Select how board expansion works in the run.
 
     ideas  -> Adds 'Idea: Shed' and 'Idea: Warehouse' to the item pool - build them yourself to expand the board as you like.
-    items  -> Ads 6x 'Board Size Increase' and 6x 'Card Limit Increase' to the item pool - each gives the size / card limit increase of one Warehouse.
+    items  -> Adds 7x 'Board Expansion: Shed' and 4x 'Board Expansion: Warehouse' items to the item pool - each spawns a Shed or Warehouse.
 
     """
     display_name = "Board Expansion Mode"
@@ -93,30 +93,30 @@ class TrapFill(Range):
     range_end = 100
     default = 25
 
-class TrapWeightEat(Range):
+class TrapWeightFeedVillagers(Range):
     """
-    The weighting of Eat Traps in the trap pool.
-    Eat Traps will force an eating phase.
+    The weighting of Feed Villagers Trap in the trap pool.
+    Feed Villager Trap will force all villagers on the current board to be fed - villagers not fed will die.
     """
-    display_name = "Eat Trap Weighting"
+    display_name = "Feed Villagers Trap Weighting"
     range_start = 0
     range_end = 100
-    default = 25
+    default = 50
 
-class TrapWeightFlip(Range):
-    """
-    The weighting of Flip Traps in the trap pool.
-    Flip Traps will flip a random card to be face-down.
-    """
-    display_name = "Flip Trap Weighting"
-    range_start = 0
-    range_end = 100
-    default = 25
+# class TrapWeightFlip(Range):
+#     """
+#     The weighting of Flip Traps in the trap pool.
+#     Flip Traps will flip a random card to be face-down.
+#     """
+#     display_name = "Flip Trap Weighting"
+#     range_start = 0
+#     range_end = 100
+#     default = 25
 
 class TrapWeightMob(Range):
     """
     The weighting of Mob Traps in the trap pool.
-    Mob Traps will spawn a random enemy.
+    Mob Traps will spawn a random enemy to the current board.
 
     NOTE:
     Killing mob traps does not count towards Mobsanity checks.
@@ -124,20 +124,30 @@ class TrapWeightMob(Range):
     display_name = "Mob Trap Weighting"
     range_start = 0
     range_end = 100
-    default = 25
+    default = 50
+
+class TrapWeightSellCards(Range):
+    """
+    The weighting of Sell Cards Trap in the trap pool.
+    Sell Cards Trap forces you to sell up to 5 cards on the current board.
+    """
+    display_name = "Sell Cards Trap Weighting"
+    range_start = 0
+    range_end = 100
+    default = 50
 
 class TrapWeightStructure(Range):
     """
     The weighting of Structure Trap items in the trap pool.
-    Structure Traps will spawn a Strange Portal or Pirate Boat depending on the board you are currently on.
+    Structure Traps will spawn a Strange Portal to the Mainland board or Pirate Boat to the Island board.
 
     NOTE:
-    You cannot use Strange Portals from these traps to travel to The Dark Forest.
+    You will not be able to use Strange Portals spawned from Structure Traps to travel to The Dark Forest.
     """
     display_name = "Structure Trap Weighting"
     range_start = 0
     range_end = 100
-    default = 25
+    default = 50
 
 @dataclass
 class StacklandsOptions(PerGameCommonOptions):
@@ -149,7 +159,8 @@ class StacklandsOptions(PerGameCommonOptions):
     mobsanity: Mobsanity
     traps: Traps
     trap_fill: TrapFill
-    eat_trap_weight: TrapWeightEat
-    flip_trap_weight: TrapWeightFlip
+    feed_villagers_trap_weight: TrapWeightFeedVillagers
+    # flip_trap_weight: TrapWeightFlip
     mob_trap_weight: TrapWeightMob
+    sell_cards_trap_weight: TrapWeightSellCards
     structure_trap_weight: TrapWeightStructure

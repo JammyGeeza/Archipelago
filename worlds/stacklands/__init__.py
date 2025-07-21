@@ -36,9 +36,10 @@ class StacklandsWorld(World):
 
         # Get trap item weights
         self.multiworld.trap_weights = {
-            "Eat Trap": self.options.eat_trap_weight.value,
-            "Flip Trap": self.options.flip_trap_weight.value,
+            "Feed Villagers Trap": self.options.feed_villagers_trap_weight.value,
+            # "Flip Trap": self.options.flip_trap_weight.value,
             "Mob Trap": self.options.mob_trap_weight.value,
+            "Sell Cards Trap": self.options.sell_cards_trap_weight.value,
             "Structure Trap": self.options.structure_trap_weight.value,
         }
         
