@@ -42,19 +42,9 @@ class StacklandsWorld(World):
             "Sell Cards Trap": self.options.sell_cards_trap_weight.value,
             "Structure Trap": self.options.structure_trap_weight.value,
         }
-        
-        # Get filler item weights
-        self.multiworld.filler_weights = {
-            "Random Idea": 20,
-            "Random Resource": 80,
-        }
 
         logging.info("----- Trap Item Weights -----")
         for key, val in self.multiworld.trap_weights.items():
-            logging.info(f"'{key}' weight: {val}")
-
-        logging.info("----- Filler Item Weights -----")
-        for key, val in self.multiworld.filler_weights.items():
             logging.info(f"'{key}' weight: {val}")
     
     # Create all items
@@ -72,7 +62,7 @@ class StacklandsWorld(World):
     # Fill the slot data
     def fill_slot_data(self) -> Dict[str, Any]:
         slot_data = {}
-        slot_data.update(self.options.as_dict("boards", "death_link", "goal", "mobsanity", "pausing", "start_inventory"))
+        slot_data.update(self.options.as_dict("boards", "death_link", "goal", "mobsanity", "moon_length", "pausing", "start_inventory"))
         return slot_data
     
     # Set all access rules

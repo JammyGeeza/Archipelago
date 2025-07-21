@@ -18,6 +18,11 @@ class ItemType(IntEnum):
     Structure = 4
     Buff      = 5
 
+class MoonlengthType(IntEnum):
+    Short     = 0
+    Normal    = 1
+    Long      = 2
+
 #endregion
 
 #region Flags

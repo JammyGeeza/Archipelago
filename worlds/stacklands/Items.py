@@ -350,7 +350,7 @@ def create_trap_items(world: MultiWorld, player: int, options: StacklandsOptions
     trap_pool: List[Item] = []
 
     # If traps are enabled and the weighting is greater than 0%
-    if options.traps.value and options.trap_fill.value > 0:
+    if options.trap_fill.value > 0:
 
         logging.info("----- Creating Trap Items -----")
 
@@ -394,7 +394,7 @@ def create_trap_items(world: MultiWorld, player: int, options: StacklandsOptions
             logging.info("No unfilled item slots available for trap items - skipping...")
 
     else:
-        logging.info("Trap item options are disabled - skipping...")
+        logging.info("Trap fill set to 0%, skipping trap items...")
 
     # Add trap items to item pool
     world.itempool += trap_pool
