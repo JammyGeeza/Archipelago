@@ -137,22 +137,7 @@ item_table: List[ItemData] = [
     ItemData("Idea: University"                     , RegionFlags.Shared     , ItemType.Idea        , OptionFlags.NA        , ItemClassification.filler     ),
 
     # Filler Resources
-    ItemData("Apple Tree"                           , RegionFlags.Shared        , ItemType.Resource    , OptionFlags.NA     , ItemClassification.filler     ),
-    ItemData("Berry x3"                             , RegionFlags.Shared        , ItemType.Resource    , OptionFlags.NA     , ItemClassification.filler     ),
-    ItemData("Berry Bush"                           , RegionFlags.Shared        , ItemType.Resource    , OptionFlags.NA     , ItemClassification.filler     ),
-    ItemData("Coin"                                 , RegionFlags.Shared        , ItemType.Resource    , OptionFlags.NA     , ItemClassification.filler     ),
-    ItemData("Coin x5"                              , RegionFlags.Shared        , ItemType.Resource    , OptionFlags.NA     , ItemClassification.filler     ),
-    ItemData("Coin x10"                             , RegionFlags.Shared        , ItemType.Resource    , OptionFlags.NA     , ItemClassification.filler     ),
-    ItemData("Egg x3"                               , RegionFlags.Shared        , ItemType.Resource    , OptionFlags.NA     , ItemClassification.filler     ),
-    ItemData("Flint x3"                             , RegionFlags.Shared        , ItemType.Resource    , OptionFlags.NA     , ItemClassification.filler     ),
-    ItemData("Iron Deposit"                         , RegionFlags.Shared        , ItemType.Resource    , OptionFlags.NA     , ItemClassification.filler     ),
-    ItemData("Iron Ore x3"                          , RegionFlags.Shared        , ItemType.Resource    , OptionFlags.NA     , ItemClassification.filler     ),
-    ItemData("Milk x3"                              , RegionFlags.Shared        , ItemType.Resource    , OptionFlags.NA     , ItemClassification.filler     ),
-    ItemData("Rock"                                 , RegionFlags.Shared        , ItemType.Resource    , OptionFlags.NA     , ItemClassification.filler     ),
-    ItemData("Stick x3"                             , RegionFlags.Shared        , ItemType.Resource    , OptionFlags.NA     , ItemClassification.filler     ),
-    ItemData("Stone x3"                             , RegionFlags.Shared        , ItemType.Resource    , OptionFlags.NA     , ItemClassification.filler     ),
-    ItemData("Tree"                                 , RegionFlags.Shared        , ItemType.Resource    , OptionFlags.NA     , ItemClassification.filler     ),
-    ItemData("Wood x3"                              , RegionFlags.Shared        , ItemType.Resource    , OptionFlags.NA     , ItemClassification.filler     ),
+    ItemData("Resource Booster Pack"                , RegionFlags.Shared     , ItemType.Booster     , OptionFlags.NA        , ItemClassification.filler     ),
 
 #endregion
 
@@ -164,15 +149,6 @@ item_table: List[ItemData] = [
     ItemData("Sell Cards Trap"                      , RegionFlags.Shared        , ItemType.Trap        , OptionFlags.Traps  , ItemClassification.trap       ),
     ItemData("Strange Portal Trap"                  , RegionFlags.Shared        , ItemType.Trap        , OptionFlags.Traps  , ItemClassification.trap       ),
 
-    # ItemData("Chickens"                             , RegionFlags.Shared        , ItemType.Mob         , OptionFlags.Traps  , ItemClassification.trap       ),
-    # ItemData("Goop"                                 , RegionFlags.Shared        , ItemType.Mob         , OptionFlags.Traps  , ItemClassification.trap       ),
-    # ItemData("Rabbits"                              , RegionFlags.Shared        , ItemType.Mob         , OptionFlags.Traps  , ItemClassification.trap       ),
-    # ItemData("Rat"                                  , RegionFlags.Shared        , ItemType.Mob         , OptionFlags.Traps  , ItemClassification.trap       ),
-    # ItemData("Slime"                                , RegionFlags.Shared        , ItemType.Mob         , OptionFlags.Traps  , ItemClassification.trap       ),
-    # ItemData("Snake"                                , RegionFlags.Shared        , ItemType.Mob         , OptionFlags.Traps  , ItemClassification.trap       ),
-
-    # More trap items coming soon...
-
 #endregion
 ]
 
@@ -182,11 +158,11 @@ group_table: Dict[str, set[str]] = {
     "All Ideas": set(item.name for item in item_table if item.item_type is ItemType.Idea),
 
     # Mainland
-    "All Mainland Ideas": set(item.name for item in item_table if item.region_flags & RegionFlags.Mainland and item.item_type is ItemType.Idea),
-    "All Mainland Booster Packs": set(item.name for item in item_table if item.region_flags & RegionFlags.Mainland and item.item_type is ItemType.Booster),
+    "All Mainland Ideas": set(item.name for item in item_table if item.region_flags is RegionFlags.Mainland and item.item_type is ItemType.Idea),
+    "All Mainland Booster Packs": set(item.name for item in item_table if item.region_flags is RegionFlags.Mainland and item.item_type is ItemType.Booster),
 
     # Dark Forest
-    "All Dark Forest Ideas": set(item.name for item in item_table if item.region_flags & RegionFlags.Forest and item.item_type is ItemType.Idea),
+    "All Dark Forest Ideas": set(item.name for item in item_table if item.region_flags is RegionFlags.Forest and item.item_type is ItemType.Idea),
     
     # The Island
     # "All Island Ideas": set(item.name for item in item_table if item.region_flags == RegionFlags.Island and item.item_type is ItemType.Idea),
@@ -404,7 +380,7 @@ def create_filler_items(world: MultiWorld, player: int, options: StacklandsOptio
         mainland_selected: bool = bool(options.boards.value & RegionFlags.Mainland)
         forest_selected: bool = bool(options.boards.value & RegionFlags.Forest)
 
-        # Get all filler ideas
+        # Get filler ideas
         filler_ideas: List[ItemData] = [
             item for item in item_table if
             item.classification_flags is ItemClassification.filler                  # Item is classified as 'filler'
@@ -416,44 +392,30 @@ def create_filler_items(world: MultiWorld, player: int, options: StacklandsOptio
             }
         ]
 
-        # Randomly order and add filler ideas until ideas list completed or fill count reached
-        count: int = unfilled_count if unfilled_count < len(filler_ideas) else len(filler_ideas)
-        
-        logging.info(f"Adding {count} filler ideas to the item pool...")
-        
-        for idea_data in world.random.sample(filler_ideas, k=count):
+        # Randomly select how many ideas and boosters to add to the filler pool
+        idea_count: int = world.random.randint(0, unfilled_count if unfilled_count < len(filler_ideas) else len(filler_ideas))
 
-            logging.info(f"Creating filler idea '{idea_data.name}'...")
+        # Select that many filler ideas (without duplicates)
+        for idea_data in world.random.sample(filler_ideas, k=idea_count):
+
+            logging.info(f"Creating filler item '{idea_data.name}'...")
 
             idea: StacklandsItem = StacklandsItem(name_to_id[idea_data.name], idea_data, player)
             filler_pool.append(idea)
 
-        # If there are still empty slots...
-        if (remaining_count:= unfilled_count - count) > 0:
-            
-            # Get all filler ideas
-            filler_resources: List[ItemData] = [
-                item for item in item_table if
-                item.classification_flags is ItemClassification.filler                  # Item is classified as 'filler'
-                and item.item_type is ItemType.Resource                                 # AND Item is a 'Resource'
-                and item.option_flags is OptionFlags.NA                                 # AND Item is not affected by options
-                and {                                                                   # AND
-                    (mainland_selected and item.region_flags & RegionFlags.Mainland)    # Item is for Mainland and that board is selected
-                    or (forest_selected and item.region_flags & RegionFlags.Forest)     # OR Item is for The Dark Forest and that board is selected
-                }
-            ]
+        # Fill remaining spots with filler booster
+        if idea_count < unfilled_count:
 
-            logging.info(f"Adding {remaining_count} filler resources to the item pool...")
+            # Get resource booster item
+            filler_booster_data: ItemData = next((item for item in item_table if item.classification_flags is ItemClassification.filler and item.item_type is ItemType.Booster))
 
-            # Randomly select resources and add to filler item pool
-            for resource_data in world.random.choices(filler_resources, k=remaining_count):
+            # Add filler boosters
+            for _ in range(unfilled_count - idea_count):
 
-                logging.info(f"Creating filler resource '{resource_data.name}'...")
+                logging.info(f"Creating filler item '{filler_booster_data.name}'...")
 
-                resource: StacklandsItem = StacklandsItem(name_to_id[resource_data.name], resource_data, player)
-                filler_pool.append(resource)
-
-        logging.info(f"Added {len(filler_pool)} filler items to the item pool")
+                filler_booster: StacklandsItem = StacklandsItem(name_to_id[filler_booster_data.name], filler_booster_data, player)
+                filler_pool.append(filler_booster)
 
     else:
         logging.info(f"No free slots for filler items - skipping...")
