@@ -8,16 +8,10 @@ class Boards(Choice):
 
     mainland_only               -> Include only Mainland
     mainland_and_dark_forest    -> Include both Mainland and The Dark Forest
-
     """
-    # mainland_and_island         -> Include both Mainland and The Island
-    # all                         -> Include Mainland, The Dark Forest and The Island
-    # """
     display_name = "Included Boards"
     option_mainland_only = RegionFlags.Mainland
     option_mainland_and_dark_forest = RegionFlags.Mainland | RegionFlags.Forest
-    # option_mainland_and_island = RegionFlags.Mainland | RegionFlags.Island
-    # option_all = RegionFlags.All
     default = RegionFlags.Mainland | RegionFlags.Forest
 
 class BoardExpansionMode(Choice):
@@ -26,7 +20,6 @@ class BoardExpansionMode(Choice):
 
     ideas  -> Adds 'Idea: Shed' and 'Idea: Warehouse' to the item pool - build them yourself to expand the board as you like.
     items  -> Adds 'Board Expansion' items to the item pool and removes 'Idea: Warehouse'. Building 'Shed' will no longer expand your board, but can be used to complete the 'Build a Shed' check.
-
     """
     display_name = "Board Expansion Mode"
     option_ideas = ExpansionType.Ideas
@@ -38,9 +31,7 @@ class BoardExpansionAmount(Range):
     How many additional cards a board expansion item will give.
     NOTE: Board size is increased as if building a Shed or Warehouse in vanilla and max board size remains capped at the largest vanilla size (without Lighthouses).
     
-    If 'board_expansion_mode' is 'ideas' then this setting will be ignored.
-
-    Range from 4 to 14
+    If <Board Expansion Mode> option is 'ideas' then this setting will be ignored.
     """
     display_name = "Board Expansion Amount"
     range_start = 4
@@ -51,9 +42,7 @@ class BoardExpansionCount(Range):
     """
     How many 'Board Expansion' items are added to the item pool.
     
-    If 'board_expansion_mode' is 'ideas' then this setting will be ignored.
-
-    Range from 3 to 10
+    If <Board Expansion Mode> option is 'ideas' then this setting will be ignored.
     """
     display_name = "Board Expansion Count"
     range_start = 3
@@ -83,13 +72,12 @@ class Goal(Choice):
     automatically include all quest checks for that board.
 
     EXAMPLE:
-    Selecting 'mainland_only' in the 'boards' option and 'kill_wicked_witch' in the 'goal' option will allow you
-    to complete the goal in The Dark Forest, but no other Dark Forest quests will be included as checks.
+    If <Boards> option is set to 'mainland_only' and your <Goal> option is set to 'kill_wicked_witch', it will allow you
+    to complete the goal in The Dark Forest but no other Dark Forest quests will be included as checks.
     """
     display_name = "Goal"
     option_kill_demon = GoalFlags.Demon
     option_kill_wicked_witch = GoalFlags.Witch
-    # option_both = GoalFlags.All
     default = GoalFlags.Demon
 
 class Mobsanity(Toggle):
@@ -116,8 +104,6 @@ class TrapFill(Range):
     25  -> Approximately 25% of the filler item pool will be trap items
     50  -> Approximately 50% of the filler item pool will be trap items
     etc.
-
-    Range from 0 to 100
     """
     display_name = "Trap Fill Percentage"
     range_start = 0
@@ -132,8 +118,6 @@ class FeedVillagersTrapWeight(Range):
     Feed Villager Trap will force all villagers on the current board to be fed - villagers not fed will die.
 
     If <Trap Fill> is 0 then this setting will be ignored.
-
-    Range from 0 to 100
     """
     display_name = "Feed Villagers Trap Weighting"
     range_start = 0
@@ -148,8 +132,6 @@ class MobTrapWeight(Range):
     Mob Traps will spawn a random, basic enemy to the current board - killing mobs from Mob Traps will not count towards Mobsanity checks.
 
     If <Trap Fill> is 0 then this setting will be ignored.
-
-    Range from 0 to 100
     """
     display_name = "Mob Trap Weighting"
     range_start = 0
@@ -164,8 +146,6 @@ class SellCardsTrapWeight(Range):
     Sell Cards Trap forces you to immediately sell <Sell Cards Trap Amount> of cards from the current board.
 
     If <Trap Fill> is 0 then this setting will be ignored.
-
-    Range from 0 to 100
     """
     display_name = "Sell Cards Trap Weighting"
     range_start = 0
@@ -179,8 +159,6 @@ class SellCardsTrapAmount(Range):
     You will be forced to sell this amount of all sellable cards when you receive this trap. If you have fewer than
     this amount, you will instead be forced to sell all remaining sellable cards.
 
-    Range from 1 to 10
-    
     If <Trap Fill> is 0 or <Sell Cards Trap Weight> is 0 then this setting will be ignored.
     """
     display_name = "Sell Cards Trap Amount"
