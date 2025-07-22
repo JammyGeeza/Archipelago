@@ -42,11 +42,10 @@ class StacklandsLogic(LogicMixin):
     def sl_phase_two(self, options: StacklandsOptions, player: int) -> bool:
         return (self.sl_phase_one(options, player) and
                 (
-                    self.sl_has_all_ideas(["Campfire", "Shed"], player)         # <- Player has access to basic ideas
-                    if options.board_expansion_mode.value is ExpansionType.Ideas
-                    else (
-                        self.sl_has_idea("Campfire", player)                    # <- Player has campfire
-                        and self.sl_has_count("Board Expansion: Shed", 2, player) # <- Player has at least 2 Shed expansions
+                    self.sl_has_all_ideas(["Campfire", "Shed"], player)             # <- Player has access to basic ideas
+                    and (                                                           # AND
+                        options.board_expansion_mode.value is ExpansionType.Ideas   # Board expansion mode is 'ideas' 
+                        or self.sl_has_count("Board Expansion", 1, player)          # OR Player has at least one 'Board Expansion' item
                     )
                 ) and
                 self.sl_has_pack("Seeking Wisdom", player)) # <- Player has access to more basic resources
@@ -59,31 +58,25 @@ class StacklandsLogic(LogicMixin):
     
     def sl_phase_four(self, options: StacklandsOptions, player: int) -> bool:
         return (self.sl_phase_three(options, player) and
-                self.sl_has_all_ideas(["Iron Mine", "Lumber Camp", "Quarry"], player) and # <- Player can create infinite basic resources
-                self.sl_has_pack("Logic and Reason", player)                              # <- Player has access to additional resources
-                and (
-                    options.board_expansion_mode.value is ExpansionType.Ideas          # Board Expansion Mode is 'Ideas'
-                    or (                                                               # OR
-                        self.sl_has_count("Board Expansion: Shed", 4, player)          # Player has at least 4 Shed expansions
-                        and self.sl_has_count("Board Expansion: Warehouse", 1, player) # AND Player has at least 1 Warehouse expansions
-                    )
+                self.sl_has_all_ideas(["Iron Mine", "Lumber Camp", "Quarry"], player) and                       # Player can create infinite basic resources
+                self.sl_has_pack("Logic and Reason", player)                                                    # AND Player has access to additional resources
+                and (                                                                                           # AND
+                    options.board_expansion_mode.value is ExpansionType.Ideas                                   # Board Expansion Mode is 'Ideas'
+                    or self.sl_has_count("Board Expansion", options.board_expansion_count.value / 3, player)    # Player has at least a third of board expansions
                 ))
     
     def sl_phase_five(self, options: StacklandsOptions, player: int) -> bool:
         return (self.sl_phase_four(options, player) and
-                self.sl_has_all_ideas(["Brick", "Iron Bar", "Plank", "Smelter", "Temple"], player) and # <- Player has access to advanced resources
-                self.sl_has_all_packs(["Curious Cuisine", "The Armory"], player)) # <- Player has increased access to advanced resources
+                self.sl_has_all_ideas(["Brick", "Iron Bar", "Plank", "Smelter", "Temple"], player) and  # Player has access to advanced resources
+                self.sl_has_all_packs(["Curious Cuisine", "The Armory"], player))                       # AND Player has increased access to advanced resources
     
     def sl_phase_six(self, options: StacklandsOptions, player: int) -> bool:
         return (self.sl_phase_five(options, player) and
-                self.sl_has_all_ideas(["Smithy", "Sword"], player) and # <- Player can make an advanced weapon
-                self.sl_has_pack("Order and Structure", player) # <- Player can find/fight harder enemies
-                and (
-                    options.board_expansion_mode.value is ExpansionType.Ideas         # Board Expansion Mode is 'Ideas'
-                    or (                                                              # OR
-                       self.sl_has_count("Board Expansion: Shed", 6, player)          # Player has at least 6 Shed expansions
-                       and self.sl_has_count("Board Expansion: Warehouse", 2, player) # AND Player has at least 2 Warehuse expansions
-                    )
+                self.sl_has_all_ideas(["Smithy", "Sword"], player) and                                          # Player can make an advanced weapon
+                self.sl_has_pack("Order and Structure", player)                                                 # AND Player can find/fight harder enemies
+                and (                                                                                           # AND
+                    options.board_expansion_mode.value is ExpansionType.Ideas                                   # Board Expansion Mode is 'Ideas'
+                    or self.sl_has_count("Board Expansion", options.board_expansion_count.value / 2, player)    # Player has at least half of board expansions
                 ))
  
 # Set all region and location rules
@@ -302,7 +295,7 @@ def set_rules(world: MultiWorld, player: int):
              lambda state: state.can_reach_location("Build a House", player)) # <- Player can build a House
 
     set_rule(world.get_location("Build a Shed", player),
-             lambda state: state.sl_phase_two(options, player)) # <- Player has access to Stick / Shed
+            lambda state: state.sl_phase_two(options, player)) # <- Player has access to Stick / Shed
 
     set_rule(world.get_location("Build a Quarry", player),
              lambda state: state.sl_phase_four(options, player)) # <- Player has access to Quarry

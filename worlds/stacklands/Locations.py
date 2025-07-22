@@ -99,7 +99,7 @@ location_table: List[LocationData] = [
 
     # 'Construction' Category
     LocationData("Have 3 Houses"                                        , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NA           , LocationProgressType.DEFAULT ),
-    LocationData("Build a Shed"                                         , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.Expansion    , LocationProgressType.DEFAULT ),
+    LocationData("Build a Shed"                                         , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NA           , LocationProgressType.DEFAULT ),
     LocationData("Build a Quarry"                                       , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NA           , LocationProgressType.DEFAULT ),
     LocationData("Build a Lumber Camp"                                  , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NA           , LocationProgressType.DEFAULT ),
     LocationData("Build a Farm"                                         , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NA           , LocationProgressType.DEFAULT ),

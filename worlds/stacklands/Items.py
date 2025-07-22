@@ -63,6 +63,7 @@ item_table: List[ItemData] = [
     ItemData("Idea: Offspring"                      , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NA        , ItemClassification.progression),
     ItemData("Idea: Plank"                          , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NA        , ItemClassification.progression),
     ItemData("Idea: Quarry"                         , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NA        , ItemClassification.progression),
+    ItemData("Idea: Shed"                           , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NA        , ItemClassification.progression),
     ItemData("Idea: Slingshot"                      , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NA        , ItemClassification.progression),
     ItemData("Idea: Smelter"                        , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NA        , ItemClassification.progression),
     ItemData("Idea: Smithy"                         , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NA        , ItemClassification.progression),
@@ -105,16 +106,10 @@ item_table: List[ItemData] = [
 #region YAML-Configured Filler Items
 
     # Board Expansion Ideas
-    ItemData("Idea: Shed"                           , RegionFlags.Shared     , ItemType.Idea       , OptionFlags.Expansion  , ItemClassification.progression),
     ItemData("Idea: Warehouse"                      , RegionFlags.Shared     , ItemType.Idea       , OptionFlags.Expansion  , ItemClassification.useful     ),
 
-    # Board Expansion Items 
-    # ItemData("Board Size Increase"                  , RegionFlags.Mainland   , ItemType.Buff       , OptionFlags.Expansion  , ItemClassification.progression),
-    # ItemData("Card Limit Increase"                  , RegionFlags.Mainland   , ItemType.Buff       , OptionFlags.Expansion  , ItemClassification.progression),
-
-    # Board Expansion Structures
-    ItemData("Board Expansion: Shed"                , RegionFlags.Mainland   , ItemType.Structure  , OptionFlags.Expansion  , ItemClassification.progression),
-    ItemData("Board Expansion: Warehouse"           , RegionFlags.Mainland   , ItemType.Structure  , OptionFlags.Expansion  , ItemClassification.progression),
+    # Board Expansion Items
+    ItemData("Board Expansion"                      , RegionFlags.Mainland   , ItemType.Structure  , OptionFlags.Expansion  , ItemClassification.progression),
 
 #endregion
 
@@ -167,7 +162,7 @@ item_table: List[ItemData] = [
     # ItemData("Flip Trap"                            , RegionFlags.Shared        , ItemType.Trap        , OptionFlags.Traps  , ItemClassification.trap       ),
     ItemData("Mob Trap"                             , RegionFlags.Shared        , ItemType.Trap        , OptionFlags.Traps  , ItemClassification.trap       ),
     ItemData("Sell Cards Trap"                      , RegionFlags.Shared        , ItemType.Trap        , OptionFlags.Traps  , ItemClassification.trap       ),
-    ItemData("Structure Trap"                       , RegionFlags.Shared        , ItemType.Trap        , OptionFlags.Traps  , ItemClassification.trap       ),
+    ItemData("Strange Portal Trap"                  , RegionFlags.Shared        , ItemType.Trap        , OptionFlags.Traps  , ItemClassification.trap       ),
 
     # ItemData("Chickens"                             , RegionFlags.Shared        , ItemType.Mob         , OptionFlags.Traps  , ItemClassification.trap       ),
     # ItemData("Goop"                                 , RegionFlags.Shared        , ItemType.Mob         , OptionFlags.Traps  , ItemClassification.trap       ),
@@ -321,15 +316,9 @@ def create_expansion_items(world: MultiWorld, player: int, options: StacklandsOp
                 or (forest_selected and item.region_flags & RegionFlags.Forest)     # OR Item is for The Dark Forest and that board is selected
             )
         ]:
-            # Add 7 shed expansions
-            if expansion_item.name == "Board Expansion: Shed":
-                for _ in range(7):
-                    expansion_items.append(expansion_item)
-            
-            # Add 4 warehouse expansions
-            elif expansion_item.name == "Board Expansion: Warehouse":
-                for _ in range(4):
-                    expansion_items.append(expansion_item)
+            # Add amount configured in yaml
+            for _ in range(options.board_expansion_count.value):
+                expansion_items.append(expansion_item)
 
     # Add each expansion item to the expansion pool
     for expansion_data in expansion_items:

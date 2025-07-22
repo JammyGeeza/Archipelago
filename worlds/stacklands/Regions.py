@@ -105,10 +105,6 @@ def create_mainland_region(world: MultiWorld, player: int, options: StacklandsOp
         if options.mobsanity.value:
             check_pool += [ loc for loc in board_checks if loc.check_type is CheckType.Check and loc.option_flags & OptionFlags.Mobsanity ]
 
-        # If expansion mode is 'ideas' then include checks for building expansion items
-        if options.board_expansion_mode.value is ExpansionType.Ideas:
-            check_pool += [ loc for loc in board_checks if loc.check_type is CheckType.Check and loc.option_flags & OptionFlags.Expansion ]
-
     # Get goal check, if exists
     if (goal_check:= next((loc for loc in board_checks if loc.check_type & CheckType.Goal), None)) is not None:
 

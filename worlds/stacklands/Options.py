@@ -25,13 +25,40 @@ class BoardExpansionMode(Choice):
     Select how board expansion works in the run.
 
     ideas  -> Adds 'Idea: Shed' and 'Idea: Warehouse' to the item pool - build them yourself to expand the board as you like.
-    items  -> Adds 7x 'Board Expansion: Shed' and 4x 'Board Expansion: Warehouse' items to the item pool - each spawns a Shed or Warehouse.
+    items  -> Adds 'Board Expansion' items to the item pool and removes 'Idea: Warehouse'. Building 'Shed' will no longer expand your board, but can be used to complete the 'Build a Shed' check.
 
     """
     display_name = "Board Expansion Mode"
     option_ideas = ExpansionType.Ideas
     option_items = ExpansionType.Items
     default = ExpansionType.Items
+
+class BoardExpansionAmount(Range):
+    """
+    How many additional cards a board expansion item will give.
+    NOTE: Board size is increased as if building a Shed or Warehouse in vanilla and max board size remains capped at the largest vanilla size (without Lighthouses).
+    
+    If 'board_expansion_mode' is 'ideas' then this setting will be ignored.
+
+    Range from 4 to 14
+    """
+    display_name = "Board Expansion Amount"
+    range_start = 4
+    range_end = 14
+    default = 8
+
+class BoardExpansionCount(Range):
+    """
+    How many 'Board Expansion' items are added to the item pool.
+    
+    If 'board_expansion_mode' is 'ideas' then this setting will be ignored.
+
+    Range from 3 to 10
+    """
+    display_name = "Board Expansion Count"
+    range_start = 3
+    range_end = 10
+    default = 4
 
 class MoonLength(Choice):
     """
@@ -118,7 +145,7 @@ class MobTrapWeight(Range):
     The weighting of Mob Traps in the trap pool.
     The higher this number relative to the other trap weightings, the more often it is likely to appear.
     
-    Mob Traps will spawn a random enemy to the current board - killing mob traps will not count towards Mobsanity checks.
+    Mob Traps will spawn a random, basic enemy to the current board - killing mobs from Mob Traps will not count towards Mobsanity checks.
 
     If <Trap Fill> is 0 then this setting will be ignored.
 
@@ -152,26 +179,26 @@ class SellCardsTrapAmount(Range):
     You will be forced to sell this amount of all sellable cards when you receive this trap. If you have fewer than
     this amount, you will instead be forced to sell all remaining sellable cards.
 
-    Range from 1 to 25
+    Range from 1 to 10
     
     If <Trap Fill> is 0 or <Sell Cards Trap Weight> is 0 then this setting will be ignored.
     """
     display_name = "Sell Cards Trap Amount"
     range_start = 1
-    range_end = 25
+    range_end = 10
     default = 3
 
-class StructureTrapWeight(Range):
+class StrangePortalTrapWeight(Range):
     """
-    The weighting of Structure Trap items in the trap pool.
+    The weighting of Strange Portal Trap items in the trap pool.
     The higher this number relative to the other trap weightings, the more often it is likely to appear.
 
-    Structure Traps will spawn a Strange Portal to the Mainland board or Pirate Boat to the Island board.
-    You will not be able to use Strange Portals spawned from Structure Traps to travel to The Dark Forest.
+    Strange Portal Traps will spawn a Strange Portal to the current board.
+    Portals from these traps cannot be used to travel to The Dark Forest and killing enemies spawned from these Portals will not count towards Mobsanity checks.
     
     If <Trap Fill> is 0 then this setting will be ignored.
     """
-    display_name = "Structure Trap Weighting"
+    display_name = "Strange Portal Trap Weighting"
     range_start = 0
     range_end = 100
     default = 50
@@ -180,6 +207,8 @@ class StructureTrapWeight(Range):
 class StacklandsOptions(PerGameCommonOptions):
     boards: Boards
     board_expansion_mode: BoardExpansionMode
+    board_expansion_amount: BoardExpansionAmount
+    board_expansion_count: BoardExpansionCount
     death_link: DeathLink
     moon_length: MoonLength
     goal: Goal
@@ -191,4 +220,4 @@ class StacklandsOptions(PerGameCommonOptions):
     mob_trap_weight: MobTrapWeight
     sell_cards_trap_weight: SellCardsTrapWeight
     sell_cards_trap_amount: SellCardsTrapAmount
-    structure_trap_weight: StructureTrapWeight
+    strange_portal_trap_weight: StrangePortalTrapWeight

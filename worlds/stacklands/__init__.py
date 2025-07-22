@@ -37,10 +37,9 @@ class StacklandsWorld(World):
         # Get trap item weights
         self.multiworld.trap_weights = {
             "Feed Villagers Trap": self.options.feed_villagers_trap_weight.value,
-            # "Flip Trap": self.options.flip_trap_weight.value,
             "Mob Trap": self.options.mob_trap_weight.value,
             "Sell Cards Trap": self.options.sell_cards_trap_weight.value,
-            "Structure Trap": self.options.structure_trap_weight.value,
+            "Strange Portal Trap": self.options.strange_portal_trap_weight.value,
         }
 
         logging.info("----- Trap Item Weights -----")
@@ -62,7 +61,7 @@ class StacklandsWorld(World):
     # Fill the slot data
     def fill_slot_data(self) -> Dict[str, Any]:
         slot_data = {}
-        slot_data.update(self.options.as_dict("boards", "death_link", "goal", "mobsanity", "moon_length", "pausing", "sell_cards_trap_amount", "start_inventory"))
+        slot_data.update(self.options.as_dict("boards", "board_expansion_mode", "board_expansion_amount", "death_link", "goal", "mobsanity", "moon_length", "pausing", "sell_cards_trap_amount", "start_inventory"))
         return slot_data
     
     # Set all access rules
