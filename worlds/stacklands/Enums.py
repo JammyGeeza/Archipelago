@@ -36,7 +36,7 @@ class CheckFlags(IntFlag):
 class GoalFlags(IntFlag):
     Demon     = 1 << 0
     Witch     = 1 << 1
-    All       = 1 << 2
+    All       = Demon | Witch
 
 class ItemFlags(IntFlag):
     NA        = 0
@@ -45,7 +45,6 @@ class ItemFlags(IntFlag):
     Resource  = 1 << 2
     Mob       = 1 << 3
     Expansion = 1 << 4
-    CardLimit = 1 << 5
 
 class OptionFlags(IntFlag):
     NA        = 0
@@ -58,7 +57,7 @@ class RegionFlags(IntFlag):
     NA        = 0
     Mainland  = 1 << 0
     Forest    = 1 << 1
-    Island    = 1 << 2
-    Shared    = Mainland | Forest
+
+    Mainland_and_Forest = Mainland | Forest
 
 #endregion

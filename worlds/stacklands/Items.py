@@ -106,7 +106,7 @@ item_table: List[ItemData] = [
 #region YAML-Configured Filler Items
 
     # Board Expansion Ideas
-    ItemData("Idea: Warehouse"                      , RegionFlags.Shared     , ItemType.Idea       , OptionFlags.Expansion  , ItemClassification.useful     ),
+    ItemData("Idea: Warehouse"                      , RegionFlags.Mainland_and_Forest     , ItemType.Idea       , OptionFlags.Expansion  , ItemClassification.useful     ),
 
     # Board Expansion Items
     ItemData("Board Expansion"                      , RegionFlags.Mainland   , ItemType.Structure  , OptionFlags.Expansion  , ItemClassification.progression),
@@ -116,38 +116,38 @@ item_table: List[ItemData] = [
 #region Junk Items
 
     # Filler Ideas
-    ItemData("Idea: Bone Spear"                     , RegionFlags.Shared     , ItemType.Idea        , OptionFlags.NA        , ItemClassification.filler     ),
-    ItemData("Idea: Boomerang"                      , RegionFlags.Shared     , ItemType.Idea        , OptionFlags.NA        , ItemClassification.filler     ),
-    ItemData("Idea: Breeding Pen"                   , RegionFlags.Shared     , ItemType.Idea        , OptionFlags.NA        , ItemClassification.filler     ),
-    ItemData("Idea: Butchery"                       , RegionFlags.Shared     , ItemType.Idea        , OptionFlags.NA        , ItemClassification.filler     ),
-    ItemData("Idea: Club"                           , RegionFlags.Shared     , ItemType.Idea        , OptionFlags.NA        , ItemClassification.filler     ),
-    ItemData("Idea: Crane"                          , RegionFlags.Shared     , ItemType.Idea        , OptionFlags.NA        , ItemClassification.filler     ),
-    ItemData("Idea: Dustbin"                        , RegionFlags.Shared     , ItemType.Idea        , OptionFlags.NA        , ItemClassification.filler     ), 
-    ItemData("Idea: Fruit Salad"                    , RegionFlags.Shared     , ItemType.Idea        , OptionFlags.NA        , ItemClassification.filler     ),
-    ItemData("Idea: Hotpot"                         , RegionFlags.Shared     , ItemType.Idea        , OptionFlags.NA        , ItemClassification.filler     ),
-    ItemData("Idea: Magic Blade"                    , RegionFlags.Shared     , ItemType.Idea        , OptionFlags.NA        , ItemClassification.filler     ),
-    ItemData("Idea: Magic Glue"                     , RegionFlags.Shared     , ItemType.Idea        , OptionFlags.NA        , ItemClassification.filler     ),
-    ItemData("Idea: Magic Ring"                     , RegionFlags.Shared     , ItemType.Idea        , OptionFlags.NA        , ItemClassification.filler     ),
-    ItemData("Idea: Magic Staff"                    , RegionFlags.Shared     , ItemType.Idea        , OptionFlags.NA        , ItemClassification.filler     ),
-    ItemData("Idea: Magic Tome"                     , RegionFlags.Shared     , ItemType.Idea        , OptionFlags.NA        , ItemClassification.filler     ),
-    ItemData("Idea: Mess Hall"                      , RegionFlags.Shared     , ItemType.Idea        , OptionFlags.NA        , ItemClassification.filler     ),
-    ItemData("Idea: Milkshake"                      , RegionFlags.Shared     , ItemType.Idea        , OptionFlags.NA        , ItemClassification.filler     ),
-    ItemData("Idea: Spiked Plank"                   , RegionFlags.Shared     , ItemType.Idea        , OptionFlags.NA        , ItemClassification.filler     ),
-    ItemData("Idea: Stew"                           , RegionFlags.Shared     , ItemType.Idea        , OptionFlags.NA        , ItemClassification.filler     ),
-    ItemData("Idea: University"                     , RegionFlags.Shared     , ItemType.Idea        , OptionFlags.NA        , ItemClassification.filler     ),
+    ItemData("Idea: Bone Spear"                     , RegionFlags.Mainland_and_Forest     , ItemType.Idea        , OptionFlags.NA        , ItemClassification.filler     ),
+    ItemData("Idea: Boomerang"                      , RegionFlags.Mainland_and_Forest     , ItemType.Idea        , OptionFlags.NA        , ItemClassification.filler     ),
+    ItemData("Idea: Breeding Pen"                   , RegionFlags.Mainland_and_Forest     , ItemType.Idea        , OptionFlags.NA        , ItemClassification.filler     ),
+    ItemData("Idea: Butchery"                       , RegionFlags.Mainland_and_Forest     , ItemType.Idea        , OptionFlags.NA        , ItemClassification.filler     ),
+    ItemData("Idea: Club"                           , RegionFlags.Mainland_and_Forest     , ItemType.Idea        , OptionFlags.NA        , ItemClassification.filler     ),
+    ItemData("Idea: Crane"                          , RegionFlags.Mainland_and_Forest     , ItemType.Idea        , OptionFlags.NA        , ItemClassification.filler     ),
+    ItemData("Idea: Dustbin"                        , RegionFlags.Mainland_and_Forest     , ItemType.Idea        , OptionFlags.NA        , ItemClassification.filler     ), 
+    ItemData("Idea: Fruit Salad"                    , RegionFlags.Mainland_and_Forest     , ItemType.Idea        , OptionFlags.NA        , ItemClassification.filler     ),
+    ItemData("Idea: Hotpot"                         , RegionFlags.Mainland_and_Forest     , ItemType.Idea        , OptionFlags.NA        , ItemClassification.filler     ),
+    ItemData("Idea: Magic Blade"                    , RegionFlags.Mainland_and_Forest     , ItemType.Idea        , OptionFlags.NA        , ItemClassification.filler     ),
+    ItemData("Idea: Magic Glue"                     , RegionFlags.Mainland_and_Forest     , ItemType.Idea        , OptionFlags.NA        , ItemClassification.filler     ),
+    ItemData("Idea: Magic Ring"                     , RegionFlags.Mainland_and_Forest     , ItemType.Idea        , OptionFlags.NA        , ItemClassification.filler     ),
+    ItemData("Idea: Magic Staff"                    , RegionFlags.Mainland_and_Forest     , ItemType.Idea        , OptionFlags.NA        , ItemClassification.filler     ),
+    ItemData("Idea: Magic Tome"                     , RegionFlags.Mainland_and_Forest     , ItemType.Idea        , OptionFlags.NA        , ItemClassification.filler     ),
+    ItemData("Idea: Mess Hall"                      , RegionFlags.Mainland_and_Forest     , ItemType.Idea        , OptionFlags.NA        , ItemClassification.filler     ),
+    ItemData("Idea: Milkshake"                      , RegionFlags.Mainland_and_Forest     , ItemType.Idea        , OptionFlags.NA        , ItemClassification.filler     ),
+    ItemData("Idea: Spiked Plank"                   , RegionFlags.Mainland_and_Forest     , ItemType.Idea        , OptionFlags.NA        , ItemClassification.filler     ),
+    ItemData("Idea: Stew"                           , RegionFlags.Mainland_and_Forest     , ItemType.Idea        , OptionFlags.NA        , ItemClassification.filler     ),
+    ItemData("Idea: University"                     , RegionFlags.Mainland_and_Forest     , ItemType.Idea        , OptionFlags.NA        , ItemClassification.filler     ),
 
     # Filler Resources
-    ItemData("Resource Booster Pack"                , RegionFlags.Shared     , ItemType.Booster     , OptionFlags.NA        , ItemClassification.filler     ),
+    ItemData("Resource Booster Pack"                , RegionFlags.Mainland_and_Forest     , ItemType.Booster     , OptionFlags.NA        , ItemClassification.filler     ),
 
 #endregion
 
 #region Trap Items
 
-    ItemData("Feed Villagers Trap"                  , RegionFlags.Shared        , ItemType.Trap        , OptionFlags.Traps  , ItemClassification.trap       ),
-    # ItemData("Flip Trap"                            , RegionFlags.Shared        , ItemType.Trap        , OptionFlags.Traps  , ItemClassification.trap       ),
-    ItemData("Mob Trap"                             , RegionFlags.Shared        , ItemType.Trap        , OptionFlags.Traps  , ItemClassification.trap       ),
-    ItemData("Sell Cards Trap"                      , RegionFlags.Shared        , ItemType.Trap        , OptionFlags.Traps  , ItemClassification.trap       ),
-    ItemData("Strange Portal Trap"                  , RegionFlags.Shared        , ItemType.Trap        , OptionFlags.Traps  , ItemClassification.trap       ),
+    ItemData("Feed Villagers Trap"                  , RegionFlags.Mainland_and_Forest        , ItemType.Trap        , OptionFlags.Traps  , ItemClassification.trap       ),
+    # ItemData("Flip Trap"                            , RegionFlags.Mainland_and_Forest        , ItemType.Trap        , OptionFlags.Traps  , ItemClassification.trap       ),
+    ItemData("Mob Trap"                             , RegionFlags.Mainland_and_Forest        , ItemType.Trap        , OptionFlags.Traps  , ItemClassification.trap       ),
+    ItemData("Sell Cards Trap"                      , RegionFlags.Mainland_and_Forest        , ItemType.Trap        , OptionFlags.Traps  , ItemClassification.trap       ),
+    ItemData("Strange Portal Trap"                  , RegionFlags.Mainland_and_Forest        , ItemType.Trap        , OptionFlags.Traps  , ItemClassification.trap       ),
 
 #endregion
 ]
@@ -187,7 +187,7 @@ def create_mainland_items(world: MultiWorld, player: int, options: StacklandsOpt
     logging.info("----- Creating 'Mainland' Items -----")
 
     # If mainland board is selected in YAML
-    if options.boards.value & RegionFlags.Mainland:
+    if options.quest_checks.value & RegionFlags.Mainland:
 
         # Get items from starting inventory
         excluded_items: List[Item] = world.precollected_items[player]
@@ -222,7 +222,7 @@ def create_forest_items(world: MultiWorld, player: int, options: StacklandsOptio
     logging.info("----- Creating 'The Dark Forest' Items -----")
 
     # If The Dark Forest board is selected in YAML
-    if options.boards.value & RegionFlags.Forest:
+    if options.quest_checks.value & RegionFlags.Forest:
 
         # Get items from starting inventory
         excluded_items: List[Item] = world.precollected_items[player]
@@ -258,8 +258,8 @@ def create_expansion_items(world: MultiWorld, player: int, options: StacklandsOp
     expansion_items: List[ItemData] = []
 
     # Calculate selected boards
-    mainland_selected: bool = bool(options.boards.value & RegionFlags.Mainland)
-    forest_selected: bool = bool(options.boards.value & RegionFlags.Forest)
+    mainland_selected: bool = bool(options.quest_checks.value & RegionFlags.Mainland)
+    forest_selected: bool = bool(options.quest_checks.value & RegionFlags.Forest)
 
     # If 'Ideas' mode selected
     if options.board_expansion_mode.value is ExpansionType.Ideas:
@@ -377,8 +377,8 @@ def create_filler_items(world: MultiWorld, player: int, options: StacklandsOptio
         logging.info(f"There are {unfilled_count} un-filled item slots")
 
         # Calculate selected boards
-        mainland_selected: bool = bool(options.boards.value & RegionFlags.Mainland)
-        forest_selected: bool = bool(options.boards.value & RegionFlags.Forest)
+        mainland_selected: bool = bool(options.quest_checks.value & RegionFlags.Mainland)
+        forest_selected: bool = bool(options.quest_checks.value & RegionFlags.Forest)
 
         # Get filler ideas
         filler_ideas: List[ItemData] = [

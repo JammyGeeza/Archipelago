@@ -82,10 +82,10 @@ def create_mainland_region(world: MultiWorld, player: int, options: StacklandsOp
     check_pool: List[LocationData] = []
 
     # Get all checks for Mainland board
-    board_checks: List[LocationData] = [ loc for loc in location_table if loc.region_flags is RegionFlags.Mainland ]
+    mainland_checks: List[LocationData] = [ loc for loc in location_table if loc.region_flags is RegionFlags.Mainland ]
 
     # Check if mainland board is selected in YAML
-    board_selected: bool = bool(options.boards.value & RegionFlags.Mainland)
+    board_selected: bool = bool(options.quest_checks.value & RegionFlags.Mainland)
     goal_selected: bool = bool(options.goal.value & GoalFlags.Demon)
 
     logging.info(f"Board selected: {board_selected}")
@@ -95,18 +95,18 @@ def create_mainland_region(world: MultiWorld, player: int, options: StacklandsOp
     if board_selected:
 
         # Add all quest checks (not affected by options) for Mainland to check pool
-        check_pool += [ loc for loc in board_checks if loc.check_type is CheckType.Check and loc.option_flags is OptionFlags.NA ]
+        check_pool += [ loc for loc in mainland_checks if loc.check_type is CheckType.Check and loc.option_flags is OptionFlags.NA ]
 
         # If pausing is enabled, add all Pausing quest checks for Mainland to check pool 
         if options.pausing.value:
-            check_pool += [ loc for loc in board_checks if loc.check_type is CheckType.Check and loc.option_flags & OptionFlags.Pausing ]
+            check_pool += [ loc for loc in mainland_checks if loc.check_type is CheckType.Check and loc.option_flags & OptionFlags.Pausing ]
 
         # If mobsanity is enabled, add all mobsanity checks for Mainland to the check pool
         if options.mobsanity.value:
-            check_pool += [ loc for loc in board_checks if loc.check_type is CheckType.Check and loc.option_flags & OptionFlags.Mobsanity ]
+            check_pool += [ loc for loc in mainland_checks if loc.check_type is CheckType.Check and loc.option_flags & OptionFlags.Mobsanity ]
 
     # Get goal check, if exists
-    if (goal_check:= next((loc for loc in board_checks if loc.check_type & CheckType.Goal), None)) is not None:
+    if (goal_check:= next((loc for loc in mainland_checks if loc.check_type & CheckType.Goal), None)) is not None:
 
         logging.info(f"Goal found: {goal_check.name}")
 
@@ -117,13 +117,7 @@ def create_mainland_region(world: MultiWorld, player: int, options: StacklandsOp
         # If goal is not selected but board is selected, replace the goal check with a normal quest check
         # NOTE: Can't just update the location's check flag because it messes it up for all Fuzz.py generations
         elif not goal_selected and board_selected:
-            check_pool += [ LocationData(
-                goal_check.name,
-                goal_check.region_flags,
-                CheckType.Check,
-                goal_check.option_flags,
-                goal_check.progress_type)
-            ]
+            check_pool += [ LocationData(goal_check.name, goal_check.region_flags, CheckType.Check, goal_check.option_flags, goal_check.progress_type) ]
 
     logging.info(f"Mainland check pool: {len(check_pool)}")
 
@@ -144,10 +138,10 @@ def create_forest_region(world: MultiWorld, player: int, options: StacklandsOpti
     check_pool: List[LocationData] = []
 
     # Get all checks for The Dark Forest board
-    board_checks: List[LocationData] = [ loc for loc in location_table if loc.region_flags is RegionFlags.Forest ]
+    forest_checks: List[LocationData] = [ loc for loc in location_table if loc.region_flags is RegionFlags.Forest ]
 
     # Check if Dark Forest board is selected in YAML
-    board_selected: bool = bool(options.boards.value & RegionFlags.Forest)
+    board_selected: bool = bool(options.quest_checks.value & RegionFlags.Forest)
     goal_selected: bool = bool(options.goal.value & GoalFlags.Witch)
 
     logging.info(f"Board selected: {board_selected}")
@@ -157,14 +151,14 @@ def create_forest_region(world: MultiWorld, player: int, options: StacklandsOpti
     if board_selected:
         
         # Add all quest checks for Mainland to check pool
-        check_pool += [ loc for loc in board_checks if loc.check_type is CheckType.Check and loc.option_flags is OptionFlags.NA ]
+        check_pool += [ loc for loc in forest_checks if loc.check_type is CheckType.Check and loc.option_flags is OptionFlags.NA ]
 
         # If mobsanity is enabled, add all mobsanity checks for Mainland to the check pool
         if options.mobsanity.value:
-            check_pool += [ loc for loc in board_checks if loc.check_type is CheckType.Check and loc.option_flags & OptionFlags.Mobsanity ]
+            check_pool += [ loc for loc in forest_checks if loc.check_type is CheckType.Check and loc.option_flags & OptionFlags.Mobsanity ]
 
     # Get goal check, if exists
-    if (goal_check:= next((loc for loc in board_checks if loc.check_type is CheckType.Goal), None)) is not None:
+    if (goal_check:= next((loc for loc in forest_checks if loc.check_type is CheckType.Goal), None)) is not None:
 
         logging.info(f"Goal found: {goal_check.name}")
 
@@ -175,13 +169,7 @@ def create_forest_region(world: MultiWorld, player: int, options: StacklandsOpti
         # If goal is not selected but board is selected, replace the goal check with a normal quest check
         # NOTE: Can't just update the location's check flag because it messes it up for all Fuzz.py generations
         elif not goal_selected and board_selected:
-            check_pool += [ LocationData(
-                goal_check.name,
-                goal_check.region_flags,
-                CheckType.Check,
-                goal_check.option_flags,
-                goal_check.progress_type)
-            ]
+            check_pool += [ LocationData(goal_check.name, goal_check.region_flags, CheckType.Check, goal_check.option_flags, goal_check.progress_type) ]
 
     logging.info(f"Dark Forest check pool: {len(check_pool)}")
 

@@ -2,17 +2,39 @@ from dataclasses import dataclass
 from .Enums import ExpansionType, GoalFlags, MoonlengthType, RegionFlags
 from Options import Choice, DeathLink, PerGameCommonOptions, Range, Toggle
 
-class Boards(Choice):
+class Goal(Choice):
     """
-    Select which boards to include in the run - all quests from each selected board will be added as checks to the check pool.
+    Select which bosses to kill for the goal of your run.
 
-    mainland_only               -> Include only Mainland
-    mainland_and_dark_forest    -> Include both Mainland and The Dark Forest
+    kill_demon          -> Complete the 'Kill the Demon' quest (Mainland)
+    kill_wicked_witch   -> Complete the 'Fight the Wicked Witch' quest (The Dark Forest)
+    all_bosses          -> Complete both 'Kill the Demon' (Mainland) and 'Fight the Wicked Witch' (The Dark Forest)
+
+    NOTE:
+    Selecting a goal for a board you have NOT selected in the <Board Checks> option will still work, but will not
+    automatically include all quest checks for that board.
+
+    EXAMPLE:
+    If <Boards> option is set to 'mainland_only' and your <Goal> option is set to 'kill_wicked_witch', it will allow you
+    to complete the goal in The Dark Forest but no other Dark Forest quests will be included as checks.
     """
-    display_name = "Included Boards"
+    display_name = "Goal"
+    option_kill_demon = GoalFlags.Demon
+    option_kill_wicked_witch = GoalFlags.Witch
+    option_all_bosses = GoalFlags.All
+    default = option_all_bosses
+
+class QuestChecks(Choice):
+    """
+    Select which quests to include as checks.
+
+    mainland_only               -> Include all Mainland quests as checks.
+    mainland_and_dark_forest    -> Include all Mainland and The Dark Forest quests as checks.
+    """
+    display_name = "Quest Checks"
     option_mainland_only = RegionFlags.Mainland
-    option_mainland_and_dark_forest = RegionFlags.Mainland | RegionFlags.Forest
-    default = RegionFlags.Mainland | RegionFlags.Forest
+    option_mainland_and_dark_forest = RegionFlags.Mainland_and_Forest
+    default = option_mainland_and_dark_forest
 
 class BoardExpansionMode(Choice):
     """
@@ -58,27 +80,6 @@ class MoonLength(Choice):
     option_normal = MoonlengthType.Normal
     option_long = MoonlengthType.Long
     default = MoonlengthType.Normal
-
-
-class Goal(Choice):
-    """
-    Select the goal for your run.
-
-    kill_demon          -> Complete the 'Kill the Demon' quest (Mainland)
-    kill_wicked_witch   -> Complete the 'Fight the Wicked Witch' quest (The Dark Forest)
-
-    NOTE: 
-    Selecting a goal for a board you have NOT selected in the 'boards' option will still work, but will not
-    automatically include all quest checks for that board.
-
-    EXAMPLE:
-    If <Boards> option is set to 'mainland_only' and your <Goal> option is set to 'kill_wicked_witch', it will allow you
-    to complete the goal in The Dark Forest but no other Dark Forest quests will be included as checks.
-    """
-    display_name = "Goal"
-    option_kill_demon = GoalFlags.Demon
-    option_kill_wicked_witch = GoalFlags.Witch
-    default = GoalFlags.Demon
 
 class Mobsanity(Toggle):
     """
@@ -183,13 +184,13 @@ class StrangePortalTrapWeight(Range):
 
 @dataclass
 class StacklandsOptions(PerGameCommonOptions):
-    boards: Boards
+    goal: Goal
+    quest_checks: QuestChecks
     board_expansion_mode: BoardExpansionMode
     board_expansion_amount: BoardExpansionAmount
     board_expansion_count: BoardExpansionCount
     death_link: DeathLink
     moon_length: MoonLength
-    goal: Goal
     pausing: Pausing
     mobsanity: Mobsanity
     trap_fill: TrapFill

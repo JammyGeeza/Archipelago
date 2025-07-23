@@ -85,12 +85,8 @@ def set_rules(world: MultiWorld, player: int):
     # Get relevant options
     options = world.worlds[player].options
 
-    # Calculate selected boards
-    mainland_board_selected: bool = bool(options.boards.value & RegionFlags.Mainland)
-    forest_board_selected: bool = bool(options.boards.value & RegionFlags.Forest)
-
-    # Calculate selected goals
-    demon_goal_selected: bool = bool(options.goal.value & GoalFlags.Demon)
+    # Calculate selected dark forest options
+    forest_board_selected: bool = bool(options.quest_checks.value & RegionFlags.Forest)
     witch_goal_selected: bool = bool(options.goal.value & GoalFlags.Witch)
 
 #region 'Entrances'
