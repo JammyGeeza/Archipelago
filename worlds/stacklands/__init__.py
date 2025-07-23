@@ -1,3 +1,4 @@
+import logging
 from typing import Dict, Any
 from .Options import StacklandsOptions
 from .Items import StacklandsItem, create_all_items, item_table, group_table, name_to_id as item_lookup
@@ -28,6 +29,22 @@ class StacklandsWorld(World):
     item_name_groups = group_table
     
     required_client_version = (0, 1, 9)
+
+    # trap_weights: Dict[str, int] = {}
+
+    def generate_early(self) -> None:
+
+        # Get trap item weights
+        self.multiworld.trap_weights = {
+            "Feed Villagers Trap": self.options.feed_villagers_trap_weight.value,
+            "Mob Trap": self.options.mob_trap_weight.value,
+            "Sell Cards Trap": self.options.sell_cards_trap_weight.value,
+            "Strange Portal Trap": self.options.strange_portal_trap_weight.value,
+        }
+
+        logging.info("----- Trap Item Weights -----")
+        for key, val in self.multiworld.trap_weights.items():
+            logging.info(f"'{key}' weight: {val}")
     
     # Create all items
     def create_items(self):
@@ -44,7 +61,8 @@ class StacklandsWorld(World):
     # Fill the slot data
     def fill_slot_data(self) -> Dict[str, Any]:
         slot_data = {}
-        slot_data.update(self.options.as_dict("dark_forest", "death_link", "goal", "mobsanity", "pausing", "start_inventory"))
+        slot_data.update(self.options.as_dict("board_expansion_mode", "board_expansion_amount", "death_link", "goal", "mobsanity", "moon_length", "pausing", "quest_checks", "sell_cards_trap_amount", "start_inventory"))
+        slot_data.update({ "version": "0.1.6" })
         return slot_data
     
     # Set all access rules

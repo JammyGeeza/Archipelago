@@ -1,69 +1,182 @@
 import logging
+from .Enums import CheckType, ExpansionType, GoalFlags, OptionFlags, RegionFlags
 from typing import List, NamedTuple
 from BaseClasses import Entrance, Item, ItemClassification, LocationProgressType, MultiWorld, Region
-from .Locations import CheckType, LocationData, StacklandsLocation, goal_table, location_table, name_to_id as location_lookup
+from .Options import StacklandsOptions
+from .Locations import LocationData, StacklandsLocation, location_table, name_to_id as location_lookup
 
 class RegionData(NamedTuple):
     name: str
     locations: List[LocationData]
     exits: List[str]
 
-# Regions table
-region_table: List[RegionData] = [
-    RegionData("Menu",              [loc for loc in location_table if loc.region == "Menu"],                [ "Start" ]),
-    RegionData("Mainland",          [loc for loc in location_table if loc.region == "Mainland"],            [ "Portal", "Rowboat" ]),
-    RegionData("The Dark Forest",   [loc for loc in location_table if loc.region == "The Dark Forest"],     [ ]),
-    RegionData("The Island",        [loc for loc in location_table if loc.region == "The Island"],          [ ]),
-]
+def create_region(world: MultiWorld, player: int, region_data: RegionData) -> Region:
+    """Create a region in the multiworld from the region data"""
 
-# Create a region
-def create_region(world: MultiWorld, player: int, region: RegionData) -> Region:
-    
     # Create region object
-    region_obj = Region(region.name, player, world)
+    region: Region = Region(region_data.name, player, world)
 
-    # Get relevant options
-    options = world.worlds[player].options
+    # Get all locations that are not goals
+    for location_data in [ loc for loc in region_data.locations if loc.check_type is CheckType.Check ]:
 
-    # Cycle through all valid location checks
-    for loc in [
-        loc for loc in region.locations if 
-        (options.dark_forest.value or loc.region != "The Dark Forest") and # Include Dark Forest checks if enabled in options
-        (options.mobsanity.value or loc.check_type != CheckType.Mobsanity) and # Include Mobsanity checks if enabled in options
-        (options.pausing.value or loc.name != "Pause using the play icon in the top right corner") and # Include Pausing check if enabled in options
-        ((options.goal.value == 0 and loc.name != "Kill the Demon") or # Exclude 'Kill the Demon' if set as goal as this will be an Event instead
-        (options.goal.value == 1 and loc.name != "Fight the Wicked Witch")) # Exclude 'Fight the Wicked Witch' if set as goal, as it will be an Event instead
-    ]:
+        logging.info(f"Creating '{location_data.name}' location in '{region.name}' region...")
 
-        # Add location check to region
-        loc_obj = StacklandsLocation(player, loc.name, location_lookup[loc.name], region_obj)
-        loc_obj.progress_type = loc.progress_type
-        region_obj.locations.append(loc_obj)
+        # Create and add location to region
+        location: StacklandsLocation = StacklandsLocation(player, location_data, location_lookup[location_data.name], region)
+        region.locations.append(location)
 
-    # Add exits to region, if provided
-    if region.exits:
-        for exit in region.exits:
-            region_obj.exits.append(Entrance(player, exit, region_obj))
+    # Get all locations that are goals
+    for goal_data in [ loc for loc in region_data.locations if loc.check_type is CheckType.Goal ]:
 
-    # Get the goal data (if it exists in this region)
-    goal = goal_table[options.goal.value] if goal_table[options.goal.value].region == region.name else None
+        logging.info(f"Creating '{goal_data.name}' goal in '{region.name}' region...")
 
-    # Add goal and victory item to region, if goal is within this region
-    if goal:
-        goal_obj = StacklandsLocation(player, goal.name, None, region_obj)
-        goal_obj.place_locked_item(Item("Victory", ItemClassification.progression, None, player))
-        region_obj.locations.append(goal_obj)
+        # Create and add goal to region
+        goal: StacklandsLocation = StacklandsLocation(player, goal_data, None, region)
+        goal.place_locked_item(Item("Victory", ItemClassification.progression, None, player))
+        region.locations.append(goal)
 
-    return region_obj
+    # Add exits to region
+    for exit in region_data.exits:
+        region.exits.append(Entrance(player, exit, region))
 
-# Create all regions
+    # Add region to world
+    world.regions.append(region)
+
+    return region
+
 def create_all_regions(world: MultiWorld, player: int):
+    """Create all regions for this apworld"""
+    
+    # Get YAML Options
+    options: StacklandsOptions = world.worlds[player].options
+
+    logging.info(f"Goal Value: {options.goal.value}")
+    logging.info(f"Kill the Demon goal: {options.goal.value & GoalFlags.Demon}")
+    logging.info(f"Kill the Wicked Witch goal: {options.goal.value & GoalFlags.Witch}")
 
     # Create regions
-    for region in region_table:
-        world.regions.append(create_region(world, player, region))
+    menu_region: Region = create_menu_region(world, player, options)
+    mainland_region: Region = create_mainland_region(world, player, options)
+    forest_region: Region = create_forest_region(world, player, options)
 
-    # Connect exits to regions
-    world.get_entrance("Start", player).connect(world.get_region("Mainland", player))
-    world.get_entrance("Portal", player).connect(world.get_region("The Dark Forest", player))
-    world.get_entrance("Rowboat", player).connect(world.get_region("The Island", player))
+    # Connect region entrances and exits
+    world.get_entrance("Start", player).connect(mainland_region)
+    world.get_entrance("Strange Portal", player).connect(forest_region)
+    # world.get_entrance("Rowboat", player).connect(world.get_region("The Island", player))
+
+def create_menu_region(world: MultiWorld, player: int, options: StacklandsOptions) -> Region:
+    """Create the default 'Menu' region"""
+
+    # Compile region data
+    menu_region: RegionData = RegionData("Menu", [], ["Start"])
+
+    # Create region
+    return create_region(world, player, menu_region)
+
+def create_mainland_region(world: MultiWorld, player: int, options: StacklandsOptions) -> Region:
+    """Create the 'Mainland' region"""
+
+    logging.info("----- Creating 'Mainland' Region -----")
+
+    # Prepare check pool
+    check_pool: List[LocationData] = []
+
+    # Get all checks for Mainland board
+    mainland_checks: List[LocationData] = [ loc for loc in location_table if loc.region_flags is RegionFlags.Mainland ]
+
+    # Check if mainland board is selected in YAML
+    board_selected: bool = bool(options.quest_checks.value & RegionFlags.Mainland)
+    goal_selected: bool = bool(options.goal.value & GoalFlags.Demon)
+
+    logging.info(f"Board selected: {board_selected}")
+    logging.info(f"Goal selected: {goal_selected}")
+
+    # If mainland board has been selected
+    if board_selected:
+
+        # Add all quest checks (not affected by options) for Mainland to check pool
+        check_pool += [ loc for loc in mainland_checks if loc.check_type is CheckType.Check and loc.option_flags is OptionFlags.NA ]
+
+        # If pausing is enabled, add all Pausing quest checks for Mainland to check pool 
+        if options.pausing.value:
+            check_pool += [ loc for loc in mainland_checks if loc.check_type is CheckType.Check and loc.option_flags & OptionFlags.Pausing ]
+
+        # If mobsanity is enabled, add all mobsanity checks for Mainland to the check pool
+        if options.mobsanity.value:
+            check_pool += [ loc for loc in mainland_checks if loc.check_type is CheckType.Check and loc.option_flags & OptionFlags.Mobsanity ]
+
+    # Get goal check, if exists
+    if (goal_check:= next((loc for loc in mainland_checks if loc.check_type & CheckType.Goal), None)) is not None:
+
+        logging.info(f"Goal found: {goal_check.name}")
+
+        # If the goal has been selected, add the goal to the check pool
+        if goal_selected:
+            check_pool += [ goal_check ]
+
+        # If goal is not selected but board is selected, replace the goal check with a normal quest check
+        # NOTE: Can't just update the location's check flag because it messes it up for all Fuzz.py generations
+        elif not goal_selected and board_selected:
+            check_pool += [ LocationData(goal_check.name, goal_check.region_flags, CheckType.Check, goal_check.option_flags, goal_check.progress_type) ]
+
+    logging.info(f"Mainland check pool: {len(check_pool)}")
+
+    # Compile region data
+    region_data: RegionData = RegionData("Mainland", check_pool, [ "Strange Portal" ])
+
+    logging.info(f"{len(check_pool)} checks to be included for '{region_data.name}' region")
+
+    # Create region
+    return create_region(world, player, region_data)
+
+def create_forest_region(world: MultiWorld, player: int, options: StacklandsOptions) -> Region:
+    """Create the 'Dark Forest' region"""
+
+    logging.info("----- Creating 'The Dark Forest' Region -----")
+
+    # Prepare check pool
+    check_pool: List[LocationData] = []
+
+    # Get all checks for The Dark Forest board
+    forest_checks: List[LocationData] = [ loc for loc in location_table if loc.region_flags is RegionFlags.Forest ]
+
+    # Check if Dark Forest board is selected in YAML
+    board_selected: bool = bool(options.quest_checks.value & RegionFlags.Forest)
+    goal_selected: bool = bool(options.goal.value & GoalFlags.Witch)
+
+    logging.info(f"Board selected: {board_selected}")
+    logging.info(f"Goal selected: {goal_selected}")
+
+    # If dark forest board has been selected
+    if board_selected:
+        
+        # Add all quest checks for Mainland to check pool
+        check_pool += [ loc for loc in forest_checks if loc.check_type is CheckType.Check and loc.option_flags is OptionFlags.NA ]
+
+        # If mobsanity is enabled, add all mobsanity checks for Mainland to the check pool
+        if options.mobsanity.value:
+            check_pool += [ loc for loc in forest_checks if loc.check_type is CheckType.Check and loc.option_flags & OptionFlags.Mobsanity ]
+
+    # Get goal check, if exists
+    if (goal_check:= next((loc for loc in forest_checks if loc.check_type is CheckType.Goal), None)) is not None:
+
+        logging.info(f"Goal found: {goal_check.name}")
+
+        # If the goal has been selected, add the goal to the check pool
+        if goal_selected:
+            check_pool += [ goal_check ]
+
+        # If goal is not selected but board is selected, replace the goal check with a normal quest check
+        # NOTE: Can't just update the location's check flag because it messes it up for all Fuzz.py generations
+        elif not goal_selected and board_selected:
+            check_pool += [ LocationData(goal_check.name, goal_check.region_flags, CheckType.Check, goal_check.option_flags, goal_check.progress_type) ]
+
+    logging.info(f"Dark Forest check pool: {len(check_pool)}")
+
+    # Compile region data
+    region_data: RegionData = RegionData("The Dark Forest", check_pool, [ ])
+
+    logging.info(f"{len(check_pool)} checks to be included for '{region_data.name}' region")
+
+    # Create region
+    return create_region(world, player, region_data)
