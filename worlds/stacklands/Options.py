@@ -198,7 +198,7 @@ class StacklandsOptions(PerGameCommonOptions):
     board_expansion_mode: BoardExpansionMode
     board_expansion_amount: BoardExpansionAmount
     board_expansion_count: BoardExpansionCount
-    death_link: DeathLink
+    # death_link: DeathLink
     moon_length: MoonLength
     pausing: Pausing
     trap_fill: TrapFill
