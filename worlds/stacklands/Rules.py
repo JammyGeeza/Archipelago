@@ -435,6 +435,38 @@ def set_rules(world: MultiWorld, player: int):
             set_rule(world.get_location("Kill an Orc Wizard", player),
                  lambda state: state.can_reach_location("Get to Wave 6", player)) # <- Only found in The Dark Forest from Wave 4
 
+    # If packsanity is enabled, include packsanity checks in rules
+    if options.packsanity.value:
+
+        set_rule(world.get_location("Buy the Seeking Wisdom Pack", player),
+                 lambda state: state.sl_phase_one(options, player) and
+                               state.sl_has_pack("Seeking Wisdom", player))
+
+        set_rule(world.get_location("Buy the Reap & Sow Pack", player),
+                 lambda state: state.sl_phase_two(options, player) and
+                               state.sl_has_pack("Reap & Sow", player))
+        
+        set_rule(world.get_location("Buy the Curious Cuisine Pack", player),
+                 lambda state: state.sl_phase_four(options, player) and
+                               state.sl_has_pack("Curious Cuisine", player))
+        
+        set_rule(world.get_location("Buy the Logic and Reason Pack", player),
+                 lambda state: state.sl_phase_three(options, player) and
+                               state.sl_has_pack("Logic and Reason", player))
+        
+        set_rule(world.get_location("Buy the The Armory Pack", player),
+                 lambda state: state.sl_phase_four(options, player) and
+                               state.sl_has_pack("The Armory", player))
+        
+        set_rule(world.get_location("Buy the Explorers Pack", player),
+                 lambda state: state.sl_phase_two(options, player) and
+                               state.sl_has_pack("Explorers", player))
+        
+        set_rule(world.get_location("Buy the Order and Structure Pack", player),
+                 lambda state: state.sl_phase_five(options, player) and
+                               state.sl_has_pack("Order and Structure", player))
+
+
 #endregion
 
     # Set completion condition
