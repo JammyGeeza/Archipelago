@@ -47,11 +47,12 @@ class ItemFlags(IntFlag):
     Expansion = 1 << 4
 
 class OptionFlags(IntFlag):
-    NA        = 0
-    Pausing   = 1 << 0
-    Traps     = 1 << 1
-    Mobsanity = 1 << 2
-    Expansion = 1 << 3
+    NONE        = 0
+    Pausing     = 1 << 0
+    Traps       = 1 << 1
+    Mobsanity   = 1 << 2
+    Expansion   = 1 << 3
+    Packsanity  = 1 << 4
 
 class RegionFlags(IntFlag):
     NA        = 0

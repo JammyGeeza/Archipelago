@@ -89,6 +89,13 @@ class Mobsanity(Toggle):
     display_name = "Enable Mobsanity"
     default = 0
 
+class Packsanity(Toggle):
+    """
+    Add checks for buying each booster pack to the check pool.
+    """
+    display_name = "Enable Packsanity"
+    default = 1
+
 class Pausing(Toggle):
     """
     The player keeps the ability to be able to pause time.
@@ -186,13 +193,14 @@ class StrangePortalTrapWeight(Range):
 class StacklandsOptions(PerGameCommonOptions):
     goal: Goal
     quest_checks: QuestChecks
+    mobsanity: Mobsanity
+    packsanity: Packsanity
     board_expansion_mode: BoardExpansionMode
     board_expansion_amount: BoardExpansionAmount
     board_expansion_count: BoardExpansionCount
     death_link: DeathLink
     moon_length: MoonLength
     pausing: Pausing
-    mobsanity: Mobsanity
     trap_fill: TrapFill
     feed_villagers_trap_weight: FeedVillagersTrapWeight
     # flip_trap_weight: TrapWeightFlip
