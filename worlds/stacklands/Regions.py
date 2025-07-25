@@ -1,5 +1,5 @@
 import logging
-from .Enums import CheckType, ExpansionType, GoalFlags, OptionFlags, RegionFlags
+from .Enums import CheckType, ExpansionType, GoalFlags, OptionFlags, RegionFlags, SpendsanityType
 from typing import List, NamedTuple
 from BaseClasses import Entrance, Item, ItemClassification, LocationProgressType, MultiWorld, Region
 from .Options import StacklandsOptions
@@ -103,6 +103,11 @@ def create_mainland_region(world: MultiWorld, player: int, options: StacklandsOp
         # If packsanity is enabled, add all packsanity checks for Mainland to the check pool
         if options.packsanity.value:
             check_pool += [ loc for loc in mainland_checks if loc.check_type is CheckType.Check and loc.option_flags & OptionFlags.Packsanity ]
+
+        # If spendsanity is enabled, add configured amount of checks to the pool
+        if options.spendsanity.value is not SpendsanityType.Off and (spendsanity_check:= next((loc for loc in mainland_checks if loc.check_type is CheckType.Check and loc.option_flags & OptionFlags.Spendsanity), None)) is not None:
+            for x in range(1, options.spendsanity_count + 1):
+                check_pool.append(LocationData(spendsanity_check.name.format(count=x), spendsanity_check.region_flags, spendsanity_check.check_type, spendsanity_check.option_flags, spendsanity_check.progress_type))
 
     # Get goal check, if exists
     if (goal_check:= next((loc for loc in mainland_checks if loc.check_type & CheckType.Goal), None)) is not None:

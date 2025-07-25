@@ -36,6 +36,53 @@ class QuestChecks(Choice):
     option_mainland_and_dark_forest = RegionFlags.Mainland_and_Forest
     default = option_mainland_and_dark_forest
 
+class Mobsanity(Toggle):
+    """
+    Add checks for killing one of each enemy type to the check pool.
+    Only includes checks for enemies that are reachable within the boards you have selected in the 'boards' option.
+    """
+    display_name = "Mobsanity"
+    default = 0
+
+class Packsanity(Toggle):
+    """
+    Add checks for buying each booster pack to the check pool.
+    """
+    display_name = "Packsanity"
+    default = 0
+
+class Spendsanity(Choice):
+    """
+    Adds a new 'Spendsanity' booster box to the pack line - 'buying' boosters from this box are checks.
+
+    off         -> Disabled
+    fixed       -> The cost starts at <Spendsanity Cost> and remains at this cost after each purchase.
+    incremental -> The cost starts at <Spendsanity Cost> and increases by the same amount after each purchase.
+    """
+    display_name = "Spendsanity"
+    option_off = 0
+    option_fixed = 1
+    option_incremental = 2
+    default = option_off
+
+class SpendsanityCost(Range):
+    """
+    The cost for a 'Spendsanity' purchase - the cost throughout will be affected by your choice in <Spendsanity>.
+    """
+    display_name = "Spendsanity Cost"
+    range_start = 1
+    range_end = 25
+    default = 10
+
+class SpendsanityCount(Range):
+    """
+    How many Spendsanity checks to add to the check pool.
+    """
+    display_name = "Spendsanity Count"
+    range_start = 1
+    range_end = 25
+    default = 10
+
 class BoardExpansionMode(Choice):
     """
     Select how board expansion works in the run.
@@ -80,21 +127,6 @@ class MoonLength(Choice):
     option_normal = MoonlengthType.Normal
     option_long = MoonlengthType.Long
     default = MoonlengthType.Normal
-
-class Mobsanity(Toggle):
-    """
-    Add checks for killing one of each enemy type to the check pool.
-    Only includes checks for enemies that are reachable within the boards you have selected in the 'boards' option.
-    """
-    display_name = "Enable Mobsanity"
-    default = 0
-
-class Packsanity(Toggle):
-    """
-    Add checks for buying each booster pack to the check pool.
-    """
-    display_name = "Enable Packsanity"
-    default = 1
 
 class Pausing(Toggle):
     """
@@ -195,15 +227,16 @@ class StacklandsOptions(PerGameCommonOptions):
     quest_checks: QuestChecks
     mobsanity: Mobsanity
     packsanity: Packsanity
+    spendsanity: Spendsanity
+    spendsanity_cost: SpendsanityCost
+    spendsanity_count: SpendsanityCount
     board_expansion_mode: BoardExpansionMode
     board_expansion_amount: BoardExpansionAmount
     board_expansion_count: BoardExpansionCount
-    # death_link: DeathLink
     moon_length: MoonLength
     pausing: Pausing
     trap_fill: TrapFill
     feed_villagers_trap_weight: FeedVillagersTrapWeight
-    # flip_trap_weight: TrapWeightFlip
     mob_trap_weight: MobTrapWeight
     sell_cards_trap_weight: SellCardsTrapWeight
     sell_cards_trap_amount: SellCardsTrapAmount

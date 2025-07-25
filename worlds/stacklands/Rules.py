@@ -1,6 +1,6 @@
 from typing import List
 from BaseClasses import MultiWorld
-from .Enums import ExpansionType, GoalFlags, RegionFlags
+from .Enums import ExpansionType, GoalFlags, RegionFlags, SpendsanityType
 from .Locations import location_table
 from .Options import StacklandsOptions
 from worlds.AutoWorld import LogicMixin
@@ -465,7 +465,19 @@ def set_rules(world: MultiWorld, player: int):
         set_rule(world.get_location("Buy the Order and Structure Pack", player),
                  lambda state: state.sl_phase_five(options, player) and
                                state.sl_has_pack("Order and Structure", player))
-
+        
+    # If spendsanity enabled, include spendsanity checks in rules
+    if options.spendsanity.value is not SpendsanityType.Off:
+        for x in range(1, options.spendsanity_count.value + 1):
+            # Attempt to spread the checks across spheres
+            set_rule(world.get_location("Buy {count} Spendsanity Packs".format(count=x), player),
+                     lambda state: state.sl_phase_zero(player)                                      # Spread 1 - 2 across phase zero
+                        if x < 3 else state.sl_phase_one(options, player)                           # Spread 3 - 6 across phase one 
+                            if x < 7 else state.sl_phase_two(options, player)                       # Spread 7 - 10 across phase two
+                                if x < 11 else state.sl_phase_three(options, player)                # Spread 11 - 14 across phase three
+                                    if x < 15 else state.sl_phase_four(options, player)             # Spread 15 - 18 across phase four
+                                        if x < 19 else state.sl_phase_five(options, player)         # Spread 19 - 22 across phase five
+                                            if x < 23 else state.sl_phase_six(options, player))     # Spread 23 - 25 across phase six
 
 #endregion
 
