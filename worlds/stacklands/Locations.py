@@ -1,4 +1,5 @@
-from .Enums import CheckFlags, CheckType, OptionFlags, RegionFlags
+from .Enums import CheckFlags, CheckType, OptionFlags, RegionFlags, SpendsanityType
+from .Options import StacklandsOptions
 from dataclasses import dataclass
 from enum import Enum, IntFlag
 from typing import Dict, List, NamedTuple
@@ -164,6 +165,13 @@ location_table: List[LocationData] = [
     LocationData("Buy the Order and Structure Pack"                    , RegionFlags.Mainland      , CheckType.Check    , OptionFlags.Packsanity   , LocationProgressType.DEFAULT ),
 
 #endregion
+
+#region Spendsanity
+
+    LocationData("Buy {count} Spendsanity Packs"                       , RegionFlags.Mainland      , CheckType.Check    , OptionFlags.Spendsanity   , LocationProgressType.DEFAULT ),
+
+#endregion
+
 ]
 
 base_id: int = 92000
@@ -173,5 +181,12 @@ name_to_id = {}
 
 # Create locations lookup
 for location in location_table:
-    name_to_id[location.name] = current_id
-    current_id += 1
+        
+    # If location check is for Spendsanity, add it the maximum amount of times
+    if (location.option_flags is OptionFlags.Spendsanity):
+        for x in range(1, 26):
+            name_to_id[location.name.format(count=x)] = current_id
+            current_id +=1
+    else:
+        name_to_id[location.name] = current_id
+        current_id += 1

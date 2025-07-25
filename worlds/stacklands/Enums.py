@@ -23,6 +23,11 @@ class MoonlengthType(IntEnum):
     Normal    = 1
     Long      = 2
 
+class SpendsanityType(IntEnum):
+    Off         = 0
+    Fixed       = 1
+    Incremental = 2
+
 #endregion
 
 #region Flags
@@ -53,6 +58,7 @@ class OptionFlags(IntFlag):
     Mobsanity   = 1 << 2
     Expansion   = 1 << 3
     Packsanity  = 1 << 4
+    Spendsanity = 1 << 5
 
 class RegionFlags(IntFlag):
     NA        = 0
