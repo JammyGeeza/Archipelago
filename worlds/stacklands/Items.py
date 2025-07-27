@@ -317,11 +317,8 @@ def create_trap_items(world: MultiWorld, player: int, options: StacklandsOptions
 
         logging.info("----- Creating Trap Items -----")
 
-        # Calculate how many item slots need filling for this player
-        unfilled_count: int = len(world.get_unfilled_locations(player)) - len([item for item in world.itempool if item.player == player])
-
         # Check if there are available item slots
-        if unfilled_count > 0:
+        if (unfilled_count:= len(world.get_unfilled_locations(player)) - len([item for item in world.itempool if item.player == player])) > 0:
 
             logging.info(f"Trap item fill is {options.trap_fill.value}%...")
 
@@ -366,7 +363,7 @@ def create_filler_items(world: MultiWorld, player: int, options: StacklandsOptio
     logging.info("----- Creating Filler Items -----")
     logging.info(f"Unfilled locations: {len(world.get_unfilled_locations(player))}")
 
-    # If there are un-filled slots for this player...
+    # If there are un-filled slots...
     if (unfilled_count:= len(world.get_unfilled_locations(player)) - len([item for item in world.itempool if item.player == player])) > 0:
 
         # Calculate selected boards
