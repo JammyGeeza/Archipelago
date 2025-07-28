@@ -21,6 +21,8 @@ class Goal(Choice):
     display_name = "Goal"
     option_kill_demon = GoalFlags.Demon
     option_kill_wicked_witch = GoalFlags.Witch
+    option_kill_demon_lord = GoalFlags.DemonLord
+    option_kill_demon_and_witch = GoalFlags
     option_all_bosses = GoalFlags.All
     default = option_all_bosses
 

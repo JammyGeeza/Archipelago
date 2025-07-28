@@ -8,6 +8,18 @@ from worlds.generic.Rules import set_rule
 
 class StacklandsLogic(LogicMixin):
 
+    def sl_can_reach_island(self, player: int) -> bool:
+        return self.can_reach_location("The Island", player)
+    
+    def sl_can_reach_all_quests(self, quests: List[str], player: int) -> bool:
+        return all(self.can_reach_location(quest, player) for quest in quests)
+    
+    def sl_can_make_smelter(self, player: int) -> bool:
+        return (
+            self.sl_has_all_packs([ "Humble Beginnings", "Seeking Wisdom" ], player)
+            and self.sl_has_all_ideas(["Brick", "Plank", "Smelter"], player)
+        )
+
     # Check if player has received booster pack
     def sl_has_idea(self, name: str, player: int) -> bool:
         return self.has("Idea: " + name, player)
@@ -96,6 +108,11 @@ def set_rules(world: MultiWorld, player: int):
 
     set_rule(world.get_entrance("Strange Portal", player),
              lambda state: state.sl_phase_three(options, player)) # <- Player has access to basic equipment to fight mobs in Dark Forest
+    
+    set_rule(world.get_entrance("Rowboat", player),
+             lambda state:
+                state.can_reach_location("Build a Rowboat")            # Player can build a Rowboat
+                and state.can_reach_location("Get a Second Villager")) # AND player can have more than one villager (one must stay in Mainland to travel)
     
 #endregion
 
@@ -355,6 +372,93 @@ def set_rules(world: MultiWorld, player: int):
                               state.can_reach_region("The Dark Forest", player))  # <- Player can reach The Dark Forest
 
 #endregion
+
+    #region 'The Island' Quests
+
+        #region 'The Grand Scheme' Category
+
+        set_rule(world.get_location("Build a Rowboat", player),
+                 lambda state:
+                    state.can_reach_all_locations([ "Get an Iron Bar" ], player)    # Player can make Iron Bar / Brick / Plank / Smelter
+                    and state.sl_has_idea("Rowboat", player))                       # AND has the Rowboat idea
+
+        set_rule(world.get_location("Build a Cathedral on the Mainland", player),
+                 lambda state:
+                    state.sl_can_reach_all_locations([ "Make a Gold Bar", "Make Glass" ], player)        # AND player can make Glass / Gold Bar / Plank / Brick / Smelter
+                    and state.sl_has_idea("Cathedral", player))                                          # AND has the Cathedral idea
+        
+        set_rule(world.get_location("Bring the Island Relic to the Cathedral", player),
+                 lambda state:
+                    state.sl_can_reach_all_locations([ "Build a Cathedral on the Mainland", "Open the Sacred Chest" ], player)) # Player can make Cathedral and open the Sacred Chest
+        
+        # TODO: Set the goal for The Island once yaml options worked out
+
+        #endregion
+
+        #region 'Marooned' Category
+
+        set_rule(world.get_location("Get 2 Bananas", player),
+                 lambda state:
+                    state.can_reach_island(player)) # Player can reach The Island 
+        
+        set_rule(world.get_location("Punch some Driftwood", player),
+                 lambda state:
+                    state.can_reach_island(player)) # Player can reach The Island
+        
+        set_rule(world.get_location("Have 3 Shells", player),
+                 lambda state:
+                    state.can_reach_island(player)) # Player can reach The Island
+        
+        set_rule(world.get_location("Catch a Fish", player),
+                 lambda state:
+                    state.can_reach_island(player)                  # Player can reach The Island 
+                    and state.sl_has_pack("On the Shore", player))  # AND has the 'On the Shore' booster
+        
+        set_rule(world.get_location("Make Rope", player),
+                 lambda state:
+                    state.can_reach_island(player)                  # Player can reach The Island
+                    and state.sl_has_pack("On the Shore", player)   # AND has the 'On the Shore' booster
+                    and state.sl_has_idea("Rope", player))          # AND has the 'Rope' idea
+        
+        set_rule(world.get_location("Make a Fish Trap", player),
+                 lambda state:
+                    state.can_reach_location("Make Rope", player)   # Player can make Rope
+                    and state.sl_has_idea("Fish Trap", player))     # AND has the 'Fish Trap' idea
+        
+        set_rule(world.get_location("Make a Sail", player),
+                 lambda state:
+                    state.can_reach_location("Make Rope", player)   # Player can make Rope
+                    and state.sl_has_idea("Fish Trap", player))     # AND has the 'Fish Trap' idea
+        
+        set_rule(world.get_location("Make a Sail", player),
+                 lambda state:
+                    state.can_reach_location("Make Rope", player)               # Player can make Rope
+                    and state.sl_has_all_ideas([ "Fabric", "Sail" ], player))   # AND has the 'Fabric' and 'Sail' ideas
+
+        set_rule(world.get_location("Build a Sloop", player),
+                 lambda state:
+                    state.can_reach_location("Make a Sail", player) # Player can make a Sail
+                    and state.sl_has_idea("Sloop", player))         # AND has the 'Sloop' idea
+        #endregion
+
+        #region 'Mystery of The Island' Category
+
+        set_rule(world.get_location("Unlock all Island Packs", player),
+                 lambda state:
+                    state.sl_can_reach_island(player) # Player can reach The Island and has all Island packs
+                    and state.sl_has_all_packs([ "On the Shore", "Island of Ideas", "Grilling and Brewing", "Island Insights", "Advanced Archipelago", "Enclave Explorers" ], player))
+        
+        set_rule(world.get_location("Find a Treasure Map", player),
+                 lambda state:
+                    state.sl_can_reach_island(player)                                            # Player can reach The Island
+                    and state.sl_has_all_packs([ "On the Shore", "Enclave Explorers" ], player)) # AND has a basic pack and Enclave Explorers pack
+
+        set_rule(world.get_location("Find Treasure", player),
+                 lambda state:
+                    state.can_reach_location("Find a Treasure Map", player)) # Player can find the treasure map
+        #endregion
+
+    #endregion
 
 #region 'Mobsanity' Quests
 
