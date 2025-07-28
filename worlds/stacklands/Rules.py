@@ -8,17 +8,17 @@ from worlds.generic.Rules import set_rule
 
 class StacklandsLogic(LogicMixin):
 
-    def sl_can_reach_island(self, player: int) -> bool:
-        return self.can_reach_location("The Island", player)
+    def sl_can_start_island(self, player: int) -> bool:
+        return (
+            self.can_reach_location("The Island", player)
+            and self.sl_has_pack("On the Shore", player)
+        )
     
     def sl_can_reach_all_quests(self, quests: List[str], player: int) -> bool:
         return all(self.can_reach_location(quest, player) for quest in quests)
     
-    def sl_can_make_smelter(self, player: int) -> bool:
-        return (
-            self.sl_has_all_packs([ "Humble Beginnings", "Seeking Wisdom" ], player)
-            and self.sl_has_all_ideas(["Brick", "Plank", "Smelter"], player)
-        )
+    def sl_can_reach_any_quests(self, quests: List[str], player: int) -> bool:
+        return any(self.can_reach_location(quest, player) for quest in quests)
 
     # Check if player has received booster pack
     def sl_has_idea(self, name: str, player: int) -> bool:
@@ -379,17 +379,17 @@ def set_rules(world: MultiWorld, player: int):
 
         set_rule(world.get_location("Build a Rowboat", player),
                  lambda state:
-                    state.can_reach_all_locations([ "Get an Iron Bar" ], player)    # Player can make Iron Bar / Brick / Plank / Smelter
-                    and state.sl_has_idea("Rowboat", player))                       # AND has the Rowboat idea
+                    state.sl_can_reach_all_quests([ "Get an Iron Bar" ], player) # Player can make Iron Bar / Brick / Plank / Smelter
+                    and state.sl_has_idea("Rowboat", player))                    # AND has the 'Rowboat' idea
 
         set_rule(world.get_location("Build a Cathedral on the Mainland", player),
                  lambda state:
-                    state.sl_can_reach_all_locations([ "Make a Gold Bar", "Make Glass" ], player)        # AND player can make Glass / Gold Bar / Plank / Brick / Smelter
-                    and state.sl_has_idea("Cathedral", player))                                          # AND has the Cathedral idea
+                    state.sl_can_reach_all_quests([ "Make a Gold Bar", "Make Glass" ], player)        # AND player can make Glass / Gold Bar / Plank / Brick / Smelter
+                    and state.sl_has_idea("Cathedral", player))                                       # AND has the 'Cathedral' idea
         
         set_rule(world.get_location("Bring the Island Relic to the Cathedral", player),
                  lambda state:
-                    state.sl_can_reach_all_locations([ "Build a Cathedral on the Mainland", "Open the Sacred Chest" ], player)) # Player can make Cathedral and open the Sacred Chest
+                    state.sl_can_reach_all_quests([ "Build a Cathedral on the Mainland", "Open the Sacred Chest" ], player)) # Player can make Cathedral and open the Sacred Chest
         
         # TODO: Set the goal for The Island once yaml options worked out
 
@@ -399,33 +399,26 @@ def set_rules(world: MultiWorld, player: int):
 
         set_rule(world.get_location("Get 2 Bananas", player),
                  lambda state:
-                    state.can_reach_island(player)) # Player can reach The Island 
+                    state.can_reach_region("The Island", player))   # Player can reach The Island 
         
         set_rule(world.get_location("Punch some Driftwood", player),
                  lambda state:
-                    state.can_reach_island(player)) # Player can reach The Island
+                    state.can_reach_region("The Island", player))   # Player can reach The Island 
         
         set_rule(world.get_location("Have 3 Shells", player),
                  lambda state:
-                    state.can_reach_island(player)) # Player can reach The Island
+                    state.can_reach_region("The Island", player))   # Player can reach The Island 
         
         set_rule(world.get_location("Catch a Fish", player),
                  lambda state:
-                    state.can_reach_island(player)                  # Player can reach The Island 
-                    and state.sl_has_pack("On the Shore", player))  # AND has the 'On the Shore' booster
+                    state.sl_can_start_island(player))              # Player can start The Island 
         
         set_rule(world.get_location("Make Rope", player),
                  lambda state:
-                    state.can_reach_island(player)                  # Player can reach The Island
-                    and state.sl_has_pack("On the Shore", player)   # AND has the 'On the Shore' booster
+                    state.can_reach_island(player)                  # Player can start The Island
                     and state.sl_has_idea("Rope", player))          # AND has the 'Rope' idea
         
         set_rule(world.get_location("Make a Fish Trap", player),
-                 lambda state:
-                    state.can_reach_location("Make Rope", player)   # Player can make Rope
-                    and state.sl_has_idea("Fish Trap", player))     # AND has the 'Fish Trap' idea
-        
-        set_rule(world.get_location("Make a Sail", player),
                  lambda state:
                     state.can_reach_location("Make Rope", player)   # Player can make Rope
                     and state.sl_has_idea("Fish Trap", player))     # AND has the 'Fish Trap' idea
@@ -445,17 +438,156 @@ def set_rules(world: MultiWorld, player: int):
 
         set_rule(world.get_location("Unlock all Island Packs", player),
                  lambda state:
-                    state.sl_can_reach_island(player) # Player can reach The Island and has all Island packs
+                    state.sl_can_start_island(player) # Player can start The Island and has all Island packs
                     and state.sl_has_all_packs([ "On the Shore", "Island of Ideas", "Grilling and Brewing", "Island Insights", "Advanced Archipelago", "Enclave Explorers" ], player))
         
         set_rule(world.get_location("Find a Treasure Map", player),
                  lambda state:
-                    state.sl_can_reach_island(player)                                            # Player can reach The Island
-                    and state.sl_has_all_packs([ "On the Shore", "Enclave Explorers" ], player)) # AND has a basic pack and Enclave Explorers pack
+                    state.sl_can_start_island(player)                   # Player can start The Island
+                    and state.sl_has_pack("Enclave Explorers", player)) # AND has a pack containing Cave
 
         set_rule(world.get_location("Find Treasure", player),
                  lambda state:
                     state.can_reach_location("Find a Treasure Map", player)) # Player can find the treasure map
+        
+        set_rule(world.get_location("Forge Sacred Key", player),
+                 lambda state:
+                    state.sl_can_reach_all_quests([ "Make Glass", "Make a Gold Bar" ], player)   # Player can make Glass and Gold Bars
+                    and state.sl_has_idea("Sacred Key", player))                                    # AND has the 'Sacred Key' idea
+        
+        set_rule(world.get_location("Open the Sacred Chest", player),
+                 lambda state:
+                    state.sl_can_reach_all_quests([ "Forge Sacred Key", "Find Treasure" ], player))   # Player can forge key and find the chest
+        
+        set_rule(world.get_location("Kill the Kraken", player),
+                 lambda state:
+                    state.can_reach_location("Open the Sacred Chest", player))  # Player can open the chest
+
+        #endregion
+
+        #region 'Island Grub'
+
+        set_rule(world.get_location("Make Sushi", player),
+                 lambda state:
+                    state.state.can_reach_island(player)            # Player can start The Island
+                    and state.sl_has_idea("Sushi", player))         # AND has the 'Sushi' idea
+        
+        set_rule(world.get_location("Cook Crab Meat", player),
+                 lambda state:
+                    state.state.can_reach_island(player)                   # Player can start The Island
+                    and state.sl_has_pack("Grilling and Brewing", player)  # AND has pack containing Crab
+                    and state.sl_has_idea("Campfire", player))             # AND player has 'Campfire' idea
+
+        set_rule(world.get_location("Make Ceviche", player),
+                 lambda state:
+                    state.state.can_reach_island(player)                                                # Player can start The Island
+                    and state.sl_has_any_packs([ "Grilling and Brewing", "Island Insights" ], player)   # AND has a pack containing Lime
+                    and state.sl_has_idea("Ceviche", player))                                           # AND has the 'Ceviche' idea
+
+        set_rule(world.get_location("Make a Seafood Stew", player),
+                 lambda state:
+                    state.state.can_reach_island(player)                                                # Player can start The Island
+                    and state.sl_has_any_packs([ "Grilling and Brewing", "Island Insights" ], player)   # AND has a pack containing Crab and Chili Pepper
+                    and state.sl_has_all_ideas(["Campfire", "Seafood Stew" ], player))                  # AND has 'Campfire' and 'Seafood Stew' ideas
+        
+        set_rule(world.get_location("Make a Bottle of Rum", player),
+                 lambda state:
+                    state.sl_can_reach_locations("Make Glass", player)                                  # Player can make glass
+                    and state.sl_has_any_packs([ "Advanced Archipelago", "Enclave Explorers" ], player) # AND has a pack containing 'Spring'
+                    and state.sl_has_all_ideas([ "Bottle of Rum", "Distillery", "Stove" ], player))     # AND has 'Bottle of Rum', 'Distillery' and 'Stove' ideas
+        
+        #endregion
+
+        #region 'Island Ambitions' Category
+
+        set_rule(world.get_location("Have 10 Shells", player),
+                 lambda state:
+                    state.sl_can_start_island(player)               # Player can start The Island
+                    and state.sl_has_pack("On the Shore", player))  # AND has the 'On the Shore' pack
+        
+        set_rule(world.get_location("Get a Villager Drunk", player),
+                 lambda state:
+                    state.can_reach_location("Make a Bottle of Rum", player)) # Player can make a bottle of rum
+        
+        set_rule(world.get_location("Make Sandstone", player),
+                 lambda state:
+                    state.sl_can_start_island(player)               # Player can start The Island
+                    and state.sl_has_idea("Sandstone", player))     # AND has the 'Sandstone' idea
+        
+        set_rule(world.get_location("Build a Mess Hall", player),
+                 lambda state:
+                    state.sl_can_start_island(player)                                   # Player can start The Island
+                    and state.sl_has_all_ideas([ "Campfire", "Mess Hall" ], player))    # AND has the 'Campfire' and 'Mess Hall' ideas
+        
+        set_rule(world.get_location("Build a Greenhouse", player),
+                 lambda state:
+                    state.sl_can_reach_all_quests([ "Build a Composter", "Make Glass" ], player)  # Player can make Composter / Glass / Iron Bars
+                    and state.sl_has_idea("Greenhouse", player))                                                     # AND has the 'Greenhouse' idea
+        
+        set_rule(world.get_location("Have a Poisoned Villager", player),
+                 lambda state:
+                    state.sl_can_start_island(player)                      # Player can start The Island
+                    and state.sl_has_pack("Enclave Explorers", player))    # AND has a pack that contains a Snake
+        
+        set_rule(world.get_location("Cure a Poisoned Villager", player),
+                 lambda state:
+                    state.can_reach_location("Have a Poisoned Villager", player)    # Player can poison a villager
+                    and state.sl_has_all_ideas([ "Campfire", "Charcoal" ], player)) # AND has the 'Campfire' and 'Charcoal' ideas
+
+        set_rule(world.get_location("Build a Composter", player),
+                 lambda state:
+                    state.sl_can_start_island(player)               # Player can start The Island
+                    and state.sl_has_idea("Composter", player))     # AND has the 'Composter' idea
+        
+        set_rule(world.get_location("Bribe a Pirate Boat", player),
+                 lambda state:
+                    state.can_reach_location("Build a Sloop", player))   # Player can build a Sloop (to bring coins back)
+        
+        set_rule(world.get_location("Befriend a Pirate", player),
+                 lambda state:
+                    state.sl_can_start_island(player)                                                       # Player can start The Island
+                    and state.sl_has_any_packs([ "Enclave Explorers", "Grilling and Brewing" ], player))    # AND has a pack containing Parrot
+        
+        set_rule(world.get_location("Make a Gold Bar", player),
+                 lambda state:
+                    state.sl_can_start_island(player)                                                       # Player can start The Island
+                    and state.sl_has_any_packs([ "Advanced Archipelago", "Enclave Explorers" ], player)     # AND has a pack containing Gold Deposit
+                    and state.sl_has_idea("Gold Bar", player))                                              # AND player has 'Gold Bar' idea
+
+        set_rule(world.get_location("Make Glass", player),
+                 lambda state:
+                    state.sl_can_start_island(player)                                                       # Player can start The Island
+                    and state.sl_has_idea("Glass", player))                                                 # AND player has 'Glass' idea
+
+        #endregion
+
+        #region 'Strengthen Up' Category
+
+        set_rule(world.get_location("Train an Archer", player),
+                 lambda state:
+                    state.can_reach_location("Make Rope", player)   # Player can make Rope
+                    and state.sl_has_idea("Bow", player))           # AND has the 'Bow' idea
+        
+        set_rule(world.get_location("Break a Bottle", player),
+                 lambda state:
+                    state.sl_can_start_island(player)                                                       # Player can start The Island
+                    and state.sl_has_all_ideas([ "Campfire", "Broken Bottle", "Empty Bottle" ], player))    # AND has 'Campfire', 'Broken Bottle' and 'Empty Bottle' ideas
+        
+        set_rule(world.get_location("Equip an Archer with a Quiver", player),
+                 lambda state:
+                    state.sl_can_reach_all_quests([ "Train an Archer", "Train Militia" ], player))          # Player can train an Archer and fight mobs to gain Quiver
+        
+        set_rule(world.get_location("Make a Villager wear Crab Scale Armor", player),
+                 lambda state:
+                    state.sl_can_start_island(player)                                                   # Player can start The Island
+                    and state.sl_has_pack("Grilling and Brewing", player)                               # AND player has pack containing Crab
+                    and state.sl_can_reach_any_quests([ "Train an Archer", "Train Militia" ], player))  # AND player can fight Melee mobs
+        
+        set_rule(world.get_location("Craft the Amulet of the Forest", player),
+                 lambda state:
+                    state.sl_can_reach_all_quests([ "Build a Smithy", "Make a Gold Bar" ], player)      # Player can build a Smithy and make Gold Bars
+                    and state.sl_has_idea("Forest Amulet", player))                                     # AND has 'Forest Amulet' idea
+
         #endregion
 
     #endregion
