@@ -41,7 +41,12 @@ class CheckFlags(IntFlag):
 class GoalFlags(IntFlag):
     Demon     = 1 << 0
     Witch     = 1 << 1
-    All       = Demon | Witch
+    DemonLord = 1 << 2
+
+    Demon_and_Witch      = Demon | Witch
+    Demon_and_Demon_Lord = Demon | DemonLord
+    Witch_and_Demon_Lord = Witch | DemonLord
+    All                  = Demon | Witch | DemonLord
 
 class ItemFlags(IntFlag):
     NA        = 0
@@ -64,7 +69,10 @@ class RegionFlags(IntFlag):
     NA        = 0
     Mainland  = 1 << 0
     Forest    = 1 << 1
+    Island    = 1 << 2
 
     Mainland_and_Forest = Mainland | Forest
+    Mainland_and_Island = Mainland | Island
+    All                 = Mainland | Forest | Island
 
 #endregion
