@@ -147,7 +147,6 @@ item_table: List[ItemData] = [
     ItemData("Idea: Frigate"                       , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
     ItemData("Idea: Gold Mine"                     , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
     ItemData("Idea: Golden Chestplate"             , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
-    ItemData("Idea: Lighthouse"                    , RegionFlags.Island      , ItemType.Idea        , OptionFlags.Expansion   , ItemClassification.useful     ),
     ItemData("Idea: Mountain Amulet"               , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
     ItemData("Idea: Resource Magnet"               , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
     ItemData("Idea: Sand Quarry"                   , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
@@ -158,10 +157,12 @@ item_table: List[ItemData] = [
 #region YAML-Configured Filler Items
 
     # Board Expansion Ideas
-    ItemData("Idea: Warehouse"                      , RegionFlags.Mainland_and_Forest     , ItemType.Idea       , OptionFlags.Expansion  , ItemClassification.useful     ),
+    ItemData("Idea: Warehouse"                      , RegionFlags.Mainland   , ItemType.Idea       , OptionFlags.Expansion  , ItemClassification.useful     ),
+    ItemData("Idea: Lighthouse"                     , RegionFlags.Island     , ItemType.Idea       , OptionFlags.Expansion  , ItemClassification.useful     ),
 
     # Board Expansion Items
-    ItemData("Board Expansion"                      , RegionFlags.Mainland   , ItemType.Structure  , OptionFlags.Expansion  , ItemClassification.progression),
+    ItemData("Mainland Board Expansion"             , RegionFlags.Mainland   , ItemType.Structure  , OptionFlags.Expansion  , ItemClassification.progression),
+    ItemData("Island Board Expansion"               , RegionFlags.Island     , ItemType.Structure  , OptionFlags.Expansion  , ItemClassification.progression),
 
 #endregion
 

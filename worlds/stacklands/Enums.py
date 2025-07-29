@@ -39,14 +39,10 @@ class CheckFlags(IntFlag):
     Mobsanity = 1 << 2
 
 class GoalFlags(IntFlag):
-    Demon     = 1 << 0
-    Witch     = 1 << 1
-    DemonLord = 1 << 2
-
-    Demon_and_Witch      = Demon | Witch
-    Demon_and_Demon_Lord = Demon | DemonLord
-    Witch_and_Demon_Lord = Witch | DemonLord
-    All                  = Demon | Witch | DemonLord
+    NONE      = 0
+    Bosses    = 1 << 0
+    Quests    = 1 << 1
+    All       = Bosses | Quests
 
 class ItemFlags(IntFlag):
     NA        = 0
@@ -73,6 +69,7 @@ class RegionFlags(IntFlag):
 
     Mainland_and_Forest = Mainland | Forest
     Mainland_and_Island = Mainland | Island
+    Island_and_Forest   = Forest   | Island
     All                 = Mainland | Forest | Island
 
 #endregion

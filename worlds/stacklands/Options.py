@@ -2,46 +2,33 @@ from dataclasses import dataclass
 from .Enums import ExpansionType, GoalFlags, MoonlengthType, RegionFlags
 from Options import Choice, DeathLink, PerGameCommonOptions, Range, Toggle
 
+class Boards(Choice):
+    """
+    Select which boards to include in your run - will include all quests for each board as location checks.
+    """
+    display_name = "Boards"
+    option_mainland_only = RegionFlags.Mainland
+    option_mainland_and_forest = RegionFlags.Mainland | RegionFlags.Forest
+    option_mainland_and_island = RegionFlags.Mainland | RegionFlags.Island
+    option_all = RegionFlags.All
+    default = option_all
+
 class Goal(Choice):
     """
-    Select which bosses to kill for the goal of your run.
+    Select the goal for your run.
 
-    kill_demon          -> Complete the 'Kill the Demon' quest (Mainland)
-    kill_wicked_witch   -> Complete the 'Fight the Wicked Witch' quest (The Dark Forest)
-    all_bosses          -> Complete both 'Kill the Demon' (Mainland) and 'Fight the Wicked Witch' (The Dark Forest)
-
-    NOTE:
-    Selecting a goal for a board you have NOT selected in the <Board Checks> option will still work, but will not
-    automatically include all quest checks for that board.
-
-    EXAMPLE:
-    If <Boards> option is set to 'mainland_only' and your <Goal> option is set to 'kill_wicked_witch', it will allow you
-    to complete the goal in The Dark Forest but no other Dark Forest quests will be included as checks.
+    All Bosses -> Kill all bosses on each board selected in the <Boards> option.
+    All Quests -> Complete all quests on each board selected in the <Boards> option.
     """
     display_name = "Goal"
-    option_kill_demon = GoalFlags.Demon
-    option_kill_wicked_witch = GoalFlags.Witch
-    option_kill_demon_lord = GoalFlags.DemonLord
-    option_kill_demon_and_witch = GoalFlags
-    option_all_bosses = GoalFlags.All
+    option_all_bosses = GoalFlags.Bosses
+    option_all_quests = GoalFlags.Quests
     default = option_all_bosses
-
-class QuestChecks(Choice):
-    """
-    Select which quests to include as checks.
-
-    mainland_only               -> Include all Mainland quests as checks.
-    mainland_and_dark_forest    -> Include all Mainland and The Dark Forest quests as checks.
-    """
-    display_name = "Quest Checks"
-    option_mainland_only = RegionFlags.Mainland
-    option_mainland_and_dark_forest = RegionFlags.Mainland_and_Forest
-    default = option_mainland_and_dark_forest
 
 class Mobsanity(Toggle):
     """
     Add checks for killing one of each enemy type to the check pool.
-    Only includes checks for enemies that are reachable within the boards you have selected in the 'boards' option.
+    Includes checks for all enemies reachable in all boards selected in <Boards>.
     """
     display_name = "Mobsanity"
     default = 0
@@ -49,6 +36,7 @@ class Mobsanity(Toggle):
 class Packsanity(Toggle):
     """
     Add checks for buying each booster pack to the check pool.
+    Includes checks for packs available in all boards selected in <Boards>.
     """
     display_name = "Packsanity"
     default = 0
@@ -225,8 +213,8 @@ class StrangePortalTrapWeight(Range):
 
 @dataclass
 class StacklandsOptions(PerGameCommonOptions):
+    boards: Boards
     goal: Goal
-    quest_checks: QuestChecks
     mobsanity: Mobsanity
     packsanity: Packsanity
     spendsanity: Spendsanity
