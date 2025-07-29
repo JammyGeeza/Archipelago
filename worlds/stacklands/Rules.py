@@ -31,7 +31,11 @@ class StacklandsLogic(LogicMixin):
         return self.sl_has_pack("Humble Beginnings", player)
     
     def sl_can_start_forest(self, player: int) -> bool:
-        return self.sl_
+        return (
+            self.can_reach_region("The Dark Forest", player)
+            and self.sl_can_reach_any_quests(["Train Militia", "Train a Wizard"], player)
+            and self.can_reach_location("Cook Raw Meat", player)
+        )
 
     def sl_can_start_island(self, player: int) -> bool:
         return (
@@ -145,8 +149,9 @@ def set_rules(world: MultiWorld, player: int):
     # Entrances
     set_rule(world.get_entrance("Start", player), lambda state: True)
 
-    set_rule(world.get_entrance("Strange Portal", player),
-             lambda state: state.sl_phase_three(options, player)) # <- Player has access to basic equipment to fight mobs in Dark Forest
+    set_rule(world.get_entrance("Portal", player),
+             lambda state:
+                state.sl_can_reach_any_quests(["Find the Dark Forest", "Build a Stable Portal"], player))
     
     set_rule(world.get_entrance("Rowboat", player),
              lambda state:
@@ -453,16 +458,16 @@ def set_rules(world: MultiWorld, player: int):
         #region 'Longevity' Quests
 
         set_rule(world.get_location("Reach Moon 6", player),
-                lambda state: state.sl_phase_one(options, player)) # <- Player is able to reach Moon 12
+                 lambda state: state.sl_can_start_mainland(player))  # Player can start Mainland
 
         set_rule(world.get_location("Reach Moon 12", player),
-                lambda state: state.sl_phase_two(options, player)) # <- Player is able to reach Moon 12
+                 lambda state: state.sl_can_start_mainland(player))  # Player can start Mainland
 
         set_rule(world.get_location("Reach Moon 24", player),
-                lambda state: state.sl_phase_four(options, player)) # <- Player is able to reach Moon 24
+                 lambda state: state.sl_can_start_mainland(player))  # Player can start Mainland
 
         set_rule(world.get_location("Reach Moon 36", player),
-                lambda state: state.sl_phase_six(options, player)) # <- Player is able to reach Moon 36
+                 lambda state: state.sl_can_start_mainland(player))  # Player can start Mainland
 
         #endregion
 
@@ -473,22 +478,30 @@ def set_rules(world: MultiWorld, player: int):
     if forest_selected:
 
         set_rule(world.get_location("Find the Dark Forest", player),
-                lambda state: state.can_reach_region("The Dark Forest", player)) # <- Player has access to Basic Weapons / Offspring / Food
+                 lambda state: state.can_reach_location("Reach Moon 12", player)) # Player can reach Moon 12 for Strange Portals
 
         set_rule(world.get_location("Complete the first wave", player),
-                lambda state: state.can_reach_region("The Dark Forest", player)) # <- Player has access to Basic Weapons / Offspring / Food
+                 lambda state:
+                    state.can_reach_location("Find the Dark Forest", player)                        # Player can reach The Dark Forest
+                    and state.sl_can_reach_any_quests(["Train Militia", "Train a Wizard"], player)) # AND has access to basic weapons
 
         set_rule(world.get_location("Build a Stable Portal", player),
-                lambda state: state.sl_has_all_ideas(["Brick", "Stable Portal"], player) and # <- Player has idea for Stable Portal
-                              state.can_reach_region("The Dark Forest", player))  # <- Player has Idea for Stable Portal
+                 lambda state:
+                    state.sl_can_start_mainland(player)                     # Player can start Mainland
+                    and state.sl_has_pack("Explorers", player)              # AND has pack containing 'Magic Dust'
+                    and state.sl_has_all_ideas(["Brick", "Stable Portal"])) # AND has 'Brick' and 'Stable Portal' ideas
 
         set_rule(world.get_location("Get to Wave 6", player),
-                lambda state: state.sl_phase_six(options, player) and # <- Player has access to advanced weapon
-                              state.can_reach_region("The Dark Forest", player))  # <- Player can reach The Dark Forest
+                 lambda state:
+                    state.sl_can_reach_all_quests([
+                        "Complete the first wave",  # Player can complete the first wave
+                        "Kill a Skeleton",          # AND has access to weapons and shield
+                        "Create Offspring",         # AND can create villagers
+                        "Cook Raw Meat"], player))  # AND has access to cooking
         
         set_rule(world.get_location("Fight the Wicked Witch", player),
-                lambda state: state.sl_phase_six(options, player) and # <- Player has access to advanced weapon
-                              state.can_reach_region("The Dark Forest", player))  # <- Player can reach The Dark Forest
+                 lambda state:
+                    state.sl_can_reach_all_quests(["Get to Wave 6", "Train a Ninja"], player)) # Player can complete 6 waves and has all weapons
 
     #endregion
 
@@ -720,79 +733,93 @@ def set_rules(world: MultiWorld, player: int):
     if mobsanity_selected:
 
         set_rule(world.get_location("Kill a Bear", player),
-                 lambda state: state.sl_phase_three(options, player)) # <- Player has basic weapon / food / offspring and can find Bear in Explorers or Strange Portals from Moon 16
+                 lambda state: state.can_reach_location("Kill a Skeleton", player))    # Player has weapons and explorers / armory
 
         set_rule(world.get_location("Kill an Elf", player),
-                 lambda state: state.sl_phase_three(options, player)) # <- Player has basic weapon / food / offspring and can find Elf in Strange Portals from Moon 24 (or Dark Forest from Wave 1)
+                 lambda state: state.sl_can_reach_any_locations(["Kill a Skeleton", "Complete the first wave"], player)) # Player can get to Dark Forest or make it to Moon 24
 
         set_rule(world.get_location("Kill an Elf Archer", player),
-                 lambda state: state.sl_phase_three(options, player)) # <- Player has basic weapon / food / offspring and can find Elf Archer in Strange Portals from Moon 24 (or Dark Forest from Wave 1)
+                 lambda state: state.can_reach_location("Kill an Elf", player)) # Player can get to Dark Forest or make it to Moon 24
 
         set_rule(world.get_location("Kill an Enchanted Shroom", player),
-                 lambda state: state.sl_phase_three(options, player)) # <- Player has basic weapon / food / offspring and can find Enchanted Shroom in Strange Portals from Moon 24 (or Dark Forest from Wave 1)
+                 lambda state: state.can_reach_location("Kill an Elf", player)) # Player can get to Dark Forest or make it to Moon 24
 
         set_rule(world.get_location("Kill a Feral Cat", player),
-                 lambda state: state.sl_phase_three(options, player)) # <- Player has basic weapon / food / offspring and can find Enchanted Shroom in Explorers / Strange Portals from Moon 24 (or Dark Forest from Wave 1)
+                 lambda state: state.can_reach_location("Kill an Elf", player)) # Player can get to Dark Forest or make it to Moon 24 or find Ruins
 
         set_rule(world.get_location("Kill a Frog Man", player),
-                 lambda state: state.sl_phase_three(options, player)) # <- Player has basic weapon / food / offspring and can find Frog Man in Explorers or Strange Portals from Moon 16
+                 lambda state:
+                    state.can_reach_location("Kill a Skeleton", player)         # Player has weapons and explorers / armory
+                    or (                                                        # OR
+                        state.sl_can_start_island(player)                       # Player can start The Island
+                        and state.sl_has_pack("Advanced Archipelago", player)   # AND has the 'Advanced Archipelago' pack
+                    ))
 
         set_rule(world.get_location("Kill a Ghost", player),
-                 lambda state: state.sl_phase_three(options, player)) # <- Player has basic weapon / food / offspring and can find Ghost in Strange Portals from Moon 24 (or Dark Forest from Wave 1)
+                 lambda state: state.can_reach_location("Kill an Elf", player)) # Player can get to Dark Forest or make it to Moon 24
 
         set_rule(world.get_location("Kill a Giant Rat", player),
-                 lambda state: state.sl_phase_three(options, player)) # <- Player has basic weapon / food / offspring and can find Giant Rat in Explorers or Strange Portals from Moon 16
+                 lambda state: state.can_reach_location("Kill a Skeleton", player))    # Player has weapons and explorers / armory
 
         set_rule(world.get_location("Kill a Giant Snail", player),
-                 lambda state: state.sl_phase_three(options, player)) # <- Player has basic weapon / food / offspring and can find Giant Snail in Strange Portals from Moon 24 (or Dark Forest from Wave 1)
+                 lambda state: state.can_reach_location("Kill an Elf", player)) # Player can get to Dark Forest or make it to Moon 24
 
         set_rule(world.get_location("Kill a Goblin", player),
-                 lambda state: state.sl_phase_three(options, player)) # <- Player has basic weapon / food / offspring and can find Goblin in Explorers or Strange Portals from Moon 12
+                 lambda state:
+                    state.can_reach_location("Have a Villager with Combat Level 20", player)    # Player has basic weapon and shield
+                    and state.sl_has_pack("Explorers", player))                                 # AND has pack containing 'Goblin'
 
         set_rule(world.get_location("Kill a Goblin Archer", player),
-                 lambda state: state.sl_phase_three(options, player)) # <- Player has basic weapon / food / offspring and can find Goblin Archer in Explorers or Strange Portals from Moon 12
+                 lambda state: state.can_reach_location("Kill a Goblin", player))   # Player has basic weapon and packs containing 'Goblin Archer'
 
         set_rule(world.get_location("Kill a Goblin Shaman", player),
-                 lambda state: state.sl_phase_three(options, player)) # <- Player has basic weapon / food / offspring and can find Goblin Shaman in Explorers or Strange Portals from Moon 16
+                 lambda state: state.can_reach_location("Kill a Skeleton", player))    # Player has weapons and explorers / armory
 
         set_rule(world.get_location("Kill a Merman", player),
-                 lambda state: state.sl_phase_three(options, player)) # <- Player has basic weapon / food / offspring and can find Merman in Strange Portals from Moon 24 (or Dark Forest from Wave 1)
+                 lambda state: 
+                    state.can_reach_location("Kill a Frog Man", player)     # Player has weapons and explorers / armory or can reach island with packs containing 'Merman'
+                    or state.can_reach("Complete the first wave", player))  # OR can complete a wave of The Dark Forest
 
         set_rule(world.get_location("Kill a Mimic", player),
-                 lambda state: state.sl_phase_three(options, player)) # <- Player has basic weapon / food / offspring and can find Merman in Explorers / Strange Portals from Moon 16 (or Dark Forest from Wave 1)
+                 lambda state: state.sl_can_reach_any_quests(["Kill a Skeleton", "Reach Wave 6"], player)) # Player has weaapons and Armory / Explorers or can reach Wave 6 of Dark Forest
 
         set_rule(world.get_location("Kill a Mosquito", player),
-                 lambda state: state.sl_phase_three(options, player)) # <- Player has basic weapon / food / offspring and can find Merman in Strange Portals from Moon 24 (or Dark Forest from Wave 1)
+                 lambda state: state.can_reach_location("Kill a Merman", player))   # Player has weapons and explorers / armory or can reach island with packs containing 'Mosquito' or complete first wave of forest
 
         set_rule(world.get_location("Kill a Slime", player),
-                 lambda state: state.sl_phase_three(options, player)) # <- Player has basic weapon / food / offspring and can find Merman in Strange Portals from Moon 16 (or Dark Forest from Wave 1)
+                 lambda state: state.can_reach_location("Kill a Skeleton", player)) # Player has weapons and explorers / armory
 
         set_rule(world.get_location("Kill a Small Slime", player),
-                 lambda state: state.can_reach_location("Kill a Slime", player)) # <- Found from killing a Slime
+                 lambda state: state.can_reach_location("Kill a Slime", player))    # Player can find and kill a slime
 
         set_rule(world.get_location("Kill a Snake", player),
-                 lambda state: state.sl_phase_three(options, player)) # <- Player has basic weapon / food / offspring and can find Snake in Explorers (Cave)
+                 lambda state:
+                    state.sl_can_start_island(player)                   # Player can start The Island
+                    and state.sl_has_pack("Enclave Explorers", player)) # AND has Enclave Explorers pack
 
         set_rule(world.get_location("Kill a Tiger", player),
-                 lambda state: state.sl_phase_three(options, player)) # <- Player has basic weapon / food / offspring and can find Snake in Explorers (Cave)
+                 lambda state:
+                    state.sl_can_start_island(player)                                               # Player can start The Island
+                    and state.sl_can_reach_any_quests(["Train Militia", "Train a Wizard"], player)  # AND has access to basic weapons
+                    and state.sl_has_pack("Enclave Explorers", player))                             # AND has pack containing 'Tiger'
 
         set_rule(world.get_location("Kill a Wolf", player),
-                 lambda state: state.can_reach_location("Get a Dog", player)) # <- Player is able to find and fight a Wolf instead of giving it a Bone
+                 lambda state: state.can_reach_location("Get a Dog", player)) # Player has packs containing 'Wolf'
 
         # Only apply these rules if The Dark Forest is enabled
         if forest_selected:
 
             set_rule(world.get_location("Kill a Dark Elf", player),
-                 lambda state: state.can_reach_location("Get to Wave 6", player)) # <- Only found in The Dark Forest from Wave 4
+                 lambda state: state.can_reach_location("Get to Wave 6", player)) # Found in The Dark Forest from Wave 4
             
             set_rule(world.get_location("Kill an Ent", player),
-                 lambda state: state.can_reach_location("Get to Wave 6", player)) # <- Only found in The Dark Forest from Wave 4
+                 lambda state: state.can_reach_location("Get to Wave 6", player)) # Found in The Dark Forest from Wave 4
             
             set_rule(world.get_location("Kill an Ogre", player),
-                 lambda state: state.can_reach_location("Get to Wave 6", player)) # <- Only found in The Dark Forest from Wave 4
+                 lambda state: state.can_reach_location("Get to Wave 6", player)) # Found in The Dark Forest from Wave 4
 
             set_rule(world.get_location("Kill an Orc Wizard", player),
-                 lambda state: state.can_reach_location("Get to Wave 6", player)) # <- Only found in The Dark Forest from Wave 4
+                 lambda state: state.can_reach_location("Get to Wave 6", player)) # Found in The Dark Forest from Wave 4
 
         # Only apply these rules if The Island is enabled 
         if island_selected:
@@ -832,32 +859,39 @@ def set_rules(world: MultiWorld, player: int):
     if packsanity_selected:
 
         set_rule(world.get_location("Buy the Seeking Wisdom Pack", player),
-                 lambda state: state.sl_phase_one(options, player) and
-                               state.sl_has_pack("Seeking Wisdom", player))
+                 lambda state:
+                    state.sl_can_start_mainland(player)                 # Player can start Mainland
+                    and state.sl_has_pack("Seeking Wisdom", player))    # AND has 'Seeking Wisdom' pack
 
         set_rule(world.get_location("Buy the Reap & Sow Pack", player),
-                 lambda state: state.sl_phase_two(options, player) and
-                               state.sl_has_pack("Reap & Sow", player))
+                 lambda state:
+                    state.sl_can_start_mainland(player)             # Player can start Mainland
+                    and state.sl_has_pack("Reap & Sow", player))    # AND has 'Reap & Sow' pack
         
         set_rule(world.get_location("Buy the Curious Cuisine Pack", player),
-                 lambda state: state.sl_phase_four(options, player) and
-                               state.sl_has_pack("Curious Cuisine", player))
+                 lambda state:
+                    state.sl_can_start_mainland(player)                 # Player can start Mainland
+                    and state.sl_has_pack("Curious Cuisine", player))   # AND has 'Curious Cuisine' pack
         
         set_rule(world.get_location("Buy the Logic and Reason Pack", player),
-                 lambda state: state.sl_phase_three(options, player) and
-                               state.sl_has_pack("Logic and Reason", player))
+                 lambda state:
+                    state.sl_can_start_mainland(player)                 # Player can start Mainland
+                    and state.sl_has_pack("Logic and Reason", player))  # AND has 'Logic and Reason' pack
         
         set_rule(world.get_location("Buy the The Armory Pack", player),
-                 lambda state: state.sl_phase_four(options, player) and
-                               state.sl_has_pack("The Armory", player))
+                 lambda state:
+                    state.sl_can_start_mainland(player)             # Player can start Mainland
+                    and state.sl_has_pack("The Armory", player))    # AND has 'The Armory' pack
         
         set_rule(world.get_location("Buy the Explorers Pack", player),
-                 lambda state: state.sl_phase_two(options, player) and
-                               state.sl_has_pack("Explorers", player))
+                 lambda state:
+                    state.sl_can_start_mainland(player)             # Player can start Mainland
+                    and state.sl_has_pack("Explorers", player))    # AND has 'Explorers' pack
         
         set_rule(world.get_location("Buy the Order and Structure Pack", player),
-                 lambda state: state.sl_phase_five(options, player) and
-                               state.sl_has_pack("Order and Structure", player))
+                 lambda state:
+                    state.sl_can_start_mainland(player)                     # Player can start Mainland
+                    and state.sl_has_pack("Order and Structure", player))   # AND has 'Order and Structure' pack
         
         # Apply these rules if The Island board is selected
         if island_selected:
