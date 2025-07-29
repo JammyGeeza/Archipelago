@@ -62,6 +62,7 @@ class StacklandsWorld(World):
     def fill_slot_data(self) -> Dict[str, Any]:
         slot_data = {}
         slot_data.update(self.options.as_dict(
+            "boards",
             "board_expansion_mode",
             "board_expansion_amount",
             "goal",
@@ -69,7 +70,6 @@ class StacklandsWorld(World):
             "moon_length",
             "packsanity",
             "pausing",
-            "quest_checks",
             "sell_cards_trap_amount",
             "spendsanity",
             "spendsanity_cost",
