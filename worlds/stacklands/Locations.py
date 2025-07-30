@@ -40,7 +40,7 @@ location_table: List[LocationData] = [
     LocationData("Buy the Humble Beginnings Pack"                       , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ), 
     LocationData("Harvest a Tree using a Villager"                      , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Make a Stick from Wood"                               , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.PRIORITY), # <- Prioritise to aid progression
-    LocationData("Pause using the play icon in the top right corner"    , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.Pausing      , LocationProgressType.DEFAULT ), 
+    LocationData("Pause using the play icon in the top right corner"    , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.Pausing        , LocationProgressType.DEFAULT ), 
     LocationData("Grow a Berry Bush using Soil"                         , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Build a House"                                        , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Get a Second Villager"                                , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
@@ -53,7 +53,7 @@ location_table: List[LocationData] = [
     LocationData("Find a mysterious artifact"                           , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ), 
     LocationData("Build a Temple"                                       , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.PRIORITY), # <- Prioritise to aid progression
     LocationData("Bring the Goblet to the Temple"                       , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
-    LocationData("Kill the Demon"                                       , RegionFlags.Mainland     , CheckType.Goal     , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
+    LocationData("Kill the Demon"                                       , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.EXCLUDED), # <- Goal check, don't include progression items
 
     # 'Power & Skill' Category
     LocationData("Train Militia"                                        , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
@@ -121,17 +121,17 @@ location_table: List[LocationData] = [
     LocationData("Complete the first wave"                             , RegionFlags.Forest        , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ), 
     LocationData("Build a Stable Portal"                               , RegionFlags.Forest        , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.PRIORITY), # <- Prioritise to aid progression 
     LocationData("Get to Wave 6"                                       , RegionFlags.Forest        , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ), 
-    LocationData("Fight the Wicked Witch"                              , RegionFlags.Forest        , CheckType.Goal     , OptionFlags.NONE           , LocationProgressType.PRIORITY), # <- Prioritise to aid progression 
+    LocationData("Fight the Wicked Witch"                              , RegionFlags.Forest        , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.EXCLUDED), # <- Goal check, don't include progression items
 
 #endregion
 
 #region The Island Quests
 
     # 'The Grand Scheme' Category
-    LocationData("Build a Rowboat"                                     , RegionFlags.Island        , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
+    LocationData("Build a Rowboat"                                     , RegionFlags.Island        , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.PRIORITY), # <- Prioritise to aid progression
     LocationData("Build a Cathedral on the Mainland"                   , RegionFlags.Island        , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
     LocationData("Bring the Island Relic to the Cathedral"             , RegionFlags.Island        , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
-    LocationData("Kill the Demon Lord"                                 , RegionFlags.Island        , CheckType.Goal     , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
+    LocationData("Kill the Demon Lord"                                 , RegionFlags.Island        , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.EXCLUDED), # <- Goal check, don't include progression items
 
     # 'Marooned' Category
     LocationData("Get 2 Bananas"                                       , RegionFlags.Island        , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
@@ -139,7 +139,7 @@ location_table: List[LocationData] = [
     LocationData("Have 3 Shells"                                       , RegionFlags.Island        , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
     LocationData("Catch a Fish"                                        , RegionFlags.Island        , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
     LocationData("Make Rope"                                           , RegionFlags.Island        , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
-    LocationData("Make a Fish Trap"                                    , RegionFlags.Island        , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
+    LocationData("Make a Fish Trap"                                    , RegionFlags.Island        , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.PRIORITY), # <- Prioritise to aid progression
     LocationData("Make a Sail"                                         , RegionFlags.Island        , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
     LocationData("Build a Sloop"                                       , RegionFlags.Island        , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
 
@@ -169,13 +169,13 @@ location_table: List[LocationData] = [
     LocationData("Build a Composter"                                   , RegionFlags.Island        , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
     LocationData("Bribe a Pirate Boat"                                 , RegionFlags.Island        , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
     LocationData("Befriend a Pirate"                                   , RegionFlags.Island        , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
-    LocationData("Make a Gold Bar"                                     , RegionFlags.Island        , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
+    LocationData("Make a Gold Bar"                                     , RegionFlags.Island        , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.PRIORITY), # <- Prioritise to aid progression
     LocationData("Make Glass"                                          , RegionFlags.Island        , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
     
     # 'Strengthen Up' Category
     LocationData("Train an Archer"                                     , RegionFlags.Island        , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
     LocationData("Break a Bottle"                                      , RegionFlags.Island        , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
-    LocationData("Equip an Archer with a Quiver"                       , RegionFlags.Island        , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.EXCLUDED), # <- Relies on RNG to drop Quiver
+    LocationData("Equip an Archer with a Quiver"                       , RegionFlags.Island        , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.EXCLUDED), # <- Relies on RNG to drop Quiver, so don't include progression items
     LocationData("Make a Villager wear Crab Scale Armor"               , RegionFlags.Island        , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
     LocationData("Craft the Amulet of the Forest"                      , RegionFlags.Island        , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
 
@@ -237,6 +237,12 @@ location_table: List[LocationData] = [
 #region Spendsanity
 
     LocationData("Buy {count} Spendsanity Packs"                       , RegionFlags.Mainland      , CheckType.Check    , OptionFlags.Spendsanity   , LocationProgressType.DEFAULT ),
+
+#endregion
+
+#region Goal
+
+    LocationData("Goal Complete"                                        , RegionFlags.All          , CheckType.Goal     , OptionFlags.NONE          , LocationProgressType.DEFAULT ),
 
 #endregion
 

@@ -2,28 +2,23 @@ from dataclasses import dataclass
 from .Enums import ExpansionType, GoalFlags, MoonlengthType, RegionFlags
 from Options import Choice, DeathLink, PerGameCommonOptions, Range, Toggle
 
-class Boards(Choice):
+class Goal(Choice):
     """
-    Select which boards to include in your run - will include all quests for each board as location checks.
+    Select which boards to complete (kill the boss) for the goal of your run.
+
+    Mainland Only       -> Kill the Demon
+    Mainland and Forest -> Kill the Demon and the Wicked Witch
+    Mainland and Island -> Kill the Demon and the Demon Lord
+    All                 -> Kill the Demon, Wicked Witch and Demon Lord
+
+    For each board selected, all quests for that board will be added as Location Checks.
     """
-    display_name = "Boards"
+    display_name = "Goal"
     option_mainland_only = RegionFlags.Mainland
     option_mainland_and_forest = RegionFlags.Mainland | RegionFlags.Forest
     option_mainland_and_island = RegionFlags.Mainland | RegionFlags.Island
     option_all = RegionFlags.All
     default = option_all
-
-class Goal(Choice):
-    """
-    Select the goal for your run.
-
-    All Bosses -> Kill all bosses on each board selected in the <Boards> option.
-    All Quests -> Complete all quests on each board selected in the <Boards> option.
-    """
-    display_name = "Goal"
-    option_all_bosses = GoalFlags.Bosses
-    option_all_quests = GoalFlags.Quests
-    default = option_all_bosses
 
 class Mobsanity(Toggle):
     """
@@ -104,9 +99,9 @@ class BoardExpansionCount(Range):
     If <Board Expansion Mode> option is 'ideas' then this setting will be ignored.
     """
     display_name = "Board Expansion Count"
-    range_start = 3
-    range_end = 10
-    default = 4
+    range_start = 2
+    range_end = 5
+    default = 3
 
 class MoonLength(Choice):
     """
@@ -213,7 +208,6 @@ class StrangePortalTrapWeight(Range):
 
 @dataclass
 class StacklandsOptions(PerGameCommonOptions):
-    boards: Boards
     goal: Goal
     mobsanity: Mobsanity
     packsanity: Packsanity

@@ -55,7 +55,6 @@ item_table: List[ItemData] = [
     ItemData("Idea: Growth"                         , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: House"                          , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Iron Bar"                       , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
-    ItemData("Idea: Iron Mine"                      , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Lumber Camp"                    , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Magic Wand"                     , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Market"                         , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
@@ -69,29 +68,26 @@ item_table: List[ItemData] = [
     ItemData("Idea: Smithy"                         , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Spear"                          , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Stick"                          , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
-    ItemData("Idea: Sword"                          , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Temple"                         , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Throwing Stars"                 , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
+    ItemData("Idea: Wooden Shield"                  , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
 
     # Useful
-    ItemData("Idea: Animal Pen"                     , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
     ItemData("Idea: Axe"                            , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
     ItemData("Idea: Chainmail Armor"                , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
-    # ItemData("Idea: Charcoal"                       , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
     ItemData("Idea: Chicken"                        , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
     ItemData("Idea: Coin Chest"                     , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
-    ItemData("Idea: Crane"                          , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
-    ItemData("Idea: Crossroads"                     , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
-    ItemData("Idea: Filter Crossroads"              , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
+    # ItemData("Idea: Crossroads"                     , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
+    # ItemData("Idea: Filter Crossroads"              , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
     ItemData("Idea: Hammer"                         , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
     ItemData("Idea: Garden"                         , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
+    ItemData("Idea: Iron Mine"                      , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
     ItemData("Idea: Iron Shield"                    , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
     ItemData("Idea: Pickaxe"                        , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
-    ItemData("Idea: Road Builder"                   , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
+    # ItemData("Idea: Road Builder"                   , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
     ItemData("Idea: Resource Chest"                 , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
     ItemData("Idea: Sawmill"                        , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
-    # ItemData("Idea: Stove"                          , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
-    ItemData("Idea: Wooden Shield"                  , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
+    ItemData("Idea: Sword"                          , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
 
 #endregion
 
@@ -118,6 +114,7 @@ item_table: List[ItemData] = [
     ItemData("Idea: Cathedral"                     , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Ceviche"                       , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Charcoal"                      , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
+    ItemData("Idea: Coin"                          , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Composter"                     , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Distillery"                    , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Empty Bottle"                  , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
@@ -139,16 +136,13 @@ item_table: List[ItemData] = [
     ItemData("Idea: Sushi"                         , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
 
     # Useful Ideas
-    ItemData("Idea: Aquarium"                      , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
     ItemData("Idea: Blunderbuss"                   , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
-    ItemData("Idea: Coin"                          , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
     ItemData("Idea: Crossbow"                      , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
     ItemData("Idea: Fishing Rod"                   , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
     ItemData("Idea: Frigate"                       , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
     ItemData("Idea: Gold Mine"                     , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
     ItemData("Idea: Golden Chestplate"             , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
     ItemData("Idea: Mountain Amulet"               , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
-    ItemData("Idea: Resource Magnet"               , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
     ItemData("Idea: Sand Quarry"                   , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
     ItemData("Idea: Shell Chest"                   , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
 
@@ -169,12 +163,14 @@ item_table: List[ItemData] = [
 #region Junk Items
 
     # Filler Ideas
+    ItemData("Idea: Animal Pen"                     , RegionFlags.Mainland                , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.filler     ),
+    ItemData("Idea: Aquarium"                       , RegionFlags.Island                  , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.filler     ),
     ItemData("Idea: Bone Spear"                     , RegionFlags.Mainland                , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.filler     ),
     ItemData("Idea: Boomerang"                      , RegionFlags.Mainland                , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.filler     ),
     ItemData("Idea: Breeding Pen"                   , RegionFlags.Mainland                , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.filler     ),
     ItemData("Idea: Butchery"                       , RegionFlags.Mainland                , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.filler     ),
     ItemData("Idea: Club"                           , RegionFlags.Mainland                , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.filler     ),
-    # ItemData("Idea: Crane"                          , RegionFlags.Mainland                , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.filler     ),
+    ItemData("Idea: Crane"                          , RegionFlags.Mainland                , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.filler     ),
     ItemData("Idea: Dustbin"                        , RegionFlags.Mainland                , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.filler     ), 
     ItemData("Idea: Fruit Salad"                    , RegionFlags.Mainland                , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.filler     ),
     ItemData("Idea: Hotpot"                         , RegionFlags.Mainland                , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.filler     ),
@@ -185,6 +181,7 @@ item_table: List[ItemData] = [
     ItemData("Idea: Magic Tome"                     , RegionFlags.Mainland                , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.filler     ),
     # ItemData("Idea: Mess Hall"                      , RegionFlags.Mainland_and_Forest     , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.filler     ),
     ItemData("Idea: Milkshake"                      , RegionFlags.Mainland                , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.filler     ),
+    ItemData("Idea: Resource Magnet"                , RegionFlags.Island                  , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.filler     ),
     ItemData("Idea: Spiked Plank"                   , RegionFlags.Mainland                , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.filler     ),
     ItemData("Idea: Stew"                           , RegionFlags.Mainland                , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.filler     ),
     ItemData("Idea: Tamago Sushi"                   , RegionFlags.Island                  , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.filler     ),
@@ -236,206 +233,236 @@ for item in item_table:
     name_to_id[item.name] = current_id
     current_id += 1
 
-def create_mainland_items(world: MultiWorld, player: int, options: StacklandsOptions):
+def create_progression_items(world: MultiWorld, player: int, items: List[ItemData]):
+
+    logging.info("----- Creating Progression / Useful Items -----")
+
+    # Get items from starting inventory
+    excluded_items: List[Item] = world.precollected_items[player]
+
+    # Pop all relevant progression / useful items
+    progression_items: List[ItemData] = [
+        items.pop(index)
+        for index in reversed(range(len(items)))
+        if (item:= items[index]) 
+        and item.option_flags is OptionFlags.NONE
+        and item.classification_flags & (ItemClassification.progression | ItemClassification.useful)
+    ]
 
     # Prepare item pool
     item_pool: List[Item] = []
 
-    logging.info("----- Creating 'Mainland' Items -----")
+    # Add each item
+    for item_data in progression_items:
 
-    # If mainland board is selected in YAML
-    if options.quest_checks.value & RegionFlags.Mainland:
+        # Generate AP item
+        item: StacklandsItem = StacklandsItem(name_to_id[item_data.name], item_data, player)
 
-        # Get items from starting inventory
-        excluded_items: List[Item] = world.precollected_items[player]
-
-        # Get all items for region
-        region_items: List[ItemData] = [ item for item in item_table if item.region_flags is RegionFlags.Mainland ]
-
-        # Add progression and useful items (not affected by options) for region to the pool
-        for item_data in [ 
-            item for item in region_items if 
-            item.classification_flags & (ItemClassification.progression | ItemClassification.useful)
-             and item.option_flags is OptionFlags.NONE
-        ]:
-
-            # Generate AP item
-            item: StacklandsItem = StacklandsItem(name_to_id[item_data.name], item_data, player)
-
-            # If item is not in the starting inventory, add it to the prospective item pool
-            if item not in excluded_items:
-                item_pool.append(item)
+        # If item is not in the starting inventory, add it to the prospective item pool
+        if item not in excluded_items:
+            item_pool.append(item)
 
     logging.info(f"Added {len(item_pool)} items to the item pool!")
 
     # Add items to world item pool
     world.itempool += item_pool
 
-def create_forest_items(world: MultiWorld, player: int, options: StacklandsOptions):
+# def create_mainland_items(world: MultiWorld, player: int, items: List[ItemData]):
 
-    # Prepare item pool
-    item_pool: List[Item] = []
+#     logging.info("----- Creating 'Mainland' Items -----")
 
-    logging.info("----- Creating 'The Dark Forest' Items -----")
+#     # Get items from starting inventory
+#     excluded_items: List[Item] = world.precollected_items[player]
 
-    # If The Dark Forest board is selected in YAML
-    if options.quest_checks.value & RegionFlags.Forest:
+#     # Pop all relevant progression / useful items for mainland
+#     mainland_items: List[ItemData] = [
+#         items.pop(index)
+#         for index in reversed(range(len(items)))
+#         if (item:= items[index]) 
+#         and item.region_flags & RegionFlags.Mainland
+#         and item.option_flags is OptionFlags.NONE
+#         and item.classification_flags & (ItemClassification.progression | ItemClassification.useful)
+#     ]
 
-        # Get items from starting inventory
-        excluded_items: List[Item] = world.precollected_items[player]
+#     # Prepare item pool
+#     item_pool: List[Item] = []
 
-        # Get all items for region
-        region_items: List[ItemData] = [ item for item in item_table if item.region_flags is RegionFlags.Forest ]
+#     # Add each item
+#     for item_data in mainland_items:
 
-        # Add progression and useful items (not affected by options) for region to the pool
-        for item_data in [ 
-            item for item in region_items if 
-            item.classification_flags & (ItemClassification.progression | ItemClassification.useful)  and
-            item.option_flags is OptionFlags.NONE
-        ]:
+#         # Generate AP item
+#         item: StacklandsItem = StacklandsItem(name_to_id[item_data.name], item_data, player)
 
-            # Generate AP item
-            item: StacklandsItem = StacklandsItem(name_to_id[item_data.name], item_data, player)
+#         # If item is not in the starting inventory, add it to the prospective item pool
+#         if item not in excluded_items:
+#             item_pool.append(item)
 
-            # If item is not in the starting inventory, add it to the prospective item pool
-            if item not in excluded_items:
-                item_pool.append(item)
+#     logging.info(f"Added {len(item_pool)} items to the item pool!")
 
-    logging.info(f"Added {len(item_pool)} items to the item pool!")
+#     # Add items to world item pool
+#     world.itempool += item_pool
 
-    # Add items to world item pool
-    world.itempool += item_pool
+# def create_forest_items(world: MultiWorld, player: int, items: List[ItemData]):
 
-def create_expansion_items(world: MultiWorld, player: int, options: StacklandsOptions):
+#     logging.info("----- Creating 'The Dark Forest' Items -----")
 
-    expansion_pool: List[Item] = []
+#     # Get items from starting inventory
+#     excluded_items: List[Item] = world.precollected_items[player]
+
+#     # Pop all relevant progression / useful items for forest
+#     forest_items: List[ItemData] = [
+#         items.pop(index)
+#         for index in reversed(range(len(items)))
+#         if (item:= items[index]) 
+#         and item.region_flags & RegionFlags.Forest
+#         and item.option_flags is OptionFlags.NONE
+#         and item.classification_flags & (ItemClassification.progression | ItemClassification.useful)
+#     ]
+
+#     # Prepare item pool
+#     item_pool: List[Item] = []
+
+#     # Add each item
+#     for item_data in forest_items:
+        
+#         # Generate AP item
+#         item: StacklandsItem = StacklandsItem(name_to_id[item_data.name], item_data, player)
+
+#         # If item is not in the starting inventory, add it to the prospective item pool
+#         if item not in excluded_items:
+#             item_pool.append(item)
+
+#     logging.info(f"Added {len(item_pool)} items to the item pool!")
+
+#     # Add items to world item pool
+#     world.itempool += item_pool
+
+# def create_island_items(world: MultiWorld, player: int, items: List[ItemData]):
+
+#     logging.info("----- Creating 'The Island' Items -----")
+
+#     # Get items from starting inventory
+#     excluded_items: List[Item] = world.precollected_items[player]
+
+#     # Pop all relevant progression / useful items for island
+#     island_items: List[ItemData] = [
+#         items.pop(index)
+#         for index in reversed(range(len(items)))
+#         if (item:= items[index]) 
+#         and item.region_flags & RegionFlags.Island
+#         and item.option_flags is OptionFlags.NONE
+#         and item.classification_flags & (ItemClassification.progression | ItemClassification.useful)
+#     ]
+
+#     # Prepare item pool
+#     item_pool: List[Item] = []
+
+#     # Add each item
+#     for item_data in island_items:
+
+#         # Generate AP item
+#         item: StacklandsItem = StacklandsItem(name_to_id[item_data.name], item_data, player)
+
+#         # If item is not in the starting inventory, add it to the prospective item pool
+#         if item not in excluded_items:
+#             item_pool.append(item)
+
+#     logging.info(f"Added {len(item_pool)} items to the item pool!")
+
+#     # Add items to world item pool
+#     world.itempool += item_pool
+
+def create_expansion_items(world: MultiWorld, player: int, items: List[ItemData], options: StacklandsOptions):
 
     logging.info("----- Creating Board Expansion Items -----")
 
-    expansion_items: List[ItemData] = []
+    # Pop all relevant board expansion items
+    expansion_items: List[ItemData] = [
+        items.pop(index)
+        for index in reversed(range(len(items)))
+        if (item:= items[index]) 
+        and item.option_flags is OptionFlags.Expansion
+        and item.classification_flags & (ItemClassification.progression | ItemClassification.useful)
+    ]
 
-    # Calculate selected boards
-    mainland_selected: bool = bool(options.quest_checks.value & RegionFlags.Mainland)
-    forest_selected: bool = bool(options.quest_checks.value & RegionFlags.Forest)
+    # Prepare item pool 
+    item_pool: List[Item] = []
 
-    # If 'Ideas' mode selected
-    if options.board_expansion_mode.value is ExpansionType.Ideas:
+    # Add items
+    for item_data in expansion_items:
 
-        logging.info(f"Creating expansion items as Idea items...")
-
-        # Get expansion ideas
-        expansion_items = [ 
-            item for item in item_table if
-            item.option_flags & OptionFlags.Expansion                               # Item is for the 'Expansion Mode' option
-            and item.item_type is ItemType.Idea                                     # AND Item is type 'Idea'        
-            and (                                                                   # AND
-                (mainland_selected and item.region_flags & RegionFlags.Mainland)    # Item is for Mainland and that board is selected
-                or (forest_selected and item.region_flags & RegionFlags.Forest)     # Item is for The Dark Forest and that board is selected
-            )
-        ]
-
-    # If 'Items' mode selected
-    elif options.board_expansion_mode.value is ExpansionType.Items:
-
-        logging.info(f"Creating expansion items as Board Expansion items...")
-
-        # Get expansion items
-        for expansion_item in [ 
-            item for item in item_table if 
-            item.option_flags & OptionFlags.Expansion                               # Item is for the 'Board Expansion Mode' option
-            and item.item_type is ItemType.Structure                                # AND Item is type 'Structure'
-            and (                                                                   # AND
-                (mainland_selected and item.region_flags & RegionFlags.Mainland)    # Item is for Mainland and that board is selected
-                or (forest_selected and item.region_flags & RegionFlags.Forest)     # OR Item is for The Dark Forest and that board is selected
-            )
-        ]:
-            # Add amount configured in yaml
+        # Add ideas to the item pool
+        if item_data.item_type is ItemType.Idea:
+            expansion_item: StacklandsItem = StacklandsItem(name_to_id[item_data.name], item_data, player)
+            item_pool.append(expansion_item)
+            
+        # Add X amount of structures to the item pool
+        elif item_data.item_type is ItemType.Structure:
             for _ in range(options.board_expansion_count.value):
-                expansion_items.append(expansion_item)
+                expansion_item: StacklandsItem = StacklandsItem(name_to_id[item_data.name], item_data, player)
+                item_pool.append(expansion_item)
 
-    # Add each expansion item to the expansion pool
-    for expansion_data in expansion_items:
-
-        expansion_item: StacklandsItem = StacklandsItem(name_to_id[expansion_data.name], expansion_data, player)
-        expansion_pool.append(expansion_item)
-
-    logging.info(f"Added {len(expansion_pool)} items to the item pool!")
+    logging.info(f"Added {len(item_pool)} items to the item pool!")
 
     # Add items to world item pool
-    world.itempool += expansion_pool
+    world.itempool += item_pool
 
 def create_trap_items(world: MultiWorld, player: int, options: StacklandsOptions):
 
+    logging.info("----- Creating Trap Items -----")
+
     # Prepare trap pool
-    trap_pool: List[Item] = []
+    item_pool: List[Item] = []
 
-    # If traps are enabled and the weighting is greater than 0%
-    if options.trap_fill.value > 0:
+    # Check if there are available item slots
+    if (unfilled_count:= len(world.get_unfilled_locations(player)) - len([item for item in world.itempool if item.player == player])) > 0:
 
-        logging.info("----- Creating Trap Items -----")
+        logging.info(f"Trap item fill is {options.trap_fill.value}%...")
 
-        # Check if there are available item slots
-        if (unfilled_count:= len(world.get_unfilled_locations(player)) - len([item for item in world.itempool if item.player == player])) > 0:
+        # Calculate how many trap items to create
+        trap_count: int = round(unfilled_count * options.trap_fill.value / 100)
 
-            logging.info(f"Trap item fill is {options.trap_fill.value}%...")
+        # Check that calculated trap count is one or more
+        if trap_count >= 1:
 
-            # Calculate how many trap items to create
-            trap_count: int = round(unfilled_count * options.trap_fill.value / 100)
+            # Select traps using trap weights
+            trap_selection = world.random.choices(
+                population=list(world.trap_weights.keys()),
+                weights=list(world.trap_weights.values()),
+                k=trap_count
+            )
 
-            # Check that calculated trap count is one or more
-            if trap_count > 0:
-
-                # Select traps using trap weights
-                trap_selection = world.random.choices(
-                    population=list(world.trap_weights.keys()),
-                    weights=list(world.trap_weights.values()),
-                    k=trap_count
-                )
-
-                # Add trap items to the pool
-                for trap_item in trap_selection:
-                    trap_data: ItemData = next(item for item in item_table if item.name == trap_item)
-                    trap: StacklandsItem = StacklandsItem(name_to_id[trap_data.name], trap_data, player)
-                    trap_pool.append(trap)
-
-            else:
-                logging.info("Trap count not high enough due to item slot availability and trap weighting - skipping...")
+            # Add trap items to the pool
+            for trap_item in trap_selection:
+                trap_data: ItemData = next(item for item in item_table if item.name == trap_item)
+                trap: StacklandsItem = StacklandsItem(name_to_id[trap_data.name], trap_data, player)
+                item_pool.append(trap)
 
         else:
-            logging.info("No unfilled item slots available for trap items - skipping...")
-
+            logging.info("Trap count not high enough due to unfilled slot availability and trap weighting - skipping...")
     else:
-        logging.info("Trap fill set to 0%, skipping trap items...")
+        logging.info("No unfilled item slots available for trap items - skipping...")
 
-    logging.info(f"Added {len(trap_pool)} items to the item pool!")
+    logging.info(f"Added {len(item_pool)} items to the item pool!")
 
     # Add trap items to item pool
-    world.itempool += trap_pool
+    world.itempool += item_pool
 
-def create_filler_items(world: MultiWorld, player: int, options: StacklandsOptions):
-
-    # Prepare item pool
-    filler_pool: List[Item] = []
+def create_filler_items(world: MultiWorld, player: int, items: List[ItemData], options: StacklandsOptions):
 
     logging.info("----- Creating Filler Items -----")
+
+    # Prepare item pool
+    item_pool: List[Item] = []
 
     # If there are un-filled slots...
     if (unfilled_count:= len(world.get_unfilled_locations(player)) - len([item for item in world.itempool if item.player == player])) > 0:
 
-        # Calculate selected boards
-        mainland_selected: bool = bool(options.quest_checks.value & RegionFlags.Mainland)
-        forest_selected: bool = bool(options.quest_checks.value & RegionFlags.Forest)
-
         # Get filler ideas
         filler_ideas: List[ItemData] = [
-            item for item in item_table if
-            item.classification_flags is ItemClassification.filler                  # Item is classified as 'filler'
-            and item.item_type is ItemType.Idea                                     # AND Item is an 'Idea'
-            and item.option_flags is OptionFlags.NONE                                 # AND Item is not affected by options
-            and {                                                                   # AND
-                (mainland_selected and item.region_flags & RegionFlags.Mainland)    # Item is for Mainland and that board is selected
-                or (forest_selected and item.region_flags & RegionFlags.Forest)     # OR Item is for The Dark Forest and that board is selected
-            }
+            item for item in items if
+            item.classification_flags is ItemClassification.filler  # Item is classified as 'filler'
+            and item.item_type is ItemType.Idea                     # AND Item is an 'Idea'
         ]
 
         # Randomly select how many filler ideas to add to the filler pool
@@ -451,7 +478,7 @@ def create_filler_items(world: MultiWorld, player: int, options: StacklandsOptio
         for idea_data in world.random.sample(filler_ideas, k=idea_count):
 
             idea: StacklandsItem = StacklandsItem(name_to_id[idea_data.name], idea_data, player)
-            filler_pool.append(idea)
+            item_pool.append(idea)
 
         # Fill remaining spots with filler booster
         if idea_count < unfilled_count:
@@ -465,15 +492,15 @@ def create_filler_items(world: MultiWorld, player: int, options: StacklandsOptio
             for _ in range(unfilled_count - idea_count):
 
                 filler_booster: StacklandsItem = StacklandsItem(name_to_id[filler_booster_data.name], filler_booster_data, player)
-                filler_pool.append(filler_booster)
+                item_pool.append(filler_booster)
 
     else:
         logging.info(f"No free slots for filler items - skipping...")
 
-    logging.info(f"Added {len(filler_pool)} filler items to the item pool!")
+    logging.info(f"Added {len(item_pool)} filler items to the item pool!")
 
     # Add filler items to the item pool
-    world.itempool += filler_pool
+    world.itempool += item_pool
 
 # Create all items
 def create_all_items(world: MultiWorld, player: int) -> None:
@@ -481,20 +508,37 @@ def create_all_items(world: MultiWorld, player: int) -> None:
     # Get YAML options
     options = world.worlds[player].options
 
-    # Add mainland progression / useful items
-    create_mainland_items(world, player, options)
+    expansion_items_selected: bool = options.board_expansion_mode.value is ExpansionType.Items
+    traps_selected: bool = options.trap_fill.value > 0 and any(weight > 0 for weight in [
+        options.feed_villagers_trap_weight.value,
+        options.mob_trap_weight.value,
+        options.sell_cards_trap_weight,
+        options.strange_portal_trap_weight
+    ]) 
 
-    # Add forest progression / useful items
-    create_forest_items(world, player, options)
+    item_pool: List[ItemData] = [
+        item for item in item_table
+        if item.region_flags & options.goal.value                                                                                   # Item contains a flag for selected boards
+        and (                                                                                                                       # AND
+            item.option_flags is OptionFlags.NONE                                                                                   # Is not affected by YAML options
+            or (traps_selected and item.option_flags is OptionFlags.Traps)                                                          # OR traps are selected and item contains Trap flag
+            or (expansion_items_selected and item.option_flags is OptionFlags.Expansion and item.item_type is ItemType.Structure)   # OR expansion items is selected and item is expansion structure
+            or (not expansion_items_selected and item.option_flags is OptionFlags.Expansion and item.item_type is ItemType.Idea)    # OR expansion items not selected and item is expansion idea
+        )
+    ]
+
+    # Add all progression / useful items
+    create_progression_items(world, player, item_pool)
 
     # Add expansion items
-    create_expansion_items(world, player, options)
+    create_expansion_items(world, player, item_pool, options)
 
-    # Add trap items
-    create_trap_items(world, player, options)
+    # Add trap items if enabled
+    if traps_selected:
+        create_trap_items(world, player, options)
 
     # Add filler items
-    create_filler_items(world, player, options)
+    create_filler_items(world, player, item_pool, options)
 
-    logging.info(f"Total items: {len(world.itempool)}")
-    logging.info(f"Total locations: {len(world.get_unfilled_locations())}")
+    logging.info(f"Locations added to pool: {len(world.get_unfilled_locations(player))}")
+    logging.info(f"Items added to pool: {len(world.itempool)}")
