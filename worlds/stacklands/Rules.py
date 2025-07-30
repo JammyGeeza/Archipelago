@@ -39,7 +39,7 @@ class StacklandsLogic(LogicMixin):
 
     def sl_can_start_island(self, player: int) -> bool:
         return (
-            self.can_reach_location("The Island", player)
+            self.can_reach_region("The Island", player)
             and self.sl_has_pack("On the Shore", player)
         )
     
@@ -73,52 +73,52 @@ class StacklandsLogic(LogicMixin):
     
     # NOTE: Attempting a phased ideas / packs release to attempt to better spread ideas and packs throughout the run in a 'logical' order.
 
-    def sl_phase_zero(self, player: int) -> bool:
-        return self.sl_has_pack("Humble Beginnings", player)
+    # def sl_phase_zero(self, player: int) -> bool:
+    #     return self.sl_has_pack("Humble Beginnings", player)
     
-    def sl_phase_one(self, options: StacklandsOptions, player: int) -> bool:
-        return (self.sl_phase_zero(player) and
-                self.sl_has_all_ideas(["Growth", "Stick"], player)) # <- Player has access to simple ideas
+    # def sl_phase_one(self, options: StacklandsOptions, player: int) -> bool:
+    #     return (self.sl_phase_zero(player) and
+    #             self.sl_has_all_ideas(["Growth", "Stick"], player)) # <- Player has access to simple ideas
     
-    def sl_phase_two(self, options: StacklandsOptions, player: int) -> bool:
-        return (self.sl_phase_one(options, player) and
-                (
-                    self.sl_has_all_ideas(["Campfire", "Shed"], player)             # <- Player has access to basic ideas
-                    and (                                                           # AND
-                        options.board_expansion_mode.value is ExpansionType.Ideas   # Board expansion mode is 'ideas' 
-                        or self.sl_has_count("Board Expansion", 1, player)          # OR Player has at least one 'Board Expansion' item
-                    )
-                ) and
-                self.sl_has_pack("Seeking Wisdom", player)) # <- Player has access to more basic resources
+    # def sl_phase_two(self, options: StacklandsOptions, player: int) -> bool:
+    #     return (self.sl_phase_one(options, player) and
+    #             (
+    #                 self.sl_has_all_ideas(["Campfire", "Shed"], player)             # <- Player has access to basic ideas
+    #                 and (                                                           # AND
+    #                     options.board_expansion_mode.value is ExpansionType.Ideas   # Board expansion mode is 'ideas' 
+    #                     or self.sl_has_count("Board Expansion", 1, player)          # OR Player has at least one 'Board Expansion' item
+    #                 )
+    #             ) and
+    #             self.sl_has_pack("Seeking Wisdom", player)) # <- Player has access to more basic resources
     
-    def sl_phase_three(self, options: StacklandsOptions, player: int) -> bool:
-        return (self.sl_phase_two(options, player) and
-                self.sl_has_any_ideas(["Slingshot", "Spear"], player) and # <- Player can make at least one basic weapon
-                self.sl_has_all_ideas(["House", "Offspring"], player) and # <- Player can begin training multiple villagers
-                self.sl_has_all_packs(["Explorers", "Reap & Sow"], player)) # <- Player can find/fight enemies and gather more food
+    # def sl_phase_three(self, options: StacklandsOptions, player: int) -> bool:
+    #     return (self.sl_phase_two(options, player) and
+    #             self.sl_has_any_ideas(["Slingshot", "Spear"], player) and # <- Player can make at least one basic weapon
+    #             self.sl_has_all_ideas(["House", "Offspring"], player) and # <- Player can begin training multiple villagers
+    #             self.sl_has_all_packs(["Explorers", "Reap & Sow"], player)) # <- Player can find/fight enemies and gather more food
     
-    def sl_phase_four(self, options: StacklandsOptions, player: int) -> bool:
-        return (self.sl_phase_three(options, player) and
-                self.sl_has_all_ideas(["Iron Mine", "Lumber Camp", "Quarry"], player) and                       # Player can create infinite basic resources
-                self.sl_has_pack("Logic and Reason", player)                                                    # AND Player has access to additional resources
-                and (                                                                                           # AND
-                    options.board_expansion_mode.value is ExpansionType.Ideas                                   # Board Expansion Mode is 'Ideas'
-                    or self.sl_has_count("Board Expansion", options.board_expansion_count.value / 3, player)    # Player has at least a third of board expansions
-                ))
+    # def sl_phase_four(self, options: StacklandsOptions, player: int) -> bool:
+    #     return (self.sl_phase_three(options, player) and
+    #             self.sl_has_all_ideas(["Iron Mine", "Lumber Camp", "Quarry"], player) and                       # Player can create infinite basic resources
+    #             self.sl_has_pack("Logic and Reason", player)                                                    # AND Player has access to additional resources
+    #             and (                                                                                           # AND
+    #                 options.board_expansion_mode.value is ExpansionType.Ideas                                   # Board Expansion Mode is 'Ideas'
+    #                 or self.sl_has_count("Board Expansion", options.board_expansion_count.value / 3, player)    # Player has at least a third of board expansions
+    #             ))
     
-    def sl_phase_five(self, options: StacklandsOptions, player: int) -> bool:
-        return (self.sl_phase_four(options, player) and
-                self.sl_has_all_ideas(["Brick", "Iron Bar", "Plank", "Smelter", "Temple"], player) and  # Player has access to advanced resources
-                self.sl_has_all_packs(["Curious Cuisine", "The Armory"], player))                       # AND Player has increased access to advanced resources
+    # def sl_phase_five(self, options: StacklandsOptions, player: int) -> bool:
+    #     return (self.sl_phase_four(options, player) and
+    #             self.sl_has_all_ideas(["Brick", "Iron Bar", "Plank", "Smelter", "Temple"], player) and  # Player has access to advanced resources
+    #             self.sl_has_all_packs(["Curious Cuisine", "The Armory"], player))                       # AND Player has increased access to advanced resources
     
-    def sl_phase_six(self, options: StacklandsOptions, player: int) -> bool:
-        return (self.sl_phase_five(options, player) and
-                self.sl_has_all_ideas(["Smithy", "Sword"], player) and                                          # Player can make an advanced weapon
-                self.sl_has_pack("Order and Structure", player)                                                 # AND Player can find/fight harder enemies
-                and (                                                                                           # AND
-                    options.board_expansion_mode.value is ExpansionType.Ideas                                   # Board Expansion Mode is 'Ideas'
-                    or self.sl_has_count("Board Expansion", options.board_expansion_count.value / 2, player)    # Player has at least half of board expansions
-                ))
+    # def sl_phase_six(self, options: StacklandsOptions, player: int) -> bool:
+    #     return (self.sl_phase_five(options, player) and
+    #             self.sl_has_all_ideas(["Smithy", "Sword"], player) and                                          # Player can make an advanced weapon
+    #             self.sl_has_pack("Order and Structure", player)                                                 # AND Player can find/fight harder enemies
+    #             and (                                                                                           # AND
+    #                 options.board_expansion_mode.value is ExpansionType.Ideas                                   # Board Expansion Mode is 'Ideas'
+    #                 or self.sl_has_count("Board Expansion", options.board_expansion_count.value / 2, player)    # Player has at least half of board expansions
+    #             ))
  
 # Set all region and location rules
 def set_rules(world: MultiWorld, player: int):
@@ -127,18 +127,14 @@ def set_rules(world: MultiWorld, player: int):
     options = world.worlds[player].options
 
     # Calculate board options
-    mainland_selected: bool = bool(options.boards.value & RegionFlags.Mainland)
-    forest_selected: bool = bool(options.boards.value & RegionFlags.Forest)
-    island_selected: bool = bool(options.boards.value & RegionFlags.Island)
-
-    # Calculate goal options
-    bosses_goal: bool = bool(options.goal.value & GoalFlags.Bosses)
-    quests_goal: bool = bool(options.goal.value & GoalFlags.Quests)
+    mainland_selected: bool = bool(options.goal.value & RegionFlags.Mainland)
+    forest_selected: bool = bool(options.goal.value & RegionFlags.Forest)
+    island_selected: bool = bool(options.goal.value & RegionFlags.Island)
 
     # Calculate sanity options
     mobsanity_selected: bool = options.mobsanity.value
     packsanity_selected: bool = options.packsanity.value
-    spendsanity_selected: bool = options.spendsanity.value is not SpendsanityType.Off
+    spendsanity_selected: bool = options.spendsanity.value != SpendsanityType.Off
 
     # Calculate other options
     expansion_items_selected: bool = options.board_expansion_mode.value is ExpansionType.Items
@@ -147,16 +143,20 @@ def set_rules(world: MultiWorld, player: int):
 #region 'Entrances'
 
     # Entrances
-    set_rule(world.get_entrance("Start", player), lambda state: True)
+    if mainland_selected:
+        set_rule(world.get_entrance("Start", player), lambda state: True)
 
-    set_rule(world.get_entrance("Portal", player),
-             lambda state:
-                state.sl_can_reach_any_quests(["Find the Dark Forest", "Build a Stable Portal"], player))
+    if forest_selected:
+        set_rule(world.get_entrance("Portal", player),
+                lambda state:
+                    state.sl_can_start_mainland(player) and                     # Player can start Mainland
+                    state.sl_has_all_ideas(["House", "Offspring"], player))     # AND can create extra villagers
     
-    set_rule(world.get_entrance("Rowboat", player),
-             lambda state:
-                state.can_reach_location("Build a Rowboat")            # Player can build a Rowboat
-                and state.can_reach_location("Get a Second Villager")) # AND player can have more than one villager (one must stay in Mainland to travel)
+    if island_selected:
+        set_rule(world.get_entrance("Rowboat", player),
+                lambda state:
+                    state.sl_can_start_mainland(player)                                                                                # Player can start Mainland
+                    and state.sl_has_all_ideas(["Brick", "House", "Iron Bar", "Offspring", "Plank", "Rowboat", "Smelter"], player))    # AND can create Rowboat and extra villagers
     
 #endregion
 
@@ -202,7 +202,7 @@ def set_rules(world: MultiWorld, player: int):
         set_rule(world.get_location("Build a House", player),
                  lambda state: 
                     state.sl_can_start_mainland(player)     # Player can start Mainland
-                    and state.sl_has_idea("House", player)) # AND has 'Growth' idea
+                    and state.sl_has_idea("House", player)) # AND has 'House' idea
         
         set_rule(world.get_location("Get a Second Villager", player),
                  lambda state: state.sl_can_start_mainland(player)) # Player can start Mainland
@@ -223,8 +223,7 @@ def set_rules(world: MultiWorld, player: int):
 
         set_rule(world.get_location("Get 3 Villagers", player),
                  lambda state:
-                    state.sl_can_expand_mainland(player, options.board_expansion_mode.value, player) # Player can expand mainland board
-                    and state.can_reach_location("Create Offspring", player))                        # AND can create Offspring
+                    state.can_reach_location("Create Offspring", player))                # Player can create Offspring
 
         set_rule(world.get_location("Find the Catacombs", player),
                  lambda state:
@@ -237,8 +236,8 @@ def set_rules(world: MultiWorld, player: int):
 
         set_rule(world.get_location("Build a Temple", player),
                  lambda state:
-                    state.can_reach_location("Get an Iron Bar", player) # Player can make Iron Bar / Plank / Brick / Smelter
-                    and state.sl_has_idea("Temple", player))            # AND has 'Temple' idea
+                    state.sl_can_reach_all_quests(["Get 3 Villagers", "Get an Iron Bar"], player) # Player can make 3x Villagers and Iron Bars
+                    and state.sl_has_idea("Temple", player))                                      # AND has 'Temple' idea
 
         set_rule(world.get_location("Bring the Goblet to the Temple", player),
                  lambda state:
@@ -247,15 +246,8 @@ def set_rules(world: MultiWorld, player: int):
 
         set_rule(world.get_location("Kill the Demon", player),
                  lambda state:
-                    state.sl_can_reach_all_quests([         
-                        "Bring the Goblet to the Temple",   # Player can bring the goblet to the temple
-                        "Get 3 Villagers",                  # AND can have multiple villagers
-                        "Kill a Skeleton",                  # AND has access to weapons
-                        "Cook an Omelette"])                # AND has access to cooking
-                    and (
-                        not expansion_items_selected        # AND expansion mode is 'items' OR player has half their board expansions
-                        or state.count("Mainland Board Expansion", player) >= (options.board_expansion_count / 2)
-                    ))
+                    state.can_reach_location("Bring the Goblet to the Temple", player))
+        
         #endregion
 
         #region 'Power & Skill' Quests
@@ -270,15 +262,19 @@ def set_rules(world: MultiWorld, player: int):
 
         set_rule(world.get_location("Kill a Skeleton", player),
                  lambda state:
-                    state.can_reach_location("Have a Villager with Combat Level 20", player)    # Player can create basic weapons & shield
-                    and state.sl_has_any_packs([ "Explorers", "The Armory" ], player))          # AND player has a pack containing 'Skeleton'
+                    state.sl_can_start_mainland(player)                                                         # Player can start Mainland
+                    and state.sl_can_reach_any_quests(["Train Militia", "Train a Wizard"], player)              # AND has a basic weapon
+                    and (                                                                                       # AND
+                        state.sl_has_any_packs(["Explorers", "The Armory"], player)                             # Has a mainland pack containing Skeleton
+                        or (                                                                                    # OR
+                            state.sl_can_start_island(player)                                                   # Can start the island
+                            and state.sl_has_any_packs(["Advanced Archipelago", "Enclave Explorers"], player)   # AND has an island pack containing Skeleton
+                        )
+                    ))
 
         #endregion
 
         #region 'Strengthen Up' Quests
-
-        # set_rule(world.get_location("Train an Archer", player),
-        #         lambda state: state.sl_phase_three(options, player)) # <- Player can find/fight enemies to drop a Bow
 
         set_rule(world.get_location("Make a Villager wear a Rabbit Hat", player),
                  lambda state: state.sl_can_start_mainland(player))   # Player can find Rabbit in Humble Beginnings
@@ -294,9 +290,6 @@ def set_rules(world: MultiWorld, player: int):
                     and state.sl_has_pack("Explorers", player)                  # AND has a pack containing Magic Dust
                     and state.sl_has_idea("Magic Wand", player))                # AND has 'Magic Wand' idea
     
-        # set_rule(world.get_location("Equip an Archer with a Quiver", player),
-        #         lambda state: state.sl_phase_three(options, player)) # <- Player can find/fight enemies to drop a Quiver
-
         set_rule(world.get_location("Have a Villager with Combat Level 20", player),
                  lambda state:
                     state.sl_can_reach_any_quests(["Train Militia", "Train a Wizard"], player)  # Player can create basic weapons
@@ -323,15 +316,15 @@ def set_rules(world: MultiWorld, player: int):
 
         set_rule(world.get_location("Cook an Omelette", player),
                 lambda state:
-                    state.can_reach_location("Cook Raw Meat", player)   # Player can make a campfire
-                    and state.sl_has_pack("Reap & Sow", player)         # AND has the 'Reap & Sow' pack
-                    and state.sl_has_idea("Omelette", player))          # AND has the 'Omelette' idea
+                    state.can_reach_location("Start a Campfire", player)    # Player can make a campfire
+                    and state.sl_has_pack("Reap & Sow", player)             # AND has pack containing Egg
+                    and state.sl_has_idea("Omelette", player))              # AND has the 'Omelette' idea
 
         set_rule(world.get_location("Cook a Frittata", player),
                 lambda state:
-                    state.can_reach_location("Cook an Omelette", player)    # Player can make an Omelette
-                    and state.sl_has_pack("Curious Cuisine", player)        # AND has the 'Curious Cuisine' pack
-                    and state.sl_has_idea("Frittata", player))              # AND has the 'Frittata' idea
+                    state.can_reach_location("Start a Campfire", player)                    # Player can make an Omelette
+                    and state.sl_has_all_packs(["Curious Cuisine", "Reap & Sow"], player)   # AND has packs containing Egg and Potato
+                    and state.sl_has_idea("Frittata", player))                              # AND has the 'Frittata' idea
 
         #endregion
 
@@ -339,20 +332,27 @@ def set_rules(world: MultiWorld, player: int):
 
         set_rule(world.get_location("Explore a Forest", player),
                  lambda state:
-                    state.sl_can_start_mainland(player)                                     # Player can start Mainland
-                    and state.sl_has_all_packs(["Seeking Wisdom", "Explorers"], player))    # AND has pack containing Forest
+                    state.sl_can_start_mainland(player)            # Player can start Mainland
+                    and state.sl_has_pack("Explorers", player))    # AND has pack containing Forest
 
         set_rule(world.get_location("Explore a Mountain", player),
-                 lambda state: state.can_reach_location("Explore a Forest", player)) # Player has a pack containing Mountain
+                 lambda state:
+                    state.sl_can_start_mainland(player)                         # Player can start Mainland
+                    and (                                                       # AND
+                        state.sl_has_pack("Explorers", player))                 # Has mainland pack containing Mountain
+                        or (                                                    # OR
+                            state.sl_can_start_island(player)                   # Player can start the island
+                            and state.sl_has_pack("Enclave Explorers", player)  # AND has island pack containing Mountain
+                        ))
 
         set_rule(world.get_location("Open a Treasure Chest", player),
-                 lambda state: state.can_reach_location("Explore a Forest", player)) # Player has a pack containing Treasure Chest
+                 lambda state: state.can_reach_location("Explore a Mountain", player)) # Player has packs containing Treasure Chest
 
         set_rule(world.get_location("Get a Dog", player),
-                 lambda state: state.can_reach_location("Explore a Forest", player)) # Player has packs containing Wolf and Bone
+                 lambda state: state.can_reach_location("Explore a Forest", player)) # Player has packs containing 'Wolf' and 'Bone'
 
         set_rule(world.get_location("Find a Graveyard", player),
-                 lambda state: state.can_reach_location("Create Offspring", player)) # Player can create Corpses to make Graveyard
+                 lambda state: state.can_reach_location("Get a Second Villager", player)) # Player can create Corpses to make Graveyard
 
         set_rule(world.get_location("Train an Explorer", player),
                  lambda state:
@@ -381,7 +381,7 @@ def set_rules(world: MultiWorld, player: int):
         set_rule(world.get_location("Get an Iron Bar", player),
                  lambda state:
                     state.sl_can_start_mainland(player)                                             # Player can start Mainland
-                    and state.sl_has_pack("Seeking Wisdom", player)                                 # AND has Seeking Wisdom pack
+                    and state.sl_has_pack("Order and Structure", player)                            # AND has pack containing Iron Deposit and Iron Ore
                     and state.sl_has_all_ideas(["Brick", "Plank", "Iron Bar", "Smelter"], player))  # AND has ideas to make Brick / Plank / Iron Bar / Smelter
 
         set_rule(world.get_location("Have 5 Food", player),
@@ -390,11 +390,13 @@ def set_rules(world: MultiWorld, player: int):
         set_rule(world.get_location("Have 10 Food", player),
                   lambda state: state.can_reach_location("Have 5 Food", player)) # Player can get at least 5 food
 
+        # TODO: This is where I got to
+
         set_rule(world.get_location("Have 20 Food", player),
                  lambda state:
                     state.can_reach_location("Have 10 Food", player)        # Player can get at least 10 food
                     and state.sl_has_pack("Reap & Sow", player)             # AND has Reap & Sow pack
-                    and state.sl_mainland_capacity(options, player) >= 5)   # AND has extra capacity for food items     
+                    and state.sl_mainland_capacity(options, player) >= 4)   # AND has extra capacity for food items     
 
         set_rule(world.get_location("Have 50 Food", player),
                  lambda state:
@@ -478,7 +480,7 @@ def set_rules(world: MultiWorld, player: int):
     if forest_selected:
 
         set_rule(world.get_location("Find the Dark Forest", player),
-                 lambda state: state.can_reach_location("Reach Moon 12", player)) # Player can reach Moon 12 for Strange Portals
+                 lambda state: state.sl_can_reach_any_quests(["Build a Stable Portal", "Reach Moon 12"], player)) # Player can reach Moon 12 for Strange Portals or build a Stable Portal
 
         set_rule(world.get_location("Complete the first wave", player),
                  lambda state:
@@ -487,9 +489,9 @@ def set_rules(world: MultiWorld, player: int):
 
         set_rule(world.get_location("Build a Stable Portal", player),
                  lambda state:
-                    state.sl_can_start_mainland(player)                     # Player can start Mainland
-                    and state.sl_has_pack("Explorers", player)              # AND has pack containing 'Magic Dust'
-                    and state.sl_has_all_ideas(["Brick", "Stable Portal"])) # AND has 'Brick' and 'Stable Portal' ideas
+                    state.sl_can_start_mainland(player)                             # Player can start Mainland
+                    and state.sl_has_pack("Explorers", player)                      # AND has pack containing 'Magic Dust'
+                    and state.sl_has_all_ideas(["Brick", "Stable Portal"], player)) # AND has 'Brick' and 'Stable Portal' ideas
 
         set_rule(world.get_location("Get to Wave 6", player),
                  lambda state:
@@ -551,7 +553,7 @@ def set_rules(world: MultiWorld, player: int):
         
         set_rule(world.get_location("Make Rope", player),
                  lambda state:
-                    state.can_reach_island(player)                  # Player can start The Island
+                    state.sl_can_start_island(player)                  # Player can start The Island
                     and state.sl_has_idea("Rope", player))          # AND has the 'Rope' idea
         
         set_rule(world.get_location("Make a Fish Trap", player),
@@ -605,30 +607,30 @@ def set_rules(world: MultiWorld, player: int):
 
         set_rule(world.get_location("Make Sushi", player),
                  lambda state:
-                    state.state.can_reach_island(player)            # Player can start The Island
+                    state.sl_can_start_island(player)            # Player can start The Island
                     and state.sl_has_idea("Sushi", player))         # AND has the 'Sushi' idea
         
         set_rule(world.get_location("Cook Crab Meat", player),
                  lambda state:
-                    state.state.can_reach_island(player)                   # Player can start The Island
+                    state.sl_can_start_island(player)                   # Player can start The Island
                     and state.sl_has_pack("Grilling and Brewing", player)  # AND has pack containing Crab
                     and state.sl_has_idea("Campfire", player))             # AND player has 'Campfire' idea
 
         set_rule(world.get_location("Make Ceviche", player),
                  lambda state:
-                    state.state.can_reach_island(player)                                                # Player can start The Island
+                    state.sl_can_start_island(player)                                                # Player can start The Island
                     and state.sl_has_any_packs([ "Grilling and Brewing", "Island Insights" ], player)   # AND has a pack containing Lime
                     and state.sl_has_idea("Ceviche", player))                                           # AND has the 'Ceviche' idea
 
         set_rule(world.get_location("Make a Seafood Stew", player),
                  lambda state:
-                    state.state.can_reach_island(player)                                                # Player can start The Island
+                    state.sl_can_start_island(player)                                                # Player can start The Island
                     and state.sl_has_any_packs([ "Grilling and Brewing", "Island Insights" ], player)   # AND has a pack containing Crab and Chili Pepper
                     and state.sl_has_all_ideas(["Campfire", "Seafood Stew" ], player))                  # AND has 'Campfire' and 'Seafood Stew' ideas
         
         set_rule(world.get_location("Make a Bottle of Rum", player),
                  lambda state:
-                    state.sl_can_reach_locations("Make Glass", player)                                  # Player can make glass
+                    state.can_reach_location("Make Glass", player)                                  # Player can make glass
                     and state.sl_has_any_packs([ "Advanced Archipelago", "Enclave Explorers" ], player) # AND has a pack containing 'Spring'
                     and state.sl_has_all_ideas([ "Bottle of Rum", "Distillery", "Stove" ], player))     # AND has 'Bottle of Rum', 'Distillery' and 'Stove' ideas
         
@@ -736,7 +738,10 @@ def set_rules(world: MultiWorld, player: int):
                  lambda state: state.can_reach_location("Kill a Skeleton", player))    # Player has weapons and explorers / armory
 
         set_rule(world.get_location("Kill an Elf", player),
-                 lambda state: state.sl_can_reach_any_locations(["Kill a Skeleton", "Complete the first wave"], player)) # Player can get to Dark Forest or make it to Moon 24
+                 lambda state:
+                    state.sl_can_reach_any_quests(["Kill a Skeleton", "Complete the first wave"], player)   # Player can get to Dark Forest or make it to Moon 24
+                    if forest_selected else
+                    state.can_reach_location("Kill a Skeleton", player))
 
         set_rule(world.get_location("Kill an Elf Archer", player),
                  lambda state: state.can_reach_location("Kill an Elf", player)) # Player can get to Dark Forest or make it to Moon 24
@@ -778,10 +783,16 @@ def set_rules(world: MultiWorld, player: int):
         set_rule(world.get_location("Kill a Merman", player),
                  lambda state: 
                     state.can_reach_location("Kill a Frog Man", player)     # Player has weapons and explorers / armory or can reach island with packs containing 'Merman'
-                    or state.can_reach("Complete the first wave", player))  # OR can complete a wave of The Dark Forest
-
+                    or (
+                        forest_selected 
+                        and state.can_reach_location("Complete the first wave", player)  # OR can complete a wave of The Dark Forest
+                    ))
+        
         set_rule(world.get_location("Kill a Mimic", player),
-                 lambda state: state.sl_can_reach_any_quests(["Kill a Skeleton", "Reach Wave 6"], player)) # Player has weaapons and Armory / Explorers or can reach Wave 6 of Dark Forest
+                 lambda state:
+                    state.sl_can_reach_any_quests(["Kill a Skeleton", "Get to Wave 6"], player) # Player has weaapons and Armory / Explorers or can get to Wave 6 of Dark Forest
+                    if forest_selected else
+                    state.can_reach_location("Kill a Skeleton", player))
 
         set_rule(world.get_location("Kill a Mosquito", player),
                  lambda state: state.can_reach_location("Kill a Merman", player))   # Player has weapons and explorers / armory or can reach island with packs containing 'Mosquito' or complete first wave of forest
@@ -791,17 +802,6 @@ def set_rules(world: MultiWorld, player: int):
 
         set_rule(world.get_location("Kill a Small Slime", player),
                  lambda state: state.can_reach_location("Kill a Slime", player))    # Player can find and kill a slime
-
-        set_rule(world.get_location("Kill a Snake", player),
-                 lambda state:
-                    state.sl_can_start_island(player)                   # Player can start The Island
-                    and state.sl_has_pack("Enclave Explorers", player)) # AND has Enclave Explorers pack
-
-        set_rule(world.get_location("Kill a Tiger", player),
-                 lambda state:
-                    state.sl_can_start_island(player)                                               # Player can start The Island
-                    and state.sl_can_reach_any_quests(["Train Militia", "Train a Wizard"], player)  # AND has access to basic weapons
-                    and state.sl_has_pack("Enclave Explorers", player))                             # AND has pack containing 'Tiger'
 
         set_rule(world.get_location("Kill a Wolf", player),
                  lambda state: state.can_reach_location("Get a Dog", player)) # Player has packs containing 'Wolf'
@@ -840,10 +840,21 @@ def set_rules(world: MultiWorld, player: int):
                  lambda state:
                     state.can_reach_location("Make a Fish Trap", player)) # Found using Fish Trap with Raw Meat
             
+            set_rule(world.get_location("Kill a Snake", player),
+                 lambda state:
+                    state.sl_can_start_island(player)                   # Player can start The Island
+                    and state.sl_has_pack("Enclave Explorers", player)) # AND has Enclave Explorers pack
+
             set_rule(world.get_location("Kill a Tentacle", player),
                  lambda state:
                     state.can_reach_location("Open the Sacred Chest", player)) # Found after opening sacred chest
-        
+
+            set_rule(world.get_location("Kill a Tiger", player),
+                 lambda state:
+                    state.sl_can_start_island(player)                                               # Player can start The Island
+                    and state.sl_can_reach_any_quests(["Train Militia", "Train a Wizard"], player)  # AND has access to basic weapons
+                    and state.sl_has_pack("Enclave Explorers", player))                             # AND has pack containing 'Tiger'
+
         # Apply these rules if either Forest or Island are enabled
         if forest_selected or island_selected:
 
@@ -926,21 +937,32 @@ def set_rules(world: MultiWorld, player: int):
                     and state.sl_has_pack("Enclave Explorers", player)) # AND has 'Enclave Explorers' pack
 
     #endregion
-        
+    
+    # TODO: Re-write these
     # If spendsanity enabled, include spendsanity checks in rules
     if spendsanity_selected:
         for x in range(1, options.spendsanity_count.value + 1):
-            # Attempt to spread the checks across spheres
             set_rule(world.get_location("Buy {count} Spendsanity Packs".format(count=x), player),
-                     lambda state: state.sl_phase_zero(player)                                      # Spread 1 - 2 across phase zero
-                        if x < 3 else state.sl_phase_one(options, player)                           # Spread 3 - 6 across phase one 
-                            if x < 7 else state.sl_phase_two(options, player)                       # Spread 7 - 10 across phase two
-                                if x < 11 else state.sl_phase_three(options, player)                # Spread 11 - 14 across phase three
-                                    if x < 15 else state.sl_phase_four(options, player)             # Spread 15 - 18 across phase four
-                                        if x < 19 else state.sl_phase_five(options, player)         # Spread 19 - 22 across phase five
-                                            if x < 23 else state.sl_phase_six(options, player))     # Spread 23 - 25 across phase six
+                     lambda state: state.sl_can_start_mainland(player))
+
+            # # Attempt to spread the checks across spheres
+            # set_rule(world.get_location("Buy {count} Spendsanity Packs".format(count=x), player),
+            #          lambda state: state.sl_phase_zero(player)                                      # Spread 1 - 2 across phase zero
+            #             if x < 3 else state.sl_phase_one(options, player)                           # Spread 3 - 6 across phase one 
+            #                 if x < 7 else state.sl_phase_two(options, player)                       # Spread 7 - 10 across phase two
+            #                     if x < 11 else state.sl_phase_three(options, player)                # Spread 11 - 14 across phase three
+            #                         if x < 15 else state.sl_phase_four(options, player)             # Spread 15 - 18 across phase four
+            #                             if x < 19 else state.sl_phase_five(options, player)         # Spread 19 - 22 across phase five
+            #                                 if x < 23 else state.sl_phase_six(options, player))     # Spread 23 - 25 across phase six
 
 #endregion
+
+    # Set goal condition
+    set_rule(world.get_location("Goal Complete", player),
+             lambda state:
+                (not mainland_selected or state.can_reach_location("Kill the Demon", player))
+                and (not forest_selected or state.can_reach_location("Fight the Wicked Witch", player))
+                and (not island_selected or state.can_reach_location("Kill the Demon Lord", player)))
 
     # Set completion condition
     world.completion_condition[player] = lambda state: state.has("Victory", player)
