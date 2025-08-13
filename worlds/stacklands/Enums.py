@@ -5,6 +5,7 @@ from enum import IntEnum, IntFlag
 class CheckType(IntEnum):
     Check     = 0
     Goal      = 1
+    Event     = 2
 
 class ExpansionType(IntEnum):
     Ideas     = 0
