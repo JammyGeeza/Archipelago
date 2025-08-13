@@ -457,6 +457,9 @@ def create_filler_items(world: MultiWorld, player: int, items: List[ItemData], o
     # Prepare item pool
     item_pool: List[Item] = []
 
+    # Prepare item pool
+    item_pool: List[Item] = []
+
     # If there are un-filled slots...
     if (unfilled_count:= len(world.get_unfilled_locations(player)) - len([item for item in world.itempool if item.player == player])) > 0:
 
