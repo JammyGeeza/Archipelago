@@ -40,14 +40,14 @@ item_table: List[ItemData] = [
     ItemData("Seeking Wisdom Booster Pack"          , RegionFlags.Mainland   , ItemType.Booster     , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Reap & Sow Booster Pack"              , RegionFlags.Mainland   , ItemType.Booster     , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Curious Cuisine Booster Pack"         , RegionFlags.Mainland   , ItemType.Booster     , OptionFlags.NONE        , ItemClassification.progression),
-    ItemData("Logic and Reason Booster Pack"        , RegionFlags.Mainland   , ItemType.Booster     , OptionFlags.NONE        , ItemClassification.progression_skip_balancing), # <- Try not to release too early
-    ItemData("The Armory Booster Pack"              , RegionFlags.Mainland   , ItemType.Booster     , OptionFlags.NONE        , ItemClassification.progression_skip_balancing), # <- Try not to release too early
-    ItemData("Explorers Booster Pack"               , RegionFlags.Mainland   , ItemType.Booster     , OptionFlags.NONE        , ItemClassification.progression_skip_balancing), # <- Try not to release too early
-    ItemData("Order and Structure Booster Pack"     , RegionFlags.Mainland   , ItemType.Booster     , OptionFlags.NONE        , ItemClassification.progression_skip_balancing), # <- Try not to release too early
+    ItemData("Logic and Reason Booster Pack"        , RegionFlags.Mainland   , ItemType.Booster     , OptionFlags.NONE        , ItemClassification.progression), 
+    ItemData("The Armory Booster Pack"              , RegionFlags.Mainland   , ItemType.Booster     , OptionFlags.NONE        , ItemClassification.progression), 
+    ItemData("Explorers Booster Pack"               , RegionFlags.Mainland   , ItemType.Booster     , OptionFlags.NONE        , ItemClassification.progression), 
+    ItemData("Order and Structure Booster Pack"     , RegionFlags.Mainland   , ItemType.Booster     , OptionFlags.NONE        , ItemClassification.progression),
 
     # Progression
     ItemData("Idea: Brick"                          , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
-    ItemData("Idea: Brickyard"                      , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
+    ItemData("Idea: Brickyard"                      , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression_deprioritized),
     ItemData("Idea: Campfire"                       , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Coin Chest"                     , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Cooked Meat"                    , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
@@ -56,20 +56,21 @@ item_table: List[ItemData] = [
     ItemData("Idea: Fruit Salad"                    , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Garden"                         , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Growth"                         , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
-    ItemData("Idea: Hotpot"                         , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
+    ItemData("Idea: Hotpot"                         , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression_deprioritized),
     ItemData("Idea: House"                          , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Iron Bar"                       , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression_skip_balancing), # <- Try not to release this too early
+    ItemData("Idea: Iron Shield"                    , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Iron Mine"                      , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
-    ItemData("Idea: Lumber Camp"                    , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
+    ItemData("Idea: Lumber Camp"                    , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression_deprioritized),
     ItemData("Idea: Magic Wand"                     , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Market"                         , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Milkshake"                      , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Offspring"                      , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Omelette"                       , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Plank"                          , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
-    ItemData("Idea: Quarry"                         , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
+    ItemData("Idea: Quarry"                         , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression_deprioritized),
     ItemData("Idea: Resource Chest"                 , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
-    ItemData("Idea: Sawmill"                        , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
+    ItemData("Idea: Sawmill"                        , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression_deprioritized),
     ItemData("Idea: Shed"                           , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Slingshot"                      , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Smelter"                        , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression_skip_balancing), # <- Try not to release this too early
@@ -78,9 +79,10 @@ item_table: List[ItemData] = [
     ItemData("Idea: Stew"                           , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Stick"                          , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Stove"                          , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
+    ItemData("Idea: Sword"                          , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Temple"                         , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression_skip_balancing), # <- Try not to release this too early
-    ItemData("Idea: Throwing Stars"                 , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
-    ItemData("Idea: Warehouse"                      , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
+    ItemData("Idea: Throwing Stars"                 , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression_skip_balancing), # <- Try not to release this too early
+    ItemData("Idea: Warehouse"                      , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression_skip_balancing), # <- Try not to release this too early
     ItemData("Idea: Wooden Shield"                  , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
 
     # Useful
@@ -90,10 +92,8 @@ item_table: List[ItemData] = [
     # ItemData("Idea: Crossroads"                     , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
     # ItemData("Idea: Filter Crossroads"              , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
     ItemData("Idea: Hammer"                         , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
-    ItemData("Idea: Iron Shield"                    , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
     ItemData("Idea: Pickaxe"                        , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
     # ItemData("Idea: Road Builder"                   , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
-    ItemData("Idea: Sword"                          , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
 
 #endregion
 

@@ -82,22 +82,22 @@ location_table: List[LocationData] = [
     LocationData("Drag the Villager on top of the Berry Bush"           , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Mine a Rock using a Villager"                         , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Sell a Card"                                          , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ), 
-    LocationData("Buy the Humble Beginnings Pack"                       , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.PRIORITY),  # <- Required for progression
+    LocationData("Buy the Humble Beginnings Pack"                       , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Harvest a Tree using a Villager"                      , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
-    LocationData("Make a Stick from Wood"                               , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.PRIORITY),  # <- Required for progression
+    LocationData("Make a Stick from Wood"                               , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Pause using the play icon in the top right corner"    , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.Pausing        , LocationProgressType.DEFAULT ), 
-    LocationData("Grow a Berry Bush using Soil"                         , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.PRIORITY),
-    LocationData("Build a House"                                        , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.PRIORITY),
+    LocationData("Grow a Berry Bush using Soil"                         , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.PRIORITY), # <- Help steer progression
+    LocationData("Build a House"                                        , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Get a Second Villager"                                , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
-    LocationData("Create Offspring"                                     , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.PRIORITY),  # <- Required for progression
+    LocationData("Create Offspring"                                     , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.PRIORITY),  # <- Help steer progression
 
     # 'The Grand Scheme' Category
     LocationData("Unlock all Packs"                                     , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Get 3 Villagers"                                      , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Find the Catacombs"                                   , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
-    LocationData("Find a mysterious artifact"                           , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.PRIORITY),  # <- Required for progression
-    LocationData("Build a Temple"                                       , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.PRIORITY),  # <- Required for progression
-    LocationData("Bring the Goblet to the Temple"                       , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.PRIORITY),
+    LocationData("Find a mysterious artifact"                           , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
+    LocationData("Build a Temple"                                       , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.PRIORITY),  # <- Help steer progression
+    LocationData("Bring the Goblet to the Temple"                       , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Kill the Demon"                                       , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.EXCLUDED),  # <- Goal check, don't include progression items
 
     # 'Power & Skill' Category
@@ -108,7 +108,7 @@ location_table: List[LocationData] = [
     # 'Strengthen Up' Category
     # LocationData("Train an Archer"                                      , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.EXCLUDED), # <- Relies heavily on RNG, reduce priority
     LocationData("Make a Villager wear a Rabbit Hat"                    , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
-    LocationData("Build a Smithy"                                       , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.PRIORITY),  # <- Required for progression
+    LocationData("Build a Smithy"                                       , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Train a Wizard"                                       , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     # LocationData("Equip an Archer with a Quiver"                        , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.EXCLUDED), # <- Relies heavily on RNG, reduce priority
     LocationData("Have a Villager with Combat Level 20"                 , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
@@ -134,7 +134,7 @@ location_table: List[LocationData] = [
     LocationData("Have 10 Ideas"                                        , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Have 10 Wood"                                         , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Have 10 Stone"                                        , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
-    LocationData("Get an Iron Bar"                                      , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.PRIORITY), # <- Required for progression
+    LocationData("Get an Iron Bar"                                      , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.PRIORITY), # <- Help steer progression
     LocationData("Have 5 Food"                                          , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Have 10 Food"                                         , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Have 20 Food"                                         , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
@@ -145,7 +145,7 @@ location_table: List[LocationData] = [
 
     # 'Construction' Category
     LocationData("Have 3 Houses"                                        , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
-    LocationData("Build a Shed"                                         , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.PRIORITY), # <- Required for progression
+    LocationData("Build a Shed"                                         , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.PRIORITY), # <- Help steer progression
     LocationData("Build a Quarry"                                       , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Build a Lumber Camp"                                  , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Build a Farm"                                         , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
@@ -180,11 +180,12 @@ location_table: List[LocationData] = [
     LocationData("Get 5 Villagers"                                      , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Get 7 Villagers"                                      , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
 
-    LocationData("Build a Coin Chest"                                   , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.PRIORITY), # <- Arguably required for progression
+    LocationData("Build a Coin Chest"                                   , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Build a Garden"                                       , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Build a Hotpot"                                       , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Build an Iron Mine"                                   , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
-    LocationData("Build a Resource Chest"                               , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.PRIORITY), # <- Arguably required for progression
+    LocationData("Build a Market"                                       , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
+    LocationData("Build a Resource Chest"                               , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Build a Sawmill"                                      , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Build a Smelter"                                      , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Build a Stove"                                        , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
@@ -205,8 +206,6 @@ location_table: List[LocationData] = [
     LocationData("Explore a Graveyard"                                  , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Explore an Old Village"                               , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Explore a Plains"                                     , RegionFlags.Mainland     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
-
-    
 
 #endregion
 

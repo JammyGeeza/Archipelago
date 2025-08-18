@@ -99,14 +99,14 @@ def create_all_regions(world: MultiWorld, player: int):
     world.get_entrance("Rowboat from The Island to Mainland", player).connect(mainland_region)
 
     # Mainland Events
-    # mainland_region.add_event("Gain Skill", "Create Villagers")
-    # mainland_region.add_event("Gain Skill", "Create Weapons")
-    
-    # mainland_region.add_event("Create Food", "Meals")
-    # mainland_region.add_event("Create Temple", "Temple")
-    # mainland_region.add_event("Create Weapons", "Weapons")
-    # mainland_region.add_event("Create Villagers", "Villagers")
-    mainland_region.add_event("Summon Mainland Boss", "Demon")
+    # mainland_region.add_event("Kill the Demon", "Demon")
+    # mainland_region.add_event("Milestone: Offspring", "Offspring")
+    # mainland_region.add_event("Milestone: Sustainable Village", "Sustainable Village")
+    # mainland_region.add_event("Milestone: Iron Bars", "Iron Bars")
+    # mainland_region.add_event("Milestone: Basic Equipment", "Basic Equipment")
+    # mainland_region.add_event("Milestone: Advanced Equipment", "Advanced Equipment")
+    # # mainland_region.add_event("Create Iron Bars", "5x Iron Bars")
+    # mainland_region.add_event("Milestone: Summon Mainland Boss", "Demon")
 
     # Create Mainland / Forest Shared region
     # mainland_forest_shared_region: Region = create_mainland_forest_shared_region(world, player, location_pool)
