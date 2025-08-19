@@ -101,83 +101,6 @@ class StacklandsLogic(LogicMixin):
 
    def sl_has_humble_beginnings(self, player: int) -> bool:
       return self.sl_has_pack("Humble Beginnings", player)
-   
-   def sl_can_reach_mainland_moon(self, player: int, moon: int) -> bool:
-      return self.can_reach_region(f"Mainland: Moon {moon}", player)
-   
-   def sl_can_reach_mainland_phase(self, player: int, phase: str) -> bool:
-      return self.can_reach_region(f"Mainland: Progression Phase {phase}", player)
-   
-   def sl_can_reach_mainland_moon_2(self, player: int) -> bool:
-      return self.sl_has_pack("Humble Beginnings", player)        # Player has Humble Beginnings
-   
-   def sl_can_reach_mainland_moon_6(self, player: int) -> bool:
-      return (
-         self.sl_can_reach_mainland_moon(player, 2)          # Player can reach Moon 2
-         and self.sl_has_all_ideas([
-            "Campfire",                                           # AND make a Campfire
-            "Stick"                                               # AND make a Stick
-         ], player)
-         and self.sl_has_pack("Seeking Wisdom", player)           # AND has the Seeking Wisdom pack
-      )
-   
-   def sl_can_reach_mainland_moon_12(self, player: int) -> bool:
-      return (
-         self.sl_can_reach_mainland_moon(player, 6)          # Player can reach Moon 6
-         and self.sl_has_all_ideas([
-            "Growth",                                             # AND can use Growth
-            "House"                                               # AND can make a House
-         ], player)
-         and self.sl_has_any_packs([
-            "Reap & Sow",                                         # AND has either the Reap & Sow
-            "Curious Cuisine"], player)                           # OR Curious Cuisine pack
-      )
-   
-   def sl_can_reach_mainland_moon_18(self, player: int) -> bool:
-      return (
-         self.sl_can_reach_mainland_moon(player, 12)         # Player can reach Moon 12
-         and self.sl_has_all_ideas([
-            "Brick",                                              # AND can make Bricks
-            # "Coin Chest",                                         # AND can make Coin Chest
-            "Cooked Meat",                                        # AND can make Cooked Meat
-            "Plank",                                              # AND can make Planks
-            "Offspring",                                          # AND can make Offspring
-            "Shed",                                               # AND can make Sheds
-            "Wooden Shield"                                       # AND can make Wooden Shields
-         ], player)
-         and self.sl_has_any_ideas([
-            "Slingshot",                                          # AND can make Slingshots
-            "Spear"], player)                                     # OR Spears
-         and self.sl_has_pack("Explorers", player)                # AND has the Explorers pack
-      )
-   
-   def sl_can_reach_mainland_moon_24(self, player: int) -> bool:
-      return (
-         self.sl_can_reach_mainland_moon(player, 18)         # Player can reach Moon 18
-         and self.sl_has_all_ideas([
-            "Iron Bar",                                           # AND can make Iron Bars
-            # "Resource Chest",                                     # AND can make Resource Chests
-            "Smelter"                                             # AND can make Smelter
-         ], player)
-         and self.sl_has_pack("Order and Structure", player)      # AND has the Order and Structure pack
-      )
-   
-   def sl_can_reach_mainland_moon_30(self, player: int) -> bool:
-      return (
-         self.sl_can_reach_mainland_moon(player, 24)         # Player can reach Moon 24
-         and self.sl_has_all_ideas([
-            "Iron Shield",                                        # AND can make Iron Shields
-            "Smithy"                                              # AND can make Smithy
-         ], player)
-         and self.sl_has_any_ideas([
-            "Sword",                                              # AND can make Swords
-            "Throwing Stars"                                      # OR Throwing Stars
-         ], player)
-         and self.sl_has_pack("The Armory", player)               # AND has The Armory pack
-      )
-   
-   def sl_can_reach_mainland_moon_36(self, player: int) -> bool:
-      return self.sl_can_reach_mainland_moon(player, 30)     # Player can reach Moon 30
 
 
 # Set all region and location rules
@@ -210,10 +133,6 @@ def set_rules(world: MultiWorld, player: int):
 
    #region Mainland Exit(s)
 
-   set_rule(world.get_entrance("Portal from Mainland to Dark Forest", player),
-            lambda state:
-               state.sl_stable_portal_from_mainland(player))               # Can build a Stable Portal from Mainland resources
-
    set_rule(world.get_entrance("Rowboat from Mainland to The Island", player),
             lambda state:
                state.sl_rowboat_from_mainland(player))                     # Can build a Rowboat from Mainland resources
@@ -225,119 +144,74 @@ def set_rules(world: MultiWorld, player: int):
    set_rule(world.get_entrance("Forward to Mainland: Progression Phase Two", player),
             lambda state:
                state.sl_has_all_ideas([
-                  # "Campfire",                  
-                  # "Cooked Meat",
-                  # "Growth",
+                  "Growth",
                   "House",
                   "Offspring",
-                  # "Stick"
-               ], player))
-               # and state.sl_has_all_packs([
-               #    "Reap & Sow",
-               #    "Seeking Wisdom"
-               # ], player))
+                  "Shed",
+               ], player)
+               and state.sl_has_all_packs([
+                  "Seeking Wisdom",
+                  "Explorers"
+               ], player)
+               and state.sl_mainland_board_capacity(options, player) >= 4)
    
    set_rule(world.get_entrance("Forward to Mainland: Progression Phase Three", player),
             lambda state:
                state.sl_has_all_ideas([
                   "Brick",
+                  "Campfire",
+                  "Cooked Meat",
                   "Plank",
-                  "Shed",                 
-                  # "Wooden Shield"
+                  "Stick"
                ], player)
-               # and state.sl_has_any_ideas([
-               #    "Slingshot",
-               #    "Spear"
-               # ], player)
-               and state.sl_has_all_packs([
-                  "Explorers"
-               ], player))
+               and state.sl_has_any_ideas([
+                  "Slingshot",
+                  "Spear"
+               ], player)
+               and state.sl_has_any_packs([
+                  "Curious Cuisine",
+                  "Reap & Sow"
+               ], player)
+               and state.sl_mainland_board_capacity(options, player) >= 8)
    
    set_rule(world.get_entrance("Forward to Mainland: Progression Phase Four", player),
             lambda state:
                state.sl_has_all_ideas([
                   "Iron Bar",                  
-                  # "Iron Shield",                  
                   "Smelter",
-                  # "Smithy"
-               ], player))
-               # and state.sl_has_any_ideas([
-               #    "Sword",
-               #    "Throwing Stars"
-               # ], player)
-               # and state.sl_has_all_packs([
-               #    "Logic and Reason",
-               #    "Order and Structure"
-               # ], player))
-   
-   # set_rule(world.get_entrance("Forward to Mainland: Moon 2", player),
-   #          lambda state:
-   #             state.sl_has_pack("Humble Beginnings", player)) # Player has the 'Humble Beginnings' pack
-   
-   # set_rule(world.get_entrance("Forward to Mainland: Moon 6", player),
-   #          lambda state:
-   #             state.sl_has_all_ideas([
-   #                "Campfire",                                     # Player can also make a 'Campfire'
-   #                "Stick"                                         # AND make a 'Stick'
-   #             ], player)
-   #             and state.sl_has_pack("Seeking Wisdom", player))   # AND has the 'Seeking Wisdom' pack
-   
-   # set_rule(world.get_entrance("Forward to Mainland: Moon 12", player),
-   #          lambda state:
-   #             state.sl_has_all_ideas([
-   #                "Growth",                     # Player can also use 'Growth'
-   #                "House"                       # AND can make a 'House'
-   #             ], player)
-   #             and state.sl_has_any_packs([
-   #                "Reap & Sow",                 # AND has either the 'Reap & Sow'
-   #                "Curious Cuisine"], player)   # OR 'Curious Cuisine' pack
-   #          )
-   
-   # set_rule(world.get_entrance("Forward to Mainland: Moon 18", player),
-   #          lambda state:
-   #             state.sl_has_all_ideas([
-   #             "Brick",                                  # Player can also 'Bricks'
-   #             "Cooked Meat",                            # AND can make 'Cooked Meat'
-   #             "Plank",                                  # AND can make 'Planks'
-   #             "Offspring",                              # AND can make 'Offspring'
-   #             "Shed",                                   # AND can make 'Shed'
-   #             "Wooden Shield"                           # AND can make 'Wooden Shield'
-   #          ], player)
-   #          and state.sl_has_any_ideas([
-   #             "Slingshot",                              # AND can make 'Slingshot'
-   #             "Spear"], player)                         # OR can make 'Spear'
-   #          and state.sl_has_pack("Explorers", player))  # AND has the 'Explorers' pack
-   
-   # set_rule(world.get_entrance("Forward to Mainland: Moon 24", player),
-   #          lambda state:
-   #             state.sl_has_all_ideas([
-   #                "Iron Bar",                                        # Player can also make 'Iron Bar'
-   #                "Smelter"                                          # AND can make 'Smelter'
-   #             ], player)
-   #             and state.sl_has_pack("Order and Structure", player)) # AND has the 'Order and Structure' pack
-   
-   # set_rule(world.get_entrance("Forward to Mainland: Moon 30", player),
-   #          lambda state:
-   #             state.sl_has_all_ideas([
-   #                "Iron Shield",                            # Player can also make 'Iron Shield'
-   #                "Smithy",                                 # AND can make 'Smithy'
-   #                "Temple"                                  # AND can make 'Temple'
-   #             ], player)
-   #             and state.sl_has_any_ideas([
-   #                "Sword",                                  # AND can make 'Sword'
-   #                "Throwing Stars"                          # OR can make 'Throwing Star'
-   #             ], player)
-   #             and state.sl_has_pack("The Armory", player)) # AND has 'The Armory' pack
-   
-   # set_rule(world.get_entrance("Forward to Mainland: Moon 36", player),
-   #          lambda state: True)  # If player can reach Moon 30 they can reach Moon 36
-
-   
-   
+                  "Sword"
+               ], player)
+               and state.sl_has_pack("The Armory", player)
+               and state.sl_has_any_packs([
+                  "Logic and Reason",
+                  "Order and Structure",
+               ], player)
+               and state.sl_mainland_board_capacity(options, player) >= 12)
 
    #endregion
 
-   #region Dark Forest Exit(s)
+   #region Dark Forest Entrances
+
+   set_rule(world.get_entrance("Portal from Mainland to Dark Forest", player),
+            lambda state:
+               state.sl_has_all_packs([
+                  "Humble Beginnings",
+                  "Seeking Wisdom",
+                  "Explorers"
+               ], player)
+               and state.sl_has_any_packs([
+                  "Logic and Reason",
+                  "Order and Structure"
+               ], player)
+               and state.sl_has_all_ideas([
+                  "Brick",
+                  "House",
+                  "Iron Bar",
+                  "Offspring",
+                  "Plank",
+                  "Stable Portal",
+                  "Smelter"
+               ], player))
 
    #endregion
 
@@ -494,23 +368,21 @@ def set_rules(world: MultiWorld, player: int):
                      "Seeking Wisdom",
                      "Explorers"
                   ], player)
-                  and state.sl_has_any_packs([
-                     "Reap & Sow",
-                     "Curious Cuisine"
-                  ], player)
-                  and state.sl_has_any_packs([
-                     "Logic and Reason",
-                     "Order and Structure"
-                  ], player)
                   and state.sl_has_all_ideas([
                      "Brick",
+                     "Campfire",
                      "Growth",
                      "House",
                      "Iron Bar",
+                     "Iron Shield",
                      "Offspring",
                      "Plank",
                      "Smelter",
-                     "Temple"
+                     "Smithy",
+                     "Stick",
+                     "Sword",
+                     "Temple",
+                     "Throwing Stars"
                   ], player))
       
       #endregion
@@ -1347,84 +1219,86 @@ def set_rules(world: MultiWorld, player: int):
       
       #endregion
 
-   #region Events
-
-   # set_rule(world.get_location("Milestone: Advanced Equipment", player),
-   #          lambda state:
-   #             state.has_all(["Iron Bars"], player)                      # Requires ability to make Iron Bars
-   #             and state.sl_has_all_ideas(["Iron Shield", "Smithy"], player)        # AND 'Iron Shield' and 'Smithy' ideas
-   #             and state.sl_has_any_ideas(["Sword", "Throwing Stars"], player))     # AND 'Sword' OR 'Throwing Stars' ideas
-
-   # set_rule(world.get_location("Milestone: Basic Equipment", player),
-   #          lambda state:
-   #             state.sl_has_humble_beginnings(player)                                     # Requires Humble Beginnings
-   #             and state.has("Sustainable Village", player)                               # AND a sustainable village
-   #             and state.sl_has_pack("Seeking Wisdom", player)                            # AND Seeking Wisdom pack
-   #             and state.sl_has_all_ideas(["Plank", "Stick", "Wooden Shield"], player)    # AND 'Plank', 'Stick' and 'Wooden Shield' ideas
-   #             and state.sl_has_any_ideas(["Slingshot", "Spear"], player))                # AND 'Slingshot' OR 'Spear' idea
-   
-   # set_rule(world.get_location("Milestone: Iron Bars", player),
-   #          lambda state:
-   #             state.sl_has_humble_beginnings(player)                                           # Requires Humble Beginnings
-   #             and state.has("Basic Equipment", player)                                   # AND basic equipment
-   #             and state.sl_has_all_packs(["Order and Structure"], player)                      # AND the 'Order and Structure' pack
-   #             and state.sl_has_all_ideas(["Brick", "Plank", "Iron Bar", "Smelter"], player))   # AND the 'Brick', 'Plank', 'Iron Bar' and 'Smelter' ideas
-
-   # set_rule(world.get_location("Milestone: Basic Cooking", player),
-   #          lambda state:
-   #             state.sl_has_humble_beginnings(player)                                                    # Requires Humble Beginnings
-   #             and state.sl_has_all_packs(["Seeking Wisdom", "Reap & Sow", "Curious Cuisine"], player)   # AND Reap & Sow and Curious Cuisine packs
-   #             and state.sl_has_all_ideas(["Campfire", "Cooked Meat", "Growth", "Stick"], player)        # AND the 'Campfire', 'Cooked Meat', 'Growth' and 'Stick' ideas
-   #             and state.sl_has_any_ideas(["Frittata", "Fruit Salad", "Milkshake", "Omelette"], player)) # AND 'Frittata', OR 'Fruit Salad' OR 'Milkshake' OR 'Omelette' idea
-
-   # set_rule(world.get_location("Milestone: Offspring", player),
-   #          lambda state:
-   #             state.sl_has_humble_beginnings(player)                         # Requires Humble Beginnings
-   #             and state.sl_has_all_packs(["Seeking Wisdom"], player)         # AND Seeking Wisdom and Reap & Sow packs
-   #             and state.sl_has_all_ideas(["House", "Offspring"], player))    # AND the 'House' and 'Offspring' ideas
-
-   # set_rule(world.get_location("Milestone: Sustainable Village", player),
-   #          lambda state:
-   #             state.has_all(["Cooking", "Offspring"], player)                # Reqiores ability to Cook and create Offspring
-   #             and state.sl_mainland_board_capacity(options, player) >= 7)    # AND at least one warehouse worth of expansion
-
-   # set_rule(world.get_location("Kill the Demon", player),
-   #             lambda state:
-   #                state.can_reach_location("Bring the Goblet to the Temple", player))
-
-   #endregion
-
    #endregion
 
    #region 'The Dark Forest' Quests
 
    if forest_selected:
 
+      # TODO: Re-work Dark Forest rules so that, ideally, Wave 6 onwards needs the Stable Portal
+      #       so that you don't need Iron Bars etc before you can "logically" get to the forest
+
       set_rule(world.get_location("Find the Dark Forest", player),
-               lambda state: state.sl_can_reach_any_quests(["Build a Stable Portal", "Reach Moon 12"], player)) # Player can reach Moon 12 for Strange Portals or build a Stable Portal
+               lambda state: True)
 
       set_rule(world.get_location("Complete the first wave", player),
                lambda state:
-                  state.can_reach_location("Find the Dark Forest", player)                        # Player can reach The Dark Forest
-                  and state.sl_can_reach_any_quests(["Train Militia", "Train a Wizard"], player)) # AND has access to basic weapons
+                  state.sl_has_all_ideas([
+                     "Stick",
+                     "Wooden Shield"
+                  ], player)
+                  and state.sl_has_any_ideas([
+                     "Slingshot",
+                     "Spear"
+                  ], player))
 
       set_rule(world.get_location("Build a Stable Portal", player),
-               lambda state:
-                  state.sl_can_progress_mainland(player)                             # Player can start Mainland
-                  and state.sl_has_pack("Explorers", player)                      # AND has pack containing 'Magic Dust'
-                  and state.sl_has_all_ideas(["Brick", "Stable Portal"], player)) # AND has 'Brick' and 'Stable Portal' ideas
+               lambda state: True)
 
       set_rule(world.get_location("Get to Wave 6", player),
                lambda state:
-                  state.sl_can_reach_all_quests([
-                     "Complete the first wave",  # Player can complete the first wave
-                     "Kill a Skeleton",          # AND has access to weapons and shield
-                     "Create Offspring",         # AND can create villagers
-                     "Cook Raw Meat"], player))  # AND has access to cooking
+                  state.sl_has_all_ideas([
+                     "Slingshot",
+                     "Spear",
+                     "Sword",
+                     "Stick",
+                     "Wooden Shield"
+                  ], player))
 
       set_rule(world.get_location("Fight the Wicked Witch", player),
                lambda state:
-                  state.sl_can_reach_all_quests(["Get to Wave 6", "Train a Ninja"], player)) # Player can complete 6 waves and has all weapons
+                  state.sl_has_all_ideas([
+                     "Iron Shield",
+                     "Smithy",
+                     "Slingshot",
+                     "Spear",
+                     "Stick",
+                     "Sword",
+                     "Wooden Shield"
+                  ], player))
+
+      # Additional Archipelago Quests
+      set_rule(world.get_location("Get to Wave 2", player),
+               lambda state:
+                  state.sl_has_all_ideas([
+                     "Stick",
+                     "Wooden Shield"
+                  ], player)
+                  and state.sl_has_any_ideas([
+                     "Slingshot",
+                     "Spear"
+                  ], player))
+      
+      set_rule(world.get_location("Get to Wave 4", player),
+               lambda state:
+                  state.sl_has_all_ideas([
+                     "Slingshot",
+                     "Spear",
+                     "Stick",
+                     "Wooden Shield"
+                  ], player))
+      
+      set_rule(world.get_location("Get to Wave 8", player),
+               lambda state:
+                  state.sl_has_all_ideas([
+                     "Iron Shield",
+                     "Smithy",
+                     "Slingshot",
+                     "Spear",
+                     "Stick",
+                     "Sword",
+                     "Wooden Shield"
+                  ], player))
 
    #endregion
 

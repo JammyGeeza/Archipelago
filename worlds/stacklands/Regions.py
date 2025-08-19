@@ -142,7 +142,7 @@ def create_all_regions(world: MultiWorld, player: int):
     # world.get_entrance("Rowboat", player).connect(world.get_region("The Island", player))
 
 def create_menu_region(world: MultiWorld, player: int) -> Region:
-    """Create the default 'Menu' region"""
+    """Create the default 'Menu' regions"""
     
     logging.info("----- Creating 'Menu' Region -----")
 
@@ -153,7 +153,7 @@ def create_menu_region(world: MultiWorld, player: int) -> Region:
     return create_region(world, player, menu_region)
 
 def setup_mainland(world: MultiWorld, player: int, locations: List[LocationData]) -> Region:
-    """Create the 'Mainland' region"""
+    """Create the 'Mainland' regions"""
 
     logging.info("----- Setting up 'Mainland' -----")
 
@@ -193,7 +193,6 @@ def setup_mainland(world: MultiWorld, player: int, locations: List[LocationData]
     ],
     [
         "Forward to Mainland: Progression Phase Two",
-        # "Back to Mainland"
     ]))
 
     # Mainland: Progression Phase Two (Basic Resources & Equipment)
@@ -204,7 +203,6 @@ def setup_mainland(world: MultiWorld, player: int, locations: List[LocationData]
     ],
     [
         "Forward to Mainland: Progression Phase Three",
-        # "Back to Mainland: Progression Phase One"
     ]))
 
     # Mainland: Progression Phase Three (Advanced Resources & Equipment)
@@ -215,7 +213,6 @@ def setup_mainland(world: MultiWorld, player: int, locations: List[LocationData]
     ],
     [
         "Forward to Mainland: Progression Phase Four",
-        # "Back to Mainland: Progression Phase Two"
     ]))
 
     # Mainland: Progression Phase Four (Boss Battle)
@@ -223,141 +220,84 @@ def setup_mainland(world: MultiWorld, player: int, locations: List[LocationData]
         check_pool.pop(index)
         for index in reversed(range(len(check_pool)))
         if check_pool[index].prog_phase == ProgressionPhase.PhaseFour
-    ],
-    [
-        # "Back to Mainland: Progression Phase Three"
-    ]))
+    ],[]))
 
     # Connect entrances and exits
-    # world.get_entrance("Back to Mainland", player).connect(mainland_region)
     world.get_entrance("Forward to Mainland: Progression Phase One", player).connect(mainland_phase_one_region)
-    # world.get_entrance("Back to Mainland: Progression Phase One", player).connect(mainland_phase_one_region)
     world.get_entrance("Forward to Mainland: Progression Phase Two", player).connect(mainland_phase_two_region)
-    # world.get_entrance("Back to Mainland: Progression Phase Two", player).connect(mainland_phase_two_region)
     world.get_entrance("Forward to Mainland: Progression Phase Three", player).connect(mainland_phase_three_region)
-    # world.get_entrance("Back to Mainland: Progression Phase Three", player).connect(mainland_phase_three_region)
     world.get_entrance("Forward to Mainland: Progression Phase Four", player).connect(mainland_phase_four_region)
 
+# def create_mainland_region(world: MultiWorld, player: int, locations: List[LocationData]) -> Region:
+#     """Create the 'Mainland' region"""
 
-    # # Moon 2
-    # mainland_moon_2_region: Region = create_region(world, player, RegionData("Mainland: Moon 2", [
-    #     check_pool.pop(index) 
-    #     for index in reversed(range(len(check_pool))) 
-    #     if check_pool[index].moon_phase == MoonPhase.Moon_2
-    # ], 
-    # [
-    #     "Forward to Mainland: Moon 6",
-    #     "Back to Mainland"
-    # ]))
+#     logging.info("----- Creating 'Mainland' Region -----")
 
-    # # Moon 6
-    # mainland_moon_6_region: Region = create_region(world, player, RegionData("Mainland: Moon 6", [
-    #     check_pool.pop(index) 
-    #     for index in reversed(range(len(check_pool))) 
-    #     if check_pool[index].moon_phase == MoonPhase.Moon_6
-    # ], 
-    # [
-    #     "Forward to Mainland: Moon 12",
-    #     "Back to Mainland: Moon 2"
-    # ]))
+#     # Pop all mainland checks from the locations pool
+#     check_pool: List[LocationData] = [
+#         locations.pop(index)
+#         for index in reversed(range(len(locations)))
+#         if locations[index].region_flags & RegionFlags.Mainland
+#     ]
 
-    # # Moon 12
-    # mainland_moon_12_region: Region = create_region(world, player, RegionData("Mainland: Moon 12", [
-    #     check_pool.pop(index) 
-    #     for index in reversed(range(len(check_pool))) 
-    #     if check_pool[index].moon_phase == MoonPhase.Moon_12
-    # ], 
-    # [
-    #     "Forward to Mainland: Moon 18",
-    #     "Back to Mainland: Moon 6"
-    # ]))
+#     logging.info(f"Found {len(check_pool)} checks for region")
 
-    # # Moon 18
-    # mainland_moon_18_region: Region = create_region(world, player, RegionData("Mainland: Moon 18", [
-    #     check_pool.pop(index) 
-    #     for index in reversed(range(len(check_pool))) 
-    #     if check_pool[index].moon_phase == MoonPhase.Moon_18
-    # ], 
-    # [
-    #     "Forward to Mainland: Moon 24",
-    #     "Back to Mainland: Moon 12"
-    # ]))
+#     # Compile region data
+#     region_data: RegionData = RegionData("Mainland", check_pool, [ 
+#         # "Mainland to Shared: Mainland & Dark Forest",
+#         # "Mainland to Shared: Mainland & The Island", 
+#         "Portal from Mainland to Dark Forest",
+#         "Rowboat from Mainland to The Island",
+#         "To Mainland Moon 2"
+#     ])
 
-    # # Moon 24
-    # mainland_moon_24_region: Region = create_region(world, player, RegionData("Mainland: Moon 24", [
-    #     check_pool.pop(index) 
-    #     for index in reversed(range(len(check_pool))) 
-    #     if check_pool[index].moon_phase == MoonPhase.Moon_24
-    # ], 
-    # [
-    #     "Forward to Mainland: Moon 30",
-    #     "Back to Mainland: Moon 18"
-    # ]))
+#     # Create region
+#     return create_region(world, player, region_data)
 
-    # # Moon 30
-    # mainland_moon_30_region: Region = create_region(world, player, RegionData("Mainland: Moon 30", [
-    #     check_pool.pop(index) 
-    #     for index in reversed(range(len(check_pool))) 
-    #     if check_pool[index].moon_phase == MoonPhase.Moon_30
-    # ], 
-    # [
-    #     "Forward to Mainland: Moon 36",
-    #     "Back to Mainland: Moon 24"
-    # ]))
+def setup_dark_forest(world: MultiWorld, player: int, locations: List[LocationData]) -> Region:
+    """Create the 'The Dark Forest' regions"""
 
-    # # Moon 30
-    # mainland_moon_36_region: Region = create_region(world, player, RegionData("Mainland: Moon 36", [
-    #     check_pool.pop(index) 
-    #     for index in reversed(range(len(check_pool))) 
-    #     if check_pool[index].moon_phase == MoonPhase.Moon_36
-    # ], 
-    # [
-    #     "Back to Mainland: Moon 30"
-    # ]))
-    
-    # # Connect forward entrances and exits
-    # world.get_entrance("Forward to Mainland: Moon 2", player).connect(mainland_moon_2_region)
-    # world.get_entrance("Forward to Mainland: Moon 6", player).connect(mainland_moon_6_region)
-    # world.get_entrance("Forward to Mainland: Moon 12", player).connect(mainland_moon_12_region)
-    # world.get_entrance("Forward to Mainland: Moon 18", player).connect(mainland_moon_18_region)
-    # world.get_entrance("Forward to Mainland: Moon 24", player).connect(mainland_moon_24_region)
-    # world.get_entrance("Forward to Mainland: Moon 30", player).connect(mainland_moon_30_region)
-    # world.get_entrance("Forward to Mainland: Moon 36", player).connect(mainland_moon_36_region)
-
-    # # Connect backward entrances and exits
-    # world.get_entrance("Back to Mainland", player).connect(mainland_region)
-    # world.get_entrance("Back to Mainland: Moon 2", player).connect(mainland_moon_2_region)
-    # world.get_entrance("Back to Mainland: Moon 6", player).connect(mainland_moon_6_region)
-    # world.get_entrance("Back to Mainland: Moon 12", player).connect(mainland_moon_12_region)
-    # world.get_entrance("Back to Mainland: Moon 18", player).connect(mainland_moon_18_region)
-    # world.get_entrance("Back to Mainland: Moon 24", player).connect(mainland_moon_24_region)
-    # world.get_entrance("Back to Mainland: Moon 30", player).connect(mainland_moon_30_region)
-
-def create_mainland_region(world: MultiWorld, player: int, locations: List[LocationData]) -> Region:
-    """Create the 'Mainland' region"""
-
-    logging.info("----- Creating 'Mainland' Region -----")
+    logging.info("----- Setting up 'The Dark Forest' -----")
 
     # Pop all mainland checks from the locations pool
     check_pool: List[LocationData] = [
         locations.pop(index)
         for index in reversed(range(len(locations)))
-        if locations[index].region_flags & RegionFlags.Mainland
+        if locations[index].region_flags & RegionFlags.Forest
     ]
 
-    logging.info(f"Found {len(check_pool)} checks for region")
+    logging.info(f"Found {len(check_pool)} checks for The Dark Forest")
 
-    # Compile region data
-    region_data: RegionData = RegionData("Mainland", check_pool, [ 
-        # "Mainland to Shared: Mainland & Dark Forest",
-        # "Mainland to Shared: Mainland & The Island", 
-        "Portal from Mainland to Dark Forest",
-        "Rowboat from Mainland to The Island",
-        "To Mainland Moon 2"
-    ])
+    # Dark Forest Region (for all 'General' checks)
+    dark_forest_region: Region = create_region(world, player, RegionData("The Dark Forest", [
+        check_pool.pop(index) 
+        for index in reversed(range(len(check_pool))) 
+        if check_pool[index].prog_phase == ProgressionPhase.General
+    ],
+    [ 
+        "Forward to The Dark Forest: Progression Phase One",
+    ]))
 
-    # Create region
-    return create_region(world, player, region_data)
+    # Dark Forest: Progression Phase One (Basic Weapons)
+    dark_forest_phase_one_region: Region = create_region(world, player, RegionData("The Dark Forest: Progression Phase One", [
+        check_pool.pop(index)
+        for index in reversed(range(len(check_pool)))
+        if check_pool[index].prog_phase == ProgressionPhase.PhaseOne
+    ],
+    [
+        "Forward to The Dark Forest: Progression Phase Two",
+    ]))
+
+    # Mainland: Progression Phase Two (Advanced Weapons)
+    dark_forest_phase_two_region: Region = create_region(world, player, RegionData("The Dark Forest: Progression Phase Two", [
+        check_pool.pop(index)
+        for index in reversed(range(len(check_pool)))
+        if check_pool[index].prog_phase == ProgressionPhase.PhaseTwo
+    ],[]))
+
+    # Connect entrances and exits
+    world.get_entrance("Forward to The Dark Forest: Progression Phase One", player).connect(dark_forest_phase_one_region)
+    world.get_entrance("Forward to The Dark Forest: Progression Phase Two", player).connect(dark_forest_phase_two_region)
 
 def create_forest_region(world: MultiWorld, player: int, locations: List[LocationData]) -> Region:
     """Create the 'Dark Forest' region"""
