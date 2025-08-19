@@ -227,7 +227,7 @@ def set_rules(world: MultiWorld, player: int):
                state.sl_has_all_ideas([
                   # "Campfire",                  
                   # "Cooked Meat",
-                  "Growth",
+                  # "Growth",
                   "House",
                   "Offspring",
                   # "Stick"
@@ -244,14 +244,14 @@ def set_rules(world: MultiWorld, player: int):
                   "Plank",
                   "Shed",                 
                   # "Wooden Shield"
-               ], player))
+               ], player)
                # and state.sl_has_any_ideas([
                #    "Slingshot",
                #    "Spear"
                # ], player)
-               # and state.sl_has_all_packs([
-               #    "Explorers"
-               # ], player))
+               and state.sl_has_all_packs([
+                  "Explorers"
+               ], player))
    
    set_rule(world.get_entrance("Forward to Mainland: Progression Phase Four", player),
             lambda state:
@@ -1281,7 +1281,6 @@ def set_rules(world: MultiWorld, player: int):
                   ], player)
                   and state.sl_has_all_ideas([
                      "Brick",
-                     "Hotpot",
                      "Iron Bar",
                      "Plank",
                      "Smelter",

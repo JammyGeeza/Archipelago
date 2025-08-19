@@ -193,7 +193,7 @@ def setup_mainland(world: MultiWorld, player: int, locations: List[LocationData]
     ],
     [
         "Forward to Mainland: Progression Phase Two",
-        "Back to Mainland"
+        # "Back to Mainland"
     ]))
 
     # Mainland: Progression Phase Two (Basic Resources & Equipment)
@@ -204,7 +204,7 @@ def setup_mainland(world: MultiWorld, player: int, locations: List[LocationData]
     ],
     [
         "Forward to Mainland: Progression Phase Three",
-        "Back to Mainland: Progression Phase One"
+        # "Back to Mainland: Progression Phase One"
     ]))
 
     # Mainland: Progression Phase Three (Advanced Resources & Equipment)
@@ -215,7 +215,7 @@ def setup_mainland(world: MultiWorld, player: int, locations: List[LocationData]
     ],
     [
         "Forward to Mainland: Progression Phase Four",
-        "Back to Mainland: Progression Phase Two"
+        # "Back to Mainland: Progression Phase Two"
     ]))
 
     # Mainland: Progression Phase Four (Boss Battle)
@@ -225,17 +225,17 @@ def setup_mainland(world: MultiWorld, player: int, locations: List[LocationData]
         if check_pool[index].prog_phase == ProgressionPhase.PhaseFour
     ],
     [
-        "Back to Mainland: Progression Phase Three"
+        # "Back to Mainland: Progression Phase Three"
     ]))
 
     # Connect entrances and exits
-    world.get_entrance("Back to Mainland", player).connect(mainland_region)
+    # world.get_entrance("Back to Mainland", player).connect(mainland_region)
     world.get_entrance("Forward to Mainland: Progression Phase One", player).connect(mainland_phase_one_region)
-    world.get_entrance("Back to Mainland: Progression Phase One", player).connect(mainland_phase_one_region)
+    # world.get_entrance("Back to Mainland: Progression Phase One", player).connect(mainland_phase_one_region)
     world.get_entrance("Forward to Mainland: Progression Phase Two", player).connect(mainland_phase_two_region)
-    world.get_entrance("Back to Mainland: Progression Phase Two", player).connect(mainland_phase_two_region)
+    # world.get_entrance("Back to Mainland: Progression Phase Two", player).connect(mainland_phase_two_region)
     world.get_entrance("Forward to Mainland: Progression Phase Three", player).connect(mainland_phase_three_region)
-    world.get_entrance("Back to Mainland: Progression Phase Three", player).connect(mainland_phase_three_region)
+    # world.get_entrance("Back to Mainland: Progression Phase Three", player).connect(mainland_phase_three_region)
     world.get_entrance("Forward to Mainland: Progression Phase Four", player).connect(mainland_phase_four_region)
 
 
