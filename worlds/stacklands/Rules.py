@@ -102,12 +102,18 @@ class StacklandsLogic(LogicMixin):
    def sl_has_humble_beginnings(self, player: int) -> bool:
       return self.sl_has_pack("Humble Beginnings", player)
    
+   def sl_can_reach_mainland_moon(self, player: int, moon: int) -> bool:
+      return self.can_reach_region(f"Mainland: Moon {moon}", player)
+   
+   def sl_can_reach_mainland_phase(self, player: int, phase: str) -> bool:
+      return self.can_reach_region(f"Mainland: Progression Phase {phase}", player)
+   
    def sl_can_reach_mainland_moon_2(self, player: int) -> bool:
       return self.sl_has_pack("Humble Beginnings", player)        # Player has Humble Beginnings
    
    def sl_can_reach_mainland_moon_6(self, player: int) -> bool:
       return (
-         self.sl_can_reach_mainland_moon_2(player)          # Player can reach Moon 2
+         self.sl_can_reach_mainland_moon(player, 2)          # Player can reach Moon 2
          and self.sl_has_all_ideas([
             "Campfire",                                           # AND make a Campfire
             "Stick"                                               # AND make a Stick
@@ -117,7 +123,7 @@ class StacklandsLogic(LogicMixin):
    
    def sl_can_reach_mainland_moon_12(self, player: int) -> bool:
       return (
-         self.sl_can_reach_mainland_moon_6(player)          # Player can reach Moon 6
+         self.sl_can_reach_mainland_moon(player, 6)          # Player can reach Moon 6
          and self.sl_has_all_ideas([
             "Growth",                                             # AND can use Growth
             "House"                                               # AND can make a House
@@ -129,7 +135,7 @@ class StacklandsLogic(LogicMixin):
    
    def sl_can_reach_mainland_moon_18(self, player: int) -> bool:
       return (
-         self.sl_can_reach_mainland_moon_12(player)         # Player can reach Moon 12
+         self.sl_can_reach_mainland_moon(player, 12)         # Player can reach Moon 12
          and self.sl_has_all_ideas([
             "Brick",                                              # AND can make Bricks
             # "Coin Chest",                                         # AND can make Coin Chest
@@ -147,7 +153,7 @@ class StacklandsLogic(LogicMixin):
    
    def sl_can_reach_mainland_moon_24(self, player: int) -> bool:
       return (
-         self.sl_can_reach_mainland_moon_18(player)         # Player can reach Moon 18
+         self.sl_can_reach_mainland_moon(player, 18)         # Player can reach Moon 18
          and self.sl_has_all_ideas([
             "Iron Bar",                                           # AND can make Iron Bars
             # "Resource Chest",                                     # AND can make Resource Chests
@@ -158,7 +164,7 @@ class StacklandsLogic(LogicMixin):
    
    def sl_can_reach_mainland_moon_30(self, player: int) -> bool:
       return (
-         self.sl_can_reach_mainland_moon_24(player)         # Player can reach Moon 24
+         self.sl_can_reach_mainland_moon(player, 24)         # Player can reach Moon 24
          and self.sl_has_all_ideas([
             "Iron Shield",                                        # AND can make Iron Shields
             "Smithy"                                              # AND can make Smithy
@@ -171,7 +177,7 @@ class StacklandsLogic(LogicMixin):
       )
    
    def sl_can_reach_mainland_moon_36(self, player: int) -> bool:
-      return self.sl_can_reach_mainland_moon_30(player)     # Player can reach Moon 30
+      return self.sl_can_reach_mainland_moon(player, 30)     # Player can reach Moon 30
 
 
 # Set all region and location rules
@@ -211,6 +217,123 @@ def set_rules(world: MultiWorld, player: int):
    set_rule(world.get_entrance("Rowboat from Mainland to The Island", player),
             lambda state:
                state.sl_rowboat_from_mainland(player))                     # Can build a Rowboat from Mainland resources
+   
+   set_rule(world.get_entrance("Forward to Mainland: Progression Phase One", player),
+            lambda state:
+               state.sl_has_pack("Humble Beginnings", player)) # Player has the 'Humble Beginnings' pack)
+   
+   set_rule(world.get_entrance("Forward to Mainland: Progression Phase Two", player),
+            lambda state:
+               state.sl_has_all_ideas([
+                  # "Campfire",                  
+                  # "Cooked Meat",
+                  "Growth",
+                  "House",
+                  "Offspring",
+                  # "Stick"
+               ], player))
+               # and state.sl_has_all_packs([
+               #    "Reap & Sow",
+               #    "Seeking Wisdom"
+               # ], player))
+   
+   set_rule(world.get_entrance("Forward to Mainland: Progression Phase Three", player),
+            lambda state:
+               state.sl_has_all_ideas([
+                  "Brick",
+                  "Plank",
+                  "Shed",                 
+                  # "Wooden Shield"
+               ], player))
+               # and state.sl_has_any_ideas([
+               #    "Slingshot",
+               #    "Spear"
+               # ], player)
+               # and state.sl_has_all_packs([
+               #    "Explorers"
+               # ], player))
+   
+   set_rule(world.get_entrance("Forward to Mainland: Progression Phase Four", player),
+            lambda state:
+               state.sl_has_all_ideas([
+                  "Iron Bar",                  
+                  # "Iron Shield",                  
+                  "Smelter",
+                  # "Smithy"
+               ], player))
+               # and state.sl_has_any_ideas([
+               #    "Sword",
+               #    "Throwing Stars"
+               # ], player)
+               # and state.sl_has_all_packs([
+               #    "Logic and Reason",
+               #    "Order and Structure"
+               # ], player))
+   
+   # set_rule(world.get_entrance("Forward to Mainland: Moon 2", player),
+   #          lambda state:
+   #             state.sl_has_pack("Humble Beginnings", player)) # Player has the 'Humble Beginnings' pack
+   
+   # set_rule(world.get_entrance("Forward to Mainland: Moon 6", player),
+   #          lambda state:
+   #             state.sl_has_all_ideas([
+   #                "Campfire",                                     # Player can also make a 'Campfire'
+   #                "Stick"                                         # AND make a 'Stick'
+   #             ], player)
+   #             and state.sl_has_pack("Seeking Wisdom", player))   # AND has the 'Seeking Wisdom' pack
+   
+   # set_rule(world.get_entrance("Forward to Mainland: Moon 12", player),
+   #          lambda state:
+   #             state.sl_has_all_ideas([
+   #                "Growth",                     # Player can also use 'Growth'
+   #                "House"                       # AND can make a 'House'
+   #             ], player)
+   #             and state.sl_has_any_packs([
+   #                "Reap & Sow",                 # AND has either the 'Reap & Sow'
+   #                "Curious Cuisine"], player)   # OR 'Curious Cuisine' pack
+   #          )
+   
+   # set_rule(world.get_entrance("Forward to Mainland: Moon 18", player),
+   #          lambda state:
+   #             state.sl_has_all_ideas([
+   #             "Brick",                                  # Player can also 'Bricks'
+   #             "Cooked Meat",                            # AND can make 'Cooked Meat'
+   #             "Plank",                                  # AND can make 'Planks'
+   #             "Offspring",                              # AND can make 'Offspring'
+   #             "Shed",                                   # AND can make 'Shed'
+   #             "Wooden Shield"                           # AND can make 'Wooden Shield'
+   #          ], player)
+   #          and state.sl_has_any_ideas([
+   #             "Slingshot",                              # AND can make 'Slingshot'
+   #             "Spear"], player)                         # OR can make 'Spear'
+   #          and state.sl_has_pack("Explorers", player))  # AND has the 'Explorers' pack
+   
+   # set_rule(world.get_entrance("Forward to Mainland: Moon 24", player),
+   #          lambda state:
+   #             state.sl_has_all_ideas([
+   #                "Iron Bar",                                        # Player can also make 'Iron Bar'
+   #                "Smelter"                                          # AND can make 'Smelter'
+   #             ], player)
+   #             and state.sl_has_pack("Order and Structure", player)) # AND has the 'Order and Structure' pack
+   
+   # set_rule(world.get_entrance("Forward to Mainland: Moon 30", player),
+   #          lambda state:
+   #             state.sl_has_all_ideas([
+   #                "Iron Shield",                            # Player can also make 'Iron Shield'
+   #                "Smithy",                                 # AND can make 'Smithy'
+   #                "Temple"                                  # AND can make 'Temple'
+   #             ], player)
+   #             and state.sl_has_any_ideas([
+   #                "Sword",                                  # AND can make 'Sword'
+   #                "Throwing Stars"                          # OR can make 'Throwing Star'
+   #             ], player)
+   #             and state.sl_has_pack("The Armory", player)) # AND has 'The Armory' pack
+   
+   # set_rule(world.get_entrance("Forward to Mainland: Moon 36", player),
+   #          lambda state: True)  # If player can reach Moon 30 they can reach Moon 36
+
+   
+   
 
    #endregion
 
@@ -252,16 +375,16 @@ def set_rules(world: MultiWorld, player: int):
 
       set_rule(world.get_location("Buy the Humble Beginnings Pack", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_2(player))  # Player can reach Moon 2
+                  state.sl_has_pack("Humble Beginnings", player)) # Player has the Humble Beginnings pack
 
       set_rule(world.get_location("Harvest a Tree using a Villager", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_2(player))  # Player can reach Moon 2
+                  state.sl_has_pack("Humble Beginnings", player)) # Player has the Humble Beginnings pack
 
       set_rule(world.get_location("Make a Stick from Wood", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_2(player)   # Player can reach Moon 2
-                  and state.sl_has_idea("Stick", player))      # AND has the 'Stick' idea
+                  state.sl_has_pack("Humble Beginnings", player)    # Player has the Humble Beginnings pack
+                  and state.sl_has_idea("Stick", player))   # AND has the 'Stick' idea
 
       # Set this rule only if Pausing is enabled
       if pausing_selected:
@@ -270,22 +393,22 @@ def set_rules(world: MultiWorld, player: int):
 
       set_rule(world.get_location("Grow a Berry Bush using Soil", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_6(player)   # Player can reach Moon 6
-                  and state.sl_has_idea("Growth", player))     # AND has the 'Growth' Idea
+                  state.sl_has_pack("Humble Beginnings", player)  # Player has the Humble Beginnings pack
+                  and state.sl_has_idea("Growth", player))        # AND has the 'Growth' Idea
 
       set_rule(world.get_location("Build a House", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_6(player)   # Player can reach Moon 6
-                  and state.sl_has_idea("House", player))      # AND has the 'House' Idea
+                  state.sl_has_pack("Humble Beginnings", player)  # Player has the Humble Beginnings pack
+                  and state.sl_has_idea("House", player))         # AND has the 'House' Idea
 
       set_rule(world.get_location("Get a Second Villager", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_2(player))  # Player can reach Moon 2
+                  state.sl_has_pack("Humble Beginnings", player)) # Player has the Humble Beginnings pack
 
       set_rule(world.get_location("Create Offspring", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_12(player)  # Player can reach Moon 12
-                  and state.sl_has_idea("Offspring", player))  # AND has the 'Offspring' idea
+                  state.sl_has_pack("Humble Beginnings", player)              # Player has the Humble Beginnings pack
+                  and state.sl_has_all_ideas(["House", "Offspring"], player)) # AND has the 'House' and 'Offspring' ideas
 
       #endregion
 
@@ -293,61 +416,130 @@ def set_rules(world: MultiWorld, player: int):
 
       set_rule(world.get_location("Unlock all Packs", player),
                lambda state:
-                  state.count_group("All Mainland Booster Packs", player) == 8)  # Requires all mainland booster packs
+                  state.count_group("All Mainland Booster Packs", player) == 8)
 
       set_rule(world.get_location("Get 3 Villagers", player),
                lambda state:
-                  state.can_reach_location("Create Offspring", player))    # Requires ability to create offspring
+                  state.sl_has_pack("Humble Beginnings", player)
+                  and state.sl_has_all_ideas([
+                     "House",
+                     "Offspring"
+                  ], player))
 
       set_rule(world.get_location("Get 5 Villagers", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_18(player)) # Can reach Moon 18 and sustain multiple villagers
+                  state.can_reach_location("Get 3 Villagers", player)
+                  and state.sl_has_all_packs(["Reap & Sow", "Seeking Wisdom"], player))
 
       set_rule(world.get_location("Get 7 Villagers", player),
                lambda state:
-                  state.can_reach_location("Get 5 Villagers", player))  # Same requirements as 'Get 5 Villagers'
+                  state.can_reach_location("Get 5 Villagers", player))
 
       set_rule(world.get_location("Find the Catacombs", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_12(player)
-                  and state.sl_has_pack("Explorers", player))  # Player can reach Moon 12 and has access to find Catacombs
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Explorers"
+                  ], player))
 
       set_rule(world.get_location("Find a mysterious artifact", player),
                lambda state:
-                  state.can_reach_location("Find the Catacombs", player))  # Same requirements as 'Find the Catacombs'
+                  state.can_reach_location("Find the Catacombs", player))
 
       set_rule(world.get_location("Build a Temple", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_24(player)  # Player can make Iron Bars
-                  and state.sl_has_idea("Temple", player))     # AND has the 'Temple' idea
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Seeking Wisdom"
+                  ], player)
+                  and state.sl_has_any_packs([
+                     "Logic and Reason",
+                     "Order and Structure"
+                  ], player)
+                  and state.sl_has_all_ideas([
+                     "Brick",
+                     "House",
+                     "Iron Bar",
+                     "Offspring",
+                     "Plank",
+                     "Smelter",
+                     "Temple"
+                  ], player))
 
       set_rule(world.get_location("Bring the Goblet to the Temple", player),
                lambda state:
-                  state.can_reach_location("Find a mysterious artifact", player)  # Player can find the Golden Goblet
-                  and state.can_reach_location("Build a Temple", player))         # AND can build a Temple
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Seeking Wisdom",
+                     "Explorers"
+                  ], player)
+                  and state.sl_has_any_packs([
+                     "Logic and Reason",
+                     "Order and Structure"
+                  ], player)
+                  and state.sl_has_all_ideas([
+                     "Brick",
+                     "House",
+                     "Iron Bar",
+                     "Offspring",
+                     "Plank",
+                     "Smelter",
+                     "Temple"
+                  ], player))
 
       set_rule(world.get_location("Kill the Demon", player),
                lambda state:
-                  state.can_reach_location("Bring the Goblet to the Temple", player))  # Player has everything required to summon and fight the Demon
-
-
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Seeking Wisdom",
+                     "Explorers"
+                  ], player)
+                  and state.sl_has_any_packs([
+                     "Reap & Sow",
+                     "Curious Cuisine"
+                  ], player)
+                  and state.sl_has_any_packs([
+                     "Logic and Reason",
+                     "Order and Structure"
+                  ], player)
+                  and state.sl_has_all_ideas([
+                     "Brick",
+                     "Growth",
+                     "House",
+                     "Iron Bar",
+                     "Offspring",
+                     "Plank",
+                     "Smelter",
+                     "Temple"
+                  ], player))
+      
       #endregion
 
       #region 'Power & Skill' Quests
 
       set_rule(world.get_location("Train Militia", player),
                lambda state:
-                  state.can_reach_location("Make a Stick from Wood", player)  # Same requirements as 'Make a Stick from Wood'
-                  and state.sl_has_any_ideas(["Slingshot", "Spear"], player)) # AND can create a basic Militia weapon
+                  state.sl_has_pack("Humble Beginnings", player)
+                  and state.sl_has_idea("Stick", player)
+                  and state.sl_has_any_ideas(["Slingshot", "Spear"], player))
 
       set_rule(world.get_location("Kill a Rat", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_2(player)) # Player has Humble Beginnings to find 'Rat'
+                  state.sl_has_pack("Humble Beginnings", player))
 
       set_rule(world.get_location("Kill a Skeleton", player),
                lambda state:
-                  state.sl_can_reach_any_quests(["Train Militia", "Train a Wizard"], player) # Player can train Militia or Wizards
-                  and state.sl_has_all_packs(["Explorers", "The Armory"], player))           # AND has Explorers and Armory packs to find Skeletons
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Explorers",
+                     "The Armory"
+                  ], player)
+                  and state.sl_has_idea("Stick", player)
+                  and state.sl_has_any_ideas([
+                     "Magic Wand",
+                     "Slingshot",
+                     "Spear"
+                  ], player))
 
       #endregion
 
@@ -355,28 +547,68 @@ def set_rules(world: MultiWorld, player: int):
 
       set_rule(world.get_location("Make a Villager wear a Rabbit Hat", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_2(player)) # Player can find Rabbit in Humble Beginnings
+                  state.sl_has_pack("Humble Beginnings", player))
 
       set_rule(world.get_location("Build a Smithy", player),
                lambda state:
-                  state.can_reach_location("Get an Iron Bar", player) # Same requirements as 'Get an Iron Bar'
-                  and state.sl_has_idea("Smithy", player))            # AND has 'Smithy' idea
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                  ], player)
+                  and state.sl_has_any_packs([
+                     "Logic and Reason",
+                     "Order and Structure",
+                  ], player)
+                  and state.sl_has_all_ideas([
+                     "Brick",
+                     "Iron Bar",
+                     "Plank",
+                     "Smelter",
+                     "Smithy"
+                  ], player))
 
       set_rule(world.get_location("Train a Wizard", player),
                lambda state:
-                  state.can_reach_location("Make a Stick from Wood", player)  # Same requirements as 'Make a Stick from Wood'
-                  and state.sl_has_pack("Explorers", player)                  # AND has a pack containing 'Magic Dust'
-                  and state.sl_has_idea("Magic Wand", player))                # AND has 'Magic Wand' idea
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Explorers"
+                  ], player)
+                  and state.sl_has_all_ideas([
+                     "Magic Wand",
+                     "Stick"
+                  ], player))
 
       set_rule(world.get_location("Have a Villager with Combat Level 20", player),
                lambda state:
-                  state.sl_can_reach_any_quests(["Train Militia", "Train a Wizard"], player)  # Player can train Militia or Wizard
-                  and state.sl_has_all_ideas([ "Plank", "Wooden Shield" ], player))           # AND can create a Wooden Shield
+                  state.sl_has_pack("Humble Beginnings", player)
+                  and state.sl_has_all_ideas([
+                     "Plank",
+                     "Stick",
+                     "Wooden Shield"
+                  ], player)
+                  and state.sl_has_any_ideas([
+                     "Magic Wand",
+                     "Slingshot",
+                     "Spear"
+                  ], player))
 
       set_rule(world.get_location("Train a Ninja", player),
                lambda state:
-                  state.can_reach_location("Build a Smithy", player)  # Same requirements as 'Build a Smithy'
-                  and state.sl_has_idea("Throwing Stars", player))    # AND has 'Throwing Stars' idea
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Seeking Wisdom"
+                  ], player)
+                  and state.sl_has_any_packs([
+                     "Logic and Reason",
+                     "Order and Structure"
+                  ], player)
+                  and state.sl_has_all_ideas([
+                     "Brick",
+                     "Iron Bar",
+                     "Plank",
+                     "Smelter",
+                     "Smithy",
+                     "Throwing Stars"
+                  ], player))
 
       #endregion
 
@@ -384,25 +616,48 @@ def set_rules(world: MultiWorld, player: int):
 
       set_rule(world.get_location("Start a Campfire", player),
                lambda state:
-                  state.can_reach_location("Make a Stick from Wood", player)  # Same requirements as 'Make a Stick from Wood'
-                  and state.sl_has_idea("Campfire", player))                  # AND has the 'Campfire' idea
+                  state.sl_has_pack("Humble Beginnings", player)
+                  and state.sl_has_all_ideas([
+                     "Campfire",
+                     "Stick"
+                  ], player))
 
       set_rule(world.get_location("Cook Raw Meat", player),
                lambda state:
-                  state.can_reach_location("Start a Campfire", player)    # Same requirements as 'Start a Campfire'
-                  and state.sl_has_idea("Cooked Meat", player))           # AND has the 'Cooked Meat' idea
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Reap & Sow"
+                  ], player)
+                  and state.sl_has_all_ideas([
+                     "Campfire",
+                     "Cooked Meat",
+                     "Stick"
+                  ], player))
 
       set_rule(world.get_location("Cook an Omelette", player),
                lambda state:
-                  state.can_reach_location("Start a Campfire", player)    # Same requirements as 'Start a Campfire'
-                  and state.sl_has_pack("Reap & Sow", player)             # AND has a pack containing 'Egg'
-                  and state.sl_has_idea("Omelette", player))              # AND has the 'Omelette' idea
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Reap & Sow"
+                  ], player)
+                  and state.sl_has_all_ideas([
+                     "Campfire",
+                     "Omelette",
+                     "Stick"
+                  ], player))
 
       set_rule(world.get_location("Cook a Frittata", player),
                lambda state:
-                  state.can_reach_location("Start a Campfire", player)                    # Same requirements as 'Start a Campfire'
-                  and state.sl_has_all_packs(["Curious Cuisine", "Reap & Sow"], player)   # AND has packs containing Egg and Potato
-                  and state.sl_has_idea("Frittata", player))                              # AND has the 'Frittata' idea
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Curious Cuisine",
+                     "Reap & Sow"
+                  ], player)
+                  and state.sl_has_all_ideas([
+                     "Campfire",
+                     "Frittata",
+                     "Stick"
+                  ], player))
 
       #endregion
 
@@ -410,88 +665,139 @@ def set_rules(world: MultiWorld, player: int):
 
       set_rule(world.get_location("Explore a Forest", player),
                lambda state:
-                  state.can_reach_location("Find the Catacombs", player))  # Same requirements as 'Find the Catacombs'
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Explorers"
+                  ], player))
 
       set_rule(world.get_location("Explore a Mountain", player),
                lambda state:
-                  state.can_reach_location("Explore a Forest", player))    # Same requirements as 'Explore a Forest'
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Explorers"
+                  ], player))
 
       set_rule(world.get_location("Open a Treasure Chest", player),
                lambda state:
-                  state.can_reach_location("Explore a Mountain", player))  # Same requirements as 'Explore a Mountain'
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Explorers"
+                  ], player))
 
       set_rule(world.get_location("Get a Dog", player),
                lambda state:
-                  state.can_reach_location("Explore a Forest", player))    # Same requirements as 'Explore a Forest' (can find 'Wolf' and 'Bone')
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Explorers"
+                  ], player))
 
       set_rule(world.get_location("Find a Graveyard", player),
                lambda state:
-                  state.can_reach_location("Get a Second Villager", player)) # Same requirements as 'Get a Second Villager' (2x Corpses to create Graveyard)
+                  state.sl_has_pack("Humble Beginnings", player)
+                  and state.sl_has_all_ideas([
+                     "House",
+                     "Offspring"
+                  ], player))
 
       set_rule(world.get_location("Train an Explorer", player),
                lambda state:
-                  state.can_reach_location("Explore a Forest", player))    # Same requirements as 'Explore a Forest' (can find 'Map' from Enemies / Old Tome / Travelling Cart)
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Explorers"
+                  ], player))
 
       set_rule(world.get_location("Buy something from a Travelling Cart", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_18(player)) # Can reach Moon 18 (spawns on Moon 19)
+                  state.count_group("All Mainland Ideas", player) >= 15)
 
       #endregion
 
       #region 'Ways and Means' Quests
 
       set_rule(world.get_location("Have 5 Ideas", player),
-               lambda state: state.count_group("All Ideas", player) >= 5)  # Has at least 5 ideas
+               lambda state:
+                  state.sl_has_pack("Humble Beginnings", player)
+                  and state.count_group("All Ideas", player) >= 5)
 
       set_rule(world.get_location("Have 10 Ideas", player),
-               lambda state: state.count_group("All Ideas", player) >= 10) # Has at least 10 ideas
+               lambda state:
+                  state.sl_has_pack("Humble Beginnings", player)
+                  and state.count_group("All Ideas", player) >= 10)
 
       set_rule(world.get_location("Have 10 Stone", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_2(player)         # Player has Humble Beginnings pack
-                  and state.sl_has_pack("Seeking Wisdom", player))   # AND additional pack containing 'Stone'
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Seeking Wisdom"
+                  ], player))
 
       set_rule(world.get_location("Have 10 Wood", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_2(player)         # Player has Humble Beginnings pack
-                  and state.sl_has_pack("Seeking Wisdom", player))   # AND additional pack containing 'Wood'
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Seeking Wisdom"
+                  ], player))
 
       set_rule(world.get_location("Get an Iron Bar", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_24(player)) # Player can reach Moon 24 and make Iron Bars
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Seeking Wisdom"
+                  ], player)
+                  and state.sl_has_any_packs([
+                     "Logic and Reason",
+                     "Order and Structure"
+                  ], player)
+                  and state.sl_has_all_ideas([
+                     "Brick",
+                     "Iron Bar",
+                     "Plank",
+                     "Smelter"
+                  ], player))
 
       set_rule(world.get_location("Have 5 Food", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_2(player)) # Player has Humble Beginnings pack
+                  state.sl_has_pack("Humble Beginnings", player))
 
       set_rule(world.get_location("Have 10 Food", player),
                lambda state:
-                  state.can_reach_location("Have 5 Food", player))   # Same requirements as 'Have 5 Food'
+                  state.sl_has_pack("Humble Beginnings", player))
 
       set_rule(world.get_location("Have 20 Food", player),
                lambda state:
-                  state.can_reach_location("Cook Raw Meat", player)) # Same requirements as 'Cook Raw Meat'
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Reap & Sow"
+                  ], player))
+                  # TODO: Add board capacity rule
 
       set_rule(world.get_location("Have 50 Food", player),
                lambda state:
-                  state.can_reach_location("Have 20 Food", player)   # Same requirements as 'Have 20 Food'
-                  and state.sl_can_reach_any_quests([
-                     "Cook an Omelette",                             # AND can cook an Omelette
-                     "Cook a Frittata"                               # OR a Frittata
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Curious Cuisine",
+                     "Reap & Sow"
                   ], player))
+                  # TODO: Add board capacity rule
 
       set_rule(world.get_location("Have 10 Coins", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_2(player)) # Player has Humble Beginnings
+                  state.sl_has_pack("Humble Beginnings", player))
 
       set_rule(world.get_location("Have 30 Coins", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_12(player)) # Player has reasonable amount of sellable resources
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Seeking Wisdom"
+                  ], player))
 
       set_rule(world.get_location("Have 50 Coins", player),
                lambda state:
-                  state.can_reach_location("Have 30 Coins", player)  # Same reqirements as 'Have 30 Coins'
-                  and state.sl_has_idea("Coin Chest", player))       # AND can build a Coin Chest
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Seeking Wisdom"
+                  ], player)
+                  and state.sl_has_idea("Coin Chest", player))
 
       #endregion
 
@@ -499,36 +805,71 @@ def set_rules(world: MultiWorld, player: int):
 
       set_rule(world.get_location("Have 3 Houses", player),
                lambda state:
-                  state.can_reach_location("Build a House", player)) # Same requirements as 'Build a House'
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Seeking Wisdom"
+                  ], player)
+                  and state.sl_has_idea("House", player))
 
       set_rule(world.get_location("Build a Shed", player),
                lambda state:
-                  state.can_reach_location("Make a Stick from Wood", player)    # Same requirements as 'Make a Stick from Wood'
-                  and state.sl_has_idea("Shed", player))                        # AND has the 'Shed' idea
+                  state.sl_has_pack("Humble Beginnings", player)
+                  and state.sl_has_all_ideas([
+                     "Shed",
+                     "Stick"
+                  ], player))
 
       set_rule(world.get_location("Build a Quarry", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_2(player)   # Player has Humble Beginnings 
-                  and state.sl_has_idea("Quarry", player))     # AND has 'Quarry' idea
+                  state.sl_has_pack("Humble Beginnings", player)
+                  and state.sl_has_idea("Quarry", player))
 
       set_rule(world.get_location("Build a Lumber Camp", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_2(player)      # Player has Humble Beginnings 
-                  and state.sl_has_idea("Lumber Camp", player))   # AND has 'Lumber Camp' idea
+                  state.sl_has_pack("Humble Beginnings", player)
+                  and state.sl_has_idea("Lumber Camp", player))
 
       set_rule(world.get_location("Build a Farm", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_12(player)  # Player can reach Moon 12 and can make 'Brick' and 'Plank'
-                  and state.sl_has_idea("Farm", player))       # AND has the 'Farm' idea
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Seeking Wisdom"
+                  ], player)
+                  and state.sl_has_all_ideas([
+                     "Brick",
+                     "Farm",
+                     "Plank"
+                  ], player))
 
       set_rule(world.get_location("Build a Brickyard", player),
                lambda state:
-                  state.can_reach_location("Get an Iron Bar", player) # Same requirements as 'Get an Iron Bar'
-                  and state.sl_has_idea("Brickyard", player))         # AND has the 'Brickyard' idea
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Seeking Wisdom"
+                  ], player)
+                  and state.sl_has_any_packs([
+                     "Logic and Reason",
+                     "Order and Structure"
+                  ], player)
+                  and state.sl_has_all_ideas([
+                     "Brick",
+                     "Brickyard",
+                     "Iron Bar",
+                     "Plank",
+                     "Smelter"
+                  ], player))
 
       set_rule(world.get_location("Sell a Card at a Market", player),
                lambda state:
-                  state.can_reach_location("Build a Market", player)) # Same requirements as 'Build a Market'
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Seeking Wisdom"
+                  ], player)
+                  and state.sl_has_all_ideas([
+                     "Brick",
+                     "Market",
+                     "Plank"
+                  ], player))
 
       #endregion
 
@@ -536,27 +877,37 @@ def set_rules(world: MultiWorld, player: int):
 
       set_rule(world.get_location("Reach Moon 6", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_6(player))               # Player should be able to comfortably reach Moon 6
+                  state.sl_has_pack("Humble Beginnings", player)
+                  and state.count_group("All Mainland Ideas", player) >= 5)
 
       set_rule(world.get_location("Reach Moon 12", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_12(player))              # Player should be able to comfortably reach Moon 12
+                  state.sl_has_pack("Humble Beginnings", player)
+                  and state.count_group("All Ideas", player) >= 10)
 
       set_rule(world.get_location("Reach Moon 18", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_18(player))              # Player should be able to comfortably reach Moon 18
+                  state.sl_has_pack("Humble Beginnings", player)
+                  and state.count_group("All Booster Packs", player) >= 2
+                  and state.count_group("All Ideas", player) >= 15)
 
       set_rule(world.get_location("Reach Moon 24", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_24(player))              # Player should be able to comfortably reach Moon 24
+                  state.sl_has_pack("Humble Beginnings", player)
+                  and state.count_group("All Booster Packs", player) >= 3
+                  and state.count_group("All Mainland Ideas", player) >= 20)
 
       set_rule(world.get_location("Reach Moon 30", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_30(player))              # Player should be able to comfortably reach Moon 30
+                  state.sl_has_pack("Humble Beginnings", player)
+                  and state.count_group("All Booster Packs", player) >= 4
+                  and state.count_group("All Mainland Ideas", player) >= 25)
 
       set_rule(world.get_location("Reach Moon 36", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_36(player))              # Player should be able to comfortably reach Moon 36
+                  state.sl_has_pack("Humble Beginnings", player)
+                  and state.count_group("All Booster Packs", player) >= 5
+                  and state.count_group("All Mainland Ideas", player) >= 30)
 
       #endregion
 
@@ -565,192 +916,435 @@ def set_rules(world: MultiWorld, player: int):
       # Booster Packs
       set_rule(world.get_location("Buy the Seeking Wisdom Pack", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_2(player)         # Player has the Humble Beginnings pack
-                  and state.sl_has_pack("Seeking Wisdom", player))   # AND has 'Seeking Wisdom' pack
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Seeking Wisdom"
+                  ], player))
 
       set_rule(world.get_location("Buy the Reap & Sow Pack", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_2(player)      # Player has the Humble Beginnings pack
-                  and state.sl_has_pack("Reap & Sow", player))    # AND has 'Reap & Sow' pack
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Reap & Sow"
+                  ], player))
 
       set_rule(world.get_location("Buy the Curious Cuisine Pack", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_2(player)         # Player has the Humble Beginnings pack
-                  and state.sl_has_pack("Curious Cuisine", player))  # AND has 'Curious Cuisine' pack
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Curious Cuisine"
+                  ], player))
 
       set_rule(world.get_location("Buy the Logic and Reason Pack", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_2(player)         # Player has the Humble Beginnings pack
-                  and state.sl_has_pack("Logic and Reason", player)) # AND has 'Logic and Reason' pack
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Logic and Reason"
+                  ], player))
 
       set_rule(world.get_location("Buy the The Armory Pack", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_2(player)         # Player has the Humble Beginnings pack
-                  and state.sl_has_pack("The Armory", player))       # AND has 'The Armory' pack
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "The Armory"
+                  ], player))
 
       set_rule(world.get_location("Buy the Explorers Pack", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_2(player)         # Player has the Humble Beginnings pack
-                  and state.sl_has_pack("Explorers", player))        # AND has 'Explorers' pack
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Explorers"
+                  ], player))
 
       set_rule(world.get_location("Buy the Order and Structure Pack", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_2(player)            # Player has the Humble Beginnings pack
-                  and state.sl_has_pack("Order and Structure", player)) # AND has 'Order and Structure' pack
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Order and Structure"
+                  ], player))
 
       # Buying Packs
       set_rule(world.get_location("Buy 5 Booster Packs", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_2(player))  # Player has the Humble Beginnings pack
+                  state.sl_has_pack("Humble Beginnings", player))
 
       set_rule(world.get_location("Buy 10 Booster Packs", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_2(player)               # Player has the Humble Beginnings pack
-                  and state.count_group("All Booster Packs", player) >= 2) # AND has at least one other pack
+                  state.sl_has_pack("Humble Beginnings", player)
+                  and state.count_group("All Booster Packs", player) >= 2)
 
       set_rule(world.get_location("Buy 25 Booster Packs", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_2(player)               # Player has the Humble Beginnings pack
-                  and state.count_group("All Booster Packs", player) >= 3) # AND has at least 2 other packs
+                  state.sl_has_pack("Humble Beginnings", player)
+                  and state.count_group("All Booster Packs", player) >= 3)
 
       # Selling Cards
       set_rule(world.get_location("Sell 5 Cards", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_2(player))  # Player has the Humble Beginnings pack
+                  state.sl_has_pack("Humble Beginnings", player))
 
       set_rule(world.get_location("Sell 10 Cards", player),
                lambda state:
-                  state.can_reach_location("Sell 5 Cards", player)   # Same requirements as 'Sell 5 Cards'
-                  and state.sl_has_pack("Seeking Wisdom", player))   # AND has the 'Seeking Wisdom' pack
+                  state.sl_has_pack("Humble Beginnings", player))
 
       set_rule(world.get_location("Sell 25 Cards", player),
                lambda state:
-                  state.can_reach_location("Sell 10 Cards", player)) # Same requirements as 'Sell 10 Cards'
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Seeking Wisdom"
+                  ], player))
 
       # Building Structures
       set_rule(world.get_location("Build a Coin Chest", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_2(player)   # Player has Humble Beginnings pack
-                  and state.sl_has_idea("Coin Chest", player)) # AND has the 'Coin Chest' idea
+                  state.sl_has_pack("Humble Beginnings", player)
+                  and state.sl_has_idea("Coin Chest", player))
 
       set_rule(world.get_location("Build a Garden", player),
                lambda state:
-                  state.sl_can_progress_mainland(player)         # Player can start mainland
-                  and state.sl_has_idea("Garden", player))    # AND has 'Garden' idea
+                  state.sl_has_pack("Humble Beginnings", player)
+                  and state.sl_has_idea("Garden", player))
 
       set_rule(world.get_location("Build an Iron Mine", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_2(player)   # Player has Humble Beginnings pack
-                  and state.sl_has_idea("Iron Mine", player))  # AND has 'Iron Mine' idea
+                  state.sl_has_pack("Humble Beginnings", player)
+                  and state.sl_has_idea("Iron Mine", player))
 
       set_rule(world.get_location("Build a Hotpot", player),
                lambda state:
-                  (
-                     state.can_reach_location("Build a Stove", player)  # Same requirements as 'Build a Stove'
-                     or state.sl_can_reach_all_quests([
-                        "Start a Campfire",                             # OR same requirements as Start a Campfire
-                        "Get an Iron Bar"                               # AND same requirements as 'Get an Iron Bar'
-                     ], player)
-                  )
-                  and state.sl_has_idea("Hotpot", player))              # AND has the 'Hotpot' idea
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Seeking Wisdom"
+                  ], player)
+                  and state.sl_has_any_packs([
+                     "Logic and Reason",
+                     "Order and Structure"
+                  ], player)
+                  and state.sl_has_all_ideas([
+                     "Brick",
+                     "Hotpot",
+                     "Iron Bar",
+                     "Plank",
+                     "Smelter"
+                  ], player)
+                  and (
+                     state.sl_has_idea("Stove", player)
+                     or state.sl_has_all_ideas(["Campfire", "Stick"], player)
+                  ))
 
       set_rule(world.get_location("Build a Market", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_18(player)  # Player can reach Moon 18 and make Brick / Plank
-                  and state.sl_has_idea("Market", player))     # AND has the 'Market' idea
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Seeking Wisdom"
+                  ], player)
+                  and state.sl_has_all_ideas([
+                     "Brick",
+                     "Market",
+                     "Plank"
+                  ], player))
 
       set_rule(world.get_location("Build a Resource Chest", player),
                lambda state:
-                  state.can_reach_location("Get an Iron Bar", player)   # Same requirements as 'Get an Iron Bar'
-                  and state.sl_has_idea("Resource Chest", player))      # AND has the 'Resource Chest' idea
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Seeking Wisdom"
+                  ], player)
+                  and state.sl_has_any_packs([
+                     "Logic and Reason",
+                     "Order and Structure"
+                  ], player)
+                  and state.sl_has_all_ideas([
+                     "Brick",
+                     "Iron Bar",
+                     "Plank",
+                     "Resource Chest",
+                     "Smelter"
+                  ], player))
 
       set_rule(world.get_location("Build a Sawmill", player),
                lambda state:
-                  state.can_reach_location("Get an Iron Bar", player)   # Same requirements as 'Get an Iron Bar'
-                  and state.sl_has_idea("Sawmill", player))             # AND has the 'Sawmill' idea
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Seeking Wisdom"
+                  ], player)
+                  and state.sl_has_any_packs([
+                     "Logic and Reason",
+                     "Order and Structure"
+                  ], player)
+                  and state.sl_has_all_ideas([
+                     "Brick",
+                     "Iron Bar",
+                     "Plank",
+                     "Sawmill",
+                     "Smelter"
+                  ], player))
 
       set_rule(world.get_location("Build a Smelter", player),
                lambda state:
-                  state.sl_can_reach_all_quests([
-                     "Have 10 Bricks",                       # Same requirements as 'Have 10 Bricks'
-                     "Have 10 Planks"                        # AND same requirements as 'Have 10 Planks'
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Seeking Wisdom"
                   ], player)
-                  and state.sl_has_idea("Smelter", player))  # AND has the 'Smelter' idea
+                  and state.sl_has_all_ideas([
+                     "Brick",
+                     "Plank",
+                     "Smelter"
+                  ], player))
 
       set_rule(world.get_location("Build a Stove", player),
                lambda state:
-                  state.can_reach_location("Get an Iron Bar", player) # Same requirements as 'Get an Iron Bar
-                  and state.sl_has_idea("Stove", player))             # AND has the 'Stove' idea
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Seeking Wisdom"
+                  ], player)
+                  and state.sl_has_any_packs([
+                     "Logic and Reason",
+                     "Order and Structure"
+                  ], player)
+                  and state.sl_has_all_ideas([
+                     "Brick",
+                     "Iron Bar",
+                     "Plank",
+                     "Smelter",
+                     "Stove"
+                  ], player))
 
       set_rule(world.get_location("Build a Warehouse", player),
                lambda state:
-                  state.can_reach_location("Get an Iron Bar", player) # Same requirements as 'Get an Iron Bar
-                  and state.sl_has_idea("Warehouse", player))         # AND has the 'Warehouse' idea
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Seeking Wisdom"
+                  ], player)
+                  and state.sl_has_any_packs([
+                     "Logic and Reason",
+                     "Order and Structure"
+                  ], player)
+                  and state.sl_has_all_ideas([
+                     "Brick",
+                     "Iron Bar",
+                     "Plank",
+                     "Smelter",
+                     "Warehouse"
+                  ], player))
+      
+      # Making Weapons
+      set_rule(world.get_location("Make an Iron Shield", player),
+               lambda state:
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Seeking Wisdom"
+                  ], player)
+                  and state.sl_has_any_packs([
+                     "Logic and Reason",
+                     "Order and Structure"
+                  ], player)
+                  and state.sl_has_all_ideas([
+                     "Brick",
+                     "Iron Bar",
+                     "Iron Shield",
+                     "Plank",
+                     "Smelter",
+                     "Smithy"
+                  ], player))
+      
+      set_rule(world.get_location("Make a Magic Wand", player),
+               lambda state:
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Explorers"
+                  ], player)
+                  and state.sl_has_all_ideas([
+                     "Magic Wand",
+                     "Stick"
+                  ], player))
+      
+      set_rule(world.get_location("Make a Slingshot", player),
+               lambda state:
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                  ], player)
+                  and state.sl_has_all_ideas([
+                     "Slingshot",
+                     "Stick"
+                  ], player))
+      
+      set_rule(world.get_location("Make a Spear", player),
+               lambda state:
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                  ], player)
+                  and state.sl_has_all_ideas([
+                     "Spear",
+                     "Stick"
+                  ], player))
+      
+      set_rule(world.get_location("Make a Sword", player),
+               lambda state:
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Seeking Wisdom"
+                  ], player)
+                  and state.sl_has_any_packs([
+                     "Logic and Reason",
+                     "Order and Structure"
+                  ], player)
+                  and state.sl_has_all_ideas([
+                     "Brick",
+                     "Iron Bar",
+                     "Plank",
+                     "Smelter",
+                     "Sword",
+                     "Stick"
+                  ], player))
+      
+      set_rule(world.get_location("Make Throwing Stars", player),
+               lambda state:
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Seeking Wisdom"
+                  ], player)
+                  and state.sl_has_any_packs([
+                     "Logic and Reason",
+                     "Order and Structure"
+                  ], player)
+                  and state.sl_has_all_ideas([
+                     "Brick",
+                     "Iron Bar",
+                     "Plank",
+                     "Smelter",
+                     "Smithy",
+                     "Throwing Stars"
+                  ], player))
+      
+      set_rule(world.get_location("Make a Wooden Shield", player),
+               lambda state:
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Seeking Wisdom"
+                  ], player)
+                  and state.sl_has_all_ideas([
+                     "Plank",
+                     "Stick",
+                     "Wooden Shield"
+                  ], player))
 
       # Making Food
       set_rule(world.get_location("Cook a Stew", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_12(player)  # Player can reach Moon 12 and has food packs and Campfire
-                  and state.sl_has_idea("Stew", player))       # AND has the 'Stew' idea
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Curious Cuisine",
+                     "Reap & Sow"
+                  ], player)
+                  and state.sl_has_all_ideas([
+                     "Campfire",
+                     "Stew",
+                     "Stick"
+                  ], player))
 
       set_rule(world.get_location("Make a Fruit Salad", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_12(player)     # Player can reach Moon 12 and has food packs
-                  and state.sl_has_idea("Fruit Salad", player))   # AND has the 'Stew' idea
+                  state.sl_has_pack("Humble Beginnings", player)
+                  and state.sl_has_any_packs([
+                     "Curious Cuisine",
+                     "Reap & Sow"
+                  ], player)
+                  and state.sl_has_idea("Fruit Salad", player))
 
       set_rule(world.get_location("Make a Milkshake", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_12(player)  # Player can reach Moon 12 and has food packs
-                  and state.sl_has_idea("Milkshake", player))  # AND has the 'Stew' idea
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Curious Cuisine",
+                  ], player)
+                  and state.sl_has_idea("Milkshake", player))
 
       # Having Resources
       set_rule(world.get_location("Have 10 Bricks", player),
                lambda state:
-                  state.can_reach_location("Have 10 Stone", player)   # Same requirements as 'Have 10 Stone'
-                  and state.sl_has_idea("Brick", player))             # AND has 'Brick' idea
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Seeking Wisdom"
+                  ], player)
+                  and state.sl_has_idea("Brick", player))
 
       set_rule(world.get_location("Have 10 Iron Bars", player),
                lambda state:
-                  state.can_reach_location("Get an Iron Bar", player))  # Same requirements as 'Get an Iron Bar'
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Seeking Wisdom"
+                  ], player)
+                  and state.sl_has_any_packs([
+                     "Logic and Reason",
+                     "Order and Structure"
+                  ], player)
+                  and state.sl_has_all_ideas([
+                     "Brick",
+                     "Hotpot",
+                     "Iron Bar",
+                     "Plank",
+                     "Smelter",
+                     "Warehouse"
+                  ], player))
 
       set_rule(world.get_location("Have 10 Iron Ore", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_6(player)   # Player can reach Moon 6 and has basic packs
+                  state.sl_has_pack("Humble Beginnings", player)
                   and state.sl_has_any_packs([
-                     "Logic and Reason",                       # AND has 'Logic and Reason' pack
-                     "Order and Structure"                     # OR has 'Order and Structure' pack
+                     "Logic and Reason",
+                     "Order and Structure"
                   ], player))
 
       set_rule(world.get_location("Have 10 Flint", player),
                lambda state:
-                  state.sl_can_reach_mainland_moon_2(player)          # Player has 'Humble Beginnings' pack
-                  and state.sl_has_pack("Seeking Wisdom", player))    # AND has the 'Seeking Wisdom' pack
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Seeking Wisdom"
+                  ], player))
 
       set_rule(world.get_location("Have 10 Planks", player),
                lambda state:
-                  state.can_reach_location("Have 10 Wood", player)    # Same requirements as 'Have 10 Wood'
-                  and state.sl_has_idea("Plank", player))             # AND has 'Plank' idea
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Seeking Wisdom"
+                  ], player)
+                  and state.sl_has_idea("Plank", player))
 
       set_rule(world.get_location("Have 10 Sticks", player),
                lambda state:
-                  state.can_reach_location("Make a Stick from Wood", player))  # Player can make Sticks
+                  state.sl_has_pack("Humble Beginnings", player)
+                  and state.sl_has_idea("Stick", player))
 
       # Exploring Locations
       set_rule(world.get_location("Explore a Catacombs", player),
                lambda state:
-                  state.can_reach_location("Find the Catacombs", player))  # Same requirements as 'Find the Catacombs'
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Explorers"
+                  ], player))
 
       set_rule(world.get_location("Explore a Graveyard", player),
                lambda state:
-                  state.can_reach_location("Find a Graveyard", player)) # Same requirements as 'Find a Graveyard'
+                  state.sl_has_pack("Humble Beginnings", player)
+                  and state.sl_has_all_ideas([
+                     "House",
+                     "Offspring"
+                  ], player))
 
       set_rule(world.get_location("Explore an Old Village", player),
                lambda state:
-                  state.can_reach_location("Explore a Forest", player)) # Same requirements as 'Explore a Forest'
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Explorers"
+                  ], player))
 
       set_rule(world.get_location("Explore a Plains", player),
                lambda state:
-                  state.can_reach_location("Explore an Old Village", player)) # Same requirements as 'Explore an Old Village'
+                  state.sl_has_all_packs([
+                     "Humble Beginnings",
+                     "Explorers"
+                  ], player))
       
       #endregion
 
@@ -795,9 +1389,9 @@ def set_rules(world: MultiWorld, player: int):
    #             state.has_all(["Cooking", "Offspring"], player)                # Reqiores ability to Cook and create Offspring
    #             and state.sl_mainland_board_capacity(options, player) >= 7)    # AND at least one warehouse worth of expansion
 
-   set_rule(world.get_location("Kill the Demon", player),
-               lambda state:
-                  state.sl_can_reach_mainland_moon_36(player)) # Player can reach Moon 36 and has all minimum requirements
+   # set_rule(world.get_location("Kill the Demon", player),
+   #             lambda state:
+   #                state.can_reach_location("Bring the Goblet to the Temple", player))
 
    #endregion
 

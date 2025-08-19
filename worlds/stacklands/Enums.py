@@ -24,6 +24,23 @@ class MoonlengthType(IntEnum):
     Normal    = 1
     Long      = 2
 
+class MoonPhase(IntEnum):
+    Moon_0  = 0
+    Moon_2  = 1
+    Moon_6  = 2
+    Moon_12 = 3
+    Moon_18 = 4
+    Moon_24 = 5
+    Moon_30 = 6
+    Moon_36 = 7
+
+class ProgressionPhase(IntEnum):
+    General     = 0
+    PhaseOne    = 1
+    PhaseTwo    = 2
+    PhaseThree  = 3
+    PhaseFour   = 4
+
 class SpendsanityType(IntEnum):
     Off         = 0
     Fixed       = 1
