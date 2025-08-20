@@ -109,15 +109,15 @@ item_table: List[ItemData] = [
     ItemData("On the Shore Booster Pack"           , RegionFlags.Island      , ItemType.Booster     , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Island of Ideas Booster Pack"        , RegionFlags.Island      , ItemType.Booster     , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Grilling and Brewing Booster Pack"   , RegionFlags.Island      , ItemType.Booster     , OptionFlags.NONE        , ItemClassification.progression),
-    ItemData("Island Insights Booster Pack"        , RegionFlags.Island      , ItemType.Booster     , OptionFlags.NONE        , ItemClassification.progression),
-    ItemData("Advanced Archipelago Booster Pack"   , RegionFlags.Island      , ItemType.Booster     , OptionFlags.NONE        , ItemClassification.progression),
+    ItemData("Island Insights Booster Pack"        , RegionFlags.Island      , ItemType.Booster     , OptionFlags.NONE        , ItemClassification.progression_skip_balancing), # <- Try not to release this too early
+    ItemData("Advanced Archipelago Booster Pack"   , RegionFlags.Island      , ItemType.Booster     , OptionFlags.NONE        , ItemClassification.progression_skip_balancing), # <- Try not to release this too early
     ItemData("Enclave Explorers Booster Pack"      , RegionFlags.Island      , ItemType.Booster     , OptionFlags.NONE        , ItemClassification.progression),
     
     # Progression Ideas
     ItemData("Idea: Bow"                           , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Bottle of Rum"                 , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Broken Bottle"                 , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
-    ItemData("Idea: Cathedral"                     , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
+    ItemData("Idea: Cathedral"                     , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression_skip_balancing), # <- Try not to release this too early
     ItemData("Idea: Ceviche"                       , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Charcoal"                      , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Coin"                          , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
@@ -126,18 +126,18 @@ item_table: List[ItemData] = [
     ItemData("Idea: Empty Bottle"                  , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Fabric"                        , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Fish Trap"                     , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
-    ItemData("Idea: Forest Amulet"                 , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
+    ItemData("Idea: Forest Amulet"                 , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression_skip_balancing), # <- Try not to release this too early
     ItemData("Idea: Glass"                         , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
-    ItemData("Idea: Gold Bar"                      , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
+    ItemData("Idea: Gold Bar"                      , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression_skip_balancing), # <- Try not to release this too early
     ItemData("Idea: Greenhouse"                    , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Mess Hall"                     , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Rope"                          , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Rowboat"                       , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Sacred Key"                    , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
-    ItemData("Idea: Sail"                          , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
+    ItemData("Idea: Sail"                          , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression_skip_balancing), # <- Try not to release this too early
     ItemData("Idea: Sandstone"                     , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
     ItemData("Idea: Seafood Stew"                  , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
-    ItemData("Idea: Sloop"                         , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
+    ItemData("Idea: Sloop"                         , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression_skip_balancing), # <- Try not to release this too early
     ItemData("Idea: Sushi"                         , RegionFlags.Island      , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.progression),
 
     # Useful Ideas

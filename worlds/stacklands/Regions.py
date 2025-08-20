@@ -83,21 +83,23 @@ def create_all_regions(world: MultiWorld, player: int):
 
     # Create regions
     menu_region: Region = create_menu_region(world, player)
-    # mainland_region: Region = create_mainland_region(world, player, location_pool)
     setup_mainland(world, player, location_pool)
-    forest_region: Region = create_forest_region(world, player, location_pool)
-    island_region: Region = create_island_region(world, player, location_pool)
+    # mainland_region: Region = create_mainland_region(world, player, location_pool)
+    setup_dark_forest(world, player, location_pool)
+    # forest_region: Region = create_forest_region(world, player, location_pool)
+    setup_island(world, player, location_pool)
+    # island_region: Region = create_island_region(world, player, location_pool)
 
     # Menu exit(s)
     world.get_entrance("Start", player).connect(world.get_region("Mainland", player))
 
     # Mainland exit(s)
-    world.get_entrance("Portal from Mainland to Dark Forest", player).connect(world.get_region("Dark Forest", player))
-    world.get_entrance("Rowboat from Mainland to The Island", player).connect(world.get_region("The Island", player))
+    world.get_entrance("Portal", player).connect(world.get_region("The Dark Forest", player))
+    world.get_entrance("Rowboat", player).connect(world.get_region("The Island", player))
 
     # The Island exit(s)
-    world.get_entrance("Portal from The Island to Dark Forest", player).connect(world.get_region("Dark Forest", player))
-    world.get_entrance("Rowboat from The Island to Mainland", player).connect(world.get_region("Mainland", player))
+    # world.get_entrance("Portal from The Island to Dark Forest", player).connect(world.get_region("The Dark Forest", player))
+    # world.get_entrance("Rowboat from The Island to Mainland", player).connect(world.get_region("Mainland", player))
 
     # Mainland Events
     # mainland_region.add_event("Kill the Demon", "Demon")
@@ -181,8 +183,8 @@ def setup_mainland(world: MultiWorld, player: int, locations: List[LocationData]
     ],
     [ 
         "Forward to Mainland: Progression Phase One",
-        "Portal from Mainland to Dark Forest",
-        "Rowboat from Mainland to The Island"
+        "Portal",
+        "Rowboat"
     ]))
 
     # Mainland: Progression Phase One (Food & Villagers)
@@ -227,6 +229,9 @@ def setup_mainland(world: MultiWorld, player: int, locations: List[LocationData]
     world.get_entrance("Forward to Mainland: Progression Phase Two", player).connect(mainland_phase_two_region)
     world.get_entrance("Forward to Mainland: Progression Phase Three", player).connect(mainland_phase_three_region)
     world.get_entrance("Forward to Mainland: Progression Phase Four", player).connect(mainland_phase_four_region)
+
+    # Add event(s)
+    mainland_region.add_event("Defeat Mainland Boss", "Demon")
 
 # def create_mainland_region(world: MultiWorld, player: int, locations: List[LocationData]) -> Region:
 #     """Create the 'Mainland' region"""
@@ -299,34 +304,39 @@ def setup_dark_forest(world: MultiWorld, player: int, locations: List[LocationDa
     world.get_entrance("Forward to The Dark Forest: Progression Phase One", player).connect(dark_forest_phase_one_region)
     world.get_entrance("Forward to The Dark Forest: Progression Phase Two", player).connect(dark_forest_phase_two_region)
 
-def create_forest_region(world: MultiWorld, player: int, locations: List[LocationData]) -> Region:
-    """Create the 'Dark Forest' region"""
+    # Add event(s)
+    dark_forest_region.add_event("Defeat The Dark Forest Boss", "Wicked Witch")
 
-    logging.info("----- Creating 'The Dark Forest' Region -----")
+# def create_forest_region(world: MultiWorld, player: int, locations: List[LocationData]) -> Region:
+#     """Create the 'Dark Forest' region"""
 
-    # Pop all mainland checks from the locations pool
-    check_pool: List[LocationData] = [
-        locations.pop(index)
-        for index in reversed(range(len(locations)))
-        if locations[index].region_flags & RegionFlags.Forest
-    ]
+#     logging.info("----- Creating 'The Dark Forest' Region -----")
 
-    logging.info(f"Found {len(check_pool)} checks for region")
+#     # Pop all mainland checks from the locations pool
+#     check_pool: List[LocationData] = [
+#         locations.pop(index)
+#         for index in reversed(range(len(locations)))
+#         if locations[index].region_flags & RegionFlags.Forest
+#     ]
 
-    # Compile region data
-    region_data: RegionData = RegionData("Dark Forest", check_pool, [
-        # "Dark Forest to Shared: Mainland & Dark Forest",
-        # "Leave Dark Forest to Mainland",
-        # "Leave Dark Forest to The Island"
-    ])
+#     logging.info(f"Found {len(check_pool)} checks for region")
 
-    # Create region
-    return create_region(world, player, region_data)
+#     # Compile region data
+#     region_data: RegionData = RegionData("Dark Forest", check_pool, [
+#         # "Dark Forest to Shared: Mainland & Dark Forest",
+#         # "Leave Dark Forest to Mainland",
+#         # "Leave Dark Forest to The Island"
+#     ])
 
-def create_island_region(world: MultiWorld, player: int, locations: List[LocationData]) -> Region:
-    """Create the 'The Island' region"""
+#     # Create region
+#     return create_region(world, player, region_data)
 
-    logging.info("----- Creating 'The Island' Region -----")
+def setup_island(world: MultiWorld, player: int, locations: List[LocationData]) -> Region:
+    """Create the 'The Island' regions"""
+
+    name: str = "The Island"
+
+    logging.info(f"----- Setting up '{name}' -----")
 
     # Pop all mainland checks from the locations pool
     check_pool: List[LocationData] = [
@@ -335,54 +345,72 @@ def create_island_region(world: MultiWorld, player: int, locations: List[Locatio
         if locations[index].region_flags & RegionFlags.Island
     ]
 
-    logging.info(f"Found {len(check_pool)} checks for region")
+    logging.info(f"Found {len(check_pool)} checks for {name}")
 
-    # Compile region data
-    region_data: RegionData = RegionData("The Island", check_pool, [
-        "Portal from The Island to Dark Forest",
-        "Rowboat from The Island to Mainland",
-        # "The Island to Shared: Mainland & The Island"
-    ])
+    # The Island Region (for all 'General' checks)
+    island_region: Region = create_region(world, player, RegionData(f"{name}", [
+        check_pool.pop(index) 
+        for index in reversed(range(len(check_pool))) 
+        if check_pool[index].prog_phase == ProgressionPhase.General
+    ],
+    [ 
+        f"Forward to {name}: Progression Phase One"
+    ]))
 
-    # Create region
-    return create_region(world, player, region_data)
+    # The Island: Progression Phase One (Basic Weapons)
+    island_phase_one_region: Region = create_region(world, player, RegionData(f"{name}: Progression Phase One", [
+        check_pool.pop(index)
+        for index in reversed(range(len(check_pool)))
+        if check_pool[index].prog_phase == ProgressionPhase.PhaseOne
+    ],
+    [
+        f"Forward to {name}: Progression Phase Two"
+    ]))
 
-# def create_mainland_forest_shared_region(world: MultiWorld, player: int, locations: List[LocationData]) -> Region:
-#     """Create the 'Shared: Mainland & Forest' region"""
+    # The Island: Progression Phase Two (Advanced Weapons)
+    island_phase_two_region: Region = create_region(world, player, RegionData(f"{name}: Progression Phase Two", [
+        check_pool.pop(index)
+        for index in reversed(range(len(check_pool)))
+        if check_pool[index].prog_phase == ProgressionPhase.PhaseTwo
+    ],[
+        f"Forward to {name}: Progression Phase Three"
+    ]))
 
-#     logging.info("----- Creating 'Shared: Mainland & Forest' Region -----")
+    # The Island: Progression Phase Two (Advanced Weapons)
+    island_phase_three_region: Region = create_region(world, player, RegionData(f"{name}: Progression Phase Three", [
+        check_pool.pop(index)
+        for index in reversed(range(len(check_pool)))
+        if check_pool[index].prog_phase == ProgressionPhase.PhaseThree
+    ],[]))
+
+    # Connect entrances and exits
+    world.get_entrance(f"Forward to {name}: Progression Phase One", player).connect(island_phase_one_region)
+    world.get_entrance(f"Forward to {name}: Progression Phase Two", player).connect(island_phase_two_region)
+    world.get_entrance(f"Forward to {name}: Progression Phase Three", player).connect(island_phase_three_region)
+
+    # Add event(s)
+    island_region.add_event(f"Defeat {name} Boss", "Demon Lord")
+
+# def create_island_region(world: MultiWorld, player: int, locations: List[LocationData]) -> Region:
+#     """Create the 'The Island' region"""
+
+#     logging.info("----- Creating 'The Island' Region -----")
 
 #     # Pop all mainland checks from the locations pool
 #     check_pool: List[LocationData] = [
 #         locations.pop(index)
 #         for index in reversed(range(len(locations)))
-#         if locations[index].region_flags == RegionFlags.Mainland_and_Forest
+#         if locations[index].region_flags & RegionFlags.Island
 #     ]
 
 #     logging.info(f"Found {len(check_pool)} checks for region")
 
 #     # Compile region data
-#     region_data: RegionData = RegionData("Shared: Mainland & Dark Forest", check_pool, [ ])
-
-#     # Create region
-#     return create_region(world, player, region_data)
-
-# def create_mainland_island_shared_region(world: MultiWorld, player: int, locations: List[LocationData]) -> Region:
-#     """Create the 'Shared: Mainland & Island' region"""
-
-#     logging.info("----- Creating 'Shared: Mainland & Island' Region -----")
-
-#     # Pop all mainland checks from the locations pool
-#     check_pool: List[LocationData] = [
-#         locations.pop(index)
-#         for index in reversed(range(len(locations)))
-#         if locations[index].region_flags == RegionFlags.Mainland_and_Island
-#     ]
-
-#     logging.info(f"Found {len(check_pool)} checks for region")
-
-#     # Compile region data
-#     region_data: RegionData = RegionData("Shared: Mainland & The Island", check_pool, [ ])
+#     region_data: RegionData = RegionData("The Island", check_pool, [
+#         "Portal from The Island to Dark Forest",
+#         "Rowboat from The Island to Mainland",
+#         # "The Island to Shared: Mainland & The Island"
+#     ])
 
 #     # Create region
 #     return create_region(world, player, region_data)
