@@ -44,6 +44,7 @@ def create_region(world: MultiWorld, player: int, region_data: RegionData) -> Re
 
     return region
 
+
 def create_all_regions(world: MultiWorld, player: int):
     """Create all regions for this apworld"""
     
@@ -89,6 +90,7 @@ def create_all_regions(world: MultiWorld, player: int):
     world.get_entrance("Portal", player).connect(world.get_region("The Dark Forest", player))
     world.get_entrance("Rowboat", player).connect(world.get_region("The Island", player))
 
+
 def create_menu_region(world: MultiWorld, player: int) -> Region:
     """Create the default 'Menu' regions"""
     
@@ -99,6 +101,7 @@ def create_menu_region(world: MultiWorld, player: int) -> Region:
 
     # Create region
     return create_region(world, player, menu_region)
+
 
 def setup_mainland(world: MultiWorld, player: int, locations: List[LocationData]) -> Region:
     """Create the 'Mainland' regions"""

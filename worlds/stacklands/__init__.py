@@ -1,6 +1,7 @@
 import logging
 from typing import Dict, Any
 from .Options import StacklandsOptions
+from .Enums import RegionFlags
 from .Items import StacklandsItem, create_all_items, item_table, group_table, name_to_id as item_lookup
 from .Locations import name_to_id as location_lookup
 from .Regions import create_all_regions
@@ -32,6 +33,12 @@ class StacklandsWorld(World):
 
     def generate_early(self) -> None:
 
+        # Get resource booster item weights
+        self.multiworld.filler_booster_weights = {
+            "Mainland Resource Booster Pack": 1 if bool(self.options.goal.value & RegionFlags.Mainland) else 0,
+            "Island Resource Booster Pack": 1 if bool(self.options.goal.value & RegionFlags.Island) else 0,
+        }
+
         # Get trap item weights
         self.multiworld.trap_weights = {
             "Feed Villagers Trap": self.options.feed_villagers_trap_weight.value,
@@ -42,6 +49,10 @@ class StacklandsWorld(World):
 
         logging.info("----- Trap Item Weights -----")
         for key, val in self.multiworld.trap_weights.items():
+            logging.info(f"'{key}' weight: {val}")
+
+        logging.info("----- Filler Booster Weights -----")
+        for key, val in self.multiworld.filler_booster_weights.items():
             logging.info(f"'{key}' weight: {val}")
     
     # Create all items
