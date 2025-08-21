@@ -122,10 +122,9 @@ location_table: List[LocationData] = [
     LocationData("Buy the The Armory Pack"                              , RegionFlags.Mainland      , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Buy the Explorers Pack"                               , RegionFlags.Mainland      , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Buy the Order and Structure Pack"                     , RegionFlags.Mainland      , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
-
-    LocationData("Buy 5 Booster Packs"                                  , RegionFlags.Mainland      , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
-    LocationData("Buy 10 Booster Packs"                                 , RegionFlags.Mainland      , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
-    LocationData("Buy 25 Booster Packs"                                 , RegionFlags.Mainland      , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
+    LocationData("Buy 5 Mainland Booster Packs"                         , RegionFlags.Mainland      , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
+    LocationData("Buy 10 Mainland Booster Packs"                        , RegionFlags.Mainland      , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
+    LocationData("Buy 25 Mainland Booster Packs"                        , RegionFlags.Mainland      , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
 
     LocationData("Sell 5 Cards"                                         , RegionFlags.Mainland      , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ), 
     LocationData("Sell 10 Cards"                                        , RegionFlags.Mainland      , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ), 
@@ -145,10 +144,19 @@ location_table: List[LocationData] = [
     LocationData("Build a Stove"                                        , RegionFlags.Mainland      , ProgressionPhase.PhaseThree   , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Build a Warehouse"                                    , RegionFlags.Mainland      , ProgressionPhase.PhaseThree   , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     
+    LocationData("Make a Bone Spear"                                    , RegionFlags.Mainland      , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
+    LocationData("Make a Boomerang"                                     , RegionFlags.Mainland      , ProgressionPhase.PhaseThree   , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
+    LocationData("Make a Club"                                          , RegionFlags.Mainland      , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
+    LocationData("Make Chainmail Armor"                                 , RegionFlags.Mainland      , ProgressionPhase.PhaseThree   , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Make an Iron Shield"                                  , RegionFlags.Mainland      , ProgressionPhase.PhaseThree   , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
+    LocationData("Make a Magic Blade"                                   , RegionFlags.Mainland      , ProgressionPhase.PhaseThree   , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
+    LocationData("Make a Magic Ring"                                    , RegionFlags.Mainland      , ProgressionPhase.PhaseThree   , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
+    LocationData("Make a Magic Staff"                                   , RegionFlags.Mainland      , ProgressionPhase.PhaseThree   , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
+    LocationData("Make a Magic Tome"                                    , RegionFlags.Mainland      , ProgressionPhase.PhaseThree   , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Make a Magic Wand"                                    , RegionFlags.Mainland      , ProgressionPhase.PhaseTwo     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Make a Slingshot"                                     , RegionFlags.Mainland      , ProgressionPhase.PhaseTwo     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Make a Spear"                                         , RegionFlags.Mainland      , ProgressionPhase.PhaseTwo     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
+    LocationData("Make a Spiked Plank"                                  , RegionFlags.Mainland      , ProgressionPhase.PhaseTwo     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Make a Sword"                                         , RegionFlags.Mainland      , ProgressionPhase.PhaseThree   , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Make Throwing Stars"                                  , RegionFlags.Mainland      , ProgressionPhase.PhaseThree   , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Make a Wooden Shield"                                 , RegionFlags.Mainland      , ProgressionPhase.PhaseTwo     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
@@ -184,9 +192,9 @@ location_table: List[LocationData] = [
     LocationData("Get to Wave 4"                                        , RegionFlags.Forest        , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ), 
     LocationData("Get to Wave 8"                                        , RegionFlags.Forest        , ProgressionPhase.PhaseTwo     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ), 
 
-# #endregion
+#endregion
 
-# #region The Island Quests
+#region The Island Quests
 
     # 'The Grand Scheme' Category
     LocationData("Build a Rowboat"                                     , RegionFlags.Island        , ProgressionPhase.General       , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT),
@@ -202,7 +210,7 @@ location_table: List[LocationData] = [
     LocationData("Make Rope"                                           , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
     LocationData("Make a Fish Trap"                                    , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.PRIORITY), # <- Prioritise to aid progression
     LocationData("Make a Sail"                                         , RegionFlags.Island        , ProgressionPhase.PhaseTwo      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
-    LocationData("Build a Sloop"                                       , RegionFlags.Island        , ProgressionPhase.PhaseThree    , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
+    LocationData("Build a Sloop"                                       , RegionFlags.Island        , ProgressionPhase.PhaseTwo      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
 
     # 'Mystery of The Island' Category
     LocationData("Unlock all Island Packs"                             , RegionFlags.Island        , ProgressionPhase.PhaseThree    , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
@@ -221,7 +229,7 @@ location_table: List[LocationData] = [
 
     # 'Island Ambitions' Category
     LocationData("Have 10 Shells"                                      , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
-    LocationData("Get a Villager Drunk"                                , RegionFlags.Island        , ProgressionPhase.PhaseTwo      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
+    LocationData("Get a Villager Drunk"                                , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
     LocationData("Make Sandstone"                                      , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
     LocationData("Build a Mess Hall"                                   , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
     LocationData("Build a Greenhouse"                                  , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
@@ -244,51 +252,80 @@ location_table: List[LocationData] = [
     LocationData("Buy the On the Shore Pack"                           , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
     LocationData("Buy the Island of Ideas Pack"                        , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
     LocationData("Buy the Grilling and Brewing Pack"                   , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
-    LocationData("Buy the Island Insights Pack"                        , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
-    LocationData("Buy the Advanced Archipelago Pack"                   , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
+    LocationData("Buy the Island Insights Pack"                        , RegionFlags.Island        , ProgressionPhase.PhaseTwo      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
+    LocationData("Buy the Advanced Archipelago Pack"                   , RegionFlags.Island        , ProgressionPhase.PhaseTwo      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
     LocationData("Buy the Enclave Explorers Pack"                      , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
+    LocationData("Buy 5 Island Booster Packs"                          , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
+    LocationData("Buy 10 Island Booster Packs"                         , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
+    LocationData("Buy 25 Island Booster Packs"                         , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
 
-# #endregion
-
-# #region Mobsanity Quests
-
-#     LocationData("Kill a Bear"                                         , RegionFlags.Mainland           , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
-#     LocationData("Kill a Dark Elf"                                     , RegionFlags.Forest             , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
-#     LocationData("Kill an Eel"                                         , RegionFlags.Island             , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
-#     LocationData("Kill an Elf"                                         , RegionFlags.Mainland_and_Forest, CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
-#     LocationData("Kill an Elf Archer"                                  , RegionFlags.Mainland           , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
-#     LocationData("Kill an Enchanted Shroom"                            , RegionFlags.Mainland           , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
-#     LocationData("Kill an Ent"                                         , RegionFlags.Forest             , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
-#     LocationData("Kill a Feral Cat"                                    , RegionFlags.Mainland_and_Forest, CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
-#     LocationData("Kill a Frog Man"                                     , RegionFlags.Mainland_and_Island, CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
-#     LocationData("Kill a Ghost"                                        , RegionFlags.Mainland_and_Forest, CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
-#     LocationData("Kill a Giant Rat"                                    , RegionFlags.Mainland           , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
-#     LocationData("Kill a Giant Snail"                                  , RegionFlags.Mainland           , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
-#     LocationData("Kill a Goblin"                                       , RegionFlags.Mainland           , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
-#     LocationData("Kill a Goblin Archer"                                , RegionFlags.Mainland           , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
-#     LocationData("Kill a Goblin Shaman"                                , RegionFlags.Mainland           , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
-#     LocationData("Kill a Merman"                                       , RegionFlags.All                , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
-#     LocationData("Kill a Mimic"                                        , RegionFlags.Mainland_and_Forest, CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
-#     LocationData("Kill a Mosquito"                                     , RegionFlags.All                , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
-#     LocationData("Kill a Momma Crab"                                   , RegionFlags.Island             , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
-#     LocationData("Kill an Ogre"                                        , RegionFlags.Forest             , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
-#     LocationData("Kill an Orc Wizard"                                  , RegionFlags.Forest             , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
-#     LocationData("Kill a Pirate"                                       , RegionFlags.Island_and_Forest  , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
-#     LocationData("Kill a Seagull"                                      , RegionFlags.Island             , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
-#     LocationData("Kill a Shark"                                        , RegionFlags.Island             , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
-#     LocationData("Kill a Slime"                                        , RegionFlags.Mainland           , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
-#     LocationData("Kill a Small Slime"                                  , RegionFlags.Mainland           , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
-#     LocationData("Kill a Snake"                                        , RegionFlags.Island             , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
-#     LocationData("Kill a Tentacle"                                     , RegionFlags.Island             , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
-#     LocationData("Kill a Tiger"                                        , RegionFlags.Island             , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
-#     LocationData("Kill a Wolf"                                         , RegionFlags.Mainland           , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
-
-# #endregion
-
-# #region Packsanity Quests
+    LocationData("Have 30 Shells"                                      , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
+    LocationData("Have 50 Shells"                                      , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
     
+    LocationData("Make a Bottle of Water"                              , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
+    LocationData("Make Grilled Fish"                                   , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
+    LocationData("Make Tamago Sushi"                                   , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
+    
+    LocationData("Have 10 Fabric"                                      , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
+    LocationData("Have 10 Glass"                                       , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
+    LocationData("Have 10 Gold Bars"                                   , RegionFlags.Island        , ProgressionPhase.PhaseTwo      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
+    LocationData("Have 10 Rope"                                        , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
+    LocationData("Have 10 Sails"                                       , RegionFlags.Island        , ProgressionPhase.PhaseTwo      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
+    LocationData("Have 10 Sandstone"                                   , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
+
+    LocationData("Make a Blunderbuss"                                  , RegionFlags.Island        , ProgressionPhase.PhaseTwo      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
+    LocationData("Make a Bone Staff"                                   , RegionFlags.Island        , ProgressionPhase.PhaseTwo      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
+    LocationData("Make a Crossbow"                                     , RegionFlags.Island        , ProgressionPhase.PhaseTwo      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
+    LocationData("Make a Golden Chestplate"                            , RegionFlags.Island        , ProgressionPhase.PhaseTwo      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
+    LocationData("Make a Mountain Amulet"                              , RegionFlags.Island        , ProgressionPhase.PhaseTwo      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
+    LocationData("Make a Wizard Robe"                                  , RegionFlags.Island        , ProgressionPhase.PhaseTwo      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
+
+    LocationData("Build a Distillery"                                  , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
+    LocationData("Build a Frigate"                                     , RegionFlags.Island        , ProgressionPhase.PhaseTwo      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
+    LocationData("Build a Gold Mine"                                   , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
+    LocationData("Build a Lighthouse"                                  , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
+    LocationData("Build a Sand Quarry"                                 , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
+    
+    LocationData("Explore a Cave"                                      , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
+    LocationData("Explore a Jungle"                                    , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
 
 
+#endregion
+
+#region Mobsanity Quests
+
+    LocationData("Kill a Bear"                                         , RegionFlags.Mainland      , ProgressionPhase.PhaseTwo      , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
+    LocationData("Kill an Elf"                                         , RegionFlags.Mainland      , ProgressionPhase.PhaseThree    , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
+    LocationData("Kill an Elf Archer"                                  , RegionFlags.Mainland      , ProgressionPhase.PhaseThree    , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
+    LocationData("Kill an Enchanted Shroom"                            , RegionFlags.Mainland      , ProgressionPhase.PhaseThree    , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
+    LocationData("Kill a Feral Cat"                                    , RegionFlags.Mainland      , ProgressionPhase.PhaseThree    , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
+    LocationData("Kill a Frog Man"                                     , RegionFlags.Mainland      , ProgressionPhase.PhaseTwo      , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
+    LocationData("Kill a Ghost"                                        , RegionFlags.Mainland      , ProgressionPhase.PhaseThree    , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
+    LocationData("Kill a Giant Rat"                                    , RegionFlags.Mainland      , ProgressionPhase.PhaseTwo      , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
+    LocationData("Kill a Giant Snail"                                  , RegionFlags.Mainland      , ProgressionPhase.PhaseThree    , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
+    LocationData("Kill a Goblin"                                       , RegionFlags.Mainland      , ProgressionPhase.PhaseTwo      , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
+    LocationData("Kill a Goblin Archer"                                , RegionFlags.Mainland      , ProgressionPhase.PhaseTwo      , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
+    LocationData("Kill a Goblin Shaman"                                , RegionFlags.Mainland      , ProgressionPhase.PhaseTwo      , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
+    LocationData("Kill a Merman"                                       , RegionFlags.Mainland      , ProgressionPhase.PhaseTwo      , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
+    LocationData("Kill a Mimic"                                        , RegionFlags.Mainland      , ProgressionPhase.PhaseTwo      , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
+    LocationData("Kill a Mosquito"                                     , RegionFlags.All           , ProgressionPhase.General       , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
+    LocationData("Kill a Slime"                                        , RegionFlags.Mainland      , ProgressionPhase.PhaseTwo      , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
+    LocationData("Kill a Small Slime"                                  , RegionFlags.Mainland      , ProgressionPhase.PhaseTwo      , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
+    LocationData("Kill a Wolf"                                         , RegionFlags.Mainland      , ProgressionPhase.PhaseTwo      , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
+
+    LocationData("Kill a Dark Elf"                                     , RegionFlags.Forest        , ProgressionPhase.PhaseTwo      , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
+    LocationData("Kill an Ent"                                         , RegionFlags.Forest        , ProgressionPhase.PhaseTwo      , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
+    LocationData("Kill an Ogre"                                        , RegionFlags.Forest        , ProgressionPhase.PhaseTwo      , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
+    
+    LocationData("Kill an Eel"                                         , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
+    LocationData("Kill a Momma Crab"                                   , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
+    LocationData("Kill an Orc Wizard"                                  , RegionFlags.Island_and_Forest, ProgressionPhase.General    , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
+    LocationData("Kill a Pirate"                                       , RegionFlags.Island_and_Forest, ProgressionPhase.General    , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
+    LocationData("Kill a Seagull"                                      , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
+    LocationData("Kill a Shark"                                        , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
+    LocationData("Kill a Snake"                                        , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
+    LocationData("Kill a Tentacle"                                     , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
+    LocationData("Kill a Tiger"                                        , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.Mobsanity    , LocationProgressType.DEFAULT ),
 #endregion
 
 #region Spendsanity

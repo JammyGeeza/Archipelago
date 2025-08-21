@@ -90,7 +90,7 @@ class BoardExpansionAmount(Range):
     display_name = "Board Expansion Amount"
     range_start = 4
     range_end = 14
-    default = 8
+    default = 7
 
 class BoardExpansionCount(Range):
     """
@@ -99,9 +99,9 @@ class BoardExpansionCount(Range):
     If <Board Expansion Mode> option is 'ideas' then this setting will be ignored.
     """
     display_name = "Board Expansion Count"
-    range_start = 2
-    range_end = 5
-    default = 3
+    range_start = 4
+    range_end = 10
+    default = 6
 
 class MoonLength(Choice):
     """
