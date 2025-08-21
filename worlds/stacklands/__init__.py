@@ -30,8 +30,6 @@ class StacklandsWorld(World):
     
     required_client_version = (0, 1, 9)
 
-    # trap_weights: Dict[str, int] = {}
-
     def generate_early(self) -> None:
 
         # Get trap item weights
@@ -75,7 +73,7 @@ class StacklandsWorld(World):
             "spendsanity_count",
             "start_inventory"
         ))
-        slot_data.update({ "version": "0.1.7" })
+        slot_data.update({ "version": "0.2.0" })
         return slot_data
     
     # Set all access rules

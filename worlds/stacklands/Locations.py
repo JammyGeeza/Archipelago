@@ -166,9 +166,9 @@ location_table: List[LocationData] = [
     LocationData("Make a Milkshake"                                     , RegionFlags.Mainland      , ProgressionPhase.PhaseTwo     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
 
     LocationData("Have 10 Bricks"                                       , RegionFlags.Mainland      , ProgressionPhase.PhaseTwo     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
+    LocationData("Have 10 Flint"                                        , RegionFlags.Mainland      , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Have 10 Iron Bars"                                    , RegionFlags.Mainland      , ProgressionPhase.PhaseThree   , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Have 10 Iron Ore"                                     , RegionFlags.Mainland      , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
-    LocationData("Have 10 Flint"                                        , RegionFlags.Mainland      , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Have 10 Planks"                                       , RegionFlags.Mainland      , ProgressionPhase.PhaseTwo     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Have 10 Sticks"                                       , RegionFlags.Mainland      , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
 
@@ -285,6 +285,7 @@ location_table: List[LocationData] = [
     LocationData("Build a Gold Mine"                                   , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
     LocationData("Build a Lighthouse"                                  , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
     LocationData("Build a Sand Quarry"                                 , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
+    LocationData("Build a Shell Chest"                                 , RegionFlags.Island        , ProgressionPhase.PhaseTwo      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
     
     LocationData("Explore a Cave"                                      , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
     LocationData("Explore a Jungle"                                    , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),

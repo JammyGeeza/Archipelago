@@ -1095,8 +1095,7 @@ def set_rules(world: MultiWorld, player: int):
       # Shells
       set_rule(world.get_location("Have 30 Shells", player),
                lambda state:  # Phase One
-                  state.can_reach_location("Have 10 Shells", player)
-                  and state.sl_has_idea("Shell Chest", player))
+                  state.sl_can_reach_all_quests(["Build a Shell Chest", "Have 10 Shells"], player))
       
       set_rule(world.get_location("Have 50 Shells", player),
                lambda state:  # Phase One
@@ -1211,6 +1210,10 @@ def set_rules(world: MultiWorld, player: int):
       set_rule(world.get_location("Build a Sand Quarry", player),
                lambda state:  # Phase One
                   state.sl_has_idea("Sand Quarry", player))
+      
+      set_rule(world.get_location("Build a Shell Chest", player),
+               lambda state:  # Phase One
+                  state.sl_has_idea("Shell Chest", player))
       
       # Exploring
       set_rule(world.get_location("Explore a Cave", player),
