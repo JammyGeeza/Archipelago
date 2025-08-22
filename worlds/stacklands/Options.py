@@ -23,9 +23,9 @@ class Goal(Choice):
 class Equipmentsanity(Toggle):
     """
     Add checks for crafting one of each Equipment card. (E.g. Club, Sword, Blunderbuss etc.)
-    Will only add checks for Equipment that are reachable on the boards defined in the <Goal> option.
+    Will only add checks for Equipment that are reachable on the boards selected in the <Goal> option.
     
-    This will add 16 checks to Mainland and 6 checks to The Island.
+    This will add 16 checks to Mainland and 6 checks to The Island (if selected).
     """
     display_name = "Equipmentsanity"
     default = 0
@@ -33,9 +33,9 @@ class Equipmentsanity(Toggle):
 class Foodsanity(Toggle):
     """
     Add checks for cooking one of each Food card. (E.g. Stew, Fruit Salad, Tamago Sushi etc.)
-    Will only add checks for Foods that are reachable on the boards defined in the <Goal> option.
+    Will only add checks for Foods that are reachable on the boards selected in the <Goal> option.
 
-    This will add 3 checks to Mainland and 3 checks to The Island.
+    This will add 3 checks to Mainland and 3 checks to The Island (if selected).
     """
     display_name = "Foodsanity"
     default = 0
@@ -43,9 +43,9 @@ class Foodsanity(Toggle):
 class Locationsanity(Toggle):
     """
     Add checks for exploring one of each Location card. (E.g. Mountain, Old Village, Jungle etc.)
-    Will only add checks for Locations that are reachable on the boards defined in the <Goal> option.
+    Will only add checks for Locations that are reachable on the boards selected in the <Goal> option.
 
-    This will add 4 checks to Mainland and 2 checks to The Island.
+    This will add 4 checks to Mainland and 2 checks to The Island (if selected).
     """
     display_name = "Locationsanity"
     default = 0
@@ -53,9 +53,9 @@ class Locationsanity(Toggle):
 class Mobsanity(Toggle):
     """
     Add checks for killing one of each Mob card. (E.g. Elf, Giant Snail, Tiger etc.)
-    Will only add checks for Mobs that are reachable on the boards defined in the <Goal> option.
+    Will only add checks for Mobs that are reachable on the boards selected in the <Goal> option.
 
-    This will add 18 checks to Mainland, 3 checks to The Dark Forest and 9 checks to The Island.
+    This will add 18 checks to Mainland, 3 checks to The Dark Forest and 9 checks to The Island (if selected).
     """
     display_name = "Mobsanity"
     default = 0
@@ -63,9 +63,9 @@ class Mobsanity(Toggle):
 class Structuresanity(Toggle):
     """
     Add checks for building one of each reachable Structure card. (E.g Garden, Market, Distillery etc.)
-    Will only add checks for Structures that are reachable on the boards defined in the <Goal> setting.
+    Will only add checks for Structures that are reachable on the boards selected in the <Goal> option.
 
-    This will add 10 checks to Mainland and 6 checks to The Island.
+    This will add 10 checks to Mainland and 6 checks to The Island (if selected).
     """
     display_name = "Structuresanity"
     default = 0
