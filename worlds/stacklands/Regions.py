@@ -51,11 +51,14 @@ def create_all_regions(world: MultiWorld, player: int):
     # Get YAML Options
     options: StacklandsOptions = world.worlds[player].options
 
-    # expansion_items_selected: bool = options.board_expansion_mode.value is ExpansionType.Items
-    mobsanity_selected: bool = options.mobsanity.value
-    packsanity_selected: bool = options.packsanity.value
-    pausing_selected: bool = options.pausing.value
-    spendsanity_selected: bool = bool(options.spendsanity.value != SpendsanityType.Off)
+    equipmentsanity: bool = options.equipmentsanity.value
+    foodsanity: bool = options.foodsanity.value
+    locationsanity: bool = options.locationsanity.value
+    mobsanity: bool = options.mobsanity.value
+    # packsanity_selected: bool = options.packsanity.value
+    pausing: bool = options.pausing.value
+    # spendsanity_selected: bool = bool(options.spendsanity.value != SpendsanityType.Off)
+    structuresanity: bool = options.structuresanity
 
     # Get all applicable locations for this run, given the YAML options
     location_pool: List[LocationData] = [
@@ -63,22 +66,25 @@ def create_all_regions(world: MultiWorld, player: int):
         if loc.region_flags & options.goal.value                                        # Location contains a flag for selected boards
         and (                                                                           # AND
             loc.option_flags is OptionFlags.NONE                                        # Is not affected by YAML options
-            # or (expansion_items_selected and loc.option_flags & OptionFlags.Expansion)
-            or (mobsanity_selected and loc.option_flags is OptionFlags.Mobsanity)        # OR Mobsanity is selected and has Mobsanity flag
-            or (packsanity_selected and loc.option_flags is OptionFlags.Packsanity)      # OR Packsanity is selected and has packsanity flag
-            or (pausing_selected and loc.option_flags is OptionFlags.Pausing)            # OR Pausing is selected and has pausing flag
+            or (equipmentsanity and loc.option_flags is OptionFlags.Equipmentsanity)    # OR Equipmentsanity is selected and has Equipmentsanity flag
+            or (foodsanity and loc.option_flags is OptionFlags.Foodsanity)              # OR Foodsanity is selected and has Foodsanity flag
+            or (locationsanity and loc.option_flags is OptionFlags.Locationsanity)      # OR Locationsanity is selected and has Locationsanity flag
+            or (mobsanity and loc.option_flags is OptionFlags.Mobsanity)                # OR Mobsanity is selected and has Mobsanity flag
+            # or (packsanity_selected and loc.option_flags is OptionFlags.Packsanity)      # OR Packsanity is selected and has packsanity flag
+            or (pausing and loc.option_flags is OptionFlags.Pausing)                    # OR Pausing is selected and has pausing flag
             # or (spendsanity_selected and loc.option_flags is OptionFlags.Spendsanity)    # OR Spendsanity is selected and has Spendsanity flag
+            or (structuresanity and loc.option_flags is OptionFlags.Structuresanity)    # OR Structuresanity is selected and has Structuresanity flag
         )
     ]
     
-    # If Spendsanity is enabled, add configured amount of spendsanity checks to the pool
-    if spendsanity_selected:
-        for location in [ loc for loc in location_table if loc.region_flags & options.goal.value and loc.option_flags is OptionFlags.Spendsanity ]:
-            for x in range(1, options.spendsanity_count.value + 1):
-                location_pool.append(LocationData(location.name.format(count=x), location.region_flags, location.check_type, location.option_flags, location.progress_type))
+    # # If Spendsanity is enabled, add configured amount of spendsanity checks to the pool
+    # if spendsanity_selected:
+    #     for location in [ loc for loc in location_table if loc.region_flags & options.goal.value and loc.option_flags is OptionFlags.Spendsanity ]:
+    #         for x in range(1, options.spendsanity_count.value + 1):
+    #             location_pool.append(LocationData(location.name.format(count=x), location.region_flags, location.check_type, location.option_flags, location.progress_type))
 
     # Create regions
-    menu_region: Region = create_menu_region(world, player)
+    setup_menu(world, player)
     setup_mainland(world, player, location_pool)
     setup_dark_forest(world, player, location_pool)
     setup_island(world, player, location_pool)
@@ -91,7 +97,7 @@ def create_all_regions(world: MultiWorld, player: int):
     world.get_entrance("Rowboat", player).connect(world.get_region("The Island", player))
 
 
-def create_menu_region(world: MultiWorld, player: int) -> Region:
+def setup_menu(world: MultiWorld, player: int) -> Region:
     """Create the default 'Menu' regions"""
     
     logging.info("----- Creating 'Menu' Region -----")
@@ -100,7 +106,7 @@ def create_menu_region(world: MultiWorld, player: int) -> Region:
     menu_region: RegionData = RegionData("Menu", [], ["Start"])
 
     # Create region
-    return create_region(world, player, menu_region)
+    create_region(world, player, menu_region)
 
 
 def setup_mainland(world: MultiWorld, player: int, locations: List[LocationData]) -> Region:

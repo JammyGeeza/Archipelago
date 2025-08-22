@@ -73,16 +73,20 @@ class StacklandsWorld(World):
         slot_data.update(self.options.as_dict(
             "board_expansion_mode",
             "board_expansion_amount",
+            "equipmentsanity",
+            "foodsanity",
             "goal",
+            "locationsanity",
             "mobsanity",
             "moon_length",
-            "packsanity",
+            # "packsanity",
             "pausing",
             "sell_cards_trap_amount",
-            "spendsanity",
-            "spendsanity_cost",
-            "spendsanity_count",
-            "start_inventory"
+            # "spendsanity",
+            # "spendsanity_cost",
+            # "spendsanity_count",
+            "start_inventory",
+            "structuresanity"
         ))
         slot_data.update({ "version": "0.2.0" })
         return slot_data

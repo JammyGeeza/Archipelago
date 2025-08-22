@@ -20,53 +20,95 @@ class Goal(Choice):
     option_all = RegionFlags.All
     default = option_all
 
+class Equipmentsanity(Toggle):
+    """
+    Add checks for crafting one of each Equipment card. (E.g. Club, Sword, Blunderbuss etc.)
+    Will only add checks for Equipment that are reachable on the boards defined in the <Goal> option.
+    
+    This will add 16 checks to Mainland and 6 checks to The Island.
+    """
+    display_name = "Equipmentsanity"
+    default = 0
+
+class Foodsanity(Toggle):
+    """
+    Add checks for cooking one of each Food card. (E.g. Stew, Fruit Salad, Tamago Sushi etc.)
+    Will only add checks for Foods that are reachable on the boards defined in the <Goal> option.
+
+    This will add 3 checks to Mainland and 3 checks to The Island.
+    """
+    display_name = "Foodsanity"
+    default = 0
+
+class Locationsanity(Toggle):
+    """
+    Add checks for exploring one of each Location card. (E.g. Mountain, Old Village, Jungle etc.)
+    Will only add checks for Locations that are reachable on the boards defined in the <Goal> option.
+
+    This will add 4 checks to Mainland and 2 checks to The Island.
+    """
+    display_name = "Locationsanity"
+    default = 0
+
 class Mobsanity(Toggle):
     """
-    Add checks for killing one of each enemy type to the check pool.
-    Includes checks for all enemies reachable in all boards selected in <Boards>.
+    Add checks for killing one of each Mob card. (E.g. Elf, Giant Snail, Tiger etc.)
+    Will only add checks for Mobs that are reachable on the boards defined in the <Goal> option.
+
+    This will add 18 checks to Mainland, 3 checks to The Dark Forest and 9 checks to The Island.
     """
     display_name = "Mobsanity"
     default = 0
 
-class Packsanity(Toggle):
+class Structuresanity(Toggle):
     """
-    Add checks for buying each booster pack to the check pool.
-    Includes checks for packs available in all boards selected in <Boards>.
+    Add checks for building one of each reachable Structure card. (E.g Garden, Market, Distillery etc.)
+    Will only add checks for Structures that are reachable on the boards defined in the <Goal> setting.
+
+    This will add 10 checks to Mainland and 6 checks to The Island.
     """
-    display_name = "Packsanity"
+    display_name = "Structuresanity"
     default = 0
 
-class Spendsanity(Choice):
-    """
-    Adds a new 'Spendsanity' booster box to the pack line - 'buying' boosters from this box are checks.
+# class Packsanity(Toggle):
+#     """
+#     Add checks for buying each booster pack to the check pool.
+#     Includes checks for packs available in all boards selected in <Boards>.
+#     """
+#     display_name = "Packsanity"
+#     default = 0
 
-    off         -> Disabled
-    fixed       -> The cost starts at <Spendsanity Cost> and remains at this cost after each purchase.
-    incremental -> The cost starts at <Spendsanity Cost> and increases by the same amount after each purchase.
-    """
-    display_name = "Spendsanity"
-    option_off = 0
-    option_fixed = 1
-    option_incremental = 2
-    default = option_off
+# class Spendsanity(Choice):
+#     """
+#     Adds a new 'Spendsanity' booster box to the pack line - 'buying' boosters from this box are checks.
 
-class SpendsanityCost(Range):
-    """
-    The cost for a 'Spendsanity' purchase - the cost throughout will be affected by your choice in <Spendsanity>.
-    """
-    display_name = "Spendsanity Cost"
-    range_start = 1
-    range_end = 25
-    default = 10
+#     off         -> Disabled
+#     fixed       -> The cost starts at <Spendsanity Cost> and remains at this cost after each purchase.
+#     incremental -> The cost starts at <Spendsanity Cost> and increases by the same amount after each purchase.
+#     """
+#     display_name = "Spendsanity"
+#     option_off = 0
+#     option_fixed = 1
+#     option_incremental = 2
+#     default = option_off
 
-class SpendsanityCount(Range):
-    """
-    How many Spendsanity checks to add to the check pool.
-    """
-    display_name = "Spendsanity Count"
-    range_start = 1
-    range_end = 25
-    default = 10
+# class SpendsanityCost(Range):
+#     """
+#     The cost for a 'Spendsanity' purchase - the cost throughout will be affected by your choice in <Spendsanity>.
+#     """
+#     display_name = "Spendsanity Cost"
+#     range_start = 1
+#     range_end = 25
+#     default = 10
+
+# class SpendsanityCount(Range):
+#     """
+#     How many Spendsanity checks to add to the check pool.
+#     """
+#     display_name = "Spendsanity Count"
+#     range_start = 1
+#     range_end = 25
+#     default = 10
 
 class BoardExpansionMode(Choice):
     """
@@ -209,16 +251,25 @@ class StrangePortalTrapWeight(Range):
 @dataclass
 class StacklandsOptions(PerGameCommonOptions):
     goal: Goal
+
+    # Sanities
+    equipmentsanity: Equipmentsanity
+    foodsanity: Foodsanity
+    locationsanity: Locationsanity
     mobsanity: Mobsanity
-    packsanity: Packsanity
-    spendsanity: Spendsanity
-    spendsanity_cost: SpendsanityCost
-    spendsanity_count: SpendsanityCount
+    structuresanity: Structuresanity
+    # packsanity: Packsanity
+    # spendsanity: Spendsanity
+    # spendsanity_cost: SpendsanityCost
+    # spendsanity_count: SpendsanityCount
+    
     board_expansion_mode: BoardExpansionMode
     board_expansion_amount: BoardExpansionAmount
     board_expansion_count: BoardExpansionCount
     moon_length: MoonLength
     pausing: Pausing
+
+    # Traps
     trap_fill: TrapFill
     feed_villagers_trap_weight: FeedVillagersTrapWeight
     mob_trap_weight: MobTrapWeight

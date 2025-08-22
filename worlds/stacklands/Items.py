@@ -97,11 +97,8 @@ item_table: List[ItemData] = [
     # Useful
     ItemData("Idea: Axe"                            , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
     ItemData("Idea: Chicken"                        , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
-    # ItemData("Idea: Crossroads"                     , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
-    # ItemData("Idea: Filter Crossroads"              , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
     ItemData("Idea: Hammer"                         , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
     ItemData("Idea: Pickaxe"                        , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
-    # ItemData("Idea: Road Builder"                   , RegionFlags.Mainland   , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.useful     ),
 
 #endregion
 
@@ -188,7 +185,7 @@ item_table: List[ItemData] = [
     ItemData("Idea: University"                     , RegionFlags.Mainland                , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.filler     ),
     ItemData("Idea: Wishing Well"                   , RegionFlags.Island                  , ItemType.Idea        , OptionFlags.NONE        , ItemClassification.filler     ),
 
-    # Filler Resources
+    # Filler Resource Boosters
     ItemData("Mainland Resource Booster Pack"       , RegionFlags.Mainland                , ItemType.Booster     , OptionFlags.NONE        , ItemClassification.filler     ),
     ItemData("Island Resource Booster Pack"         , RegionFlags.Island                  , ItemType.Booster     , OptionFlags.NONE        , ItemClassification.filler     ),
 
