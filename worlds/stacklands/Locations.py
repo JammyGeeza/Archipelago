@@ -109,9 +109,7 @@ location_table: List[LocationData] = [
     # 'Longevity' Category
     LocationData("Reach Moon 6"                                         , RegionFlags.Mainland      , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ), 
     LocationData("Reach Moon 12"                                        , RegionFlags.Mainland      , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
-    LocationData("Reach Moon 18"                                        , RegionFlags.Mainland      , ProgressionPhase.PhaseTwo     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.EXCLUDED), # <- Is a waiting game
     LocationData("Reach Moon 24"                                        , RegionFlags.Mainland      , ProgressionPhase.PhaseTwo     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.EXCLUDED), # <- Is a waiting game
-    LocationData("Reach Moon 30"                                        , RegionFlags.Mainland      , ProgressionPhase.PhaseThree   , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.EXCLUDED), # <- Is a waiting game
     LocationData("Reach Moon 36"                                        , RegionFlags.Mainland      , ProgressionPhase.PhaseThree   , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.EXCLUDED), # <- Is a waiting game
 
     # Additional Archipelago quests
@@ -130,6 +128,9 @@ location_table: List[LocationData] = [
     LocationData("Sell 10 Cards"                                        , RegionFlags.Mainland      , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ), 
     LocationData("Sell 25 Cards"                                        , RegionFlags.Mainland      , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ), 
 
+    LocationData("Reach Moon 18"                                        , RegionFlags.Mainland      , ProgressionPhase.PhaseTwo     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.EXCLUDED), # <- Is a waiting game
+    LocationData("Reach Moon 30"                                        , RegionFlags.Mainland      , ProgressionPhase.PhaseThree   , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.EXCLUDED), # <- Is a waiting game
+    
     LocationData("Get 5 Villagers"                                      , RegionFlags.Mainland      , ProgressionPhase.PhaseTwo     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Get 7 Villagers"                                      , RegionFlags.Mainland      , ProgressionPhase.PhaseThree   , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
 
