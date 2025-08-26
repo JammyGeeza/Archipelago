@@ -31,6 +31,7 @@ class StacklandsWeb(WebWorld):
             Options.Foodsanity,
             Options.Locationsanity,
             Options.Mobsanity,
+            Options.MobsanityBalancing,
             Options.Structuresanity
         ]),
         OptionGroup("Traps", [
