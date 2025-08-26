@@ -657,13 +657,13 @@ def set_rules(world: MultiWorld, player: int):
       set_rule(world.get_location("Build a Stable Portal", player),
                lambda state: True)  # Phase Two
 
-      set_rule(world.get_location("Get to Wave 6", player),
+      set_rule(world.get_location("Get to wave 6", player),
                lambda state:  # Phase Two
                   state.sl_has_idea("Sword", player))
 
       set_rule(world.get_location("Fight the Wicked Witch", player),
                lambda state:  # Phase Three
-                  state.can_reach_location("Get to Wave 8", player)
+                  state.can_reach_location("Get to wave 8", player)
                   and state.sl_has_idea("Throwing Stars", player))
    
       set_rule(world.get_location("Defeat The Dark Forest Boss", player),
@@ -674,13 +674,13 @@ def set_rules(world: MultiWorld, player: int):
       
       #region Additional Archipelago Quests
 
-      set_rule(world.get_location("Get to Wave 2", player),
+      set_rule(world.get_location("Get to wave 2", player),
                lambda state:  # Phase One
                   state.sl_has_all_ideas(["Slingshot", "Spear"], player)
                   or state.sl_has_all_ideas(["Magic Wand", "Slingshot"], player)
                   or state.sl_has_all_ideas(["Magic Wand", "Spear"], player))
       
-      set_rule(world.get_location("Get to Wave 4", player),
+      set_rule(world.get_location("Get to wave 4", player),
                lambda state:  # Phase One
                   state.sl_has_all_ideas([
                      "Magic Wand",
@@ -690,9 +690,9 @@ def set_rules(world: MultiWorld, player: int):
                      "Wooden Shield",
                   ], player))
       
-      set_rule(world.get_location("Get to Wave 8", player),
+      set_rule(world.get_location("Get to wave 8", player),
                lambda state:  # Phase Two
-                  state.can_reach_location("Get to Wave 6", player)
+                  state.can_reach_location("Get to wave 6", player)
                   and state.sl_has_all_ideas(["Iron Shield", "Smithy"], player))
       
       #endregion
@@ -989,6 +989,10 @@ def set_rules(world: MultiWorld, player: int):
                   state.can_reach_location("Have 30 Shells", player))
       
       # Having Resources
+      set_rule(world.get_location("Have 10 Cotton", player),
+               lambda state:  # Phase One
+                  state.sl_island_board_capacity(options, player) >= 4)
+      
       set_rule(world.get_location("Have 10 Fabric", player),
                lambda state:  # Phase One
                   state.sl_has_pack("Island of Ideas", player)
@@ -1308,7 +1312,7 @@ def set_rules(world: MultiWorld, player: int):
                      state.can_reach_location("Kill an Elf", player)
                      or (
                         forest_enabled
-                        and state.can_reach_location("Get to Wave 4", player)
+                        and state.can_reach_location("Get to wave 4", player)
                      )
                      or (
                         island_enabled
@@ -1337,15 +1341,15 @@ def set_rules(world: MultiWorld, player: int):
 
          set_rule(world.get_location("Kill a Dark Elf", player),
                   lambda state:  # Phase Two (Wave 6 but appears Wave 4 so giving leway)
-                     state.can_reach_location("Get to Wave 6", player))
+                     state.can_reach_location("Get to wave 6", player))
 
          set_rule(world.get_location("Kill an Ent", player),
                   lambda state:  # Phase Two (Wave 6 but appears Wave 4 so giving leway)
-                        state.can_reach_location("Get to Wave 6", player))
+                        state.can_reach_location("Get to wave 6", player))
 
          set_rule(world.get_location("Kill an Ogre", player),
                   lambda state:  # Phase Two (Wave 6 but appears Wave 4 so giving leway)
-                        state.can_reach_location("Get to Wave 6", player))
+                        state.can_reach_location("Get to wave 6", player))
          
          #endregion
 
@@ -1396,7 +1400,7 @@ def set_rules(world: MultiWorld, player: int):
                lambda state:  # Phase Zero (so can be ambiguous between Forest / Island)
                   (
                      forest_enabled
-                     and state.can_reach_location("Get to Wave 6", player)
+                     and state.can_reach_location("Get to wave 6", player)
                   )
                   or (
                      island_enabled

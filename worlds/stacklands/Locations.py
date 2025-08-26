@@ -148,13 +148,13 @@ location_table: List[LocationData] = [
     LocationData("Find the Dark Forest"                                 , RegionFlags.Forest        , ProgressionPhase.General      , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Complete the first wave"                              , RegionFlags.Forest        , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ), 
     LocationData("Build a Stable Portal"                                , RegionFlags.Forest        , ProgressionPhase.PhaseTwo     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.PRIORITY), # <- Prioritise to aid progression 
-    LocationData("Get to Wave 6"                                        , RegionFlags.Forest        , ProgressionPhase.PhaseTwo     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ), 
+    LocationData("Get to wave 6"                                        , RegionFlags.Forest        , ProgressionPhase.PhaseTwo     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ), 
     LocationData("Fight the Wicked Witch"                               , RegionFlags.Forest        , ProgressionPhase.PhaseTwo     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.EXCLUDED), # <- Goal check, don't include progression items
 
     # Additional Archipelago quests
-    LocationData("Get to Wave 2"                                        , RegionFlags.Forest        , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ), 
-    LocationData("Get to Wave 4"                                        , RegionFlags.Forest        , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ), 
-    LocationData("Get to Wave 8"                                        , RegionFlags.Forest        , ProgressionPhase.PhaseTwo     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ), 
+    LocationData("Get to wave 2"                                        , RegionFlags.Forest        , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ), 
+    LocationData("Get to wave 4"                                        , RegionFlags.Forest        , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ), 
+    LocationData("Get to wave 8"                                        , RegionFlags.Forest        , ProgressionPhase.PhaseTwo     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ), 
 
 #endregion
 
@@ -226,6 +226,7 @@ location_table: List[LocationData] = [
     LocationData("Have 30 Shells"                                      , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
     LocationData("Have 50 Shells"                                      , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
     
+    LocationData("Have 10 Cotton"                                      , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
     LocationData("Have 10 Fabric"                                      , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
     LocationData("Have 10 Glass"                                       , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
     LocationData("Have 10 Gold Bars"                                   , RegionFlags.Island        , ProgressionPhase.PhaseTwo      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),

@@ -60,6 +60,18 @@ class Mobsanity(Toggle):
     display_name = "Mobsanity"
     default = 0
 
+class MobsanityBalancing(Toggle):
+    """
+    Greatly increases chance for all Packs / Strange Portals / Dark Forest Waves to spawn reachable Mobs that you have not yet killed.
+    
+    It is recommended to set this to 'true' to prevent relying on RNG to reach all Mobsanity checks.
+    If set to 'false' you will be at the mercy of RNG to spawn all Mob types to reach all Mobsanity checks.
+
+    This setting is ignored if the <Mobsanity> option is 'false'.
+    """
+    display_name = "Mobsanity Balancing"
+    default = 1
+
 class Structuresanity(Toggle):
     """
     Add checks for building one of each reachable Structure card. (E.g Garden, Market, Distillery etc.)
@@ -257,12 +269,13 @@ class StacklandsOptions(PerGameCommonOptions):
     foodsanity: Foodsanity
     locationsanity: Locationsanity
     mobsanity: Mobsanity
+    mobsanity_balancing: MobsanityBalancing
     structuresanity: Structuresanity
-    # packsanity: Packsanity
     # spendsanity: Spendsanity
     # spendsanity_cost: SpendsanityCost
     # spendsanity_count: SpendsanityCount
-    
+
+    # Run settings
     board_expansion_mode: BoardExpansionMode
     board_expansion_amount: BoardExpansionAmount
     board_expansion_count: BoardExpansionCount
