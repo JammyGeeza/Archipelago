@@ -233,8 +233,6 @@ for item in item_table:
 
 def create_progression_items(world: MultiWorld, player: int, items: List[ItemData]):
 
-    logging.info("----- Creating Progression / Useful Items -----")
-
     # Get items from starting inventory
     excluded_items: List[Item] = world.precollected_items[player]
 
@@ -260,14 +258,10 @@ def create_progression_items(world: MultiWorld, player: int, items: List[ItemDat
         if item not in excluded_items:
             item_pool.append(item)
 
-    logging.info(f"Added {len(item_pool)} items to the item pool!")
-
     # Add items to world item pool
     world.itempool += item_pool
 
 def create_expansion_items(world: MultiWorld, player: int, items: List[ItemData], options: StacklandsOptions):
-
-    logging.info("----- Creating Board Expansion Items -----")
 
     # Pop all relevant board expansion items
     expansion_items: List[ItemData] = [
@@ -295,22 +289,16 @@ def create_expansion_items(world: MultiWorld, player: int, items: List[ItemData]
                 expansion_item: StacklandsItem = StacklandsItem(name_to_id[item_data.name], item_data, player)
                 item_pool.append(expansion_item)
 
-    logging.info(f"Added {len(item_pool)} items to the item pool!")
-
     # Add items to world item pool
     world.itempool += item_pool
 
 def create_trap_items(world: MultiWorld, player: int, options: StacklandsOptions):
-
-    logging.info("----- Creating Trap Items -----")
 
     # Prepare trap pool
     item_pool: List[Item] = []
 
     # Check if there are available item slots
     if (unfilled_count:= len(world.get_unfilled_locations(player)) - len([item for item in world.itempool if item.player == player])) > 0:
-
-        logging.info(f"Trap item fill is {options.trap_fill.value}%...")
 
         # Calculate how many trap items to create
         trap_count: int = round(unfilled_count * options.trap_fill.value / 100)
@@ -336,14 +324,10 @@ def create_trap_items(world: MultiWorld, player: int, options: StacklandsOptions
     else:
         logging.info("No unfilled item slots available for trap items - skipping...")
 
-    logging.info(f"Added {len(item_pool)} items to the item pool!")
-
     # Add trap items to item pool
     world.itempool += item_pool
 
 def create_filler_items(world: MultiWorld, player: int, items: List[ItemData], options: StacklandsOptions):
-
-    logging.info("----- Creating Filler Items -----")
 
     # Prepare item pool
     item_pool: List[Item] = []
@@ -361,8 +345,6 @@ def create_filler_items(world: MultiWorld, player: int, items: List[ItemData], o
         # Get amount of filler ideas to add (amount of slots remaining or amount of filler ideas, whichever is lower)
         idea_fill_count: int = min(len(filler_ideas), unfilled_count)
 
-        logging.info(f"Adding {idea_fill_count} filler ideas to the filler item pool...")
-
         # Randomly select filler ideas (no duplicates) - select all if there's space or fill remaining unfilled count, whichever is lower
         for idea_data in world.random.sample(filler_ideas, k=idea_fill_count):
             idea: StacklandsItem = StacklandsItem(name_to_id[idea_data.name], idea_data, player)
@@ -373,8 +355,6 @@ def create_filler_items(world: MultiWorld, player: int, items: List[ItemData], o
 
         # Fill remaining spots with filler booster
         if unfilled_count > 0:
-
-            logging.info(f"Adding {unfilled_count} filler booster packs to the filler item pool...")
 
             # Select filler boosters using weights
             booster_selection = world.random.choices(
@@ -391,8 +371,6 @@ def create_filler_items(world: MultiWorld, player: int, items: List[ItemData], o
 
     else:
         logging.info(f"No free slots for filler items - skipping...")
-
-    logging.info(f"Added {len(item_pool)} filler items to the item pool!")
 
     # Add filler items to the item pool
     world.itempool += item_pool
@@ -434,6 +412,3 @@ def create_all_items(world: MultiWorld, player: int) -> None:
 
     # Add filler items
     create_filler_items(world, player, item_pool, options)
-
-    logging.info(f"Locations added to pool: {len(world.get_unfilled_locations(player))}")
-    logging.info(f"Items added to pool: {len(world.itempool)}")

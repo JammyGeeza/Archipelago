@@ -19,7 +19,6 @@ class StacklandsWeb(WebWorld):
             Options.Goal
         ]),
         OptionGroup("Run Settings", [
-            Options.DeathLink,
             Options.BoardExpansionMode,
             Options.BoardExpansionAmount,
             Options.BoardExpansionCount,
@@ -77,14 +76,6 @@ class StacklandsWorld(World):
             "Sell Cards Trap": self.options.sell_cards_trap_weight.value,
             "Strange Portal Trap": self.options.strange_portal_trap_weight.value,
         }
-
-        logging.info("----- Trap Item Weights -----")
-        for key, val in self.multiworld.trap_weights.items():
-            logging.info(f"'{key}' weight: {val}")
-
-        logging.info("----- Filler Booster Weights -----")
-        for key, val in self.multiworld.filler_booster_weights.items():
-            logging.info(f"'{key}' weight: {val}")
     
     # Create all items
     def create_items(self):

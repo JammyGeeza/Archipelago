@@ -13,8 +13,6 @@ class RegionData(NamedTuple):
 def create_region(world: MultiWorld, player: int, region_data: RegionData) -> Region:
     """Create a region in the multiworld from the region data"""
 
-    logging.info(f"Creating region: '{region_data.name}'...")
-
     # Create region object
     region: Region = Region(region_data.name, player, world)
 
@@ -100,8 +98,6 @@ def create_all_regions(world: MultiWorld, player: int):
 def setup_menu(world: MultiWorld, player: int) -> Region:
     """Create the default 'Menu' regions"""
     
-    logging.info("----- Creating 'Menu' Region -----")
-
     # Compile region data
     menu_region: RegionData = RegionData("Menu", [], ["Start"])
 
@@ -114,8 +110,6 @@ def setup_mainland(world: MultiWorld, player: int, locations: List[LocationData]
 
     name: str = "Mainland"
 
-    logging.info(f"----- Setting up '{name}' -----")
-
     # Pop all mainland checks from the locations pool
     check_pool: List[LocationData] = [
         locations.pop(index)
@@ -124,8 +118,6 @@ def setup_mainland(world: MultiWorld, player: int, locations: List[LocationData]
     ]
 
     total_checks: int = len(check_pool)
-
-    logging.info(f"Found {total_checks} checks for {name}")
 
     # Mainland Region (for all 'General' checks)
     mainland_region: Region = create_region(world, player, RegionData(f"{name}", [
@@ -176,9 +168,6 @@ def setup_mainland(world: MultiWorld, player: int, locations: List[LocationData]
         if check_pool[index].prog_phase == ProgressionPhase.PhaseFour
     ],[]))
 
-
-    logging.info(f"Added {total_checks - len(check_pool)}/{total_checks} checks to the check pool")
-
     # Connect entrances and exits
     world.get_entrance(f"Forward to {name}: Progression Phase One", player).connect(mainland_phase_one_region)
     world.get_entrance(f"Forward to {name}: Progression Phase Two", player).connect(mainland_phase_two_region)
@@ -194,8 +183,6 @@ def setup_dark_forest(world: MultiWorld, player: int, locations: List[LocationDa
 
     name: str = "The Dark Forest"
 
-    logging.info(f"----- Setting up '{name}' -----")
-
     # Pop all mainland checks from the locations pool
     check_pool: List[LocationData] = [
         locations.pop(index)
@@ -204,8 +191,6 @@ def setup_dark_forest(world: MultiWorld, player: int, locations: List[LocationDa
     ]
 
     total_checks: int = len(check_pool)
-
-    logging.info(f"Found {total_checks} checks for {name}")
 
     # Dark Forest Region (for all 'General' checks)
     dark_forest_region: Region = create_region(world, player, RegionData(f"{name}", [
@@ -234,8 +219,6 @@ def setup_dark_forest(world: MultiWorld, player: int, locations: List[LocationDa
         if check_pool[index].prog_phase == ProgressionPhase.PhaseTwo
     ],[]))
 
-    logging.info(f"Added {total_checks - len(check_pool)}/{total_checks} checks to the check pool")
-
     # Connect entrances and exits
     world.get_entrance(f"Forward to {name}: Progression Phase One", player).connect(dark_forest_phase_one_region)
     world.get_entrance(f"Forward to {name}: Progression Phase Two", player).connect(dark_forest_phase_two_region)
@@ -249,8 +232,6 @@ def setup_island(world: MultiWorld, player: int, locations: List[LocationData]) 
 
     name: str = "The Island"
 
-    logging.info(f"----- Setting up '{name}' -----")
-
     # Pop all mainland checks from the locations pool
     check_pool: List[LocationData] = [
         locations.pop(index)
@@ -259,8 +240,6 @@ def setup_island(world: MultiWorld, player: int, locations: List[LocationData]) 
     ]
 
     total_checks: int = len(check_pool)
-
-    logging.info(f"Found {total_checks} checks for {name}")
 
     # The Island Region (for all 'General' checks)
     island_region: Region = create_region(world, player, RegionData(f"{name}", [
@@ -297,8 +276,6 @@ def setup_island(world: MultiWorld, player: int, locations: List[LocationData]) 
         for index in reversed(range(len(check_pool)))
         if check_pool[index].prog_phase == ProgressionPhase.PhaseThree
     ],[]))
-
-    logging.info(f"Added {total_checks - len(check_pool)}/{total_checks} checks to the check pool")
 
     # Connect entrances and exits
     world.get_entrance(f"Forward to {name}: Progression Phase One", player).connect(island_phase_one_region)
