@@ -8,10 +8,40 @@ from .Regions import create_all_regions
 from .Rules import set_rules
 from worlds.AutoWorld import World, WebWorld
 from BaseClasses import Item
+from Options import OptionGroup
+from . import Options
 
 class StacklandsWeb(WebWorld):
     theme = "jungle"
-    # TODO: Set this up
+
+    option_groups = [
+        OptionGroup("Goal", [
+            Options.Goal
+        ]),
+        OptionGroup("Run Settings", [
+            Options.DeathLink,
+            Options.BoardExpansionMode,
+            Options.BoardExpansionAmount,
+            Options.BoardExpansionCount,
+            Options.MoonLength,
+            Options.Pausing
+        ]),
+        OptionGroup("Sanities", [
+            Options.Equipmentsanity,
+            Options.Foodsanity,
+            Options.Locationsanity,
+            Options.Mobsanity,
+            Options.Structuresanity
+        ]),
+        OptionGroup("Traps", [
+            Options.TrapFill,
+            Options.FeedVillagersTrapWeight,
+            Options.MobTrapWeight,
+            Options.SellCardsTrapWeight,
+            Options.SellCardsTrapAmount,
+            Options.StrangePortalTrapWeight
+        ])
+    ]
 
 class StacklandsWorld(World):
     """

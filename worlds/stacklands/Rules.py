@@ -19,7 +19,7 @@ class StacklandsLogic(LogicMixin):
                )
             )
             else 0
-            if options.board_expansion_mode.value is ExpansionType.Ideas else
+            if options.board_expansion_mode.value is ExpansionType.Vanilla else
             self.count("Mainland Board Expansion", player) * options.board_expansion_amount
       )
 
@@ -40,7 +40,7 @@ class StacklandsLogic(LogicMixin):
                )
             ) 
             else 0
-            if options.board_expansion_mode.value is ExpansionType.Ideas else
+            if options.board_expansion_mode.value is ExpansionType.Vanilla else
             self.count("Island Board Expansion", player) * options.board_expansion_amount # How much additional card limit increase has been received?
       )
 

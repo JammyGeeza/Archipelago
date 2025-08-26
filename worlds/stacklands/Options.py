@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from .Enums import ExpansionType, GoalFlags, MoonlengthType, RegionFlags
-from Options import Choice, DeathLink, PerGameCommonOptions, Range, Toggle
+from Options import Choice, DeathLink, OptionGroup, PerGameCommonOptions, Range, Toggle
 
 class Goal(Choice):
     """
@@ -126,20 +126,20 @@ class BoardExpansionMode(Choice):
     """
     Select how board expansion works in the run.
 
-    ideas  -> Adds 'Idea: Shed' and 'Idea: Warehouse' to the item pool - build them yourself to expand the board as you like.
-    items  -> Adds 'Board Expansion' items to the item pool and removes 'Idea: Warehouse'. Building 'Shed' will no longer expand your board, but can be used to complete the 'Build a Shed' check.
+    Vanilla -> Build the Shed / Warehouse / Lighthouse from the Ideas as per vanilla to expand the board as you like.
+    Items   -> Adds 'Board Expansion' items to the item pool and disables all Sheds / Warehouses / Lighthouses when built.
     """
     display_name = "Board Expansion Mode"
-    option_ideas = ExpansionType.Ideas
-    option_items = ExpansionType.Items
-    default = ExpansionType.Items
+    option_vanilla = ExpansionType.Vanilla
+    option_items = ExpansionType.Expansion_Items
+    default = ExpansionType.Expansion_Items
 
 class BoardExpansionAmount(Range):
     """
     How many additional cards a board expansion item will give.
-    NOTE: Board size is increased as if building a Shed or Warehouse in vanilla and max board size remains capped at the largest vanilla size (without Lighthouses).
+    NOTE: Physical board size will still be capped at the largest vanilla size (without Lighthouses), but card limit is uncapped.
     
-    If <Board Expansion Mode> option is 'ideas' then this setting will be ignored.
+    If <Board Expansion Mode> option is 'Vanilla' then this setting will be ignored.
     """
     display_name = "Board Expansion Amount"
     range_start = 4
@@ -148,9 +148,9 @@ class BoardExpansionAmount(Range):
 
 class BoardExpansionCount(Range):
     """
-    How many 'Board Expansion' items are added to the item pool.
+    How many 'Board Expansion' items are added to the item pool for each compatible board (Mainland & Island).
     
-    If <Board Expansion Mode> option is 'ideas' then this setting will be ignored.
+    If <Board Expansion Mode> option is 'Vanilla' then this setting will be ignored.
     """
     display_name = "Board Expansion Count"
     range_start = 4
@@ -159,7 +159,7 @@ class BoardExpansionCount(Range):
 
 class MoonLength(Choice):
     """
-    Set the length of each moon for the run - this will disable and override the 'Moon Length' option in the 'Start New Run' menu.
+    Set the length of each moon for the run - this disables and overrides the 'Moon Length' option in the 'Start New Run' menu.
     """
     display_name = "Moon Length"
     option_short = MoonlengthType.Short

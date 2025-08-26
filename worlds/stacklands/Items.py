@@ -403,7 +403,7 @@ def create_all_items(world: MultiWorld, player: int) -> None:
     # Get YAML options
     options = world.worlds[player].options
 
-    expansion_items_selected: bool = options.board_expansion_mode.value is ExpansionType.Items
+    expansion_items_selected: bool = options.board_expansion_mode.value is ExpansionType.Expansion_Items
     traps_selected: bool = options.trap_fill.value > 0 and any(weight > 0 for weight in [
         options.feed_villagers_trap_weight.value,
         options.mob_trap_weight.value,

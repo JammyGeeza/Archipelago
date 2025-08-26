@@ -8,8 +8,8 @@ class CheckType(IntEnum):
     Event     = 2
 
 class ExpansionType(IntEnum):
-    Ideas     = 0
-    Items     = 1
+    Vanilla         = 0
+    Expansion_Items = 1
 
 class ItemType(IntEnum):
     Booster   = 0
