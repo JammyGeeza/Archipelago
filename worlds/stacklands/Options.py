@@ -2,23 +2,37 @@ from dataclasses import dataclass
 from .Enums import ExpansionType, GoalFlags, MoonlengthType, RegionFlags
 from Options import Choice, DeathLink, OptionGroup, PerGameCommonOptions, Range, Toggle
 
-class Goal(Choice):
+class Boards(Choice):
     """
-    Select which boards to complete (kill the boss) for the goal of your run.
+    Select which boards will be included in the run.
 
-    Mainland Only       -> Kill the Demon
-    Mainland and Forest -> Kill the Demon and the Wicked Witch
-    Mainland and Island -> Kill the Demon and the Demon Lord
-    All                 -> Kill the Demon, Wicked Witch and Demon Lord
+    Mainland Only           -> Include Mainland
+    Mainland and Forest     -> Include Mainland and The Dark Forest
+    Mainland and Island     -> Include Mainland and The Island
+    All                     -> Include Mainland, The Dark Forest and The Island
 
-    For each board selected, all quests for that board will be added as Location Checks.
+    All quests for each selected board will be added as location checks.
     """
-    display_name = "Goal"
+    display_name = "Boards"
     option_mainland_only = RegionFlags.Mainland
     option_mainland_and_forest = RegionFlags.Mainland | RegionFlags.Forest
     option_mainland_and_island = RegionFlags.Mainland | RegionFlags.Island
     option_all = RegionFlags.All
     default = option_all
+
+class Goal(Choice):
+    """
+    Select the goal for the run.
+
+    All Bosses  -> Kill each boss from each board selected in the <Boards> option.
+    Random Boss -> Kill one randomly selected boss from the boards selected in the <Boards> option.
+    
+    More goals to be added in future...
+    """
+    display_name = "Goal"
+    option_all_bosses = GoalFlags.AllBosses
+    option_random_boss = GoalFlags.RandomBoss
+    default = option_all_bosses
 
 class Equipmentsanity(Toggle):
     """
@@ -262,6 +276,7 @@ class StrangePortalTrapWeight(Range):
 
 @dataclass
 class StacklandsOptions(PerGameCommonOptions):
+    # Goal
     goal: Goal
 
     # Sanities
@@ -276,6 +291,7 @@ class StacklandsOptions(PerGameCommonOptions):
     # spendsanity_count: SpendsanityCount
 
     # Run settings
+    boards: Boards
     board_expansion_mode: BoardExpansionMode
     board_expansion_amount: BoardExpansionAmount
     board_expansion_count: BoardExpansionCount

@@ -391,7 +391,7 @@ def create_all_items(world: MultiWorld, player: int) -> None:
 
     item_pool: List[ItemData] = [
         item for item in item_table
-        if item.region_flags & options.goal.value                                                                                   # Item contains a flag for selected boards
+        if item.region_flags & options.boards.value                                                                                 # Item contains a flag for selected boards
         and (                                                                                                                       # AND
             item.option_flags is OptionFlags.NONE                                                                                   # Is not affected by YAML options
             or (traps_selected and item.option_flags is OptionFlags.Traps)                                                          # OR traps are selected and item contains Trap flag

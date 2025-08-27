@@ -79,8 +79,8 @@ def set_rules(world: MultiWorld, player: int):
    options = world.worlds[player].options
 
    # Calculate board options
-   forest_enabled: bool = bool(options.goal.value & RegionFlags.Forest)
-   island_enabled: bool = bool(options.goal.value & RegionFlags.Island)
+   forest_enabled: bool = bool(options.boards.value & RegionFlags.Forest)
+   island_enabled: bool = bool(options.boards.value & RegionFlags.Island)
 
    # Calculate sanity options
    equipmentsanity_enabled: bool = options.equipmentsanity.value
@@ -1530,10 +1530,13 @@ def set_rules(world: MultiWorld, player: int):
 
    # Set goal condition
    set_rule(world.get_location("Goal Complete", player),
-            lambda state:
-               state.has("Demon", player)
-               and (not forest_enabled or state.has("Wicked Witch", player))
-               and (not island_enabled or state.has("Demon Lord", player)))
+            lambda state: (
+               bool(options.goal.value & (GoalFlags.AllBosses | GoalFlags.RandomBoss))
+               and (not bool(world.goal_boards & RegionFlags.Mainland) or state.has("Demon", player))
+               and (not bool(world.goal_boards & RegionFlags.Forest) or state.has("Wicked Witch", player))
+               and (not bool(world.goal_boards & RegionFlags.Island) or state.has("Demon Lord", player))
+            ))
+               
 
    # Set completion condition
    world.completion_condition[player] = lambda state: state.has("Victory", player)

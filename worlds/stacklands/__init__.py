@@ -1,7 +1,7 @@
 import logging
 from typing import Dict, Any
 from .Options import StacklandsOptions
-from .Enums import RegionFlags
+from .Enums import GoalFlags, RegionFlags
 from .Items import StacklandsItem, create_all_items, item_table, group_table, name_to_id as item_lookup
 from .Locations import name_to_id as location_lookup
 from .Regions import create_all_regions
@@ -63,10 +63,25 @@ class StacklandsWorld(World):
 
     def generate_early(self) -> None:
 
+        # Set goal bosses as all bosses if selected, otherwise select random boss
+        self.multiworld.goal_boards = (
+            self.options.boards.value 
+            if self.options.goal.value is GoalFlags.AllBosses else 
+            self.multiworld.random.choices(
+                [ RegionFlags.Mainland, RegionFlags.Forest, RegionFlags.Island ],
+                weights={
+                    RegionFlags.Mainland: 1 if bool(self.options.boards.value & RegionFlags.Mainland) else 0,
+                    RegionFlags.Forest: 1 if bool(self.options.boards.value & RegionFlags.Forest) else 0,
+                    RegionFlags.Island: 1 if bool(self.options.boards.value & RegionFlags.Island) else 0
+                },
+                k=1
+            ).pop()
+        )
+
         # Get resource booster item weights
         self.multiworld.filler_booster_weights = {
-            "Mainland Resource Booster Pack": 1 if bool(self.options.goal.value & RegionFlags.Mainland) else 0,
-            "Island Resource Booster Pack": 1 if bool(self.options.goal.value & RegionFlags.Island) else 0,
+            "Mainland Resource Booster Pack": 1 if bool(self.options.boards.value & RegionFlags.Mainland) else 0,
+            "Island Resource Booster Pack": 1 if bool(self.options.boards.value & RegionFlags.Island) else 0,
         }
 
         # Get trap item weights
@@ -93,6 +108,7 @@ class StacklandsWorld(World):
     def fill_slot_data(self) -> Dict[str, Any]:
         slot_data = {}
         slot_data.update(self.options.as_dict(
+            "boards",
             "board_expansion_mode",
             "board_expansion_amount",
             "equipmentsanity",
@@ -110,7 +126,13 @@ class StacklandsWorld(World):
             "start_inventory",
             "structuresanity"
         ))
-        slot_data.update({ "version": "0.2.0" })
+
+        # Add additional data to slot data
+        slot_data.update({
+            "goal_boards": self.multiworld.goal_boards,
+            "version": "0.2.1" 
+        })
+
         return slot_data
     
     # Set all access rules

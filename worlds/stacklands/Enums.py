@@ -57,10 +57,10 @@ class CheckFlags(IntFlag):
     Mobsanity = 1 << 2
 
 class GoalFlags(IntFlag):
-    NONE      = 0
-    Bosses    = 1 << 0
-    Quests    = 1 << 1
-    All       = Bosses | Quests
+    NONE        = 0
+    AllBosses   = 1 << 0
+    RandomBoss  = 1 << 1
+    AllQuests   = 1 << 2
 
 class ItemFlags(IntFlag):
     NA        = 0
