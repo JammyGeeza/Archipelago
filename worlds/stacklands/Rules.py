@@ -1042,7 +1042,8 @@ def set_rules(world: MultiWorld, player: int):
       
       set_rule(world.get_location("Make a Boomerang", player),
                lambda state:  # Phase Three
-                  state.sl_has_all_ideas(["Boomerang", "Smithy"], player))
+                  state.can_reach_location("Get an Iron Bar", player)
+                  and state.sl_has_all_ideas(["Boomerang", "Smithy"], player))
       
       set_rule(world.get_location("Make a Club", player),
                lambda state:  # Phase One
@@ -1065,15 +1066,18 @@ def set_rules(world: MultiWorld, player: int):
       
       set_rule(world.get_location("Make a Magic Ring", player),
                lambda state:  # Phase Three
-                  state.sl_has_all_ideas(["Magic Ring", "Smithy"], player))
+                  state.can_reach_location("Get an Iron Bar", player)
+                  and state.sl_has_all_ideas(["Magic Ring", "Smithy"], player))
       
       set_rule(world.get_location("Make a Magic Staff", player),
                lambda state:  # Phase Three
-                  state.sl_has_all_ideas(["Magic Staff", "Smithy"], player))
+                  state.can_reach_location("Get an Iron Bar", player)
+                  and state.sl_has_all_ideas(["Magic Staff", "Smithy"], player))
       
-      set_rule(world.get_location("Make a Magic Staff", player),
+      set_rule(world.get_location("Make a Magic Tome", player),
                lambda state:  # Phase Three
-                  state.sl_has_all_ideas(["Magic Tome", "Smithy"], player))
+                  state.can_reach_location("Get an Iron Bar", player)
+                  and state.sl_has_all_ideas(["Magic Tome", "Smithy"], player))
       
       set_rule(world.get_location("Make a Magic Wand", player),
                lambda state:  # Phase Two
@@ -1137,7 +1141,8 @@ def set_rules(world: MultiWorld, player: int):
          
          set_rule(world.get_location("Make a Wizard Robe", player),
                   lambda state:  # Phase Two
-                     state.sl_has_all_ideas(["Smithy", "Wizard Robe"], player))
+                     state.can_reach_location("Make Rope", player)
+                     and state.sl_has_all_ideas(["Fabric", "Smithy", "Wizard Robe"], player))
 
          #endregion
    
