@@ -498,7 +498,7 @@ def set_rules(world: MultiWorld, player: int):
 
    set_rule(world.get_location("Have 3 Houses", player),
             lambda state:  # Phase One
-               state.sl_has_pack("Seeking Wisdom", player))
+               state.can_reach_location("Build a House", player))
 
    set_rule(world.get_location("Build a Shed", player),
             lambda state:  # Phase One
