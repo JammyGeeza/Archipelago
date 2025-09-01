@@ -137,6 +137,7 @@ def set_rules(world: MultiWorld, player: int):
    set_rule(world.get_entrance("Forward to Mainland: Progression Phase Four", player),
             lambda state:
                state.sl_has_any_packs(["Logic and Reason", "Order and Structure"], player)
+               and state.sl_has_pack("The Armory", player)
                and state.sl_has_all_ideas([
                   "Iron Bar",
                   "Iron Shield",
@@ -226,6 +227,7 @@ def set_rules(world: MultiWorld, player: int):
                   and state.sl_has_all_ideas([
                      "Forest Amulet",
                      "Gold Bar",
+                     "Golden Chestplate",
                      "Iron Shield",
                      "Sail",
                      "Smithy",
@@ -1427,9 +1429,37 @@ def set_rules(world: MultiWorld, player: int):
 
       #region Mainland Structures
 
+      set_rule(world.get_location("Build an Animal Pen", player),
+               lambda state:  # Phase One
+                  state.can_reach_location("Make a Stick from Wood", player)
+                  and state.sl_has_idea("Animal Pen", player))
+      
+      set_rule(world.get_location("Build a Breeding Pen", player),
+               lambda state:  # Phase Two
+                  state.can_reach_location("Build an Animal Pen", player)
+                  and state.sl_has_any_packs(["Explorers", "The Armory"], player)
+                  and state.sl_has_idea("Breeding Pen", player))
+      
+      set_rule(world.get_location("Build a Butchery", player),
+               lambda state:  # Phase Three
+                  state.can_reach_location("Get an Iron Bar", player)
+                  and state.sl_has_idea("Butchery", player))
+
       set_rule(world.get_location("Build a Coin Chest", player),
                lambda state:  # Phase One
                   state.sl_has_idea("Coin Chest", player))
+      
+      set_rule(world.get_location("Build a Crane", player),
+               lambda state:  # Phase Three
+                  state.can_reach_location("Get an Iron Bar", player)
+                  and state.sl_has_any_packs(["Explorers", "The Armory"], player)
+                  and state.sl_has_idea("Crane", player))
+      
+      set_rule(world.get_location("Build a Dustbin", player),
+               lambda state:  # Phase Three
+                  state.can_reach_location("Get an Iron Bar", player)
+                  and state.sl_has_any_packs(["Explorers", "The Armory"], player)
+                  and state.sl_has_idea("Dustbin", player))
 
       set_rule(world.get_location("Build a Garden", player),
                lambda state:  # Phase One
@@ -1478,6 +1508,11 @@ def set_rules(world: MultiWorld, player: int):
 
          #region The Island Structures
 
+         set_rule(world.get_location("Build an Aquarium", player),
+               lambda state:  # Phase One
+                  state.can_reach_location("Make Glass", player)
+                  and state.sl_has_idea("Aquarium", player))
+
          set_rule(world.get_location("Build a Distillery", player),
                lambda state:  # Phase One
                   state.can_reach_location("Get an Iron Bar", player)
@@ -1500,6 +1535,17 @@ def set_rules(world: MultiWorld, player: int):
                      and state.sl_has_pack("Island of Ideas", player)
                      and state.sl_has_all_ideas(["Campfire", "Lighthouse", "Sandstone", "Stick"], player))
          
+         set_rule(world.get_location("Build a Magic Glue", player),
+               lambda state:  # Phase One
+                  state.sl_has_any_packs(["Explorers", "The Armory"], player)
+                  and state.sl_has_all_ideas(["Charcoal", "Magic Glue"], player))
+         
+         set_rule(world.get_location("Build a Resource Magnet", player),
+               lambda state:  # Phase One
+                  state.can_reach_location("Make a Gold Bar", player)
+                  and state.sl_has_any_packs(["Explorers", "The Armory"], player)
+                  and state.sl_has_idea("Resource Magnet", player))
+
          set_rule(world.get_location("Build a Sand Quarry", player),
                   lambda state:  # Phase One
                      state.sl_has_idea("Sand Quarry", player))

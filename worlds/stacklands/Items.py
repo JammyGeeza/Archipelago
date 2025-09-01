@@ -86,25 +86,34 @@ item_table: List[ItemData] = [
     ItemData("Idea: Pickaxe"                        , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.useful),
 
     # Equipmentsanity Ideas (that are not required for progression elsewhere)
-    ItemData("Idea: Bone Spear"                     , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Equipmentsanity   , ItemClassification.progression),
-    ItemData("Idea: Boomerang"                      , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Equipmentsanity   , ItemClassification.progression),
-    ItemData("Idea: Chainmail Armor"                , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Equipmentsanity   , ItemClassification.progression),
-    ItemData("Idea: Magic Blade"                    , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Equipmentsanity   , ItemClassification.progression),
-    ItemData("Idea: Magic Ring"                     , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Equipmentsanity   , ItemClassification.progression),
-    ItemData("Idea: Magic Staff"                    , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Equipmentsanity   , ItemClassification.progression),
-    ItemData("Idea: Magic Tome"                     , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Equipmentsanity   , ItemClassification.progression),
+    # Item classifications are changed to 'progression' if equipmentsanity is enabled
+    ItemData("Idea: Bone Spear"                     , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Equipmentsanity   , ItemClassification.filler),
+    ItemData("Idea: Boomerang"                      , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Equipmentsanity   , ItemClassification.filler),
+    ItemData("Idea: Chainmail Armor"                , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Equipmentsanity   , ItemClassification.useful),
+    ItemData("Idea: Magic Blade"                    , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Equipmentsanity   , ItemClassification.filler),
+    ItemData("Idea: Magic Ring"                     , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Equipmentsanity   , ItemClassification.filler),
+    ItemData("Idea: Magic Staff"                    , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Equipmentsanity   , ItemClassification.filler),
+    ItemData("Idea: Magic Tome"                     , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Equipmentsanity   , ItemClassification.filler),
 
     # Foodsanity Ideas (that are not required for progression elsewhere)
-    ItemData("Idea: Fruit Salad"                    , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Foodsanity        , ItemClassification.progression),
-    ItemData("Idea: Milkshake"                      , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Foodsanity        , ItemClassification.progression),
-    ItemData("Idea: Stew"                           , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Foodsanity        , ItemClassification.progression),
+    # Item classifications are changed to 'progression' if foodsanity is enabled
+    ItemData("Idea: Fruit Salad"                    , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Foodsanity        , ItemClassification.filler),
+    ItemData("Idea: Milkshake"                      , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Foodsanity        , ItemClassification.filler),
+    ItemData("Idea: Stew"                           , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Foodsanity        , ItemClassification.filler),
 
     # Structuresanity Ideas (that are not required for progression elsewhere)
-    ItemData("Idea: Garden"                         , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Structuresanity   , ItemClassification.progression),
-    ItemData("Idea: Hotpot"                         , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Structuresanity   , ItemClassification.progression),
-    ItemData("Idea: Iron Mine"                      , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Structuresanity   , ItemClassification.progression),
-    ItemData("Idea: Resource Chest"                 , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Structuresanity   , ItemClassification.progression),
-    ItemData("Idea: Sawmill"                        , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Structuresanity   , ItemClassification.progression),
+    # Item classifications are changed to 'progression' if structuresanity is enabled
+    ItemData("Idea: Animal Pen"                     , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Structuresanity   , ItemClassification.useful),
+    ItemData("Idea: Breeding Pen"                   , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Structuresanity   , ItemClassification.filler),
+    ItemData("Idea: Butchery"                       , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Structuresanity   , ItemClassification.filler),
+    ItemData("Idea: Crane"                          , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Structuresanity   , ItemClassification.filler),
+    ItemData("Idea: Dustbin"                        , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Structuresanity   , ItemClassification.filler), 
+    ItemData("Idea: Garden"                         , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Structuresanity   , ItemClassification.filler),
+    ItemData("Idea: Hotpot"                         , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Structuresanity   , ItemClassification.filler),
+    ItemData("Idea: Iron Mine"                      , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Structuresanity   , ItemClassification.useful),
+    ItemData("Idea: Resource Chest"                 , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Structuresanity   , ItemClassification.useful),
+    ItemData("Idea: Sawmill"                        , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Structuresanity   , ItemClassification.useful),
+    ItemData("Idea: University"                     , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Structuresanity   , ItemClassification.filler),
 
 #endregion
 
@@ -117,61 +126,68 @@ item_table: List[ItemData] = [
 #region The Island Items
 
     # Booster Packs
-    ItemData("On the Shore Booster Pack"           , RegionFlags.Island                 , ItemType.Booster      , OptionFlags.NONE              , ItemClassification.progression),
-    ItemData("Island of Ideas Booster Pack"        , RegionFlags.Island                 , ItemType.Booster      , OptionFlags.NONE              , ItemClassification.progression),
-    ItemData("Grilling and Brewing Booster Pack"   , RegionFlags.Island                 , ItemType.Booster      , OptionFlags.NONE              , ItemClassification.progression),
-    ItemData("Island Insights Booster Pack"        , RegionFlags.Island                 , ItemType.Booster      , OptionFlags.NONE              , ItemClassification.progression_skip_balancing), # <- Try not to release this too early
-    ItemData("Advanced Archipelago Booster Pack"   , RegionFlags.Island                 , ItemType.Booster      , OptionFlags.NONE              , ItemClassification.progression_skip_balancing), # <- Try not to release this too early
-    ItemData("Enclave Explorers Booster Pack"      , RegionFlags.Island                 , ItemType.Booster      , OptionFlags.NONE              , ItemClassification.progression),
+    ItemData("On the Shore Booster Pack"            , RegionFlags.Island                , ItemType.Booster      , OptionFlags.NONE              , ItemClassification.progression),
+    ItemData("Island of Ideas Booster Pack"         , RegionFlags.Island                , ItemType.Booster      , OptionFlags.NONE              , ItemClassification.progression),
+    ItemData("Grilling and Brewing Booster Pack"    , RegionFlags.Island                , ItemType.Booster      , OptionFlags.NONE              , ItemClassification.progression),
+    ItemData("Island Insights Booster Pack"         , RegionFlags.Island                , ItemType.Booster      , OptionFlags.NONE              , ItemClassification.progression_skip_balancing), # <- Try not to release this too early
+    ItemData("Advanced Archipelago Booster Pack"    , RegionFlags.Island                , ItemType.Booster      , OptionFlags.NONE              , ItemClassification.progression_skip_balancing), # <- Try not to release this too early
+    ItemData("Enclave Explorers Booster Pack"       , RegionFlags.Island                , ItemType.Booster      , OptionFlags.NONE              , ItemClassification.progression),
     
     # Progression Ideas
-    ItemData("Idea: Bow"                           , RegionFlags.Island                 , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
-    ItemData("Idea: Bottle of Rum"                 , RegionFlags.Island                 , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
-    ItemData("Idea: Bottle of Water"               , RegionFlags.Island                 , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
-    ItemData("Idea: Broken Bottle"                 , RegionFlags.Island                 , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
-    ItemData("Idea: Cathedral"                     , RegionFlags.Island                 , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression_skip_balancing), # <- Try not to release this too early
-    ItemData("Idea: Ceviche"                       , RegionFlags.Island                 , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
-    ItemData("Idea: Charcoal"                      , RegionFlags.Island                 , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
-    ItemData("Idea: Coin"                          , RegionFlags.Island                 , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
-    ItemData("Idea: Composter"                     , RegionFlags.Island                 , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
-    ItemData("Idea: Distillery"                    , RegionFlags.Island                 , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
-    ItemData("Idea: Empty Bottle"                  , RegionFlags.Island                 , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
-    ItemData("Idea: Fabric"                        , RegionFlags.Island                 , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
-    ItemData("Idea: Fish Trap"                     , RegionFlags.Island                 , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
-    ItemData("Idea: Forest Amulet"                 , RegionFlags.Island                 , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression_skip_balancing), # <- Try not to release this too early
-    ItemData("Idea: Glass"                         , RegionFlags.Island                 , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
-    ItemData("Idea: Gold Bar"                      , RegionFlags.Island                 , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression_skip_balancing), # <- Try not to release this too early
-    ItemData("Idea: Golden Chestplate"             , RegionFlags.Island                 , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression_skip_balancing), # <- Try not to release this too early
-    ItemData("Idea: Greenhouse"                    , RegionFlags.Island                 , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
-    ItemData("Idea: Lighthouse"                    , RegionFlags.Island                 , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
-    ItemData("Idea: Mess Hall"                     , RegionFlags.Island                 , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
-    ItemData("Idea: Rope"                          , RegionFlags.Island                 , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
-    ItemData("Idea: Rowboat"                       , RegionFlags.Island                 , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
-    ItemData("Idea: Sacred Key"                    , RegionFlags.Island                 , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
-    ItemData("Idea: Sail"                          , RegionFlags.Island                 , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression_skip_balancing), # <- Try not to release this too early
-    ItemData("Idea: Sandstone"                     , RegionFlags.Island                 , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
-    ItemData("Idea: Seafood Stew"                  , RegionFlags.Island                 , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
-    ItemData("Idea: Shell Chest"                   , RegionFlags.Island                 , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
-    ItemData("Idea: Sloop"                         , RegionFlags.Island                 , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression_skip_balancing), # <- Try not to release this too early
-    ItemData("Idea: Sushi"                         , RegionFlags.Island                 , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
+    ItemData("Idea: Bow"                            , RegionFlags.Island                , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
+    ItemData("Idea: Bottle of Rum"                  , RegionFlags.Island                , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
+    ItemData("Idea: Bottle of Water"                , RegionFlags.Island                , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
+    ItemData("Idea: Broken Bottle"                  , RegionFlags.Island                , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
+    ItemData("Idea: Cathedral"                      , RegionFlags.Island                , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression_skip_balancing), # <- Try not to release this too early
+    ItemData("Idea: Ceviche"                        , RegionFlags.Island                , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
+    ItemData("Idea: Charcoal"                       , RegionFlags.Island                , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
+    ItemData("Idea: Coin"                           , RegionFlags.Island                , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
+    ItemData("Idea: Composter"                      , RegionFlags.Island                , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
+    ItemData("Idea: Distillery"                     , RegionFlags.Island                , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
+    ItemData("Idea: Empty Bottle"                   , RegionFlags.Island                , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
+    ItemData("Idea: Fabric"                         , RegionFlags.Island                , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
+    ItemData("Idea: Fish Trap"                      , RegionFlags.Island                , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
+    ItemData("Idea: Forest Amulet"                  , RegionFlags.Island                , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression_skip_balancing), # <- Try not to release this too early
+    ItemData("Idea: Glass"                          , RegionFlags.Island                , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
+    ItemData("Idea: Gold Bar"                       , RegionFlags.Island                , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression_skip_balancing), # <- Try not to release this too early
+    ItemData("Idea: Golden Chestplate"              , RegionFlags.Island                , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression_skip_balancing), # <- Try not to release this too early
+    ItemData("Idea: Greenhouse"                     , RegionFlags.Island                , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
+    ItemData("Idea: Lighthouse"                     , RegionFlags.Island                , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
+    ItemData("Idea: Mess Hall"                      , RegionFlags.Island                , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
+    ItemData("Idea: Rope"                           , RegionFlags.Island                , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
+    ItemData("Idea: Rowboat"                        , RegionFlags.Island                , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
+    ItemData("Idea: Sacred Key"                     , RegionFlags.Island                , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
+    ItemData("Idea: Sail"                           , RegionFlags.Island                , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression_skip_balancing), # <- Try not to release this too early
+    ItemData("Idea: Sandstone"                      , RegionFlags.Island                , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
+    ItemData("Idea: Seafood Stew"                   , RegionFlags.Island                , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
+    ItemData("Idea: Shell Chest"                    , RegionFlags.Island                , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
+    ItemData("Idea: Sloop"                          , RegionFlags.Island                , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression_skip_balancing), # <- Try not to release this too early
+    ItemData("Idea: Sushi"                          , RegionFlags.Island                , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
 
     # Useful Ideas
-    ItemData("Idea: Fishing Rod"                   , RegionFlags.Island                 , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.useful),
+    ItemData("Idea: Fishing Rod"                    , RegionFlags.Island                , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.useful),
 
     # Equipmentsanity Ideas (that are not required for progression elsewhere)
-    ItemData("Idea: Blunderbuss"                   , RegionFlags.Island                 , ItemType.Idea         , OptionFlags.Equipmentsanity   , ItemClassification.progression),
-    ItemData("Idea: Bone Staff"                    , RegionFlags.Island                 , ItemType.Idea         , OptionFlags.Equipmentsanity   , ItemClassification.progression),
-    ItemData("Idea: Crossbow"                      , RegionFlags.Island                 , ItemType.Idea         , OptionFlags.Equipmentsanity   , ItemClassification.progression),
-    ItemData("Idea: Mountain Amulet"               , RegionFlags.Island                 , ItemType.Idea         , OptionFlags.Equipmentsanity   , ItemClassification.progression_skip_balancing), # <- Try not to release this too early
-    ItemData("Idea: Wizard Robe"                   , RegionFlags.Island                 , ItemType.Idea         , OptionFlags.Equipmentsanity   , ItemClassification.progression),
+    # Item classifications are changed to 'progression' if equipmentsanity is enabled
+    ItemData("Idea: Blunderbuss"                    , RegionFlags.Island                , ItemType.Idea         , OptionFlags.Equipmentsanity   , ItemClassification.filler),
+    ItemData("Idea: Bone Staff"                     , RegionFlags.Island                , ItemType.Idea         , OptionFlags.Equipmentsanity   , ItemClassification.filler),
+    ItemData("Idea: Crossbow"                       , RegionFlags.Island                , ItemType.Idea         , OptionFlags.Equipmentsanity   , ItemClassification.useful),
+    ItemData("Idea: Mountain Amulet"                , RegionFlags.Island                , ItemType.Idea         , OptionFlags.Equipmentsanity   , ItemClassification.useful),
+    ItemData("Idea: Wizard Robe"                    , RegionFlags.Island                , ItemType.Idea         , OptionFlags.Equipmentsanity   , ItemClassification.filler),
 
     # Foodsanity Ideas (that are not required for progression elsewhere)
-    ItemData("Idea: Tamago Sushi"                  , RegionFlags.Island                 , ItemType.Idea         , OptionFlags.Foodsanity        , ItemClassification.progression),
+    # Item classifications are changed to 'progression' if foodsanity is enabled
+    ItemData("Idea: Tamago Sushi"                   , RegionFlags.Island                , ItemType.Idea         , OptionFlags.Foodsanity        , ItemClassification.filler),
 
     # Structuresanity Ideas (that are not required for progression elsewhere)
-    ItemData("Idea: Frigate"                       , RegionFlags.Island                 , ItemType.Idea         , OptionFlags.Structuresanity   , ItemClassification.progression_skip_balancing), # <- Try not to release this too early
-    ItemData("Idea: Gold Mine"                     , RegionFlags.Island                 , ItemType.Idea         , OptionFlags.Structuresanity   , ItemClassification.progression),
-    ItemData("Idea: Sand Quarry"                   , RegionFlags.Island                 , ItemType.Idea         , OptionFlags.Structuresanity   , ItemClassification.progression),
+    # Item classifications are changed to 'progression' if structuresanity is enabled
+    ItemData("Idea: Aquarium"                       , RegionFlags.Island                , ItemType.Idea         , OptionFlags.Structuresanity   , ItemClassification.filler),
+    ItemData("Idea: Frigate"                        , RegionFlags.Island                , ItemType.Idea         , OptionFlags.Structuresanity   , ItemClassification.useful),
+    ItemData("Idea: Gold Mine"                      , RegionFlags.Island                , ItemType.Idea         , OptionFlags.Structuresanity   , ItemClassification.useful),
+    ItemData("Idea: Magic Glue"                     , RegionFlags.Island                , ItemType.Idea         , OptionFlags.Structuresanity   , ItemClassification.filler),
+    ItemData("Idea: Resource Magnet"                , RegionFlags.Island                , ItemType.Idea         , OptionFlags.Structuresanity   , ItemClassification.filler),
+    ItemData("Idea: Sand Quarry"                    , RegionFlags.Island                , ItemType.Idea         , OptionFlags.Structuresanity   , ItemClassification.useful),
+    ItemData("Idea: Wishing Well"                   , RegionFlags.Island                , ItemType.Idea         , OptionFlags.Structuresanity   , ItemClassification.filler),
 
 #endregion
 
@@ -184,18 +200,6 @@ item_table: List[ItemData] = [
 #endregion
 
 #region Junk Items
-
-    # Filler Ideas
-    ItemData("Idea: Animal Pen"                     , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.filler),
-    ItemData("Idea: Aquarium"                       , RegionFlags.Island                , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.filler),
-    ItemData("Idea: Breeding Pen"                   , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.filler),
-    ItemData("Idea: Butchery"                       , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.filler),
-    ItemData("Idea: Crane"                          , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.filler),
-    ItemData("Idea: Dustbin"                        , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.filler), 
-    ItemData("Idea: Magic Glue"                     , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.filler),
-    ItemData("Idea: Resource Magnet"                , RegionFlags.Island                , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.filler),
-    ItemData("Idea: University"                     , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.filler),
-    ItemData("Idea: Wishing Well"                   , RegionFlags.Island                , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.filler),
 
     # Filler Resource Boosters
     ItemData("Mainland Resource Booster Pack"       , RegionFlags.Mainland              , ItemType.Booster      , OptionFlags.NONE              , ItemClassification.filler),
@@ -330,12 +334,13 @@ def create_sanity_items(world: MultiWorld, player: int, items: List[ItemData], o
         # If item is not in the starting inventory, add it to the prospective item pool
         if item not in excluded_items:
 
-            # Adjust item classification to 'useful' for disabled sanity items
+            # Adjust item classification to 'progression' for enabled sanity items
             if (
-                (not options.equipmentsanity.value and bool(item_data.option_flags & OptionFlags.Equipmentsanity))
-                or (not options.structuresanity.value and bool(item_data.option_flags & OptionFlags.Structuresanity))
+                (options.equipmentsanity.value and bool(item_data.option_flags & OptionFlags.Equipmentsanity))
+                or (options.foodsanity.value and bool(item_data.option_flags & OptionFlags.Foodsanity))
+                or (options.structuresanity.value and bool(item_data.option_flags & OptionFlags.Structuresanity))
             ):
-                item.classification = ItemClassification.useful
+                item.classification = ItemClassification.progression
 
             item_pool.append(item)
 
@@ -382,6 +387,9 @@ def create_filler_items(world: MultiWorld, player: int, items: List[ItemData], o
     # Prepare item pool
     item_pool: List[Item] = []
 
+    # Get items from starting inventory
+    excluded_items: List[Item] = world.precollected_items[player]
+
     # If there are un-filled slots...
     if (unfilled_count:= len(world.get_unfilled_locations(player)) - len([item for item in world.itempool if item.player == player])) > 0:
 
@@ -397,8 +405,11 @@ def create_filler_items(world: MultiWorld, player: int, items: List[ItemData], o
 
         # Randomly select filler ideas (no duplicates) - select all if there's space or fill remaining unfilled count, whichever is lower
         for idea_data in world.random.sample(filler_ideas, k=idea_fill_count):
-            idea: StacklandsItem = StacklandsItem(name_to_id[idea_data.name], idea_data, player)
-            item_pool.append(idea)
+            idea_item: StacklandsItem = StacklandsItem(name_to_id[idea_data.name], idea_data, player)
+
+            # If item is not in the starting inventory, add it to the prospective item pool
+            if idea_item not in excluded_items:
+                item_pool.append(idea_item)
         
         # Re-count unfilled slots
         unfilled_count -= len(item_pool)
@@ -430,7 +441,7 @@ def create_all_items(world: MultiWorld, player: int) -> None:
     # Get YAML options
     options = world.worlds[player].options
 
-    expansion_items_selected: bool = options.board_expansion_mode.value is ExpansionType.Expansion_Items
+    # Calculate if any traps are required
     traps_selected: bool = options.trap_fill.value > 0 and any(weight > 0 for weight in [
         options.feed_villagers_trap_weight.value,
         options.mob_trap_weight.value,
@@ -441,13 +452,7 @@ def create_all_items(world: MultiWorld, player: int) -> None:
     # Select items for selected boards
     item_pool: List[ItemData] = [
         item for item in item_table
-        if item.region_flags & options.boards.value                                                                                 # Item contains a flag for selected boards
-        # and (                                                                                                                       # AND
-        #     item.option_flags is OptionFlags.NONE                                                                                   # Is not affected by YAML options
-        #     or (traps_selected and item.option_flags is OptionFlags.Traps)                                                          # OR traps are selected and item contains Trap flag
-        #     or (expansion_items_selected and item.option_flags is OptionFlags.Expansion and item.item_type is ItemType.Structure)   # OR expansion items is selected and item is expansion structure
-        #     or (not expansion_items_selected and item.option_flags is OptionFlags.Expansion and item.item_type is ItemType.Idea)    # OR expansion items not selected and item is expansion idea
-        # )
+        if item.region_flags & options.boards.value     # Item contains a flag for selected boards
     ]
 
     # Add all progression / useful items
