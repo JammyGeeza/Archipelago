@@ -351,6 +351,7 @@ location_table: List[LocationData] = [
     LocationData("Build a Sawmill"                                      , RegionFlags.Mainland      , ProgressionPhase.PhaseThree   , CheckType.Check    , OptionFlags.Structuresanity  , LocationProgressType.DEFAULT ),
     LocationData("Build a Smelter"                                      , RegionFlags.Mainland      , ProgressionPhase.PhaseTwo     , CheckType.Check    , OptionFlags.Structuresanity  , LocationProgressType.DEFAULT ),
     LocationData("Build a Stove"                                        , RegionFlags.Mainland      , ProgressionPhase.PhaseThree   , CheckType.Check    , OptionFlags.Structuresanity  , LocationProgressType.DEFAULT ),
+    LocationData("Build a University"                                   , RegionFlags.Mainland      , ProgressionPhase.PhaseThree   , CheckType.Check    , OptionFlags.Structuresanity  , LocationProgressType.DEFAULT ),
     LocationData("Build a Warehouse"                                    , RegionFlags.Mainland      , ProgressionPhase.PhaseThree   , CheckType.Check    , OptionFlags.Structuresanity  , LocationProgressType.DEFAULT ),
 
     # The Island
@@ -362,7 +363,8 @@ location_table: List[LocationData] = [
     LocationData("Build a Magic Glue"                                   , RegionFlags.Island        , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.Structuresanity  , LocationProgressType.DEFAULT ),
     LocationData("Build a Resource Magnet"                              , RegionFlags.Island        , ProgressionPhase.PhaseTwo     , CheckType.Check    , OptionFlags.Structuresanity  , LocationProgressType.DEFAULT ),
     LocationData("Build a Sand Quarry"                                  , RegionFlags.Island        , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.Structuresanity  , LocationProgressType.DEFAULT ),
-    LocationData("Build a Shell Chest"                                  , RegionFlags.Island        , ProgressionPhase.PhaseTwo     , CheckType.Check    , OptionFlags.Structuresanity  , LocationProgressType.DEFAULT ),
+    LocationData("Build a Shell Chest"                                  , RegionFlags.Island        , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.Structuresanity  , LocationProgressType.DEFAULT ),
+    LocationData("Build a Wishing Well"                                 , RegionFlags.Island        , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.Structuresanity  , LocationProgressType.DEFAULT ),
 
 # endregion
 

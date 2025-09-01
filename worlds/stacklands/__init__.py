@@ -15,15 +15,16 @@ class StacklandsWeb(WebWorld):
     theme = "jungle"
 
     option_groups = [
-        OptionGroup("Goal", [
-            Options.Goal
-        ]),
         OptionGroup("Run Settings", [
+            Options.Boards,
             Options.BoardExpansionMode,
             Options.BoardExpansionAmount,
             Options.BoardExpansionCount,
             Options.MoonLength,
             Options.Pausing
+        ]),
+        OptionGroup("Goal", [
+            Options.Goal
         ]),
         OptionGroup("Sanities", [
             Options.Equipmentsanity,
