@@ -79,8 +79,8 @@ def set_rules(world: MultiWorld, player: int):
    options = world.worlds[player].options
 
    # Calculate board options
-   forest_enabled: bool = bool(options.goal.value & RegionFlags.Forest)
-   island_enabled: bool = bool(options.goal.value & RegionFlags.Island)
+   forest_enabled: bool = bool(options.boards.value & RegionFlags.Forest)
+   island_enabled: bool = bool(options.boards.value & RegionFlags.Island)
 
    # Calculate sanity options
    equipmentsanity_enabled: bool = options.equipmentsanity.value
@@ -137,6 +137,7 @@ def set_rules(world: MultiWorld, player: int):
    set_rule(world.get_entrance("Forward to Mainland: Progression Phase Four", player),
             lambda state:
                state.sl_has_any_packs(["Logic and Reason", "Order and Structure"], player)
+               and state.sl_has_pack("The Armory", player)
                and state.sl_has_all_ideas([
                   "Iron Bar",
                   "Iron Shield",
@@ -226,6 +227,7 @@ def set_rules(world: MultiWorld, player: int):
                   and state.sl_has_all_ideas([
                      "Forest Amulet",
                      "Gold Bar",
+                     "Golden Chestplate",
                      "Iron Shield",
                      "Sail",
                      "Smithy",
@@ -498,7 +500,7 @@ def set_rules(world: MultiWorld, player: int):
 
    set_rule(world.get_location("Have 3 Houses", player),
             lambda state:  # Phase One
-               state.sl_has_pack("Seeking Wisdom", player))
+               state.can_reach_location("Build a House", player))
 
    set_rule(world.get_location("Build a Shed", player),
             lambda state:  # Phase One
@@ -1042,7 +1044,8 @@ def set_rules(world: MultiWorld, player: int):
       
       set_rule(world.get_location("Make a Boomerang", player),
                lambda state:  # Phase Three
-                  state.sl_has_all_ideas(["Boomerang", "Smithy"], player))
+                  state.can_reach_location("Get an Iron Bar", player)
+                  and state.sl_has_all_ideas(["Boomerang", "Smithy"], player))
       
       set_rule(world.get_location("Make a Club", player),
                lambda state:  # Phase One
@@ -1065,15 +1068,18 @@ def set_rules(world: MultiWorld, player: int):
       
       set_rule(world.get_location("Make a Magic Ring", player),
                lambda state:  # Phase Three
-                  state.sl_has_all_ideas(["Magic Ring", "Smithy"], player))
+                  state.can_reach_location("Get an Iron Bar", player)
+                  and state.sl_has_all_ideas(["Magic Ring", "Smithy"], player))
       
       set_rule(world.get_location("Make a Magic Staff", player),
                lambda state:  # Phase Three
-                  state.sl_has_all_ideas(["Magic Staff", "Smithy"], player))
+                  state.can_reach_location("Get an Iron Bar", player)
+                  and state.sl_has_all_ideas(["Magic Staff", "Smithy"], player))
       
-      set_rule(world.get_location("Make a Magic Staff", player),
+      set_rule(world.get_location("Make a Magic Tome", player),
                lambda state:  # Phase Three
-                  state.sl_has_all_ideas(["Magic Tome", "Smithy"], player))
+                  state.can_reach_location("Get an Iron Bar", player)
+                  and state.sl_has_all_ideas(["Magic Tome", "Smithy"], player))
       
       set_rule(world.get_location("Make a Magic Wand", player),
                lambda state:  # Phase Two
@@ -1137,7 +1143,8 @@ def set_rules(world: MultiWorld, player: int):
          
          set_rule(world.get_location("Make a Wizard Robe", player),
                   lambda state:  # Phase Two
-                     state.sl_has_all_ideas(["Smithy", "Wizard Robe"], player))
+                     state.can_reach_location("Make Rope", player)
+                     and state.sl_has_all_ideas(["Fabric", "Smithy", "Wizard Robe"], player))
 
          #endregion
    
@@ -1422,9 +1429,37 @@ def set_rules(world: MultiWorld, player: int):
 
       #region Mainland Structures
 
+      set_rule(world.get_location("Build an Animal Pen", player),
+               lambda state:  # Phase One
+                  state.can_reach_location("Make a Stick from Wood", player)
+                  and state.sl_has_idea("Animal Pen", player))
+      
+      set_rule(world.get_location("Build a Breeding Pen", player),
+               lambda state:  # Phase Two
+                  state.can_reach_location("Build an Animal Pen", player)
+                  and state.sl_has_any_packs(["Explorers", "The Armory"], player)
+                  and state.sl_has_idea("Breeding Pen", player))
+      
+      set_rule(world.get_location("Build a Butchery", player),
+               lambda state:  # Phase Three
+                  state.can_reach_location("Get an Iron Bar", player)
+                  and state.sl_has_idea("Butchery", player))
+
       set_rule(world.get_location("Build a Coin Chest", player),
                lambda state:  # Phase One
                   state.sl_has_idea("Coin Chest", player))
+      
+      set_rule(world.get_location("Build a Crane", player),
+               lambda state:  # Phase Three
+                  state.can_reach_location("Get an Iron Bar", player)
+                  and state.sl_has_any_packs(["Explorers", "The Armory"], player)
+                  and state.sl_has_idea("Crane", player))
+      
+      set_rule(world.get_location("Build a Dustbin", player),
+               lambda state:  # Phase Three
+                  state.can_reach_location("Get an Iron Bar", player)
+                  and state.sl_has_any_packs(["Explorers", "The Armory"], player)
+                  and state.sl_has_idea("Dustbin", player))
 
       set_rule(world.get_location("Build a Garden", player),
                lambda state:  # Phase One
@@ -1473,6 +1508,11 @@ def set_rules(world: MultiWorld, player: int):
 
          #region The Island Structures
 
+         set_rule(world.get_location("Build an Aquarium", player),
+               lambda state:  # Phase One
+                  state.can_reach_location("Make Glass", player)
+                  and state.sl_has_idea("Aquarium", player))
+
          set_rule(world.get_location("Build a Distillery", player),
                lambda state:  # Phase One
                   state.can_reach_location("Get an Iron Bar", player)
@@ -1495,6 +1535,17 @@ def set_rules(world: MultiWorld, player: int):
                      and state.sl_has_pack("Island of Ideas", player)
                      and state.sl_has_all_ideas(["Campfire", "Lighthouse", "Sandstone", "Stick"], player))
          
+         set_rule(world.get_location("Build a Magic Glue", player),
+               lambda state:  # Phase One
+                  state.sl_has_any_packs(["Explorers", "The Armory"], player)
+                  and state.sl_has_all_ideas(["Charcoal", "Magic Glue"], player))
+         
+         set_rule(world.get_location("Build a Resource Magnet", player),
+               lambda state:  # Phase One
+                  state.can_reach_location("Make a Gold Bar", player)
+                  and state.sl_has_any_packs(["Explorers", "The Armory"], player)
+                  and state.sl_has_idea("Resource Magnet", player))
+
          set_rule(world.get_location("Build a Sand Quarry", player),
                   lambda state:  # Phase One
                      state.sl_has_idea("Sand Quarry", player))
@@ -1530,10 +1581,13 @@ def set_rules(world: MultiWorld, player: int):
 
    # Set goal condition
    set_rule(world.get_location("Goal Complete", player),
-            lambda state:
-               state.has("Demon", player)
-               and (not forest_enabled or state.has("Wicked Witch", player))
-               and (not island_enabled or state.has("Demon Lord", player)))
+            lambda state: (
+               bool(options.goal.value & (GoalFlags.AllBosses | GoalFlags.RandomBoss))
+               and (not bool(world.goal_boards & RegionFlags.Mainland) or state.has("Demon", player))
+               and (not bool(world.goal_boards & RegionFlags.Forest) or state.has("Wicked Witch", player))
+               and (not bool(world.goal_boards & RegionFlags.Island) or state.has("Demon Lord", player))
+            ))
+               
 
    # Set completion condition
    world.completion_condition[player] = lambda state: state.has("Victory", player)

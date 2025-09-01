@@ -61,7 +61,7 @@ def create_all_regions(world: MultiWorld, player: int):
     # Get all applicable locations for this run, given the YAML options
     location_pool: List[LocationData] = [
         loc for loc in location_table 
-        if loc.region_flags & options.goal.value                                        # Location contains a flag for selected boards
+        if loc.region_flags & options.boards.value                                      # Location contains a flag for selected boards
         and (                                                                           # AND
             loc.option_flags is OptionFlags.NONE                                        # Is not affected by YAML options
             or (equipmentsanity and loc.option_flags is OptionFlags.Equipmentsanity)    # OR Equipmentsanity is selected and has Equipmentsanity flag
