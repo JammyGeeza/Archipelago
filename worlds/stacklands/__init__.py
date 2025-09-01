@@ -1,16 +1,47 @@
 import logging
 from typing import Dict, Any
 from .Options import StacklandsOptions
+from .Enums import RegionFlags
 from .Items import StacklandsItem, create_all_items, item_table, group_table, name_to_id as item_lookup
 from .Locations import name_to_id as location_lookup
 from .Regions import create_all_regions
 from .Rules import set_rules
 from worlds.AutoWorld import World, WebWorld
 from BaseClasses import Item
+from Options import OptionGroup
+from . import Options
 
 class StacklandsWeb(WebWorld):
     theme = "jungle"
-    # TODO: Set this up
+
+    option_groups = [
+        OptionGroup("Goal", [
+            Options.Goal
+        ]),
+        OptionGroup("Run Settings", [
+            Options.BoardExpansionMode,
+            Options.BoardExpansionAmount,
+            Options.BoardExpansionCount,
+            Options.MoonLength,
+            Options.Pausing
+        ]),
+        OptionGroup("Sanities", [
+            Options.Equipmentsanity,
+            Options.Foodsanity,
+            Options.Locationsanity,
+            Options.Mobsanity,
+            Options.MobsanityBalancing,
+            Options.Structuresanity
+        ]),
+        OptionGroup("Traps", [
+            Options.TrapFill,
+            Options.FeedVillagersTrapWeight,
+            Options.MobTrapWeight,
+            Options.SellCardsTrapWeight,
+            Options.SellCardsTrapAmount,
+            Options.StrangePortalTrapWeight
+        ])
+    ]
 
 class StacklandsWorld(World):
     """
@@ -30,9 +61,13 @@ class StacklandsWorld(World):
     
     required_client_version = (0, 1, 9)
 
-    # trap_weights: Dict[str, int] = {}
-
     def generate_early(self) -> None:
+
+        # Get resource booster item weights
+        self.multiworld.filler_booster_weights = {
+            "Mainland Resource Booster Pack": 1 if bool(self.options.goal.value & RegionFlags.Mainland) else 0,
+            "Island Resource Booster Pack": 1 if bool(self.options.goal.value & RegionFlags.Island) else 0,
+        }
 
         # Get trap item weights
         self.multiworld.trap_weights = {
@@ -41,10 +76,6 @@ class StacklandsWorld(World):
             "Sell Cards Trap": self.options.sell_cards_trap_weight.value,
             "Strange Portal Trap": self.options.strange_portal_trap_weight.value,
         }
-
-        logging.info("----- Trap Item Weights -----")
-        for key, val in self.multiworld.trap_weights.items():
-            logging.info(f"'{key}' weight: {val}")
     
     # Create all items
     def create_items(self):
@@ -61,8 +92,25 @@ class StacklandsWorld(World):
     # Fill the slot data
     def fill_slot_data(self) -> Dict[str, Any]:
         slot_data = {}
-        slot_data.update(self.options.as_dict("board_expansion_mode", "board_expansion_amount", "death_link", "goal", "mobsanity", "moon_length", "pausing", "quest_checks", "sell_cards_trap_amount", "start_inventory"))
-        slot_data.update({ "version": "0.1.6" })
+        slot_data.update(self.options.as_dict(
+            "board_expansion_mode",
+            "board_expansion_amount",
+            "equipmentsanity",
+            "foodsanity",
+            "goal",
+            "locationsanity",
+            "mobsanity",
+            "mobsanity_balancing",
+            "moon_length",
+            "pausing",
+            "sell_cards_trap_amount",
+            # "spendsanity",
+            # "spendsanity_cost",
+            # "spendsanity_count",
+            "start_inventory",
+            "structuresanity"
+        ))
+        slot_data.update({ "version": "0.2.0" })
         return slot_data
     
     # Set all access rules

@@ -1,5 +1,5 @@
 import logging
-from .Enums import CheckType, ExpansionType, GoalFlags, OptionFlags, RegionFlags
+from .Enums import CheckType, ExpansionType, GoalFlags, MoonPhase, OptionFlags, ProgressionPhase, RegionFlags, SpendsanityType
 from typing import List, NamedTuple
 from BaseClasses import Entrance, Item, ItemClassification, LocationProgressType, MultiWorld, Region
 from .Options import StacklandsOptions
@@ -19,16 +19,12 @@ def create_region(world: MultiWorld, player: int, region_data: RegionData) -> Re
     # Get all locations that are not goals
     for location_data in [ loc for loc in region_data.locations if loc.check_type is CheckType.Check ]:
 
-        logging.info(f"Creating '{location_data.name}' location in '{region.name}' region...")
-
         # Create and add location to region
         location: StacklandsLocation = StacklandsLocation(player, location_data, location_lookup[location_data.name], region)
         region.locations.append(location)
 
     # Get all locations that are goals
     for goal_data in [ loc for loc in region_data.locations if loc.check_type is CheckType.Goal ]:
-
-        logging.info(f"Creating '{goal_data.name}' goal in '{region.name}' region...")
 
         # Create and add goal to region
         goal: StacklandsLocation = StacklandsLocation(player, goal_data, None, region)
@@ -42,7 +38,10 @@ def create_region(world: MultiWorld, player: int, region_data: RegionData) -> Re
     # Add region to world
     world.regions.append(region)
 
+    # logging.info(f"Added {len(region.locations)} checks to the check pool!")
+
     return region
+
 
 def create_all_regions(world: MultiWorld, player: int):
     """Create all regions for this apworld"""
@@ -50,133 +49,238 @@ def create_all_regions(world: MultiWorld, player: int):
     # Get YAML Options
     options: StacklandsOptions = world.worlds[player].options
 
-    logging.info(f"Goal Value: {options.goal.value}")
-    logging.info(f"Kill the Demon goal: {options.goal.value & GoalFlags.Demon}")
-    logging.info(f"Kill the Wicked Witch goal: {options.goal.value & GoalFlags.Witch}")
+    equipmentsanity: bool = options.equipmentsanity.value
+    foodsanity: bool = options.foodsanity.value
+    locationsanity: bool = options.locationsanity.value
+    mobsanity: bool = options.mobsanity.value
+    # packsanity_selected: bool = options.packsanity.value
+    pausing: bool = options.pausing.value
+    # spendsanity_selected: bool = bool(options.spendsanity.value != SpendsanityType.Off)
+    structuresanity: bool = options.structuresanity
+
+    # Get all applicable locations for this run, given the YAML options
+    location_pool: List[LocationData] = [
+        loc for loc in location_table 
+        if loc.region_flags & options.goal.value                                        # Location contains a flag for selected boards
+        and (                                                                           # AND
+            loc.option_flags is OptionFlags.NONE                                        # Is not affected by YAML options
+            or (equipmentsanity and loc.option_flags is OptionFlags.Equipmentsanity)    # OR Equipmentsanity is selected and has Equipmentsanity flag
+            or (foodsanity and loc.option_flags is OptionFlags.Foodsanity)              # OR Foodsanity is selected and has Foodsanity flag
+            or (locationsanity and loc.option_flags is OptionFlags.Locationsanity)      # OR Locationsanity is selected and has Locationsanity flag
+            or (mobsanity and loc.option_flags is OptionFlags.Mobsanity)                # OR Mobsanity is selected and has Mobsanity flag
+            # or (packsanity_selected and loc.option_flags is OptionFlags.Packsanity)      # OR Packsanity is selected and has packsanity flag
+            or (pausing and loc.option_flags is OptionFlags.Pausing)                    # OR Pausing is selected and has pausing flag
+            # or (spendsanity_selected and loc.option_flags is OptionFlags.Spendsanity)    # OR Spendsanity is selected and has Spendsanity flag
+            or (structuresanity and loc.option_flags is OptionFlags.Structuresanity)    # OR Structuresanity is selected and has Structuresanity flag
+        )
+    ]
+    
+    # # If Spendsanity is enabled, add configured amount of spendsanity checks to the pool
+    # if spendsanity_selected:
+    #     for location in [ loc for loc in location_table if loc.region_flags & options.goal.value and loc.option_flags is OptionFlags.Spendsanity ]:
+    #         for x in range(1, options.spendsanity_count.value + 1):
+    #             location_pool.append(LocationData(location.name.format(count=x), location.region_flags, location.check_type, location.option_flags, location.progress_type))
 
     # Create regions
-    menu_region: Region = create_menu_region(world, player, options)
-    mainland_region: Region = create_mainland_region(world, player, options)
-    forest_region: Region = create_forest_region(world, player, options)
+    setup_menu(world, player)
+    setup_mainland(world, player, location_pool)
+    setup_dark_forest(world, player, location_pool)
+    setup_island(world, player, location_pool)
 
-    # Connect region entrances and exits
-    world.get_entrance("Start", player).connect(mainland_region)
-    world.get_entrance("Strange Portal", player).connect(forest_region)
-    # world.get_entrance("Rowboat", player).connect(world.get_region("The Island", player))
+    # Menu exit(s)
+    world.get_entrance("Start", player).connect(world.get_region("Mainland", player))
 
-def create_menu_region(world: MultiWorld, player: int, options: StacklandsOptions) -> Region:
-    """Create the default 'Menu' region"""
+    # Mainland exit(s)
+    world.get_entrance("Portal", player).connect(world.get_region("The Dark Forest", player))
+    world.get_entrance("Rowboat", player).connect(world.get_region("The Island", player))
 
+
+def setup_menu(world: MultiWorld, player: int) -> Region:
+    """Create the default 'Menu' regions"""
+    
     # Compile region data
     menu_region: RegionData = RegionData("Menu", [], ["Start"])
 
     # Create region
-    return create_region(world, player, menu_region)
+    create_region(world, player, menu_region)
 
-def create_mainland_region(world: MultiWorld, player: int, options: StacklandsOptions) -> Region:
-    """Create the 'Mainland' region"""
 
-    logging.info("----- Creating 'Mainland' Region -----")
+def setup_mainland(world: MultiWorld, player: int, locations: List[LocationData]) -> Region:
+    """Create the 'Mainland' regions"""
 
-    # Prepare check pool
-    check_pool: List[LocationData] = []
+    name: str = "Mainland"
 
-    # Get all checks for Mainland board
-    mainland_checks: List[LocationData] = [ loc for loc in location_table if loc.region_flags is RegionFlags.Mainland ]
+    # Pop all mainland checks from the locations pool
+    check_pool: List[LocationData] = [
+        locations.pop(index)
+        for index in reversed(range(len(locations)))
+        if locations[index].region_flags & RegionFlags.Mainland
+    ]
 
-    # Check if mainland board is selected in YAML
-    board_selected: bool = bool(options.quest_checks.value & RegionFlags.Mainland)
-    goal_selected: bool = bool(options.goal.value & GoalFlags.Demon)
+    total_checks: int = len(check_pool)
 
-    logging.info(f"Board selected: {board_selected}")
-    logging.info(f"Goal selected: {goal_selected}")
+    # Mainland Region (for all 'General' checks)
+    mainland_region: Region = create_region(world, player, RegionData(f"{name}", [
+        check_pool.pop(index) 
+        for index in reversed(range(len(check_pool))) 
+        if check_pool[index].prog_phase == ProgressionPhase.General
+    ],
+    [ 
+        f"Forward to {name}: Progression Phase One",
+        "Portal",
+        "Rowboat"
+    ]))
 
-    # If mainland board has been selected
-    if board_selected:
+    # Mainland: Progression Phase One (Food & Villagers)
+    mainland_phase_one_region: Region = create_region(world, player, RegionData(f"{name}: Progression Phase One", [
+        check_pool.pop(index)
+        for index in reversed(range(len(check_pool)))
+        if check_pool[index].prog_phase == ProgressionPhase.PhaseOne
+    ],
+    [
+        f"Forward to {name}: Progression Phase Two",
+    ]))
 
-        # Add all quest checks (not affected by options) for Mainland to check pool
-        check_pool += [ loc for loc in mainland_checks if loc.check_type is CheckType.Check and loc.option_flags is OptionFlags.NA ]
+    # Mainland: Progression Phase Two (Basic Resources & Equipment)
+    mainland_phase_two_region: Region = create_region(world, player, RegionData(f"{name}: Progression Phase Two", [
+        check_pool.pop(index)
+        for index in reversed(range(len(check_pool)))
+        if check_pool[index].prog_phase == ProgressionPhase.PhaseTwo
+    ],
+    [
+        f"Forward to {name}: Progression Phase Three",
+    ]))
 
-        # If pausing is enabled, add all Pausing quest checks for Mainland to check pool 
-        if options.pausing.value:
-            check_pool += [ loc for loc in mainland_checks if loc.check_type is CheckType.Check and loc.option_flags & OptionFlags.Pausing ]
+    # Mainland: Progression Phase Three (Advanced Resources & Equipment)
+    mainland_phase_three_region: Region = create_region(world, player, RegionData(f"{name}: Progression Phase Three", [
+        check_pool.pop(index)
+        for index in reversed(range(len(check_pool)))
+        if check_pool[index].prog_phase == ProgressionPhase.PhaseThree
+    ],
+    [
+        f"Forward to {name}: Progression Phase Four",
+    ]))
 
-        # If mobsanity is enabled, add all mobsanity checks for Mainland to the check pool
-        if options.mobsanity.value:
-            check_pool += [ loc for loc in mainland_checks if loc.check_type is CheckType.Check and loc.option_flags & OptionFlags.Mobsanity ]
+    # Mainland: Progression Phase Four (Boss Battle)
+    mainland_phase_four_region: Region = create_region(world, player, RegionData(f"{name}: Progression Phase Four", [
+        check_pool.pop(index)
+        for index in reversed(range(len(check_pool)))
+        if check_pool[index].prog_phase == ProgressionPhase.PhaseFour
+    ],[]))
 
-    # Get goal check, if exists
-    if (goal_check:= next((loc for loc in mainland_checks if loc.check_type & CheckType.Goal), None)) is not None:
+    # Connect entrances and exits
+    world.get_entrance(f"Forward to {name}: Progression Phase One", player).connect(mainland_phase_one_region)
+    world.get_entrance(f"Forward to {name}: Progression Phase Two", player).connect(mainland_phase_two_region)
+    world.get_entrance(f"Forward to {name}: Progression Phase Three", player).connect(mainland_phase_three_region)
+    world.get_entrance(f"Forward to {name}: Progression Phase Four", player).connect(mainland_phase_four_region)
 
-        logging.info(f"Goal found: {goal_check.name}")
+    # Add event(s)
+    mainland_region.add_event(f"Defeat {name} Boss", "Demon")
 
-        # If the goal has been selected, add the goal to the check pool
-        if goal_selected:
-            check_pool += [ goal_check ]
 
-        # If goal is not selected but board is selected, replace the goal check with a normal quest check
-        # NOTE: Can't just update the location's check flag because it messes it up for all Fuzz.py generations
-        elif not goal_selected and board_selected:
-            check_pool += [ LocationData(goal_check.name, goal_check.region_flags, CheckType.Check, goal_check.option_flags, goal_check.progress_type) ]
+def setup_dark_forest(world: MultiWorld, player: int, locations: List[LocationData]) -> Region:
+    """Create the 'The Dark Forest' regions"""
 
-    logging.info(f"Mainland check pool: {len(check_pool)}")
+    name: str = "The Dark Forest"
 
-    # Compile region data
-    region_data: RegionData = RegionData("Mainland", check_pool, [ "Strange Portal" ])
+    # Pop all mainland checks from the locations pool
+    check_pool: List[LocationData] = [
+        locations.pop(index)
+        for index in reversed(range(len(locations)))
+        if locations[index].region_flags & RegionFlags.Forest
+    ]
 
-    logging.info(f"{len(check_pool)} checks to be included for '{region_data.name}' region")
+    total_checks: int = len(check_pool)
 
-    # Create region
-    return create_region(world, player, region_data)
+    # Dark Forest Region (for all 'General' checks)
+    dark_forest_region: Region = create_region(world, player, RegionData(f"{name}", [
+        check_pool.pop(index) 
+        for index in reversed(range(len(check_pool))) 
+        if check_pool[index].prog_phase == ProgressionPhase.General
+    ],
+    [ 
+        f"Forward to {name}: Progression Phase One",
+    ]))
 
-def create_forest_region(world: MultiWorld, player: int, options: StacklandsOptions) -> Region:
-    """Create the 'Dark Forest' region"""
+    # Dark Forest: Progression Phase One (Basic Weapons)
+    dark_forest_phase_one_region: Region = create_region(world, player, RegionData(f"{name}: Progression Phase One", [
+        check_pool.pop(index)
+        for index in reversed(range(len(check_pool)))
+        if check_pool[index].prog_phase == ProgressionPhase.PhaseOne
+    ],
+    [
+        f"Forward to {name}: Progression Phase Two",
+    ]))
 
-    logging.info("----- Creating 'The Dark Forest' Region -----")
+    # Mainland: Progression Phase Two (Advanced Weapons)
+    dark_forest_phase_two_region: Region = create_region(world, player, RegionData(f"{name}: Progression Phase Two", [
+        check_pool.pop(index)
+        for index in reversed(range(len(check_pool)))
+        if check_pool[index].prog_phase == ProgressionPhase.PhaseTwo
+    ],[]))
 
-    # Prepare check pool
-    check_pool: List[LocationData] = []
+    # Connect entrances and exits
+    world.get_entrance(f"Forward to {name}: Progression Phase One", player).connect(dark_forest_phase_one_region)
+    world.get_entrance(f"Forward to {name}: Progression Phase Two", player).connect(dark_forest_phase_two_region)
 
-    # Get all checks for The Dark Forest board
-    forest_checks: List[LocationData] = [ loc for loc in location_table if loc.region_flags is RegionFlags.Forest ]
+    # Add event(s)
+    dark_forest_region.add_event(f"Defeat {name} Boss", "Wicked Witch")
 
-    # Check if Dark Forest board is selected in YAML
-    board_selected: bool = bool(options.quest_checks.value & RegionFlags.Forest)
-    goal_selected: bool = bool(options.goal.value & GoalFlags.Witch)
 
-    logging.info(f"Board selected: {board_selected}")
-    logging.info(f"Goal selected: {goal_selected}")
+def setup_island(world: MultiWorld, player: int, locations: List[LocationData]) -> Region:
+    """Create the 'The Island' regions"""
 
-    # If dark forest board has been selected
-    if board_selected:
-        
-        # Add all quest checks for Mainland to check pool
-        check_pool += [ loc for loc in forest_checks if loc.check_type is CheckType.Check and loc.option_flags is OptionFlags.NA ]
+    name: str = "The Island"
 
-        # If mobsanity is enabled, add all mobsanity checks for Mainland to the check pool
-        if options.mobsanity.value:
-            check_pool += [ loc for loc in forest_checks if loc.check_type is CheckType.Check and loc.option_flags & OptionFlags.Mobsanity ]
+    # Pop all mainland checks from the locations pool
+    check_pool: List[LocationData] = [
+        locations.pop(index)
+        for index in reversed(range(len(locations)))
+        if locations[index].region_flags & RegionFlags.Island
+    ]
 
-    # Get goal check, if exists
-    if (goal_check:= next((loc for loc in forest_checks if loc.check_type is CheckType.Goal), None)) is not None:
+    total_checks: int = len(check_pool)
 
-        logging.info(f"Goal found: {goal_check.name}")
+    # The Island Region (for all 'General' checks)
+    island_region: Region = create_region(world, player, RegionData(f"{name}", [
+        check_pool.pop(index) 
+        for index in reversed(range(len(check_pool))) 
+        if check_pool[index].prog_phase == ProgressionPhase.General
+    ],
+    [ 
+        f"Forward to {name}: Progression Phase One"
+    ]))
 
-        # If the goal has been selected, add the goal to the check pool
-        if goal_selected:
-            check_pool += [ goal_check ]
+    # The Island: Progression Phase One (Basic Weapons)
+    island_phase_one_region: Region = create_region(world, player, RegionData(f"{name}: Progression Phase One", [
+        check_pool.pop(index)
+        for index in reversed(range(len(check_pool)))
+        if check_pool[index].prog_phase == ProgressionPhase.PhaseOne
+    ],
+    [
+        f"Forward to {name}: Progression Phase Two"
+    ]))
 
-        # If goal is not selected but board is selected, replace the goal check with a normal quest check
-        # NOTE: Can't just update the location's check flag because it messes it up for all Fuzz.py generations
-        elif not goal_selected and board_selected:
-            check_pool += [ LocationData(goal_check.name, goal_check.region_flags, CheckType.Check, goal_check.option_flags, goal_check.progress_type) ]
+    # The Island: Progression Phase Two (Advanced Weapons)
+    island_phase_two_region: Region = create_region(world, player, RegionData(f"{name}: Progression Phase Two", [
+        check_pool.pop(index)
+        for index in reversed(range(len(check_pool)))
+        if check_pool[index].prog_phase == ProgressionPhase.PhaseTwo
+    ],[
+        f"Forward to {name}: Progression Phase Three"
+    ]))
 
-    logging.info(f"Dark Forest check pool: {len(check_pool)}")
+    # The Island: Progression Phase Two (Advanced Weapons)
+    island_phase_three_region: Region = create_region(world, player, RegionData(f"{name}: Progression Phase Three", [
+        check_pool.pop(index)
+        for index in reversed(range(len(check_pool)))
+        if check_pool[index].prog_phase == ProgressionPhase.PhaseThree
+    ],[]))
 
-    # Compile region data
-    region_data: RegionData = RegionData("The Dark Forest", check_pool, [ ])
+    # Connect entrances and exits
+    world.get_entrance(f"Forward to {name}: Progression Phase One", player).connect(island_phase_one_region)
+    world.get_entrance(f"Forward to {name}: Progression Phase Two", player).connect(island_phase_two_region)
+    world.get_entrance(f"Forward to {name}: Progression Phase Three", player).connect(island_phase_three_region)
 
-    logging.info(f"{len(check_pool)} checks to be included for '{region_data.name}' region")
-
-    # Create region
-    return create_region(world, player, region_data)
+    # Add event(s)
+    island_region.add_event(f"Defeat {name} Boss", "Demon Lord")

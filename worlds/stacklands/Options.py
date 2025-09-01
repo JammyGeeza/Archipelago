@@ -1,93 +1,171 @@
 from dataclasses import dataclass
 from .Enums import ExpansionType, GoalFlags, MoonlengthType, RegionFlags
-from Options import Choice, DeathLink, PerGameCommonOptions, Range, Toggle
+from Options import Choice, DeathLink, OptionGroup, PerGameCommonOptions, Range, Toggle
 
 class Goal(Choice):
     """
-    Select which bosses to kill for the goal of your run.
+    Select which boards to complete (kill the boss) for the goal of your run.
 
-    kill_demon          -> Complete the 'Kill the Demon' quest (Mainland)
-    kill_wicked_witch   -> Complete the 'Fight the Wicked Witch' quest (The Dark Forest)
-    all_bosses          -> Complete both 'Kill the Demon' (Mainland) and 'Fight the Wicked Witch' (The Dark Forest)
+    Mainland Only       -> Kill the Demon
+    Mainland and Forest -> Kill the Demon and the Wicked Witch
+    Mainland and Island -> Kill the Demon and the Demon Lord
+    All                 -> Kill the Demon, Wicked Witch and Demon Lord
 
-    NOTE:
-    Selecting a goal for a board you have NOT selected in the <Board Checks> option will still work, but will not
-    automatically include all quest checks for that board.
-
-    EXAMPLE:
-    If <Boards> option is set to 'mainland_only' and your <Goal> option is set to 'kill_wicked_witch', it will allow you
-    to complete the goal in The Dark Forest but no other Dark Forest quests will be included as checks.
+    For each board selected, all quests for that board will be added as Location Checks.
     """
     display_name = "Goal"
-    option_kill_demon = GoalFlags.Demon
-    option_kill_wicked_witch = GoalFlags.Witch
-    option_all_bosses = GoalFlags.All
-    default = option_all_bosses
-
-class QuestChecks(Choice):
-    """
-    Select which quests to include as checks.
-
-    mainland_only               -> Include all Mainland quests as checks.
-    mainland_and_dark_forest    -> Include all Mainland and The Dark Forest quests as checks.
-    """
-    display_name = "Quest Checks"
     option_mainland_only = RegionFlags.Mainland
-    option_mainland_and_dark_forest = RegionFlags.Mainland_and_Forest
-    default = option_mainland_and_dark_forest
+    option_mainland_and_forest = RegionFlags.Mainland | RegionFlags.Forest
+    option_mainland_and_island = RegionFlags.Mainland | RegionFlags.Island
+    option_all = RegionFlags.All
+    default = option_all
+
+class Equipmentsanity(Toggle):
+    """
+    Add checks for crafting one of each Equipment card. (E.g. Club, Sword, Blunderbuss etc.)
+    Will only add checks for Equipment that are reachable on the boards selected in the <Goal> option.
+    
+    This will add 16 checks to Mainland and 6 checks to The Island (if selected).
+    """
+    display_name = "Equipmentsanity"
+    default = 0
+
+class Foodsanity(Toggle):
+    """
+    Add checks for cooking one of each Food card. (E.g. Stew, Fruit Salad, Tamago Sushi etc.)
+    Will only add checks for Foods that are reachable on the boards selected in the <Goal> option.
+
+    This will add 3 checks to Mainland and 3 checks to The Island (if selected).
+    """
+    display_name = "Foodsanity"
+    default = 0
+
+class Locationsanity(Toggle):
+    """
+    Add checks for exploring one of each Location card. (E.g. Mountain, Old Village, Jungle etc.)
+    Will only add checks for Locations that are reachable on the boards selected in the <Goal> option.
+
+    This will add 4 checks to Mainland and 2 checks to The Island (if selected).
+    """
+    display_name = "Locationsanity"
+    default = 0
+
+class Mobsanity(Toggle):
+    """
+    Add checks for killing one of each Mob card. (E.g. Elf, Giant Snail, Tiger etc.)
+    Will only add checks for Mobs that are reachable on the boards selected in the <Goal> option.
+
+    This will add 18 checks to Mainland, 3 checks to The Dark Forest and 9 checks to The Island (if selected).
+    """
+    display_name = "Mobsanity"
+    default = 0
+
+class MobsanityBalancing(Toggle):
+    """
+    Greatly increases chance for all Packs / Strange Portals / Dark Forest Waves to spawn reachable Mobs that you have not yet killed.
+    
+    It is recommended to set this to 'true' to prevent relying on RNG to reach all Mobsanity checks.
+    If set to 'false' you will be at the mercy of RNG to spawn all Mob types to reach all Mobsanity checks.
+
+    This setting is ignored if the <Mobsanity> option is 'false'.
+    """
+    display_name = "Mobsanity Balancing"
+    default = 1
+
+class Structuresanity(Toggle):
+    """
+    Add checks for building one of each reachable Structure card. (E.g Garden, Market, Distillery etc.)
+    Will only add checks for Structures that are reachable on the boards selected in the <Goal> option.
+
+    This will add 10 checks to Mainland and 6 checks to The Island (if selected).
+    """
+    display_name = "Structuresanity"
+    default = 0
+
+# class Packsanity(Toggle):
+#     """
+#     Add checks for buying each booster pack to the check pool.
+#     Includes checks for packs available in all boards selected in <Boards>.
+#     """
+#     display_name = "Packsanity"
+#     default = 0
+
+# class Spendsanity(Choice):
+#     """
+#     Adds a new 'Spendsanity' booster box to the pack line - 'buying' boosters from this box are checks.
+
+#     off         -> Disabled
+#     fixed       -> The cost starts at <Spendsanity Cost> and remains at this cost after each purchase.
+#     incremental -> The cost starts at <Spendsanity Cost> and increases by the same amount after each purchase.
+#     """
+#     display_name = "Spendsanity"
+#     option_off = 0
+#     option_fixed = 1
+#     option_incremental = 2
+#     default = option_off
+
+# class SpendsanityCost(Range):
+#     """
+#     The cost for a 'Spendsanity' purchase - the cost throughout will be affected by your choice in <Spendsanity>.
+#     """
+#     display_name = "Spendsanity Cost"
+#     range_start = 1
+#     range_end = 25
+#     default = 10
+
+# class SpendsanityCount(Range):
+#     """
+#     How many Spendsanity checks to add to the check pool.
+#     """
+#     display_name = "Spendsanity Count"
+#     range_start = 1
+#     range_end = 25
+#     default = 10
 
 class BoardExpansionMode(Choice):
     """
     Select how board expansion works in the run.
 
-    ideas  -> Adds 'Idea: Shed' and 'Idea: Warehouse' to the item pool - build them yourself to expand the board as you like.
-    items  -> Adds 'Board Expansion' items to the item pool and removes 'Idea: Warehouse'. Building 'Shed' will no longer expand your board, but can be used to complete the 'Build a Shed' check.
+    Vanilla -> Build the Shed / Warehouse / Lighthouse from the Ideas as per vanilla to expand the board as you like.
+    Items   -> Adds 'Board Expansion' items to the item pool and disables all Sheds / Warehouses / Lighthouses when built.
     """
     display_name = "Board Expansion Mode"
-    option_ideas = ExpansionType.Ideas
-    option_items = ExpansionType.Items
-    default = ExpansionType.Items
+    option_vanilla = ExpansionType.Vanilla
+    option_items = ExpansionType.Expansion_Items
+    default = ExpansionType.Expansion_Items
 
 class BoardExpansionAmount(Range):
     """
     How many additional cards a board expansion item will give.
-    NOTE: Board size is increased as if building a Shed or Warehouse in vanilla and max board size remains capped at the largest vanilla size (without Lighthouses).
+    NOTE: Physical board size will still be capped at the largest vanilla size (without Lighthouses), but card limit is uncapped.
     
-    If <Board Expansion Mode> option is 'ideas' then this setting will be ignored.
+    If <Board Expansion Mode> option is 'Vanilla' then this setting will be ignored.
     """
     display_name = "Board Expansion Amount"
     range_start = 4
     range_end = 14
-    default = 8
+    default = 7
 
 class BoardExpansionCount(Range):
     """
-    How many 'Board Expansion' items are added to the item pool.
+    How many 'Board Expansion' items are added to the item pool for each compatible board (Mainland & Island).
     
-    If <Board Expansion Mode> option is 'ideas' then this setting will be ignored.
+    If <Board Expansion Mode> option is 'Vanilla' then this setting will be ignored.
     """
     display_name = "Board Expansion Count"
-    range_start = 3
+    range_start = 4
     range_end = 10
-    default = 4
+    default = 6
 
 class MoonLength(Choice):
     """
-    Set the length of each moon for the run - this will disable and override the 'Moon Length' option in the 'Start New Run' menu.
+    Set the length of each moon for the run - this disables and overrides the 'Moon Length' option in the 'Start New Run' menu.
     """
     display_name = "Moon Length"
     option_short = MoonlengthType.Short
     option_normal = MoonlengthType.Normal
     option_long = MoonlengthType.Long
     default = MoonlengthType.Normal
-
-class Mobsanity(Toggle):
-    """
-    Add checks for killing one of each enemy type to the check pool.
-    Only includes checks for enemies that are reachable within the boards you have selected in the 'boards' option.
-    """
-    display_name = "Enable Mobsanity"
-    default = 0
 
 class Pausing(Toggle):
     """
@@ -185,17 +263,28 @@ class StrangePortalTrapWeight(Range):
 @dataclass
 class StacklandsOptions(PerGameCommonOptions):
     goal: Goal
-    quest_checks: QuestChecks
+
+    # Sanities
+    equipmentsanity: Equipmentsanity
+    foodsanity: Foodsanity
+    locationsanity: Locationsanity
+    mobsanity: Mobsanity
+    mobsanity_balancing: MobsanityBalancing
+    structuresanity: Structuresanity
+    # spendsanity: Spendsanity
+    # spendsanity_cost: SpendsanityCost
+    # spendsanity_count: SpendsanityCount
+
+    # Run settings
     board_expansion_mode: BoardExpansionMode
     board_expansion_amount: BoardExpansionAmount
     board_expansion_count: BoardExpansionCount
-    death_link: DeathLink
     moon_length: MoonLength
     pausing: Pausing
-    mobsanity: Mobsanity
+
+    # Traps
     trap_fill: TrapFill
     feed_villagers_trap_weight: FeedVillagersTrapWeight
-    # flip_trap_weight: TrapWeightFlip
     mob_trap_weight: MobTrapWeight
     sell_cards_trap_weight: SellCardsTrapWeight
     sell_cards_trap_amount: SellCardsTrapAmount
