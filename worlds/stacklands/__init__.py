@@ -64,20 +64,27 @@ class StacklandsWorld(World):
 
     def generate_early(self) -> None:
 
+        # Define goal weights based on options
+        goal_weights: Dict[RegionFlags, int] = {
+            RegionFlags.Mainland: 1 if bool(self.options.boards.value & RegionFlags.Mainland) else 0,
+            RegionFlags.Forest: 1 if bool(self.options.boards.value & RegionFlags.Forest) else 0,
+            RegionFlags.Island: 1 if bool(self.options.boards.value & RegionFlags.Island) else 0
+        }
+
         # Set goal bosses as all bosses if selected, otherwise select random boss
         self.multiworld.goal_boards = (
             self.options.boards.value 
             if self.options.goal.value is GoalFlags.AllBosses else 
             self.multiworld.random.choices(
-                [ RegionFlags.Mainland, RegionFlags.Forest, RegionFlags.Island ],
-                weights={
-                    RegionFlags.Mainland: 1 if bool(self.options.boards.value & RegionFlags.Mainland) else 0,
-                    RegionFlags.Forest: 1 if bool(self.options.boards.value & RegionFlags.Forest) else 0,
-                    RegionFlags.Island: 1 if bool(self.options.boards.value & RegionFlags.Island) else 0
-                },
+                population=list(goal_weights.keys()),
+                weights=list(goal_weights.values()),
                 k=1
             ).pop()
         )
+
+        logging.info(f"Goal Board(s) Value: {self.options.boards.value}")
+        logging.info(f"Island present?: {bool(self.options.boards.value & RegionFlags.Island)}")
+        logging.info(f"Goal Board(s): {self.multiworld.goal_boards}")
 
         # Get resource booster item weights
         self.multiworld.filler_booster_weights = {
@@ -131,7 +138,7 @@ class StacklandsWorld(World):
         # Add additional data to slot data
         slot_data.update({
             "goal_boards": self.multiworld.goal_boards,
-            "version": "0.2.1" 
+            "version": "0.2.2"
         })
 
         return slot_data
