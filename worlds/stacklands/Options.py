@@ -83,7 +83,7 @@ class Goal(Choice):
     """
     Select the goal for the run.
 
-    All Bosses  -> Kill each boss from each board selected in the <Boards> option.
+    All Bosses  -> Kill each boss from every board selected in the <Boards> option.
     Random Boss -> Kill one randomly selected boss from the boards selected in the <Boards> option.
     
     More goals to be added in future...
