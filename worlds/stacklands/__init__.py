@@ -82,10 +82,6 @@ class StacklandsWorld(World):
             ).pop()
         )
 
-        logging.info(f"Goal Board(s) Value: {self.options.boards.value}")
-        logging.info(f"Island present?: {bool(self.options.boards.value & RegionFlags.Island)}")
-        logging.info(f"Goal Board(s): {self.multiworld.goal_boards}")
-
         # Get resource booster item weights
         self.multiworld.filler_booster_weights = {
             "Mainland Resource Booster Pack": 1 if bool(self.options.boards.value & RegionFlags.Mainland) else 0,
