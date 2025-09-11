@@ -82,10 +82,23 @@ class StacklandsWorld(World):
             ).pop()
         )
 
-        # Get resource booster item weights
-        self.multiworld.filler_booster_weights = {
-            "Mainland Resource Booster Pack": 1 if bool(self.options.boards.value & RegionFlags.Mainland) else 0,
-            "Island Resource Booster Pack": 1 if bool(self.options.boards.value & RegionFlags.Island) else 0,
+        # Get filler weights
+        self.multiworld.junk_weights = {
+            # Buffs
+            "Buff: Frenzy": 15,
+            "Buff: Invulnerable": 15,
+            "Buff: Well Fed": 10,
+
+            # Currency
+            "Coin x3": 50 if bool(self.options.boards.value & RegionFlags.Mainland) else 0,
+            "Shell x3": 50 if bool(self.options.boards.value & RegionFlags.Island) else 0,
+
+            # Junk
+            "Goop": 10,
+
+            # Resource Boosters
+            "Mainland Resource Booster Pack": 50 if bool(self.options.boards.value & RegionFlags.Mainland) else 0,
+            "Island Resource Booster Pack": 50 if bool(self.options.boards.value & RegionFlags.Island) else 0
         }
 
         # Get trap item weights
@@ -93,6 +106,7 @@ class StacklandsWorld(World):
             "Feed Villagers Trap": self.options.feed_villagers_trap_weight.value,
             "Mob Trap": self.options.mob_trap_weight.value,
             "Sell Cards Trap": self.options.sell_cards_trap_weight.value,
+            "Status Trap": self.options.status_trap_weight.value,
             "Strange Portal Trap": self.options.strange_portal_trap_weight.value,
         }
     

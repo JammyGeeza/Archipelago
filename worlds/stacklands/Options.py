@@ -57,6 +57,13 @@ class BoardExpansionCount(Range):
     range_end = 10
     default = 6
 
+class GameSpeedItems(Toggle):
+    """
+    The ability to Pause and Speed-Up gameplay are included as items in the item pool.
+    """
+    display_name = "Game Speed Items"
+    default = 0
+
 class MoonLength(Choice):
     """
     Set the length of each moon for the run - this disables and overrides the 'Moon Length' option in the 'Start New Run' menu.
@@ -74,6 +81,8 @@ class Pausing(Toggle):
     """
     display_name = "Enable Pausing"
     default = 1
+
+
 
 #endregion
 
@@ -265,6 +274,20 @@ class SellCardsTrapAmount(Range):
     range_end = 10
     default = 3
 
+class StatusTrapWeight(Range):
+    """
+    The weighting of Status Trap items in the trap pool.
+    The higher this number relative to the other trap weightings, the more often it is likely to appear.
+
+    Status Traps will inflict a random negative status (Bleeding, Drunk, Frenzy, Poisoned) on a random villager.
+    
+    If <Trap Fill> is 0 then this setting will be ignored.
+    """
+    display_name = "Status Trap Weighting"
+    range_start = 0
+    range_end = 100
+    default = 50
+
 class StrangePortalTrapWeight(Range):
     """
     The weighting of Strange Portal Trap items in the trap pool.
@@ -289,6 +312,7 @@ class StacklandsOptions(PerGameCommonOptions):
     board_expansion_mode: BoardExpansionMode
     board_expansion_amount: BoardExpansionAmount
     board_expansion_count: BoardExpansionCount
+    game_speed_items: GameSpeedItems
     moon_length: MoonLength
     pausing: Pausing
 
@@ -312,4 +336,5 @@ class StacklandsOptions(PerGameCommonOptions):
     mob_trap_weight: MobTrapWeight
     sell_cards_trap_weight: SellCardsTrapWeight
     sell_cards_trap_amount: SellCardsTrapAmount
+    status_trap_weight: StatusTrapWeight
     strange_portal_trap_weight: StrangePortalTrapWeight

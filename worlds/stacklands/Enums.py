@@ -18,6 +18,7 @@ class ItemType(IntEnum):
     Trap      = 3
     Structure = 4
     Buff      = 5
+    Ability   = 6
 
 class MoonlengthType(IntEnum):
     Short     = 0
@@ -80,6 +81,7 @@ class OptionFlags(IntFlag):
     Mobsanity       = 1 << 5
     Structuresanity = 1 << 6
     Expansion       = 1 << 7
+    PauseSpeedItems = 1 << 8
 
 class RegionFlags(IntFlag):
     NA        = 0

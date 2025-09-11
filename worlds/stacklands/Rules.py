@@ -49,6 +49,9 @@ class StacklandsLogic(LogicMixin):
 
    def sl_can_reach_any_quests(self, quests: List[str], player: int) -> bool:
       return any(self.can_reach_location(quest, player) for quest in quests)
+   
+   def sl_has_ability(self, name: str, player: int) -> bool:
+      return self.has("Ability: " + name, player)
 
    def sl_has_idea(self, name: str, player: int) -> bool:
       return self.has("Idea: " + name, player)
@@ -93,6 +96,7 @@ def set_rules(world: MultiWorld, player: int):
 
    # Calculate other options
    pausing_enabled: bool = options.pausing.value
+   game_speed_items_enabled: bool = options.game_speed_items.value
 
 #region 'Exits'
 
@@ -271,7 +275,10 @@ def set_rules(world: MultiWorld, player: int):
    # Set this rule only if Pausing is enabled
    if pausing_enabled:
       set_rule(world.get_location("Pause using the play icon in the top right corner", player),
-               lambda state: True)  # Phase Zero
+               lambda state:     # Phase Zero
+                  state.sl_has_ability("Pause", player) 
+                  if game_speed_items_enabled 
+                  else True)
 
    set_rule(world.get_location("Grow a Berry Bush using Soil", player),
             lambda state:        # Phase One
