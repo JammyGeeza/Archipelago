@@ -1,173 +1,321 @@
 from .bases import StacklandsWorldTestBase
+from ..Enums import RegionFlags
+from typing import List
 
-class TestDarkForestEnabled(StacklandsWorldTestBase):
+class TestPausing(StacklandsWorldTestBase):
 
+    @property
+    def base_locations(self):
+        return [
+            "Pause using the play icon in the top right corner"
+        ]
+    
     options = {
-        "dark_forest": True,
-    }
-
-    def test_dark_forest_enabled(self) -> None:
-        """Test that relevant locations and items exist in the pool when Dark Forest is enabled in the YAML"""
-
-        for location in self.dark_forest_locations:
-            try:
-                self.assertIsNotNone(self.world.get_location(location))
-            except Exception:
-                self.fail(f"YAML set to {self.world.options.dark_forest} but '{location}' does not exist in the location pool.")
-
-class TestDarkForestDisabled(StacklandsWorldTestBase):
-
-    options = {
-        "dark_forest": False,
-    }
-
-    def test_dark_forest_disabled(self) -> None:
-        """Test that relevant locations and items do not exist in the pool when Dark Forest is disabled in the YAML"""
-        
-        # Cycle through dark forest locations
-        for location in self.dark_forest_locations:
-            with self.assertRaises(KeyError, msg=f"YAML option is {self.world.options.dark_forest} but '{location}' location check exists in the pool."):
-                self.world.get_location(location)
-
-        # Cycle through dark forest items
-        for item in self.dark_forest_items:
-            with self.assertRaises(ValueError, msg=f"YAML option is {self.world.options.dark_forest} but '{item}' item exists in the pool."):
-                self.get_item_by_name(item)
-
-class TestMobsanityEnabledWithDarkForest(StacklandsWorldTestBase):
-
-    options = {
-        "mobsanity": True,
-        "dark_forest": True
-    }
-
-    def test_mobsanity_enabled_with_dark_forest(self) -> None:
-        """Test that relevant locations exist in the pool when Mobsanity is enabled and Dark Forest is enabled in the YAML"""
-
-        for location in self.mobsanity_locations + self.dark_forest_mobsanity_locations:
-            try:
-                self.assertIsNotNone(self.world.get_location(location))
-            except Exception:
-                self.fail(f"YAML set to {self.world.options.mobsanity} and {self.world.options.dark_forest} but '{location}' does not exist in the location pool.")
-
-class TestMobsanityEnabledWithoutDarkForest(StacklandsWorldTestBase):
-
-    options = {
-        "mobsanity": True,
-        "dark_forest": False
-    }
-
-    def test_mobsanity_enabled_without_dark_forest(self) -> None:
-        """Test that relevant locations exist in the pool when Mobsanity is enabled and Dark Forest is disabled in the YAML"""
-
-        # Assert that Mobsanity locations exist
-        for location in self.mobsanity_locations:
-            try:
-                self.assertIsNotNone(self.world.get_location(location))
-            except Exception:
-                self.fail(f"YAML set to {self.world.options.mobsanity} but '{location}' does not exist in the location pool.")
-
-        # Assert that Mobsanity locations for Dark Forest don't exist
-        for location in self.dark_forest_mobsanity_locations:
-            with self.assertRaises(KeyError, msg=f"YAML option is {self.world.options.mobsanity} but '{location}' location check exists in the pool."):
-                self.world.get_location(location)
-
-class TestMobsanityDisabled(StacklandsWorldTestBase):
-
-    options = {
-        "mobsanity": False
-    }
-
-    def test_mobsanity_disabled(self) -> None:
-        """Test that relevant locations and items do not exist in the pool when Mobsanity is disabled in the YAML"""
-        
-        # Cycle through dark forest locations
-        for location in self.mobsanity_locations + self.dark_forest_mobsanity_locations:
-            with self.assertRaises(KeyError, msg=f"YAML option is {self.world.options.mobsanity} but '{location}' location check exists in the pool."):
-                self.world.get_location(location)
-
-class TestPausingEnabled(StacklandsWorldTestBase):
-
-    options = {
+        "boards": "all",
         "pausing": True
     }
 
-    def test_pausing_enabled(self) -> None:
-        """Test that relevant locations exist in the pool when Pausing is enabled in the YAML"""
+class TestMainland(StacklandsWorldTestBase):
 
-        for location in self.pausing_locations:
-            try:
-                self.assertIsNotNone(self.world.get_location(location))
-            except Exception:
-                self.fail(f"YAML set to {self.world.options.pausing} but '{location}' does not exist in the location pool.")
+    @property
+    def base_items(self) -> List[str]:
+        return [
+            "Humble Beginnings Booster Pack",
+            "Seeking Wisdom Booster Pack",
+            "Reap & Sow Booster Pack",
+            "Curious Cuisine Booster Pack",
+            "Logic and Reason Booster Pack",
+            "The Armory Booster Pack",
+            "Explorers Booster Pack",
+            "Order and Structure Booster Pack",
 
-class TestPausingDisabled(StacklandsWorldTestBase):
+            "Idea: Brick",
+            "Idea: Brickyard",
+            "Idea: Campfire",
+            "Idea: Club",
+            "Idea: Coin Chest",
+            "Idea: Cooked Meat",
+            "Idea: Farm",
+            "Idea: Frittata",
+            "Idea: Growth",
+            "Idea: House",
+            "Idea: Iron Bar",
+            "Idea: Iron Shield",
+            "Idea: Lumber Camp",
+            "Idea: Magic Wand",
+            "Idea: Market",
+            "Idea: Offspring",
+            "Idea: Omelette",
+            "Idea: Plank",
+            "Idea: Quarry",
+            "Idea: Shed",
+            "Idea: Slingshot",
+            "Idea: Smelter",
+            "Idea: Smithy",
+            "Idea: Spear",
+            "Idea: Spiked Plank",
+            "Idea: Stick",
+            "Idea: Stove",
+            "Idea: Sword",
+            "Idea: Temple",
+            "Idea: Throwing Stars",
+            "Idea: Warehouse",
+            "Idea: Wooden Shield",
+
+            "Idea: Axe",
+            "Idea: Chicken",
+            "Idea: Hammer",
+            "Idea: Pickaxe"
+        ]
+
+    @property
+    def base_locations(self) -> List[str]:
+        return [
+            "Open the Booster Pack",
+            "Drag the Villager on top of the Berry Bush",
+            "Mine a Rock using a Villager",
+            "Sell a Card",
+            "Buy the Humble Beginnings Pack",
+            "Harvest a Tree using a Villager",
+            "Make a Stick from Wood",
+            "Pause using the play icon in the top right corner",
+            "Grow a Berry Bush using Soil",
+            "Build a House",
+            "Get a Second Villager",
+            "Create Offspring",
+
+            "Unlock all Packs",
+            "Get 3 Villagers",
+            "Find the Catacombs",
+            "Find a mysterious artifact",
+            "Build a Temple",
+            "Bring the Goblet to the Temple",
+            "Kill the Demon",
+
+            "Train Militia",
+            "Kill a Rat",
+            "Kill a Skeleton",
+
+            "Make a Villager wear a Rabbit Hat",
+            "Build a Smithy",
+            "Train a Wizard",
+            "Have a Villager with Combat Level 20",
+            "Train a Ninja",
+
+            "Start a Campfire",
+            "Cook Raw Meat",
+            "Cook an Omelette",
+            "Cook a Frittata",
+
+            "Explore a Forest",
+            "Explore a Mountain",
+            "Open a Treasure Chest",
+            "Find a Graveyard",
+            "Get a Dog",
+            "Train an Explorer",
+            "Buy something from a Travelling Cart",
+
+            "Have 5 Ideas",
+            "Have 10 Ideas",
+            "Have 10 Wood",
+            "Have 10 Stone",
+            "Get an Iron Bar",
+            "Have 5 Food",
+            "Have 10 Food",
+            "Have 20 Food",
+            "Have 50 Food",
+            "Have 10 Coins",
+            "Have 30 Coins",
+            "Have 50 Coins",
+
+            "Have 3 Houses",
+            "Build a Shed",
+            "Build a Quarry",
+            "Build a Lumber Camp",
+            "Build a Farm",
+            "Build a Brickyard",
+            "Sell a Card at a Market",
+
+            "Reach Moon 6",
+            "Reach Moon 12",
+            "Reach Moon 24",
+            "Reach Moon 36",
+
+            "Buy the Seeking Wisdom Pack",
+            "Buy the Reap & Sow Pack",
+            "Buy the Curious Cuisine Pack",
+            "Buy the Logic and Reason Pack",
+            "Buy the The Armory Pack",
+            "Buy the Explorers Pack",
+            "Buy the Order and Structure Pack",
+            "Buy 5 Mainland Booster Packs",
+            "Buy 10 Mainland Booster Packs",
+            "Buy 25 Mainland Booster Packs",
+
+            "Sell 5 Cards",
+            "Sell 10 Cards",
+            "Sell 25 Cards",
+
+            "Reach Moon 18",
+            "Reach Moon 30",
+
+            "Get 5 Villagers",
+            "Get 7 Villagers",
+
+            "Have 10 Bricks",
+            "Have 10 Flint",
+            "Have 10 Iron Bars",
+            "Have 10 Iron Ore",
+            "Have 10 Planks",
+            "Have 10 Sticks"
+        ]
 
     options = {
-        "pausing": False
+        "boards": "mainland_only"
     }
 
-    def test_pausing_disabled(self) -> None:
-        """Test that relevant locations are removed from the pool when Pausing is disabled in the YAML"""
+class TestForest(StacklandsWorldTestBase):
 
-        for location in self.pausing_locations:
-            with self.assertRaises(KeyError, msg=f"YAML set to {self.world.options.pausing} but '{location}' exists in the location pool."):
-                self.world.get_location(location)
+    @property
+    def base_items(self) -> List[str]:
+        return [
+            "Idea: Stable Portal"
+        ]
 
-class TestTrapsEnabled(StacklandsWorldTestBase):
-
+    @property
+    def base_locations(self) -> List[str]:
+        return [
+            "Find the Dark Forest",
+            "Complete the first wave",
+            "Build a Stable Portal",
+            "Get to wave 2",
+            "Get to wave 4",
+            "Get to wave 6",
+            "Get to wave 8",
+            "Fight the Wicked Witch",
+        ]
+    
     options = {
-        "traps": True
+        "boards": "mainland_and_forest"
     }
 
-    def test_traps_enabled(self) -> None:
-        """Test that relevant items are included in the item pool when enabled in the YAML"""
+class TestIsland(StacklandsWorldTestBase):
 
-        # Check that at least one trap is in the pool
-        traps = self.get_items_by_name(self.trap_items)
-        self.assertGreater(len(traps), 0, f"YAML set to {self.world.options.traps} but no trap items found in the item pool.")
+    @property
+    def base_items(self) -> List[str]:
+        return [
+            "On the Shore Booster Pack",
+            "Island of Ideas Booster Pack",
+            "Grilling and Brewing Booster Pack",
+            "Island Insights Booster Pack",
+            "Advanced Archipelago Booster Pack",
+            "Enclave Explorers Booster Pack",
 
-class TestTrapsDisabled(StacklandsWorldTestBase):
+            "Idea: Bow",
+            "Idea: Bottle of Rum",
+            "Idea: Bottle of Water",
+            "Idea: Broken Bottle",
+            "Idea: Cathedral",
+            "Idea: Ceviche",
+            "Idea: Charcoal",
+            "Idea: Coin",
+            "Idea: Composter",
+            "Idea: Distillery",
+            "Idea: Empty Bottle",
+            "Idea: Fabric",
+            "Idea: Fish Trap",
+            "Idea: Forest Amulet",
+            "Idea: Glass",
+            "Idea: Gold Bar",
+            "Idea: Golden Chestplate",
+            "Idea: Greenhouse",
+            "Idea: Lighthouse",
+            "Idea: Mess Hall",
+            "Idea: Rope",
+            "Idea: Rowboat",
+            "Idea: Sacred Key",
+            "Idea: Sail",
+            "Idea: Sandstone",
+            "Idea: Seafood Stew",
+            "Idea: Shell Chest",
+            "Idea: Sloop",
+            "Idea: Sushi",
 
+            "Idea: Fishing Rod",
+        ]
+
+    @property
+    def base_locations(self) -> List[str]:
+        return [
+            "Build a Rowboat",
+            "Build a Cathedral on the Mainland",
+            "Bring the Island Relic to the Cathedral",
+            "Kill the Demon Lord",
+
+            "Get 2 Bananas",
+            "Punch some Driftwood",
+            "Have 3 Shells",
+            "Catch a Fish",
+            "Make Rope",
+            "Make a Fish Trap",
+            "Make a Sail",
+            "Build a Sloop",
+
+            "Unlock all Island Packs",
+            "Find a Treasure Map",
+            "Find Treasure",
+            "Forge Sacred Key",
+            "Open the Sacred Chest",
+            "Kill the Kraken",
+
+            "Make Sushi",
+            "Cook Crab Meat",
+            "Make Ceviche",
+            "Make a Seafood Stew",
+            "Make a Bottle of Rum",
+
+            "Have 10 Shells",
+            "Get a Villager Drunk",
+            "Make Sandstone",
+            "Build a Mess Hall",
+            "Build a Greenhouse",
+            "Have a Poisoned Villager",
+            "Cure a Poisoned Villager",
+            "Build a Composter",
+            "Bribe a Pirate Boat",
+            "Befriend a Pirate",
+            "Make a Gold Bar",
+            "Make Glass",
+
+            "Train an Archer",
+            "Break a Bottle",
+            "Equip an Archer with a Quiver",
+            "Make a Villager wear Crab Scale Armor",
+            "Craft the Amulet of the Forest",
+
+            "Buy the On the Shore Pack",
+            "Buy the Island of Ideas Pack",
+            "Buy the Grilling and Brewing Pack",
+            "Buy the Island Insights Pack",
+            "Buy the Advanced Archipelago Pack",
+            "Buy the Enclave Explorers Pack",
+            "Buy 5 Island Booster Packs",
+            "Buy 10 Island Booster Packs",
+            "Buy 25 Island Booster Packs",
+
+            "Have 30 Shells",
+            "Have 50 Shells",
+
+            "Have 10 Cotton",
+            "Have 10 Fabric",
+            "Have 10 Glass",
+            "Have 10 Gold Bars",
+            "Have 10 Rope",
+            "Have 10 Sails",
+            "Have 10 Sandstone",
+        ]
+    
     options = {
-        "traps": False
+        "boards": "mainland_and_island",
+        "equipmentsanity": False,
     }
-
-    def test_traps_disabled(self) -> None:
-        """Test that relevant items are removed from the item pool when disabled in the YAML"""
-
-        for item in self.trap_items:
-            with self.assertRaises(ValueError, msg=f"YAML set to {self.world.options.traps} but '{item}' exists in the item pool."):
-                self.get_item_by_name(item)
-
-
-# class TestNoMobsanityNoDarkForest(StacklandsWorldTestBase):
-
-#     options = {
-#         "dark_forest": False,
-#         "mobsanity": False
-#     }
-
-#     def test_mobsanity_no_dark_forest(self) -> None:
-#         """"""
-
-    # def test_dark_forest_disabled(self) -> None:
-    #     """Test that locations and items for The Dark Forest are removed when disabled in YAML"""
-
-    #     # Cycle through dark forest locations
-    #     for location in self.dark_forest_locations:
-    #         with self.assertRaises(KeyError, msg=f"YAML option is {self.world.options.dark_forest} but '{location}' location check exists in the pool."):
-    #             self.world.get_location(location)
-
-    #     # Cycle through dark forest items
-    #     for item in self.dark_forest_items:
-    #         with self.assertRaises(ValueError, msg=f"YAML option is {self.world.options.dark_forest} but '{item}' item exists in the pool."):
-    #             self.get_item_by_name(item)
-
-    # def test_mobsanity_disabled(self) -> None:
-    #     """Test that locations and items for Mobsanity are removed when disabled in YAML"""
-
-    #     # Cycle through mobsanity locations
-    #     for location in self.mainland_mobsanity_locations:
-    #         with self.assertRaises(KeyError, msg=f"YAML option is {self.world.options.mobsanity} but '{location}' location check exists in the pool."):
-    #             self.world.get_location(location)
