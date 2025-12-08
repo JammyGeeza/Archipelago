@@ -20,7 +20,7 @@ class Boards(Choice):
     option_mainland_and_forest = RegionFlags.Mainland | RegionFlags.Forest
     option_mainland_and_island = RegionFlags.Mainland | RegionFlags.Island
     option_all = RegionFlags.All
-    default = int(option_all)
+    default = int(option_mainland_and_forest)
 
 class BoardExpansionMode(Choice):
     """
