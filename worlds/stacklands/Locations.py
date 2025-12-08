@@ -44,7 +44,7 @@ location_table: List[LocationData] = [
     LocationData("Pause using the play icon in the top right corner"    , RegionFlags.Mainland      , ProgressionPhase.General      , CheckType.Check    , OptionFlags.Pausing        , LocationProgressType.DEFAULT ), 
     LocationData("Grow a Berry Bush using Soil"                         , RegionFlags.Mainland      , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Build a House"                                        , RegionFlags.Mainland      , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
-    LocationData("Get a Second Villager"                                , RegionFlags.Mainland      , ProgressionPhase.General      , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
+    LocationData("Get a Second Villager"                                , RegionFlags.Mainland      , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Create Offspring"                                     , RegionFlags.Mainland      , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
 
     # 'The Grand Scheme' Category

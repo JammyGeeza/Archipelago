@@ -20,7 +20,7 @@ class Boards(Choice):
     option_mainland_and_forest = RegionFlags.Mainland | RegionFlags.Forest
     option_mainland_and_island = RegionFlags.Mainland | RegionFlags.Island
     option_all = RegionFlags.All
-    default = option_all
+    default = int(option_all)
 
 class BoardExpansionMode(Choice):
     """
@@ -32,30 +32,35 @@ class BoardExpansionMode(Choice):
     display_name = "Board Expansion Mode"
     option_vanilla = ExpansionType.Vanilla
     option_items = ExpansionType.Expansion_Items
-    default = ExpansionType.Expansion_Items
+    default = int(option_vanilla)
 
 class BoardExpansionAmount(Range):
     """
-    How many additional cards a board expansion item will give.
-    NOTE: Physical board size will still be capped at the largest vanilla size (without Lighthouses), but card limit is uncapped.
-    
+    How much a Board Expansion item will increase the card limit by.
     If <Board Expansion Mode> option is 'Vanilla' then this setting will be ignored.
+    
+    NOTE: The card limit for your run will be capped at 20 + (Expansion Amount * Expansion Count).
+          The lower you set Expansion Amount and Expansion Count, the more challenging resource management will be.
+          Physical board size will still be capped at the largest vanilla size (without Lighthouses).
     """
     display_name = "Board Expansion Amount"
     range_start = 4
     range_end = 14
-    default = 7
+    default = 10
 
 class BoardExpansionCount(Range):
     """
     How many 'Board Expansion' items are added to the item pool for each compatible board (Mainland & Island).
-    
     If <Board Expansion Mode> option is 'Vanilla' then this setting will be ignored.
+
+    NOTE: The card limit for your run will be capped at 20 + (Expansion Amount * Expansion Count).
+          The lower you set Expansion Amount and Expansion Count, the more challenging resource management will be.
+          Physical board size will still be capped at the largest vanilla size (without Lighthouses).
     """
     display_name = "Board Expansion Count"
     range_start = 4
     range_end = 10
-    default = 6
+    default = 8
 
 class MoonLength(Choice):
     """
@@ -65,7 +70,7 @@ class MoonLength(Choice):
     option_short = MoonlengthType.Short
     option_normal = MoonlengthType.Normal
     option_long = MoonlengthType.Long
-    default = MoonlengthType.Normal
+    default = int(option_normal)
 
 class Pausing(Toggle):
     """
@@ -91,7 +96,7 @@ class Goal(Choice):
     display_name = "Goal"
     option_all_bosses = GoalFlags.AllBosses
     option_random_boss = GoalFlags.RandomBoss
-    default = option_all_bosses
+    default = int(option_all_bosses)
 
 #endregion
 
