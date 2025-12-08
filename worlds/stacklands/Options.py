@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from .Enums import ExpansionType, GoalFlags, MoonlengthType, RegionFlags
+from .Enums import ExpansionType, GoalFlags, MoonlengthType, RedStructureSpawnType, RegionFlags
 from Options import Choice, DeathLink, OptionGroup, PerGameCommonOptions, Range, Toggle
 
 #region Run Options Group
@@ -287,6 +287,26 @@ class StrangePortalTrapWeight(Range):
 
 #endregion
 
+#region QOL Group
+
+class RedStructureSpawn(Choice):
+    """
+    The position on the board where red structures (Strange Portal / Rare Portal / Pirate Ship) will spawn.
+    
+    Vanilla -> Red structures will spawn in random locations on the current board, as per vanilla behaviour.
+    All Other Values -> Red structures will attempt to spawn at a fixed point in the specified area of the current board.
+    """
+    display_name = "Strange Portal Spawn Location"
+    option_vanilla = RedStructureSpawnType.Vanilla
+    option_top_left = RedStructureSpawnType.TopLeft
+    option_top_right = RedStructureSpawnType.TopRight
+    option_bottom_left = RedStructureSpawnType.BottomLeft
+    option_bottom_right = RedStructureSpawnType.BottomRight
+    option_middle = RedStructureSpawnType.Middle
+    default = int(option_vanilla)
+
+#endregion
+
 @dataclass
 class StacklandsOptions(PerGameCommonOptions):
     # Run Settings
@@ -318,3 +338,6 @@ class StacklandsOptions(PerGameCommonOptions):
     sell_cards_trap_weight: SellCardsTrapWeight
     sell_cards_trap_amount: SellCardsTrapAmount
     strange_portal_trap_weight: StrangePortalTrapWeight
+
+    # QoL
+    red_structure_spawn: RedStructureSpawn

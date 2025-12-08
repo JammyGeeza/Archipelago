@@ -41,6 +41,9 @@ class StacklandsWeb(WebWorld):
             Options.SellCardsTrapWeight,
             Options.SellCardsTrapAmount,
             Options.StrangePortalTrapWeight
+        ]),
+        OptionGroup("QoL", [
+            Options.RedStructureSpawn
         ])
     ]
 
@@ -123,6 +126,7 @@ class StacklandsWorld(World):
             "mobsanity_balancing",
             "moon_length",
             "pausing",
+            "red_structure_spawn",
             "sell_cards_trap_amount",
             # "spendsanity",
             # "spendsanity_cost",
@@ -134,7 +138,7 @@ class StacklandsWorld(World):
         # Add additional data to slot data
         slot_data.update({
             "goal_boards": self.multiworld.goal_boards,
-            "version": "0.2.3"
+            "version": "0.2.4"
         })
 
         return slot_data
