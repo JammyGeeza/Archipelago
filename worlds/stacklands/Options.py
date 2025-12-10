@@ -16,11 +16,11 @@ class Boards(Choice):
     All quests for each selected board will be added as location checks.
     """
     display_name = "Boards"
-    option_mainland_only = RegionFlags.Mainland
-    option_mainland_and_forest = RegionFlags.Mainland | RegionFlags.Forest
-    option_mainland_and_island = RegionFlags.Mainland | RegionFlags.Island
-    option_all = RegionFlags.All
-    default = int(option_mainland_and_forest)
+    option_mainland_only = RegionFlags.Mainland.value
+    option_mainland_and_forest = (RegionFlags.Mainland | RegionFlags.Forest).value
+    option_mainland_and_island = (RegionFlags.Mainland | RegionFlags.Island).value
+    option_all = RegionFlags.All.value
+    default = option_mainland_and_forest
 
 class BoardExpansionMode(Choice):
     """
@@ -30,9 +30,9 @@ class BoardExpansionMode(Choice):
     Items   -> Adds 'Board Expansion' items to the item pool and disables all Sheds / Warehouses / Lighthouses when built.
     """
     display_name = "Board Expansion Mode"
-    option_vanilla = ExpansionType.Vanilla
-    option_items = ExpansionType.Expansion_Items
-    default = int(option_vanilla)
+    option_vanilla = ExpansionType.Vanilla.value
+    option_items = ExpansionType.Expansion_Items.value
+    default = option_vanilla
 
 class BoardExpansionAmount(Range):
     """
@@ -67,10 +67,10 @@ class MoonLength(Choice):
     Set the length of each moon for the run - this disables and overrides the 'Moon Length' option in the 'Start New Run' menu.
     """
     display_name = "Moon Length"
-    option_short = MoonlengthType.Short
-    option_normal = MoonlengthType.Normal
-    option_long = MoonlengthType.Long
-    default = int(option_normal)
+    option_short = MoonlengthType.Short.value
+    option_normal = MoonlengthType.Normal.value
+    option_long = MoonlengthType.Long.value
+    default = option_normal
 
 class Pausing(Toggle):
     """
@@ -94,9 +94,9 @@ class Goal(Choice):
     More goals to be added in future...
     """
     display_name = "Goal"
-    option_all_bosses = GoalFlags.AllBosses
-    option_random_boss = GoalFlags.RandomBoss
-    default = int(option_all_bosses)
+    option_all_bosses = GoalFlags.AllBosses.value
+    option_random_boss = GoalFlags.RandomBoss.value
+    default = option_all_bosses
 
 #endregion
 
