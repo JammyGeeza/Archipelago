@@ -87,7 +87,6 @@ def set_rules(world: MultiWorld, player: int):
    foodsanity_enabled: bool = options.foodsanity.value
    locationsanity_enabled: bool = options.locationsanity.value
    mobsanity_enabled: bool = options.mobsanity.value
-   # packsanity_selected: bool = options.packsanity.value
    # spendsanity_selected: bool = options.spendsanity.value != SpendsanityType.Off
    structuresanity_enabled: bool = options.structuresanity.value
 
@@ -162,18 +161,25 @@ def set_rules(world: MultiWorld, player: int):
             lambda state:  # Can make a basic weapon to start at Wave One
                not forest_enabled
                or (
-                  state.sl_has_idea("Stick", player)
+                  state.sl_has_all_ideas(["Growth", "Stick"], player)
                   and state.sl_has_any_ideas(["Magic Wand", "Slingshot", "Spear"], player)
                ))
-   
+
    set_rule(world.get_entrance("Forward to The Dark Forest: Progression Phase Two", player),
             lambda state:  # Can make all basic weapons and Stable Portal for easier travel
                not forest_enabled
                or (
-                  state.can_reach_location("Get an Iron Bar", player)
+                  state.sl_has_any_packs([
+                     "Logic and Reason",
+                     "Order and Structure"
+                  ], player)
                   and state.sl_has_all_ideas([
+                     "Brick",
+                     "Iron Bar",
+                     "Plank",
                      "Magic Wand",
                      "Slingshot",
+                     "Smelter",
                      "Spear",
                      "Stable Portal",
                      "Wooden Shield"

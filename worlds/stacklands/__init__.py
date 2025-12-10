@@ -7,11 +7,20 @@ from .Locations import name_to_id as location_lookup
 from .Regions import create_all_regions
 from .Rules import set_rules
 from worlds.AutoWorld import World, WebWorld
-from BaseClasses import Item
+from BaseClasses import Item, Tutorial
 from Options import OptionGroup
 from . import Options
 
 class StacklandsWeb(WebWorld):
+    
+    tutorials = [Tutorial(
+        "Multiworld Setup Guide",
+        "A guide to setting up the Stacklands randomizer connected to an Archipelago Multiworld.",
+        "English",
+        "setup_en.md",
+        "setup/en",
+        ["JammyGeeza"]
+    )]
     theme = "jungle"
 
     option_groups = [
@@ -134,7 +143,7 @@ class StacklandsWorld(World):
         # Add additional data to slot data
         slot_data.update({
             "goal_boards": self.multiworld.goal_boards,
-            "version": "0.2.2"
+            "version": "0.2.3"
         })
 
         return slot_data
