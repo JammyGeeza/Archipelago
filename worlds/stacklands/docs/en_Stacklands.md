@@ -39,4 +39,5 @@ There are the following amount of maximum Location Checks available for each boa
 - **Mainland** -> Up to **141** Locations _(with all 'Sanity' locations enabled)_
 - **Dark Forest** -> Up to **11** Locations _(with all 'Sanity' Locations enabled)_
 - **The Island** -> Up to **88** Locations _(with all 'Sanity' Locations enabled)_
+
 As there are always the same amount of items in your item pool as you have locations, this means you could have up to a current maximum of **240 Items** to find/receive in your world, depending on your configuration settings.
