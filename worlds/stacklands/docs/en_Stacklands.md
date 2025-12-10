@@ -29,7 +29,7 @@ The currently available items for this Stacklands randomizer are:
 ## What does another world's item look like in Stacklands?
 Items from other worlds do not take any visible appearance, but are found by completing each in-game quest in the quest list. When a quest is completed, a notification will pop up telling you which item was found and to whom it belongs.
 
-All quests from the vanilla game are "checks" along with some additional custom quests _(such as cooking one of each food, crafting one of each equipment, killing one of each Mob etc.)_ that can be configured via the options page.
+All quests from the vanilla game are "Location Checks" along with some additional custom quests _(such as cooking one of each food, crafting one of each equipment, killing one of each Mob etc.)_ that can be configured via the options page.
 
 ## When the player receives an item, what happens?
 When you receive an item from the MultiWorld, it is immediately spawned to the board along with a notification to tell you which item you received and who sent it. However, some items are board-specific _(such as Booster Pack items that are specific to 'The Island' or the 'Mainland Board Expansion' item)_. so these items will spawn to their respective board even if you are not currently playing on that board, so it may look like the item has not appeared but the notification will alert you and the item will be waiting for you when you switch boards.
