@@ -1,0 +1,37 @@
+[
+    {
+        "name": "The Fork",
+        "region": "Menu",
+        "classification": 1
+    },
+    {
+        "name": "Threadfin Shad",
+        "region": "The Fork",
+        "classification": 1
+    },
+    {
+        "name": "Bluegill Sunfish",
+        "region": "The Fork",
+        "classification": 1
+    },
+    {
+        "name": "Smallmouth Bass",
+        "region": "The Fork",
+        "classification": 1
+    },
+    {
+        "name": "Brown Trout",
+        "region": "The Fork",
+        "classification": 1
+    },
+    {
+        "name": "Walleye",
+        "region": "The Fork",
+        "classification": 1
+    },
+    {
+        "name": "Legendary White Tip",
+        "region": "The Fork",
+        "classification": 1
+    }
+]

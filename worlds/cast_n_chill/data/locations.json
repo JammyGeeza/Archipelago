@@ -1,0 +1,62 @@
+[
+    {
+        "name": "Discover a Threadfin Shad",
+        "region": "The Fork",
+        "requires": []
+    },
+    {
+        "name": "Catch a Threadfin Shad",
+        "region": "The Fork",
+        "requires": []
+    },
+    {
+        "name": "Discover a Bluegill Sunfish",
+        "region": "The Fork",
+        "requires": []
+    },
+    {
+        "name": "Catch a Bluegill Sunfish",
+        "region": "The Fork",
+        "requires": []
+    },
+    {
+        "name": "Discover a Smallmouth Bass",
+        "region": "The Fork",
+        "requires": []
+    },
+    {
+        "name": "Catch a Smallmouth Bass",
+        "region": "The Fork",
+        "requires": []
+    },
+    {
+        "name": "Discover a Brown Trout",
+        "region": "The Fork",
+        "requires": []
+    },
+    {
+        "name": "Catch a Brown Trout",
+        "region": "The Fork",
+        "requires": []
+    },
+    {
+        "name": "Discover a Walleye",
+        "region": "The Fork",
+        "requires": []
+    },
+    {
+        "name": "Catch a Walleye",
+        "region": "The Fork",
+        "requires": []
+    },
+    {
+        "name": "Discover a Legendary White Tip",
+        "region": "The Fork",
+        "requires": []
+    },
+    {
+        "name": "Catch a Legendary White Tip",
+        "region": "The Fork",
+        "requires": []
+    }
+]
