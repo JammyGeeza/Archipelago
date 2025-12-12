@@ -10,8 +10,8 @@ class CastNChillLocation:
 
     def __init__(self, json_data):
         self.name: str = json_data["name"]
-        self.region: str = json_data["region"]
-        self.requires: List[str] = json_data["requires"]
+        self.regions: List[str] = json_data["regions"]
+        self.requires: List[str] = json_data.get("requires", [])
         self.count: int = json_data.get("count", 1)
 
 # Read items data from JSON
@@ -31,7 +31,10 @@ location_name_to_id_lookup: Dict[str, int] = {}
 for location in location_table:
     for i in range(location.count):
         location.id = __base_id
-        location_name_to_id_lookup[location.name.replace("{count}", str(i))] = location.id
-        __base_id += 1
+        location_name_to_id_lookup[location.name.format(count=i+1)] = location.id + i
+        
+        logging.info(f"Location: {location.name.format(count=i+1)} - ID: {location.id + i}")
+
+    __base_id += location.count
 
 

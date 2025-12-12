@@ -1,93 +1,125 @@
 [
     {
-        "name": "The Fork",
-        "regions": "Menu",
+        "name": "The Fork License",
+        "spots": [ "The Fork" ],
         "classification": 1
     },
     {
-        "name": "Threadfin Shad",
-        "regions": [ "The Fork" ],
-        "classification": 1
-    },
-    {
-        "name": "Bluegill Sunfish",
-        "regions": [ "The Fork" ],
-        "classification": 1
-    },
-    {
-        "name": "Smallmouth Bass",
-        "regions": [ "The Fork" ],
-        "classification": 1
-    },
-    {
-        "name": "Brown Trout",
-        "regions": [ "The Fork" ],
-        "classification": 1
-    },
-    {
-        "name": "Walleye",
-        "regions": [ "The Fork" ],
-        "classification": 1
-    },
-    {
-        "name": "Legendary White Tip",
-        "regions": [ "The Fork" ],
-        "classification": 1
+        "name": "Beaver Dam License",
+        "spots": [ "Beaver Dam" ],
+        "classification" : 1
     },
     {
         "name": "Basic Bobber",
-        "regions": [ "The Fork" ],
+        "spots": [ "The Fork" ],
         "classification": 1
     },
     {
         "name": "Crankbait",
-        "regions": [ "The Fork" ],
+        "spots": [ "The Fork", "Beaver Dam" ],
         "classification": 1
     },
     {
         "name": "Big Crankbait",
-        "regions": [ "The Fork" ],
+        "spots": [ "The Fork", "Beaver Dam" ],
         "classification": 1
     },
     {
         "name": "Small Spoonbait",
-        "regions": [ "The Fork" ],
+        "spots": [ "The Fork", "Beaver Dam" ],
         "classification": 1
     },
     {
         "name": "Heavy Spoonbait",
-        "regions": [ "The Fork" ],
+        "spots": [ "The Fork" ],
+        "classification": 1
+    },
+    {
+        "name": "Dropshot",
+        "spots": [ "Beaver Dam" ],
+        "classification": 1
+    },
+    {
+        "name": "Jighead",
+        "spots": [ "Beaver Dam" ],
+        "classification": 1
+    },
+    {
+        "name": "Lil' Guppy",
+        "classification": 1
+    },
+    {
+        "name": "Maple Scout",
+        "classification": 1
+    },
+    {
+        "name": "Timberjack",
+        "classification": 1
+    },
+    {
+        "name": "Phantom Line",
+        "classification": 1
+    },
+    {
+        "name": "Grizzly Pole",
+        "classification": 1
+    },
+    {
+        "name": "Horizon Caster",
+        "classification": 1
+    },
+    {
+        "name": "Copperleaf 86",
+        "classification": 1
+    },
+    {
+        "name": "The Frost Stick",
+        "classification": 1
+    },
+    {
+        "name": "Hardwater Howler",
         "classification": 1
     },
     {
         "name": "The Leaky Bucket",
-        "regions": [],
         "classification": 1
     },
     {
         "name": "The Leaky Bucket: Progressive Storage Upgrade",
-        "regions": [],
         "classification": 2,
         "count": 5
     },
     {
         "name": "Loonchaser",
-        "regions": [],
         "classification": 2
+    },
+    {
+        "name": "Loonchaser: Progressive Storage Upgrade",
+        "classification": 2,
+        "count": 5
     },
     {
         "name": "Coastal Rambler",
-        "regions": [],
         "classification": 2
+    },
+    {
+        "name": "Coastal Rambler: Progressive Storage Upgrade",
+        "classification": 2,
+        "count": 5
     },
     {
         "name": "Snow Wolf XT1",
-        "regions": [],
         "classification": 2
     },
     {
-        "name": "Gold",
-        "regions": [],
-        "classification": 0
+        "name": "Snow Wolf XT1: Progressive Storage Upgrade",
+        "classification": 2,
+        "count": 5
+    },
+    {
+        "name": "Gold"
+    },
+    {
+        "name": "Nothing"
     }
 ]

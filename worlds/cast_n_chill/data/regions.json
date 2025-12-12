@@ -5,11 +5,34 @@
             {
                 "name": "Map to The Fork",
                 "destination": "The Fork"
+            },
+            {
+                "name": "Map to Beaver Dam",
+                "destination": "Beaver Dam"
             }
         ]
     },
     {
         "name": "The Fork",
-        "exits": []
+        "exits": [],
+        "requires": [ "The Fork License" ]
+    },
+    {
+        "name": "Beaver Dam",
+        "exits": [],
+        "requires": [ "Beaver Dam License" ]
+    },
+    {
+        "name": "The Fork / Beaver Dam",
+        "exits": [
+            {
+                "name": "To The Fork",
+                "destination": "The Fork"
+            },
+            {
+                "name": "To Beaver Dam",
+                "destination": "Beaver Dam"
+            }
+        ]
     }
 ]

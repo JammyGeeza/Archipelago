@@ -1,88 +1,166 @@
 [
     {
         "name": "Buy The Leaky Bucket",
-        "region": "Menu",
+        "regions": [ "Menu" ],
         "requires": []
     },
     {
         "name": "Buy The Leaky Bucket: Storage Upgrade {count}",
-        "region": "Menu",
+        "regions": [ "Menu" ],
         "requires": [],
         "count": 5
     },
     {
         "name": "Buy Loonchaser",
-        "region": "Menu",
+        "regions": [ "Menu" ],
         "requires": []
+    },
+    {
+        "name": "Buy Loonchaser: Storage Upgrade {count}",
+        "regions": [ "Menu" ],
+        "requires": [],
+        "count": 5
     },
     {
         "name": "Buy Coastal Rambler",
-        "region": "Menu",
+        "regions": [ "Menu" ],
         "requires": []
     },
     {
+        "name": "Buy Coastal Rambler: Storage Upgrade {count}",
+        "regions": [ "Menu" ],
+        "requires": [],
+        "count": 5
+    },
+    {
         "name": "Buy Snow Wolf XT1",
-        "region": "Menu",
+        "regions": [ "Menu" ],
+        "requires": []
+    },
+    {
+        "name": "Buy Snow Wolf XT1: Storage Upgrade {count}",
+        "regions": [ "Menu" ],
+        "requires": [],
+        "count": 5
+    },
+    {
+        "name": "Visit The Fork",
+        "regions": [ "The Fork" ],
+        "requires": []
+    },
+    {
+        "name": "Visit Beaver Dam",
+        "regions": [ "Beaver Dam" ],
         "requires": []
     },
     {
         "name": "Discover a Threadfin Shad",
-        "region": "The Fork",
+        "regions": [ "The Fork" ],
         "requires": []
     },
     {
         "name": "Catch a Threadfin Shad",
-        "region": "The Fork",
+        "regions": [ "The Fork" ],
         "requires": []
     },
     {
         "name": "Discover a Bluegill Sunfish",
-        "region": "The Fork",
+        "regions": [ "The Fork" ],
         "requires": []
     },
     {
         "name": "Catch a Bluegill Sunfish",
-        "region": "The Fork",
+        "regions": [ "The Fork" ],
         "requires": []
     },
     {
         "name": "Discover a Smallmouth Bass",
-        "region": "The Fork",
+        "regions": [ "The Fork" ],
         "requires": []
     },
     {
         "name": "Catch a Smallmouth Bass",
-        "region": "The Fork",
+        "regions": [ "The Fork" ],
         "requires": []
     },
     {
         "name": "Discover a Brown Trout",
-        "region": "The Fork",
+        "regions": [ "The Fork", "Beaver Dam" ],
         "requires": []
     },
     {
         "name": "Catch a Brown Trout",
-        "region": "The Fork",
+        "regions": [ "The Fork", "Beaver Dam" ],
         "requires": []
     },
     {
         "name": "Discover a Walleye",
-        "region": "The Fork",
+        "regions": [ "The Fork" ],
         "requires": []
     },
     {
         "name": "Catch a Walleye",
-        "region": "The Fork",
+        "regions": [ "The Fork" ],
         "requires": []
     },
     {
         "name": "Discover a Legendary White Tip",
-        "region": "The Fork",
+        "regions": [ "The Fork" ],
         "requires": []
     },
     {
         "name": "Catch a Legendary White Tip",
-        "region": "The Fork",
+        "regions": [ "The Fork" ],
+        "requires": []
+    },
+    {
+        "name": "Discover a Crappie",
+        "regions": [ "Beaver Dam" ],
+        "requires": []
+    },
+    {
+        "name": "Catch a Crappie",
+        "regions": [ "Beaver Dam" ],
+        "requires": []
+    },
+    {
+        "name": "Discover a Longnose Sucker",
+        "regions": [ "Beaver Dam" ],
+        "requires": []
+    },
+    {
+        "name": "Catch a Longnose Sucker",
+        "regions": [ "Beaver Dam" ],
+        "requires": []
+    },
+    {
+        "name": "Discover a Bullhead Catfish",
+        "regions": [ "Beaver Dam" ],
+        "requires": []
+    },
+    {
+        "name": "Catch a Bullhead Catfish",
+        "regions": [ "Beaver Dam" ],
+        "requires": []
+    },
+    {
+        "name": "Discover a Largemouth Bass",
+        "regions": [ "Beaver Dam" ],
+        "requires": []
+    },
+    {
+        "name": "Catch a Largemouth Bass",
+        "regions": [ "Beaver Dam" ],
+        "requires": []
+    },
+    {
+        "name": "Discover a Legendary Bucket Mouth",
+        "regions": [ "Beaver Dam" ],
+        "requires": []
+    },
+    {
+        "name": "Catch a Legendary Bucket Mouth",
+        "regions": [ "Beaver Dam" ],
         "requires": []
     }
 ]
