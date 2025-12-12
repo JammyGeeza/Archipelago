@@ -1,5 +1,31 @@
 [
     {
+        "name": "Buy The Leaky Bucket",
+        "region": "Menu",
+        "requires": []
+    },
+    {
+        "name": "Buy The Leaky Bucket: Storage Upgrade {count}",
+        "region": "Menu",
+        "requires": [],
+        "count": 5
+    },
+    {
+        "name": "Buy Loonchaser",
+        "region": "Menu",
+        "requires": []
+    },
+    {
+        "name": "Buy Coastal Rambler",
+        "region": "Menu",
+        "requires": []
+    },
+    {
+        "name": "Buy Snow Wolf XT1",
+        "region": "Menu",
+        "requires": []
+    },
+    {
         "name": "Discover a Threadfin Shad",
         "region": "The Fork",
         "requires": []

@@ -1,37 +1,93 @@
 [
     {
         "name": "The Fork",
-        "region": "Menu",
+        "regions": "Menu",
         "classification": 1
     },
     {
         "name": "Threadfin Shad",
-        "region": "The Fork",
+        "regions": [ "The Fork" ],
         "classification": 1
     },
     {
         "name": "Bluegill Sunfish",
-        "region": "The Fork",
+        "regions": [ "The Fork" ],
         "classification": 1
     },
     {
         "name": "Smallmouth Bass",
-        "region": "The Fork",
+        "regions": [ "The Fork" ],
         "classification": 1
     },
     {
         "name": "Brown Trout",
-        "region": "The Fork",
+        "regions": [ "The Fork" ],
         "classification": 1
     },
     {
         "name": "Walleye",
-        "region": "The Fork",
+        "regions": [ "The Fork" ],
         "classification": 1
     },
     {
         "name": "Legendary White Tip",
-        "region": "The Fork",
+        "regions": [ "The Fork" ],
         "classification": 1
+    },
+    {
+        "name": "Basic Bobber",
+        "regions": [ "The Fork" ],
+        "classification": 1
+    },
+    {
+        "name": "Crankbait",
+        "regions": [ "The Fork" ],
+        "classification": 1
+    },
+    {
+        "name": "Big Crankbait",
+        "regions": [ "The Fork" ],
+        "classification": 1
+    },
+    {
+        "name": "Small Spoonbait",
+        "regions": [ "The Fork" ],
+        "classification": 1
+    },
+    {
+        "name": "Heavy Spoonbait",
+        "regions": [ "The Fork" ],
+        "classification": 1
+    },
+    {
+        "name": "The Leaky Bucket",
+        "regions": [],
+        "classification": 1
+    },
+    {
+        "name": "The Leaky Bucket: Progressive Storage Upgrade",
+        "regions": [],
+        "classification": 2,
+        "count": 5
+    },
+    {
+        "name": "Loonchaser",
+        "regions": [],
+        "classification": 2
+    },
+    {
+        "name": "Coastal Rambler",
+        "regions": [],
+        "classification": 2
+    },
+    {
+        "name": "Snow Wolf XT1",
+        "regions": [],
+        "classification": 2
+    },
+    {
+        "name": "Gold",
+        "regions": [],
+        "classification": 0
     }
 ]

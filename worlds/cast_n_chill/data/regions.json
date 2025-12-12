@@ -1,0 +1,15 @@
+[
+    {
+        "name": "Menu",
+        "exits": [
+            {
+                "name": "Map to The Fork",
+                "destination": "The Fork"
+            }
+        ]
+    },
+    {
+        "name": "The Fork",
+        "exits": []
+    }
+]
