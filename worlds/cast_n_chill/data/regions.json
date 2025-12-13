@@ -4,35 +4,53 @@
         "exits": [
             {
                 "name": "Map to The Fork",
-                "destination": "The Fork"
+                "destination": "The Fork",
+                "access_rules": {
+                    "and": [
+                        { "has_all": [ "The Fork License" ] }
+                    ]
+                }
             },
             {
                 "name": "Map to Beaver Dam",
-                "destination": "Beaver Dam"
+                "destination": "Beaver Dam",
+                "access_rules": {
+                    "and": [
+                        { "has_all": [ "Beaver Dam License" ] }
+                    ]
+                }
             }
         ]
     },
     {
         "name": "The Fork",
-        "exits": [],
-        "requires": [ "The Fork License" ]
+        "exits": [
+            {
+                "name": "The Fork to The Fork / Beaver Dam",
+                "destination": "The Fork / Beaver Dam",
+                "access_rules": {
+                    "and": [
+                        { "has_all": [ "The Fork License" ] }
+                    ]
+                }
+            }
+        ]
     },
     {
         "name": "Beaver Dam",
-        "exits": [],
-        "requires": [ "Beaver Dam License" ]
-    },
-    {
-        "name": "The Fork / Beaver Dam",
         "exits": [
             {
-                "name": "To The Fork",
-                "destination": "The Fork"
-            },
-            {
-                "name": "To Beaver Dam",
-                "destination": "Beaver Dam"
+                "name": "Beaver Dam to The Fork / Beaver Dam",
+                "destination": "The Fork / Beaver Dam",
+                "access_rules": {
+                    "and": [
+                        { "has_all": [ "Beaver Dam License" ] }
+                    ]
+                }
             }
         ]
+    },
+    {
+        "name": "The Fork / Beaver Dam"
     }
 ]

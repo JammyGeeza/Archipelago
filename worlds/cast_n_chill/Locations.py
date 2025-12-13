@@ -11,7 +11,7 @@ class CastNChillLocation:
     def __init__(self, json_data):
         self.name: str = json_data["name"]
         self.regions: List[str] = json_data["regions"]
-        self.requires: List[str] = json_data.get("requires", [])
+        self.access_rules: Dict[str, any] = json_data.get("access_rules", None)
         self.count: int = json_data.get("count", 1)
 
 # Read items data from JSON

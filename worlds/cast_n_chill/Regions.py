@@ -1,9 +1,10 @@
 from BaseClasses import Entrance, EntranceType, Location, MultiWorld, Region
 from dataclasses import dataclass
 import json, logging, os
-from .Locations import location_table
+from .Locations import location_table, CastNChillLocation
 from .Options import CastNChillOptions
-from typing import List
+from .Rules import compile_access_rules
+from typing import Dict, List
 
 @dataclass
 class CastNChillExit:
@@ -11,6 +12,7 @@ class CastNChillExit:
     def __init__(self, json_data):
         self.name: str = json_data["name"]
         self.destination: str = json_data["destination"]
+        self.access_rules: Dict[str, any] = json_data.get("access_rules", None)
         self.type: EntranceType = EntranceType(json_data.get("type", 2))
 
 @dataclass
@@ -30,43 +32,61 @@ region_table: List[CastNChillRegion] = [ CastNChillRegion(data) for data in __re
 
 logging.info(f"There are {len(region_table)} regions in the regions table.")
 
-def get_regions(multiworld: MultiWorld, player: int) -> List[Region]:
+def set_regions(multiworld: MultiWorld, player: int):
     """Create and retrieve all applicable regions for the configured multiworld."""
 
+    # Get selected spots from options
     options: CastNChillOptions = multiworld.worlds[player].options
-    regions: List[Region] = []
+    spots: List[str] = options.spots.value
 
-    # Create applicable region(s) for 'Spots' option
-    for region_data in [ reg for reg in region_table if reg.name in [ "Menu" ] or any(spot in reg.name for spot in options.spots.value) ]:
-        logging.info(f"Creating region '{region_data.name}' ...")
-        region: Region = Region(region_data.name, player, multiworld)
+    # Get all region data models for selected 'Spots' configuration options
+    applicable_region_models: List[CastNChillRegion] = [ region for region in region_table if region.name in [ "Menu" ] or any(spot in region.name for spot in spots)]
+    applicable_exit_models: List[CastNChillExit] = []
 
-        # Create and append exits
-        for exit_data in [exit for exit in region_data.exits if exit.destination in [ spot for spot in options.spots.value ] ]:
-            logging.info(f"-> Adding exit '{exit_data.name}' ...")
-            exit: Entrance = Entrance(player, exit_data.name, region, randomization_type=exit_data.type)
+    logging.info(f"Creating {len(applicable_region_models)} eligible region(s) based on configuration options ...")
+
+    for region_model in applicable_region_models:
+        logging.info(f"Creating region '{region_model.name}' ...")
+        region: Region = Region(region_model.name, player, multiworld)
+
+        # Get all exit data models in region that connect to selected 'Spots' configuration options
+        exit_models: List[CastNChillExit] = [ exit for exit in region_model.exits if exit.destination in [ region.name for region in applicable_region_models ] ]
+        logging.info(f"-> Creating {len(exit_models)} eligible exit(s) based on configuration options ...")
+
+        for exit_model in exit_models:
+            logging.info(f"--> Creating exit '{exit_model.name}' ...")
+            exit: Entrance = Entrance(player, exit_model.name, region, randomization_type=exit_model.type)
+            exit.access_rule(compile_access_rules(exit_model.access_rules, player))
+
+            # Append exit to region
             region.exits.append(exit)
 
-        # Create and append all location(s) for region
-        for location_data in [ loc for loc in location_table if region.name == "\\".join(loc.regions) ]:
-            for i in range(location_data.count):
-                logging.info(f"-> Adding location '{location_data.name.format(count=i+1)}' ({location_data.id + i}) ...")
-                location: Location = Location(player, location_data.name.format(count=i+1), location_data.id + i, region)
-                region.locations.append(location)
-        
+        # Add exit models to applicable exits
+        applicable_exit_models += exit_models
+
+        # Get applicable location data models for region
+        location_models: List[CastNChillLocation] = [ location for location in location_table if region.name == " / ".join(location.regions) ]
+        logging.info(f"-> Creating {len(location_models)} eligible location(s) based on configuration options ...")
+
+        for location_model in location_models:
+            logging.info(f"--> Creating location '{location_model.name}' ...")
+            location: Location = Location(player, location_model.name, location_model.id, region)
+            location.access_rule(compile_access_rules(location_model.access_rules, player))
+
+            # Append location to region
+            region.locations.append(location)
+
         # Append region
-        regions.append(region)
+        multiworld.regions.append(region)
 
-    # Connect exits to respective regions
-    for region in regions:
-        logging.info(f"Finding exits for '{region.name}' ...")
-        region_data: CastNChillRegion = next(reg for reg in region_table if reg.name == region.name)
-        for exit in region.exits:
-            exit_data: CastNChillExit = next(ex for ex in region_data.exits if ex.name == exit.name)
-            connected_region: Region = next(region for region in regions if region.name == exit_data.destination)
+    logging.info(f"Connecting exits...")
 
-            logging.info(f"Connecting {region_data.name} exit '{exit.name}' to {exit_data.destination}")
+    # Now that all regions have been created, connect applicable exits to their destination regions
+    for exit_model in applicable_exit_models:
+        exit: Entrance = multiworld.get_entrance(exit_model.name, player)
+        connecting_region: Region = multiworld.get_region(exit_model.destination, player)
 
-            exit.connect(connected_region)
+        logging.info(f"-> Connecting region {exit.parent_region.name}'s exit '{exit.name}' to {connecting_region.name} ...")
 
-    return regions
+        # Connect exit to destination region
+        exit.connect(connecting_region)
