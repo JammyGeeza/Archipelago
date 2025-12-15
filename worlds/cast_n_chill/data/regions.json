@@ -19,6 +19,15 @@
                         { "has_all": [ "Beaver Dam License" ] }
                     ]
                 }
+            },
+            {
+                "name": "Map to The Mistwood",
+                "destination": "The Mistwood",
+                "access_rules": {
+                    "and": [
+                        { "has_all": [ "The Mistwood License" ] }
+                    ]
+                }
             }
         ]
     },
@@ -34,7 +43,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "is_spot": true
     },
     {
         "name": "Beaver Dam",
@@ -48,7 +58,12 @@
                     ]
                 }
             }
-        ]
+        ],
+        "is_spot": true
+    },
+    {
+        "name": "The Mistwood",
+        "is_spot": true
     },
     {
         "name": "The Fork / Beaver Dam"

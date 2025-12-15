@@ -1,7 +1,6 @@
 from BaseClasses import Item, ItemClassification, MultiWorld
 from dataclasses import dataclass
 import json, logging, os
-from .Options import CastNChillOptions
 from typing import Dict, List, NamedTuple
 
 class JsonItem:
@@ -57,14 +56,14 @@ def get_items(multiworld: MultiWorld, player: int) -> List[Item]:
     # If not all locations filled, add filler items
     if item_count < location_count:
         amount_required: int = location_count - item_count
-        items += __get_filler_items(multiworld, player, amount_required)
+        items += get_filler_items(multiworld, player, amount_required)
 
     return items
 
 def __get_progression_items(multiworld: MultiWorld, player: int) -> List[Item]:
     """Get all relevant progression items applicable to the configured multiworld generation."""
 
-    options: CastNChillOptions = multiworld.worlds[player].options
+    options = multiworld.worlds[player].options
     items: List[Item] = []
 
     logging.info(f"Creating progression / useful items for the item pool...")
@@ -72,21 +71,27 @@ def __get_progression_items(multiworld: MultiWorld, player: int) -> List[Item]:
     # Add progression and useful items for each selected region to the pool
     for item_data in [ 
         item for item in item_table 
-        if (len(item.spots) == 0 or set(item.spots) & set(options.spots.value))
-        and item.classification is not ItemClassification.filler and bool(item.classification & (ItemClassification.progression | ItemClassification.useful))
+        if (
+            len(item.spots) == 0 
+            or set(item.spots) & set(options.spots.value)
+        )
+        and item.classification is not ItemClassification.filler 
+        and bool(item.classification & (ItemClassification.progression | ItemClassification.useful))
     ]:
         for i in range(item_data.count):
                 logging.info(f"-> Adding item '{item_data.name.format(count=i+1)}' ...")
                 items.append(Item(item_data.name.format(count=i+1), item_data.classification, item_data.id, player))
 
+    # Remove starting_inventory items
+
     logging.info(f"Added {len(items)} progression / useful items to the item pool!")
 
     return items
 
-def __get_filler_items(multiworld: MultiWorld, player: int, amount: int) -> List[Item]:
+def get_filler_items(multiworld: MultiWorld, player: int, amount: int) -> List[Item]:
     """Get all relevant filler items applicable to the configured multiworld generation."""
 
-    options: CastNChillOptions = multiworld.worlds[player].options
+    options = multiworld.worlds[player].options
     items: List[Item] = []
 
     # Select amount of filler items using weights

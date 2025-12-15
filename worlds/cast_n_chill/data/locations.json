@@ -16,6 +16,10 @@
         "regions": [ "Beaver Dam" ]
     },
     {
+        "name": "Visit The Mistwood",
+        "regions": [ "The Mistwood" ]
+    },
+    {
         "name": "Discover a Threadfin Shad",
         "regions": [ "The Fork" ]
     },
@@ -177,7 +181,125 @@
         }
     },
     {
+        "name": "Discover a Creek Chub",
+        "regions": [ "The Mistwood" ],
+        "access_rules": {
+            "and": [
+                { "has_all": [ "Spinnerbait" ] }
+            ]
+        }
+    },
+    {
+        "name": "Catch a Creek Chub",
+        "regions": [ "The Mistwood" ],
+        "access_rules": {
+            "and": [
+                { "has_all": [ "Spinnerbait" ] }
+            ]
+        }
+    },
+    {
+        "name": "Discover a Rock Bass",
+        "regions": [ "The Mistwood" ],
+        "access_rules": {
+            "and": [
+                { "has_all": [ "Dropshot" ] }
+            ]
+        }
+    },
+    {
+        "name": "Catch a Rock Bass",
+        "regions": [ "The Mistwood" ],
+        "access_rules": {
+            "and": [
+                { "has_all": [ "Dropshot" ] }
+            ]
+        }
+    },
+    {
+        "name": "Discover a Shorthead Redhorse",
+        "regions": [ "The Mistwood" ],
+        "access_rules": {
+            "and": [
+                { "has_count": { "Progressive Rod": 1 } },
+                { "has_all": [ "Dropshot" ] }
+            ]
+        }
+    },
+    {
+        "name": "Catch a Shorthead Redhorse",
+        "regions": [ "The Mistwood" ],
+        "access_rules": {
+            "and": [
+                { "has_count": { "Progressive Rod": 1 } },
+                { "has_all": [ "Dropshot" ] }
+            ]
+        }
+    },
+    {
+        "name": "Discover a Steelhead",
+        "regions": [ "The Mistwood" ],
+        "access_rules": {
+            "and": [
+                { "has_count": { "Progressive Rod": 1 } },
+                { "has_all": [ "Spinnerbait" ] }
+            ]
+        }
+    },
+    {
+        "name": "Catch a Steelhead",
+        "regions": [ "The Mistwood" ],
+        "access_rules": {
+            "and": [
+                { "has_count": { "Progressive Rod": 1 } },
+                { "has_all": [ "Spinnerbait" ] }
+            ]
+        }
+    },
+    {
+        "name": "Discover a Burbot",
+        "regions": [ "The Mistwood" ],
+        "access_rules": {
+            "and": [
+                { "has_count": { "Progressive Rod": 1 } },
+                { "has_all": [ "Spoonbait" ] }
+            ]
+        }
+    },
+    {
+        "name": "Catch a Burbot",
+        "regions": [ "The Mistwood" ],
+        "access_rules": {
+            "and": [
+                { "has_count": { "Progressive Rod": 1 } },
+                { "has_all": [ "Spoonbait" ] }
+            ]
+        }
+    },
+    {
+        "name": "Catch a Legendary Slime Belly",
+        "regions": [ "The Mistwood" ],
+        "access_rules": {
+            "and": [
+                { "has_count": { "Progressive Rod": 2 } },
+                { "has_all": [ "Heavy Spoonbait" ] }
+            ]
+        }
+    },
+    {
         "name": "Buy Crankbait",
+        "regions": [ "Menu" ]
+    },
+    {
+        "name": "Buy Big Crankbait",
+        "regions": [ "Menu" ]
+    },
+    {
+        "name": "Buy Spinnerbait",
+        "regions": [ "Menu" ]
+    },
+    {
+        "name": "Buy Big Spinnerbait",
         "regions": [ "Menu" ]
     },
     {
@@ -190,6 +312,10 @@
     },
     {
         "name": "Buy Dropshot",
+        "regions": [ "Menu" ]
+    },
+    {
+        "name": "Buy Heavy Dropshot",
         "regions": [ "Menu" ]
     },
     {

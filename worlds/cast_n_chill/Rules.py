@@ -1,7 +1,6 @@
 from BaseClasses import CollectionState, Item, ItemClassification, Location, MultiWorld, Region
 from .Enums import GoalType as gt
 import logging
-from .Options import CastNChillOptions
 from typing import Any, Dict, List
 from worlds.generic.Rules import set_rule
 
@@ -25,7 +24,7 @@ def set_goal(multiworld: MultiWorld, player: int):
 def __get_goal_rule(multiworld: MultiWorld, player: int) -> CollectionState:
 
     # Get goal option
-    options: CastNChillOptions = multiworld.worlds[player].options
+    options = multiworld.worlds[player].options
     goal_value: gt = gt(options.goal.value)
     # spots_value: List[str] = options.spots.value
     

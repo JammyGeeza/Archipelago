@@ -10,7 +10,24 @@
         "classification" : 1
     },
     {
+        "name": "The Mistwood License",
+        "spots": [ "The Mistwood" ],
+        "classification": 1
+    },
+    {
         "name": "Crankbait",
+        "classification": 1
+    },
+    {
+        "name": "Big Crankbait",
+        "classification": 1
+    },
+    {
+        "name": "Spinnerbait",
+        "classification": 1
+    },
+    {
+        "name": "Big Spinnerbait",
         "classification": 1
     },
     {
@@ -23,6 +40,10 @@
     },
     {
         "name": "Dropshot",
+        "classification": 1
+    },
+    {
+        "name": "Heavy Dropshot",
         "classification": 1
     },
     {

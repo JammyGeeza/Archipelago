@@ -2,7 +2,7 @@ from BaseClasses import Entrance, EntranceType, Location, MultiWorld, Region
 from dataclasses import dataclass
 import json, logging, os
 from .Locations import location_table, CastNChillLocation
-from .Options import CastNChillOptions
+# from .Options import CastNChillOptions
 from .Rules import compile_access_rules
 from typing import Dict, List
 
@@ -21,7 +21,7 @@ class CastNChillRegion:
     def __init__(self, json_data):
         self.name: str = json_data["name"]
         self.exits: List[CastNChillExit] = [ CastNChillExit(data) for data in json_data.get("exits", []) ]
-        self.requires: List[str] = json_data.get("requires", [])
+        self.is_spot: bool = json_data.get("is_spot", False)
 
 # Read regions data from JSON
 with open(os.path.join(os.path.dirname(__file__), 'data\\regions.json'), 'r') as file:
@@ -36,7 +36,7 @@ def set_regions(multiworld: MultiWorld, player: int):
     """Create and retrieve all applicable regions for the configured multiworld."""
 
     # Get selected spots from options
-    options: CastNChillOptions = multiworld.worlds[player].options
+    options = multiworld.worlds[player].options
     spots: List[str] = options.spots.value
 
     # Get all region data models for selected 'Spots' configuration options

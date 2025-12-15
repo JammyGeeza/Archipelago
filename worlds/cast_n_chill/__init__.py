@@ -1,6 +1,6 @@
 from worlds.AutoWorld import World, WebWorld
 from BaseClasses import Item, ItemClassification, Tutorial
-from .Items import CastNChillItem, item_name_to_id_lookup, item_table, get_items
+from .Items import CastNChillItem, item_name_to_id_lookup, item_table, get_items, get_filler_items
 from .Locations import location_name_to_id_lookup
 from .Options import CastNChillOptions
 from .Regions import region_table, set_regions
@@ -41,25 +41,43 @@ class CastNChillWorld(World):
     def generate_early(self):
         """Perform actions before generation."""
 
-        # Check if no Spots provided or 'All' exists and return to default
-        if len(self.options.spots.value) == 0 or "All" in self.options.spots.value:
-            logging.warning(f"No spots provided OR 'All' entry found, treating as default.")
-            self.options.spots.value = self.options.spots.default
+        # Resolve options to ensure generation is successful
+        self.options.resolve_options()
 
-        # Check if no Filler Weights provided and return to default
-        if len(self.options.filler_weights.value) == 0:
-            logging.warning(f"No filler weights provided, treating as default.")
-            self.options.filler_weights.value = self.options.filler_weights.default
+        logging.info(f"Selecting starting spot ...")
+
+        # Randomly select the starting spot
+        starting_spot: str = self.random.choices(
+            population=list(self.options.starting_spot.keys()),
+            weights=list(self.options.starting_spot.values()),
+            k=1
+        )[0]
+
+        logging.info(f"Selected starting spot: {starting_spot}")
+
+        # Add starting spot license to the starting items
+        self.options.start_inventory_from_pool.value.update({ f"{starting_spot} License": 1 })
+
+        logging.info(f"Added {starting_spot} to starting inventory")
 
     def create_items(self):
         """Create all items for the item pool."""
         logging.info(f"Creating items...")
         self.multiworld.itempool = get_items(self.multiworld, self.player)
 
+    def create_item(self, name: str) -> Item:
+        """Create an item - used when StartInventoryPool pre-collects an item."""
+        item_model: CastNChillItem = next(item for item in item_table if item.name == name)
+        return Item(item_model.name, item_model.classification, item_model.id, self.player)
+    
+    def create_filler(self):
+        """Create a filler item - used when StartInventoryPool needs to fill a gap created by pre-collected items."""
+        return get_filler_items(self.multiworld, self.player, 1)[0]
+
     def create_regions(self):
         """Create all applicable regions for the configured multiworld."""
         set_regions(self.multiworld, self.player)
 
-    # TODO: Set goal
     def set_rules(self):
+         """Set access rules for regions, locations and goals."""
          set_goal(self.multiworld, self.player)
