@@ -4,7 +4,7 @@ from .Items import CastNChillItem, item_name_to_id_lookup, item_table, get_items
 from .Locations import location_name_to_id_lookup
 from .Options import CastNChillOptions
 from .Regions import region_table, set_regions
-# from .Rules import set_rules
+from .Rules import set_goal
 import logging
 from typing import List
 
@@ -60,5 +60,6 @@ class CastNChillWorld(World):
         """Create all applicable regions for the configured multiworld."""
         set_regions(self.multiworld, self.player)
 
-    # def set_rules(self):
-    #     set_rules(self.multiworld, self.player)
+    # TODO: Set goal
+    def set_rules(self):
+         set_goal(self.multiworld, self.player)

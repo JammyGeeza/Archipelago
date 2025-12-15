@@ -56,7 +56,7 @@ def set_regions(multiworld: MultiWorld, player: int):
         for exit_model in exit_models:
             logging.info(f"--> Creating exit '{exit_model.name}' ...")
             exit: Entrance = Entrance(player, exit_model.name, region, randomization_type=exit_model.type)
-            exit.access_rule(compile_access_rules(exit_model.access_rules, player))
+            exit.access_rule = compile_access_rules(exit_model.access_rules, player)
 
             # Append exit to region
             region.exits.append(exit)
@@ -69,15 +69,18 @@ def set_regions(multiworld: MultiWorld, player: int):
         logging.info(f"-> Creating {len(location_models)} eligible location(s) based on configuration options ...")
 
         for location_model in location_models:
-            logging.info(f"--> Creating location '{location_model.name}' ...")
-            location: Location = Location(player, location_model.name, location_model.id, region)
-            location.access_rule(compile_access_rules(location_model.access_rules, player))
+            for i in range(location_model.count):
+                logging.info(f"--> Creating location '{location_model.name.format(count=i+1)}' ...")
+                location: Location = Location(player, location_model.name.format(count=i+1), location_model.id+i, region)
+                location.access_rule = compile_access_rules(location_model.access_rules, player)
 
-            # Append location to region
-            region.locations.append(location)
+                # Append location to region
+                region.locations.append(location)
 
         # Append region
         multiworld.regions.append(region)
+
+    logging.info(f"Added {len(multiworld.get_locations(player))} locations to the location pool!")
 
     logging.info(f"Connecting exits...")
 

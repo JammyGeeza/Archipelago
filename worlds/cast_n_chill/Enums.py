@@ -2,4 +2,5 @@ from enum import IntEnum
 
 class GoalType(IntEnum):
     """Goal types for the Cast n Chill randomizer."""
-    CatchAllFish    = 0
+    CatchAllFish        = 0
+    CatchAllLegendaries = 1

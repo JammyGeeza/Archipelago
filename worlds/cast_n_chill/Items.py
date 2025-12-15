@@ -73,7 +73,7 @@ def __get_progression_items(multiworld: MultiWorld, player: int) -> List[Item]:
     for item_data in [ 
         item for item in item_table 
         if (len(item.spots) == 0 or set(item.spots) & set(options.spots.value))
-        and item.classification is not ItemClassification.filler and bool(item.classification & (ItemClassification.progression | ItemClassification.filler))
+        and item.classification is not ItemClassification.filler and bool(item.classification & (ItemClassification.progression | ItemClassification.useful))
     ]:
         for i in range(item_data.count):
                 logging.info(f"-> Adding item '{item_data.name.format(count=i+1)}' ...")

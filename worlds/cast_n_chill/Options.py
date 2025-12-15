@@ -13,7 +13,8 @@ class Goal(Choice):
     """
     display_name = "Goal"
     option_catch_all_fish = GoalType.CatchAllFish.value
-    default = option_catch_all_fish
+    option_catch_all_legendaries = GoalType.CatchAllLegendaries.value
+    default = option_catch_all_legendaries
 
 class Spots(OptionList):
     """

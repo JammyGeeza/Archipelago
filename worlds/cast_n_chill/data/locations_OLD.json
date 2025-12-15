@@ -1,13 +1,5 @@
 [
     {
-        "name": "Pet your companion",
-        "regions": [ "Menu" ]
-    },
-    {
-        "name": "Tip Rusty",
-        "regions": [ "Menu" ]
-    },
-    {
         "name": "Visit The Fork",
         "regions": [ "The Fork" ]
     },
@@ -16,185 +8,58 @@
         "regions": [ "Beaver Dam" ]
     },
     {
-        "name": "Discover a Threadfin Shad",
-        "regions": [ "The Fork" ]
-    },
-    {
-        "name": "Catch a Threadfin Shad",
-        "regions": [ "The Fork" ]
-    },
-    {
-        "name": "Discover a Bluegill Sunfish",
-        "regions": [ "The Fork" ]
-    },
-    {
-        "name": "Catch a Bluegill Sunfish",
-        "regions": [ "The Fork" ]
-    },
-    {
-        "name": "Discover Smallmouth Bass",
-        "regions": [ "The Fork" ]
-    },
-    {
-        "name": "Catch a Smallmouth Bass",
-        "regions": [ "The Fork" ],
-        "access_rules": {
-            "and": [
-                { "has_all": [ "Crankbait" ]}
-            ]
-        }
-    },
-    {
-        "name": "Discover a Brown Trout",
-        "regions": [ "The Fork", "Beaver Dam" ],
-        "access_rules": {
-            "and": [
-                { "has_all": [ "Crankbait" ]}
-            ]
-        }
-    },
-    {
-        "name": "Catch a Brown Trout",
-        "regions": [ "The Fork", "Beaver Dam" ],
-        "access_rules": {
-            "and": [
-                { "has_all": [ "Crankbait" ]}
-            ]
-        }
-    },
-    {
-        "name": "Discover a Walleye",
-        "regions": [ "The Fork" ],
-        "access_rules": {
-            "and": [
-                { "has_all": [ "Spoonbait" ]}
-            ]
-        }
-    },
-    {
-        "name": "Catch a Walleye",
-        "regions": [ "The Fork" ],
-        "access_rules": {
-            "and": [
-                { "has_all": [ "Spoonbait" ]}
-            ]
-        }
-    },
-    {
-        "name": "Catch a Legendary White Tip",
-        "regions": [ "The Fork" ],
-        "access_rules": {
-            "and": [
-                { "has_count": { "Progressive Rod": 1 } },
-                { "has_all": [ "Heavy Spoonbait" ]}
-            ]
-        }
-    },
-    {
-        "name": "Discover a Crappie",
-        "regions": [ "Beaver Dam" ],
-        "access_rules": {
-            "and": [
-                { "has_all": [ "Spoonbait" ] }
-            ]
-        }
-    },
-    {
-        "name": "Catch a Crappie",
-        "regions": [ "Beaver Dam" ],
-        "access_rules": {
-            "and": [
-                { "has_all": [ "Spoonbait" ] }
-            ]
-        }
-    },
-    {
-        "name": "Discover a Longnose Sucker",
-        "regions": [ "Beaver Dam" ],
-        "access_rules": {
-            "and": [
-                { "has_all": [ "Dropshot" ] }
-            ]
-        }
-    },
-    {
-        "name": "Catch a Longnose Sucker",
-        "regions": [ "Beaver Dam" ],
-        "access_rules": {
-            "and": [
-                { "has_all": [ "Dropshot" ] }
-            ]
-        }
-    },
-    {
-        "name": "Discover a Bullhead Catfish",
-        "regions": [ "Beaver Dam" ],
-        "access_rules": {
-            "and": [
-                { "has_count": { "Progressive Rod": 1 } },
-                { "has_all": [ "Dropshot" ] }
-            ]
-        }
-    },
-    {
-        "name": "Catch a Bullhead Catfish",
-        "regions": [ "Beaver Dam" ],
-        "access_rules": {
-            "and": [
-                { "has_count": { "Progressive Rod": 1 } },
-                { "has_all": [ "Dropshot" ] }
-            ]
-        }
-    },
-    {
-        "name": "Discover a Largemouth Bass",
-        "regions": [ "Beaver Dam" ],
-        "access_rules": {
-            "and": [
-                { "has_count": { "Progressive Rod": 1 } },
-                { "has_all": [ "Jighead" ] }
-            ]
-        }
-    },
-    {
-        "name": "Catch a Largemouth Bass",
-        "regions": [ "Beaver Dam" ],
-        "access_rules": {
-            "and": [
-                { "has_count": { "Progressive Rod": 1 } },
-                { "has_all": [ "Jighead" ] }
-            ]
-        }
-    },
-    {
-        "name": "Catch a Legendary Bucket Mouth",
-        "regions": [ "Beaver Dam" ],
-        "access_rules": {
-            "and": [
-                { "has_count": { "Progressive Rod": 2 } },
-                { "has_all": [ "Jighead" ] }
-            ]
-        }
-    },
-    {
         "name": "Buy Crankbait",
-        "regions": [ "Menu" ]
+        "regions": [ "Menu" ],
+        "access_rules": {
+            "and": [
+                { "has_all": [ "Crankbait" ] }
+            ]
+        }
+    },
+    {
+        "name": "Buy Big Crankbait",
+        "regions": [ "Menu" ],
+        "access_rules": {
+            "and": [
+                { "has_all": [ "Big Crankbait" ] }
+            ]
+        }
     },
     {
         "name": "Buy Spoonbait",
-        "regions": [ "Menu" ]
+        "regions": [ "Menu" ],
+        "access_rules": {
+            "and": [
+                { "has_all": [ "Spoonbait" ] }
+            ]
+        }
     },
     {
         "name": "Buy Heavy Spoonbait",
-        "regions": [ "Menu" ]
+        "regions": [ "Menu" ],
+        "access_rules": {
+            "and": [
+                { "has_all": [ "Heavy Spoonbait" ] }
+            ]
+        }
     },
     {
         "name": "Buy Dropshot",
-        "regions": [ "Menu" ]
+        "regions": [ "Menu" ],
+        "access_rules": {
+            "and": [
+                { "has_all": [ "Dropshot" ] }
+            ]
+        }
     },
     {
         "name": "Buy Jighead",
-        "regions": [ "Menu" ]
+        "regions": [ "Menu" ],
+        "access_rules": {
+            "and": [
+                { "has_all": [ "Jighead" ] }
+            ]
+        }
     },
     {
         "name": "Buy Lil' Guppy: Rod Strength Upgrade {count}",
@@ -344,5 +209,125 @@
             ]
         },
         "count": 5
+    },
+    {
+        "name": "Discover a Threadfin Shad",
+        "regions": [ "The Fork" ]
+    },
+    {
+        "name": "Catch a Threadfin Shad",
+        "regions": [ "The Fork" ]
+    },
+    {
+        "name": "Discover a Bluegill Sunfish",
+        "regions": [ "The Fork" ]
+    },
+    {
+        "name": "Catch a Bluegill Sunfish",
+        "regions": [ "The Fork" ]
+    },
+    {
+        "name": "Discover a Smallmouth Bass",
+        "regions": [ "The Fork" ],
+        "access_rules": {
+            "and": [
+                { "has_all": [ "Crankbait" ] }
+            ]
+        }
+    },
+    {
+        "name": "Catch a Smallmouth Bass",
+        "regions": [ "The Fork" ],
+        "access_rules": {
+            "and": [
+                { "has_all": [ "Crankbait" ] }
+            ]
+        }
+    },
+    {
+        "name": "Discover a Brown Trout",
+        "regions": [ "The Fork", "Beaver Dam" ],
+        "access_rules": {
+            "and": [
+                { "has_all": [ "Crankbait" ] }
+            ]
+        }
+    },
+    {
+        "name": "Catch a Brown Trout",
+        "regions": [ "The Fork", "Beaver Dam" ],
+        "access_rules": {
+            "and": [
+                { "has_all": [ "Crankbait" ] }
+            ]
+        }
+    },
+    {
+        "name": "Discover a Walleye",
+        "regions": [ "The Fork" ],
+        "access_rules": {
+            "and": [
+                { "has_all": [ "Spoonbait" ] }
+            ]
+        }
+    },
+    {
+        "name": "Catch a Walleye",
+        "regions": [ "The Fork" ],
+        "access_rules": {
+            "and": [
+                { "has_all": [ "Spoonbait" ] }
+            ]
+        }
+    },
+    {
+        "name": "Catch a Legendary White Tip",
+        "regions": [ "The Fork" ],
+        "access_rules": {
+            "and": [
+                { "has_count": { "Progressive Rod": 1 } },
+                { "has_all": [ "Heavy Spoonbait" ] }
+            ]
+        }
+    },
+    {
+        "name": "Discover a Crappie",
+        "regions": [ "Beaver Dam" ]
+    },
+    {
+        "name": "Catch a Crappie",
+        "regions": [ "Beaver Dam" ]
+    },
+    {
+        "name": "Discover a Longnose Sucker",
+        "regions": [ "Beaver Dam" ]
+    },
+    {
+        "name": "Catch a Longnose Sucker",
+        "regions": [ "Beaver Dam" ]
+    },
+    {
+        "name": "Discover a Bullhead Catfish",
+        "regions": [ "Beaver Dam" ]
+    },
+    {
+        "name": "Catch a Bullhead Catfish",
+        "regions": [ "Beaver Dam" ]
+    },
+    {
+        "name": "Discover a Largemouth Bass",
+        "regions": [ "Beaver Dam" ]
+    },
+    {
+        "name": "Catch a Largemouth Bass",
+        "regions": [ "Beaver Dam" ]
+    },
+    {
+        "name": "Discover a Legendary Bucket Mouth",
+        "regions": [ "Beaver Dam" ]
+    },
+    {
+        "name": "Catch a Legendary Bucket Mouth",
+        "regions": [ "Beaver Dam" ]
     }
 ]

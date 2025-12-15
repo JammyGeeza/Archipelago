@@ -1,16 +1,15 @@
 [
     {
-        "name": "The Fork License",
-        "spots": [ "The Fork" ],
-        "classification": 1
-    },
-    {
         "name": "Beaver Dam License",
         "spots": [ "Beaver Dam" ],
         "classification" : 1
     },
     {
         "name": "Crankbait",
+        "classification": 1
+    },
+    {
+        "name": "Big Crankbait",
         "classification": 1
     },
     {
@@ -36,32 +35,32 @@
     },
     {
         "name": "Lil' Guppy: Progressive Rod Strength Upgrade",
-        "classification": 2,
+        "classification": 1,
         "count": 5
     },
     {
-        "name": "Lil' Guppy: Progressive Line Length Upgrade",
-        "classification": 2,
+        "name": "Lil' Guppy: Progressive Line Length",
+        "classification": 1,
         "count": 5
     },
     {
         "name": "Maple Scout: Progressive Rod Strength Upgrade",
-        "classification": 2,
+        "classification": 1,
         "count": 5
     },
     {
-        "name": "Maple Scout: Progressive Line Length Upgrade",
-        "classification": 2,
+        "name": "Maple Scout: Progressive Line Length",
+        "classification": 1,
         "count": 5
     },
     {
         "name": "Timberjack: Progressive Rod Strength Upgrade",
-        "classification": 2,
+        "classification": 1,
         "count": 5
     },
     {
-        "name": "Timberjack: Progressive Line Length Upgrade",
-        "classification": 2,
+        "name": "Timberjack: Progressive Line Length",
+        "classification": 1,
         "count": 5
     },
     {
@@ -70,7 +69,7 @@
         "count": 4
     },
     {
-        "name": "Pond Baddler: Progressive Storage Upgrade",
+        "name": "Pond Paddler: Progressive Storage Upgrade",
         "classification": 2,
         "count": 5
     },
