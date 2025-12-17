@@ -28,8 +28,6 @@ with open(os.path.join(os.path.dirname(__file__), 'data\\items.json'), 'r') as f
 # Parse as items
 item_table: List[CastNChillItem] = [CastNChillItem(data) for data in __item_json_data]
 
-logging.info(f"There are {len(item_table)} items in the item table")
-
 # Create item lookup
 __base_id: int = 78000
 item_name_to_id_lookup: Dict[str, int] = {}
@@ -79,8 +77,8 @@ def __get_progression_items(multiworld: MultiWorld, player: int) -> List[Item]:
         and bool(item.classification & (ItemClassification.progression | ItemClassification.useful))
     ]:
         for i in range(item_data.count):
-                logging.info(f"-> Adding item '{item_data.name.format(count=i+1)}' ...")
-                items.append(Item(item_data.name.format(count=i+1), item_data.classification, item_data.id, player))
+            logging.info(f"-> Adding item '{item_data.name.format(count=i+1)}' ...")
+            items.append(Item(item_data.name.format(count=i+1), item_data.classification, item_data.id, player))
 
     # Remove starting_inventory items
 

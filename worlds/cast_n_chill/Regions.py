@@ -22,6 +22,7 @@ class CastNChillRegion:
         self.name: str = json_data["name"]
         self.exits: List[CastNChillExit] = [ CastNChillExit(data) for data in json_data.get("exits", []) ]
         self.is_spot: bool = json_data.get("is_spot", False)
+        self.starting_inventory: List[str] = json_data.get("starting_inventory", [])
 
 # Read regions data from JSON
 with open(os.path.join(os.path.dirname(__file__), 'data\\regions.json'), 'r') as file:
@@ -40,7 +41,7 @@ def set_regions(multiworld: MultiWorld, player: int):
     spots: List[str] = options.spots.value
 
     # Get all region data models for selected 'Spots' configuration options
-    applicable_region_models: List[CastNChillRegion] = [ region for region in region_table if region.name in [ "Menu" ] or any(spot in region.name for spot in spots)]
+    applicable_region_models: List[CastNChillRegion] = [ region for region in region_table if region.name in [ "Menu", "Goldenfork River" ] or any(spot in region.name for spot in spots)]
     applicable_exit_models: List[CastNChillExit] = []
 
     logging.info(f"Creating {len(applicable_region_models)} eligible region(s) based on configuration options ...")

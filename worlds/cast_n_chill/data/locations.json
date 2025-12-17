@@ -1,6 +1,6 @@
 [
     {
-        "name": "Pet your companion",
+        "name": "Pat your Companion",
         "regions": [ "Menu" ]
     },
     {
@@ -71,7 +71,7 @@
         "regions": [ "The Fork" ],
         "access_rules": {
             "and": [
-                { "has_all": [ "Spoonbait" ]}
+                { "has_all": [ "Small Spoonbait" ]}
             ]
         }
     },
@@ -80,7 +80,7 @@
         "regions": [ "The Fork" ],
         "access_rules": {
             "and": [
-                { "has_all": [ "Spoonbait" ]}
+                { "has_all": [ "Small Spoonbait" ]}
             ]
         }
     },
@@ -262,7 +262,7 @@
         "access_rules": {
             "and": [
                 { "has_count": { "Progressive Rod": 1 } },
-                { "has_all": [ "Spoonbait" ] }
+                { "has_all": [ "Heavy Spoonbait" ] }
             ]
         }
     },
@@ -272,7 +272,7 @@
         "access_rules": {
             "and": [
                 { "has_count": { "Progressive Rod": 1 } },
-                { "has_all": [ "Spoonbait" ] }
+                { "has_all": [ "Heavy Spoonbait" ] }
             ]
         }
     },
@@ -287,50 +287,212 @@
         }
     },
     {
+        "name": "Buy Medium Bladebait",
+        "regions": [ "Menu" ],
+        "access_rules": {
+            "and": [
+                { "has_all": [ "Medium Bladebait" ] }
+            ]
+        }
+    },
+    {
+        "name": "Buy Large Bladebait",
+        "regions": [ "Menu" ],
+        "access_rules": {
+            "and": [
+                { "has_all": [ "Large Bladebait" ] }
+            ]
+        }
+    },
+    {
+        "name": "Buy Heavy Bladebait",
+        "regions": [ "Menu" ],
+        "access_rules": {
+            "and": [
+                { "has_all": [ "Heavy Bladebait" ] }
+            ]
+        }
+    },
+    {
+        "name": "Buy Deep Bobber",
+        "regions": [ "Menu" ],
+        "access_rules": {
+            "and": [
+                { "has_all": [ "Deep Bobber" ] }
+            ]
+        }
+    },
+    {
         "name": "Buy Crankbait",
-        "regions": [ "Menu" ]
+        "regions": [ "Menu" ],
+        "access_rules": {
+            "and": [
+                { "has_all": [ "Crankbait" ] }
+            ]
+        }
     },
     {
         "name": "Buy Big Crankbait",
-        "regions": [ "Menu" ]
+        "regions": [ "Menu" ],
+        "access_rules": {
+            "and": [
+                { "has_all": [ "Big Crankbait" ] }
+            ]
+        }
     },
     {
-        "name": "Buy Spinnerbait",
-        "regions": [ "Menu" ]
-    },
-    {
-        "name": "Buy Big Spinnerbait",
-        "regions": [ "Menu" ]
-    },
-    {
-        "name": "Buy Spoonbait",
-        "regions": [ "Menu" ]
-    },
-    {
-        "name": "Buy Heavy Spoonbait",
-        "regions": [ "Menu" ]
+        "name": "Buy Deep Crankbait",
+        "regions": [ "Menu" ],
+        "access_rules": {
+            "and": [
+                { "has_all": [ "Deep Crankbait" ] }
+            ]
+        }
     },
     {
         "name": "Buy Dropshot",
-        "regions": [ "Menu" ]
+        "regions": [ "Menu" ],
+        "access_rules": {
+            "and": [
+                { "has_all": [ "Dropshot" ] }
+            ]
+        }
     },
     {
         "name": "Buy Heavy Dropshot",
-        "regions": [ "Menu" ]
+        "regions": [ "Menu" ],
+        "access_rules": {
+            "and": [
+                { "has_all": [ "Heavy Dropshot" ] }
+            ]
+        }
+    },
+    {
+        "name": "Buy Glidebait",
+        "regions": [ "Menu" ],
+        "access_rules": {
+            "and": [
+                { "has_all": [ "Glidebait" ] }
+            ]
+        }
+    },
+    {
+        "name": "Buy Deep Glidebait",
+        "regions": [ "Menu" ],
+        "access_rules": {
+            "and": [
+                { "has_all": [ "Deep Glidebait" ] }
+            ]
+        }
     },
     {
         "name": "Buy Jighead",
-        "regions": [ "Menu" ]
+        "regions": [ "Menu" ],
+        "access_rules": {
+            "and": [
+                { "has_all": [ "Jighead" ] }
+            ]
+        }
+    },
+    {
+        "name": "Buy Deep Jighead",
+        "regions": [ "Menu" ],
+        "access_rules": {
+            "and": [
+                { "has_all": [ "Deep Jighead" ] }
+            ]
+        }
+    },
+    {
+        "name": "Buy Spinnerbait",
+        "regions": [ "Menu" ],
+        "access_rules": {
+            "and": [
+                { "has_all": [ "Spinnerbait" ] }
+            ]
+        }
+    },
+    {
+        "name": "Buy Big Spinnerbait",
+        "regions": [ "Menu" ],
+        "access_rules": {
+            "and": [
+                { "has_all": [ "Big Spinnerbait" ] }
+            ]
+        }
+    },
+    {
+        "name": "Buy Heavy Spoonbait",
+        "regions": [ "Menu" ],
+        "access_rules": {
+            "and": [
+                { "has_all": [ "Heavy Spoonbait" ] }
+            ]
+        }
+    },
+    {
+        "name": "Buy Small Spoonbait",
+        "regions": [ "Menu" ],
+        "access_rules": {
+            "and": [
+                { "has_all": [ "Small Spoonbait" ] }
+            ]
+        }
+    },
+    {
+        "name": "Buy Huge Spoonbait",
+        "regions": [ "Menu" ],
+        "access_rules": {
+            "and": [
+                { "has_all": [ "Huge Spoonbait" ] }
+            ]
+        }
+    },
+    {
+        "name": "Buy Minnow Swimbait",
+        "regions": [ "Menu" ],
+        "access_rules": {
+            "and": [
+                { "has_all": [ "Minnow Swimbait" ] }
+            ]
+        }
+    },
+    {
+        "name": "Buy Bluegill Swimbait",
+        "regions": [ "Menu" ],
+        "access_rules": {
+            "and": [
+                { "has_all": [ "Bluegill Swimbait" ] }
+            ]
+        }
+    },
+    {
+        "name": "Buy Topwater",
+        "regions": [ "Menu" ],
+        "access_rules": {
+            "and": [
+                { "has_all": [ "Topwater" ] }
+            ]
+        }
+    },
+    {
+        "name": "Buy Wacky Worm",
+        "regions": [ "Menu" ],
+        "access_rules": {
+            "and": [
+                { "has_all": [ "Wacky Worm" ] }
+            ]
+        }
     },
     {
         "name": "Buy Lil' Guppy: Rod Strength Upgrade {count}",
         "regions": [ "Menu" ],
-        "count": 5
+        "count": 4
     },
     {
         "name": "Buy Lil' Guppy: Line Length Upgrade {count}",
         "regions": [ "Menu" ],
-        "count": 5
+        "count": 4
     },
     {
         "name": "Buy Maple Scout",
@@ -359,7 +521,7 @@
                 { "can_reach": [ "Buy Maple Scout" ] }
             ]
         },
-        "count": 5
+        "count": 4
     },
     {
         "name": "Buy Timberjack",
@@ -378,7 +540,7 @@
                 { "can_reach": [ "Buy Timberjack" ] }
             ]
         },
-        "count": 5
+        "count": 4
     },
     {
         "name": "Buy Timberjack: Line Length Upgrade {count}",
@@ -388,10 +550,10 @@
                 { "can_reach": [ "Buy Timberjack" ] }
             ]
         },
-        "count": 5
+        "count": 4
     },
     {
-        "name": "Buy Pond Paddler: Storage Upgrade {count}",
+        "name": "Buy Pond Paddler: Fish Storage Upgrade {count}",
         "regions": [ "Menu" ],
         "count": 5
     },
@@ -405,14 +567,24 @@
         }
     },
     {
-        "name": "Buy The Leaky Bucket: Storage Upgrade {count}",
+        "name": "Buy The Leaky Bucket: Motor Speed Upgrade {count}",
         "regions": [ "Menu" ],
         "access_rules": {
             "and": [
                 { "can_reach": [ "Buy The Leaky Bucket" ] }
             ]
         },
-        "count": 5
+        "count": 3
+    },
+    {
+        "name": "Buy The Leaky Bucket: Fish Storage Upgrade {count}",
+        "regions": [ "Menu" ],
+        "access_rules": {
+            "and": [
+                { "can_reach": [ "Buy The Leaky Bucket" ] }
+            ]
+        },
+        "count": 4
     },
     {
         "name": "Buy Loonchaser",
@@ -424,14 +596,24 @@
         }
     },
     {
-        "name": "Buy Loonchaser: Storage Upgrade {count}",
+        "name": "Buy Loonchaser: Motor Speed Upgrade {count}",
         "regions": [ "Menu" ],
         "access_rules": {
             "and": [
                 { "can_reach": [ "Buy Loonchaser" ] }
             ]
         },
-        "count": 5
+        "count": 4
+    },
+    {
+        "name": "Buy Loonchaser: Fish Storage Upgrade {count}",
+        "regions": [ "Menu" ],
+        "access_rules": {
+            "and": [
+                { "can_reach": [ "Buy Loonchaser" ] }
+            ]
+        },
+        "count": 4
     },
     {
         "name": "Buy Coastal Rambler",
@@ -443,14 +625,24 @@
         }
     },
     {
-        "name": "Buy Coastal Rambler: Storage Upgrade {count}",
+        "name": "Buy Coastal Rambler: Motor Speed Upgrade {count}",
         "regions": [ "Menu" ],
         "access_rules": {
             "and": [
                 { "can_reach": [ "Buy Coastal Rambler" ] }
             ]
         },
-        "count": 5
+        "count": 4
+    },
+    {
+        "name": "Buy Coastal Rambler: Fish Storage Upgrade {count}",
+        "regions": [ "Menu" ],
+        "access_rules": {
+            "and": [
+                { "can_reach": [ "Buy Coastal Rambler" ] }
+            ]
+        },
+        "count": 4
     },
     {
         "name": "Buy Snow Wolf XT1",
@@ -462,13 +654,23 @@
         }
     },
     {
-        "name": "Buy Snow Wolf XT1: Storage Upgrade {count}",
+        "name": "Buy Snow Wolf XT1: Motor Speed Upgrade {count}",
         "regions": [ "Menu" ],
         "access_rules": {
             "and": [
                 { "can_reach": [ "Buy Snow Wolf XT1" ] }
             ]
         },
-        "count": 5
+        "count": 3
+    },
+    {
+        "name": "Buy Snow Wolf XT1: Fish Storage Upgrade {count}",
+        "regions": [ "Menu" ],
+        "access_rules": {
+            "and": [
+                { "can_reach": [ "Buy Snow Wolf XT1" ] }
+            ]
+        },
+        "count": 3
     }
 ]

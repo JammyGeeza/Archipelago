@@ -21,8 +21,6 @@ with open(os.path.join(os.path.dirname(__file__), 'data\locations.json'), 'r') a
 # Parse as location objects
 location_table: List[CastNChillLocation] = [CastNChillLocation(data) for data in __location_json_data]
 
-logging.info(f"There are {len(location_table)} locations in the location table")
-
 # Create item lookup
 __base_id: int = 79000
 location_name_to_id_lookup: Dict[str, int] = {}
@@ -33,8 +31,6 @@ for location in location_table:
         location.id = __base_id
         location_name_to_id_lookup[location.name.format(count=i+1)] = location.id + i
         
-        logging.info(f"Location: {location.name.format(count=i+1)} - ID: {location.id + i}")
-
     __base_id += location.count
 
 

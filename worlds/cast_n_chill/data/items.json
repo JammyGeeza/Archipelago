@@ -1,17 +1,38 @@
 [
     {
-        "name": "The Fork License",
+        "name": "Goldenfork River License",
+        "spots": [ "The Fork", "Beaver Dam", "The Mistwood" ],
+        "classification": 1
+    },
+    {
+        "name": "The Fork",
         "spots": [ "The Fork" ],
         "classification": 1
     },
     {
-        "name": "Beaver Dam License",
+        "name": "Beaver Dam",
         "spots": [ "Beaver Dam" ],
         "classification" : 1
     },
     {
-        "name": "The Mistwood License",
+        "name": "The Mistwood",
         "spots": [ "The Mistwood" ],
+        "classification": 1
+    },
+    {
+        "name": "Medium Bladebait",
+        "classification": 1
+    },
+    {
+        "name": "Large Bladebait",
+        "classification": 1
+    },
+    {
+        "name": "Heavy Bladebait",
+        "classification": 1
+    },
+    {
+        "name": "Deep Bobber",
         "classification": 1
     },
     {
@@ -23,19 +44,7 @@
         "classification": 1
     },
     {
-        "name": "Spinnerbait",
-        "classification": 1
-    },
-    {
-        "name": "Big Spinnerbait",
-        "classification": 1
-    },
-    {
-        "name": "Spoonbait",
-        "classification": 1
-    },
-    {
-        "name": "Heavy Spoonbait",
+        "name": "Deep Crankbait",
         "classification": 1
     },
     {
@@ -47,7 +56,55 @@
         "classification": 1
     },
     {
+        "name": "Glidebait",
+        "classification": 1
+    },
+    {
+        "name": "Deep Glidebait",
+        "classification": 1
+    },
+    {
         "name": "Jighead",
+        "classification": 1
+    },
+    {
+        "name": "Deep Jighead",
+        "classification": 1
+    },
+    {
+        "name": "Spinnerbait",
+        "classification": 1
+    },
+    {
+        "name": "Big Spinnerbait",
+        "classification": 1
+    },
+    {
+        "name": "Heavy Spoonbait",
+        "classification": 1
+    },
+    {
+        "name": "Small Spoonbait",
+        "classification": 1
+    },
+    {
+        "name": "Huge Spoonbait",
+        "classification": 1
+    },
+    {
+        "name": "Minnow Swimbait",
+        "classification": 1
+    },
+    {
+        "name": "Bluegill Swimbait",
+        "classification": 1
+    },
+    {
+        "name": "Topwater",
+        "classification": 1
+    },
+    {
+        "name": "Wacky Worm",
         "classification": 1
     },
     {
@@ -58,12 +115,12 @@
     {
         "name": "Lil' Guppy: Progressive Rod Strength Upgrade",
         "classification": 2,
-        "count": 5
+        "count": 4
     },
     {
         "name": "Lil' Guppy: Progressive Line Length Upgrade",
         "classification": 2,
-        "count": 5
+        "count": 4
     },
     {
         "name": "Maple Scout: Progressive Rod Strength Upgrade",
@@ -73,17 +130,17 @@
     {
         "name": "Maple Scout: Progressive Line Length Upgrade",
         "classification": 2,
-        "count": 5
+        "count": 4
     },
     {
         "name": "Timberjack: Progressive Rod Strength Upgrade",
         "classification": 2,
-        "count": 5
+        "count": 4
     },
     {
         "name": "Timberjack: Progressive Line Length Upgrade",
         "classification": 2,
-        "count": 5
+        "count": 4
     },
     {
         "name": "Progressive Boat",
@@ -91,29 +148,49 @@
         "count": 4
     },
     {
-        "name": "Pond Baddler: Progressive Storage Upgrade",
+        "name": "Pond Paddler: Progressive Fish Storage Upgrade",
         "classification": 2,
         "count": 5
     },
     {
-        "name": "The Leaky Bucket: Progressive Storage Upgrade",
+        "name": "The Leaky Bucket: Progressive Motor Speed Upgrade",
         "classification": 2,
-        "count": 5
+        "count": 3
     },
     {
-        "name": "Loonchaser: Progressive Storage Upgrade",
+        "name": "The Leaky Bucket: Progressive Fish Storage Upgrade",
         "classification": 2,
-        "count": 5
+        "count": 4
     },
     {
-        "name": "Coastal Rambler: Progressive Storage Upgrade",
+        "name": "Loonchaser: Progressive Motor Speed Upgrade",
         "classification": 2,
-        "count": 5
+        "count": 4
     },
     {
-        "name": "Snow Wolf XT1: Progressive Storage Upgrade",
+        "name": "Loonchaser: Progressive Fish Storage Upgrade",
         "classification": 2,
-        "count": 5
+        "count": 4
+    },
+    {
+        "name": "Coastal Rambler: Progressive Motor Speed Upgrade",
+        "classification": 2,
+        "count": 4
+    },
+    {
+        "name": "Coastal Rambler: Progressive Fish Storage Upgrade",
+        "classification": 2,
+        "count": 4
+    },
+    {
+        "name": "Snow Wolf XT1: Progressive Motor Speed Upgrade",
+        "classification": 2,
+        "count": 3
+    },
+    {
+        "name": "Snow Wolf XT1: Progressive Fish Storage Upgrade",
+        "classification": 2,
+        "count": 3
     },
     {
         "name": "Gold"

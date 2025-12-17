@@ -3,20 +3,34 @@
         "name": "Menu",
         "exits": [
             {
+                "name": "Map to Goldenfork River",
+                "destination": "Goldenfork River",
+                "access_rules": {
+                    "and": [
+                        { "has_all": [ "Goldenfork River License" ] }
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "name": "Goldenfork River",
+        "exits": [
+            {
                 "name": "Map to The Fork",
                 "destination": "The Fork",
                 "access_rules": {
                     "and": [
-                        { "has_all": [ "The Fork License" ] }
+                        { "has_all": [ "The Fork" ] }
                     ]
                 }
             },
-            {
+                        {
                 "name": "Map to Beaver Dam",
                 "destination": "Beaver Dam",
                 "access_rules": {
                     "and": [
-                        { "has_all": [ "Beaver Dam License" ] }
+                        { "has_all": [ "Beaver Dam" ] }
                     ]
                 }
             },
@@ -25,7 +39,7 @@
                 "destination": "The Mistwood",
                 "access_rules": {
                     "and": [
-                        { "has_all": [ "The Mistwood License" ] }
+                        { "has_all": [ "The Mistwood" ] }
                     ]
                 }
             }
@@ -39,12 +53,13 @@
                 "destination": "The Fork / Beaver Dam",
                 "access_rules": {
                     "and": [
-                        { "has_all": [ "The Fork License" ] }
+                        { "has_all": [ "The Fork" ] }
                     ]
                 }
             }
         ],
-        "is_spot": true
+        "is_spot": true,
+        "starting_inventory": { "The Fork": 1, "Goldenfork River License": 1 }
     },
     {
         "name": "Beaver Dam",
@@ -54,16 +69,18 @@
                 "destination": "The Fork / Beaver Dam",
                 "access_rules": {
                     "and": [
-                        { "has_all": [ "Beaver Dam License" ] }
+                        { "has_all": [ "Beaver Dam" ] }
                     ]
                 }
             }
         ],
-        "is_spot": true
+        "is_spot": true,
+        "starting_inventory": { "Beaver Dam": 1, "Goldenfork River License": 1 }
     },
     {
         "name": "The Mistwood",
-        "is_spot": true
+        "is_spot": true,
+        "starting_inventory": { "The Mistwood": 1, "Goldenfork River License": 1 }
     },
     {
         "name": "The Fork / Beaver Dam"

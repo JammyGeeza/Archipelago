@@ -3,10 +3,10 @@ from BaseClasses import Item, ItemClassification, Tutorial
 from .Items import CastNChillItem, item_name_to_id_lookup, item_table, get_items, get_filler_items
 from .Locations import location_name_to_id_lookup
 from .Options import CastNChillOptions
-from .Regions import region_table, set_regions
+from .Regions import CastNChillRegion, region_table, set_regions
 from .Rules import set_goal
 import logging
-from typing import List
+from typing import Any, Dict
 
 class CastNChillWeb(WebWorld):
 
@@ -36,8 +36,6 @@ class CastNChillWorld(World):
     item_name_to_id = item_name_to_id_lookup
     location_name_to_id = location_name_to_id_lookup
 
-    required_client_version = (0, 6, 5)
-
     def generate_early(self):
         """Perform actions before generation."""
 
@@ -47,18 +45,19 @@ class CastNChillWorld(World):
         logging.info(f"Selecting starting spot ...")
 
         # Randomly select the starting spot
-        starting_spot: str = self.random.choices(
+        self.starting_spot: str = self.random.choices(
             population=list(self.options.starting_spot.keys()),
             weights=list(self.options.starting_spot.values()),
             k=1
         )[0]
 
-        logging.info(f"Selected starting spot: {starting_spot}")
+        logging.info(f"Selected starting spot: {self.starting_spot}")
 
         # Add starting spot license to the starting items
-        self.options.start_inventory_from_pool.value.update({ f"{starting_spot} License": 1 })
+        starting_region: CastNChillRegion = next(region for region in region_table if region.name == self.starting_spot)
+        self.options.start_inventory_from_pool.value.update(starting_region.starting_inventory)
 
-        logging.info(f"Added {starting_spot} to starting inventory")
+        logging.info(f"Added {self.starting_spot} to starting inventory")
 
     def create_items(self):
         """Create all items for the item pool."""
@@ -81,3 +80,21 @@ class CastNChillWorld(World):
     def set_rules(self):
          """Set access rules for regions, locations and goals."""
          set_goal(self.multiworld, self.player)
+
+    def fill_slot_data(self) -> Dict[str, Any]:
+        """Populate the slot data to send to the client."""
+
+        slot_data: Dict[str, Any] = {}
+        
+        # Add required options data
+        slot_data = self.options.as_dict(
+            "goal",
+            "spots"
+        )
+
+        # Add any additional required data
+        slot_data.update({
+            "starting_spot": self.starting_spot
+        })
+
+        return slot_data
