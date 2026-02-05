@@ -629,7 +629,17 @@ class ServerOptions(Group):
     compatibility: Compatibility = Compatibility(2)
     log_network: LogNetwork = LogNetwork(0)
 
+class DiscordGatewayOptions(Group):
+    """Options for the Discord Gateway"""
 
+    class Token(str):
+        """The bot auth token, generated from the discord developer portal."""
+
+    token: Token = Token("")
+    admin_only: bool = True
+    loglevel: str = "info"
+    logtime: bool = False
+    
 class GeneratorOptions(Group):
     """Options for Generation"""
 
@@ -742,6 +752,7 @@ class BizHawkClientOptions(Group):
 class Settings(Group):
     general_options: GeneralOptions = GeneralOptions()
     server_options: ServerOptions = ServerOptions()
+    discord_gateway_options: DiscordGatewayOptions = DiscordGatewayOptions()
     generator: GeneratorOptions = GeneratorOptions()
     sni_options: SNIOptions = SNIOptions()
     bizhawkclient_options: BizHawkClientOptions = BizHawkClientOptions()

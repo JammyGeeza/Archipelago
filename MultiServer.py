@@ -16,6 +16,7 @@ import operator
 import pickle
 import random
 import shlex
+import sys
 import threading
 import time
 import typing
@@ -253,7 +254,7 @@ class Context:
 
     def __init__(self, host: str, port: int, server_password: str, password: str, location_check_points: int,
                  hint_cost: int, item_cheat: bool, release_mode: str = "disabled", collect_mode="disabled",
-                 countdown_mode: str = "auto", remaining_mode: str = "disabled", auto_shutdown: typing.SupportsFloat = 0, 
+                 countdown_mode: str = "auto", remaining_mode: str = "disabled", auto_shutdown: typing.SupportsFloat = 0,
                  compatibility: int = 2, log_network: bool = False, logger: logging.Logger = logging.getLogger()):
         self.logger = logger
         super(Context, self).__init__()
@@ -845,12 +846,12 @@ class Context:
             if hint.location == seeked_location and hint.finding_player == finding_player:
                 return hint
         return None
-    
+
     def replace_hint(self, team: int, slot: int, old_hint: Hint, new_hint: Hint) -> None:
         if old_hint in self.hints[team, slot]:
             self.hints[team, slot].remove(old_hint)
             self.hints[team, slot].add(new_hint)
-    
+
     # "events"
 
     def on_goal_achieved(self, client: Client):
@@ -1269,7 +1270,7 @@ def format_hint(ctx: Context, team: int, hint: Hint) -> str:
 
     if hint.entrance:
         text += f" at {hint.entrance}"
-    
+
     return text + ". " + status_names.get(hint.status, "(unknown)")
 
 
@@ -2076,7 +2077,7 @@ async def process_client_cmd(ctx: Context, client: Client, args: dict):
             # As of writing this code, only_new=True does not update status for existing hints
             ctx.notify_hints(client.team, hints, only_new=True, persist_even_if_found=True)
             ctx.save()
-        
+
         elif cmd == 'UpdateHint':
             location = args["location"]
             player = args["player"]
@@ -2634,6 +2635,17 @@ def parse_args() -> argparse.Namespace:
     #0 -> recommended for tournaments to force a level playing field, only allow an exact version match
     """)
     parser.add_argument('--log_network', default=defaults["log_network"], action="store_true")
+
+    # Discord args
+    # parser.add_argument('--discord_server', default=defaults["server_id"], type=str,
+    #                     help="The ID of the discord server. Right-click on the server and select 'Copy Server ID'.")
+
+    # parser.add_argument('--discord_channel', default=defaults["channel_id"], type=str,
+    #                     help="The ID of the channel within the discord server. Right-click on the channel and select 'Copy Channel ID' or 'Copy Thread ID'.")
+
+    # parser.add_argument('--discord_token', default=defaults["token"], type=str,
+    #                     help="The auth token for the discord bot/app. This is generated in the discord developer portal.")
+
     args = parser.parse_args()
     return args
 
@@ -2724,6 +2736,18 @@ async def main(args: argparse.Namespace):
     ip = args.host if args.host else Utils.get_public_ipv4()
     logging.info('Hosting game at %s:%d (%s)' % (ip, ctx.port,
                                                  'No password' if not ctx.password else 'Password: %s' % ctx.password))
+    
+    # Force-create the save file so it exists before the agent starts
+    ctx.save(now=True)
+
+    # Upsert room data in the store
+    from DiscordGatewayStore import Store, Room
+    store = Store()
+    store.rooms.upsert(Room(ctx.port, ctx.data_filename, ctx.save_filename))
+
+    # Get all
+    for room in store.rooms.get_all():
+        logging.info(f"Room | {room.port} | {room.multidata} | {room.savedata}")
 
     await ctx.server
     console_task = asyncio.create_task(console(ctx))
@@ -2734,6 +2758,37 @@ async def main(args: argparse.Namespace):
     if ctx.shutdown_task:
         await ctx.shutdown_task
 
+def start_agent(host: str, port: int, multidata: str, password: str | None = None) -> None:
+    """Start the discord agent."""
+
+    import os
+    from pathlib import Path
+    import subprocess
+
+    cmd = [
+        sys.executable,
+        str(Path(__file__).with_name("Agent.py")),
+        "--url", f"{host}:{port}",
+        # "--password", password,
+        "--multidata", multidata
+    ]
+
+    # Include password, if provided
+    if password:
+        cmd.append("--password")
+        cmd.append(password)
+
+    # Inherit environment
+    env = os.environ.copy()
+
+    # Start detatched(ish)
+    return subprocess.Popen(
+        cmd,
+        env=env,
+        # stdout=subprocess.PIPE,
+        # stderr=subprocess.PIPE,
+        start_new_session=True
+    )
 
 client_message_processor = ClientMessageProcessor
 
