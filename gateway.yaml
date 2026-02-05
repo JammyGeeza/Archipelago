@@ -1,5 +1,0 @@
-gateway_options:
-  # The discord bot token that is generated from the discord developer portal.
-  bot_token: "MTM4MjM1NTAxNTE4Nzk1OTg5OA.G30aNa.Gf2oQt_6XRR_L1HhWSVF_yGzCsoRJhq_q4dFVk"
-  # The minimum level of logging to provide.
-  loglevel: "info"
