@@ -2730,10 +2730,10 @@ async def main(args: argparse.Namespace):
     # Force-create the save file so it exists before the agent starts
     ctx.save(now=True)
 
-    # Upsert room data in the store
-    from DiscordGatewayStore import Store, Room
+    # Create / update room data in the store
+    from DiscordGatewayStore import Store
     store = Store()
-    store.rooms.upsert(Room(ctx.port, ctx.data_filename, ctx.save_filename))
+    store.configs.create(ctx.port, ctx.data_filename, ctx.save_filename, ctx.password)
 
     await ctx.server
     console_task = asyncio.create_task(console(ctx))

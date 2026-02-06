@@ -8,14 +8,119 @@ import sys
 
 from discord import app_commands
 from discord.ext import commands
-from DiscordGatewayStore import Agent, Store, Room
+from DiscordGatewayStore import Agent, Store, Room, RoomConfig
+from DiscordPackets import AgentPacket, StatusPacket
 from typing import Dict, List, Optional, Tuple
 
 # Global variables
 admin_only: bool = True
-agents: Dict[Tuple[int,int], asyncio.subprocess.Process] = {}
 bot = commands.Bot(command_prefix='/', intents=discord.Intents.none())
 store = Store()
+
+class AgentProcess:
+
+    def __init__(self, config: RoomConfig):
+        self.config: RoomConfig = config
+        self.process: asyncio.subprocess.Process = None
+        self.status: str = "Stopped"
+
+        self.rcv_queue: asyncio.Queue = asyncio.Queue()
+        self.snd_queue: asyncio.Queue = asyncio.Queue()
+
+    async def send(self, payload: str):
+        """Send a payload to the agent process."""
+
+        logging.info(f"Sending payload to agent process... | Port: {self.config.port}")
+        logging.info(f"Payload: {payload}")
+
+        self.process.stdin.write(f"{payload}\n".encode("utf-8"))
+        await self.process.stdin.drain()
+
+    async def start(self):
+        """Start the agent process"""
+
+        logging.info(f"Starting agent process... | Port: {self.config.port}")
+
+        if self.process:
+            logging.warning(f"Agent process is already running | Port: {self.config.port}")
+            return
+
+        # Create command-line arguments
+        args = [
+            sys.executable,
+            "DiscordAgent.py",
+            "--port", str(self.config.port),
+            "--multidata", self.config.multidata,
+            "--savedata", self.config.savedata
+        ]
+
+        # Add password arg if provided
+        if self.config.password:
+            args += ["--password", self.config.password]
+
+        # Create agent process
+        self.process = await asyncio.create_subprocess_exec(
+            *args,
+            stdout=asyncio.subprocess.PIPE,
+            stdin=asyncio.subprocess.PIPE,
+        )
+
+        # Start watchers/readers
+        asyncio.create_task(self._watch())
+        asyncio.create_task(self._read_stdout())
+        asyncio.create_task(self._handle_packet())
+
+    def stop(self):
+        """Stop the agent process"""
+
+        logging.info(f"Stopping agent process... | Port {self.config.port}")
+
+        # Check process exists
+        if not self.process:
+            logging.warning(f"Agent process is not currently running | Port {self.config.port}")
+
+        # Terminate process
+        self.process.terminate()
+
+    async def _handle_packet(self):
+        """Handle a received packet from the agent process"""
+
+        while True:
+            if not (payload:= await self.rcv_queue.get()):
+                continue
+            
+            logging.info(f"Received payload from agent process | Port: {self.config.port} | Payload: {payload}")
+
+            await AgentPacket.receive(payload, self)
+
+    @StatusPacket.on_received
+    async def _handle_status_packet(self, packet: StatusPacket):
+        """Handle receipt of a status packet"""
+
+        # Cast to packet class
+        logging.info(f"Status received from agent process | Port {self.config.port} | Status: {packet.status}")
+        self.status = packet.status
+
+    async def _read_stdout(self):
+        """Listen for data received from the agent process."""
+
+        if self.process.stdout is not None:
+            async for line in self.process.stdout:
+                payload = line.decode("utf-8", errors="replace").rstrip()
+                await self.rcv_queue.put(payload)
+
+    async def _watch(self):
+        """Watch the agent process and clean-up when terminated."""
+
+        code = await self.process.wait()
+
+        logging.warning(f"Agent process for port {self.config.port} exited with code {code}")
+
+        # Clear process
+        self.process = None
+        self.status = "Stopped"
+
+agents: Dict[Tuple[int, int], AgentProcess] = {}
 
 def parse_args() -> argparse.Namespace:
     """Parse command-line arguments, providing defaults from host.yaml file if argument not provided."""
@@ -33,83 +138,76 @@ def parse_args() -> argparse.Namespace:
     args = parser.parse_args()
     return args
 
-def delete_agent(agent: Agent) -> bool:
-    global store
-    return store.agents.delete(agent)
+# async def _listen_agent_process(key: tuple[int, int], process: asyncio.subprocess.Process):
+#     """Read the stdout of an agent process and handle incoming data."""
+#     if process.stdout is not None:
+#         async for line in process.stdout:
+#             payload = line.decode("utf-8", errors="replace").rstrip()
+#             logging.info(f"Received from Agent Process {key}: {payload}")
 
-def get_agent(guild_id: int, channel_id: int) -> Optional[Agent]:
-    global store
-    return store.agents.get(guild_id, channel_id)
-
-async def _listen_agent_process(key: tuple[int, int], process: asyncio.subprocess.Process):
-    """Read the stdout of an agent process and handle incoming data."""
-    if process.stdout is not None:
-        async for line in process.stdout:
-            payload = line.decode("utf-8", errors="replace").rstrip()
-            logging.info(f"Received from Agent Process {key}: {payload}")
-
-async def _watch_agent_process(key: tuple[int, int], process: asyncio.subprocess.Process):
-    """Watch an agent and clean-up when it terminates."""
-    global agents
+# async def _watch_agent_process(key: tuple[int, int], process: asyncio.subprocess.Process):
+#     """Watch an agent and clean-up when it terminates."""
+#     global agents
     
-    # Wait for process to finish
-    code = await process.wait()
-    logging.warning(f"Agent process {key} exited with code {code}")
+#     # Wait for process to finish
+#     code = await process.wait()
+#     logging.warning(f"Agent process {key} exited with code {code}")
 
-    # Remove
-    agents.pop(key)
+#     # Remove
+#     agents.pop(key)
 
-def get_agent_process(agent: Agent) -> Optional[asyncio.subprocess.Process]:
+def get_agent(guild_id: int, channel_id: int) -> Optional[AgentProcess]:
+    """Get an agent process, if it exists."""
     global agents
-    return agents.get((agent.guild_id, agent.channel_id), None)
+    return agents.get((guild_id, channel_id), None)
 
-async def start_agent_process(agent: Agent, room: Room):
-    """Create and start an agent"""
+# async def start_agent_process(agent: Agent, room: Room):
+#     """Create and start an agent"""
 
-    global agents
+#     global agents
 
-    logging.info(f"Starting Agent... | Port: {agent.port} | Password: {agent.password} | Multidata: {room.multidata} | Save Data: {room.savedata}")
+#     logging.info(f"Starting Agent... | Port: {agent.port} | Password: {agent.password} | Multidata: {room.multidata} | Save Data: {room.savedata}")
 
-    # Create command-line arguments
-    args = [
-        sys.executable,
-        "DiscordAgent.py",
-        "--port", str(agent.port),
-        "--multidata", room.multidata,
-        "--savedata", room.savedata
-    ]
+#     # Create command-line arguments
+#     args = [
+#         sys.executable,
+#         "DiscordAgent.py",
+#         "--port", str(agent.port),
+#         "--multidata", room.multidata,
+#         "--savedata", room.savedata
+#     ]
 
-    # Add password arg if provided
-    if agent.password:
-        args += ["--password", agent.password]
+#     # Add password arg if provided
+#     if agent.password:
+#         args += ["--password", agent.password]
 
-    # Create agent process
-    process = await asyncio.create_subprocess_exec(
-        *args,
-        stdout=asyncio.subprocess.PIPE,
-        stdin=asyncio.subprocess.PIPE,
-    )
+#     # Create agent process
+#     process = await asyncio.create_subprocess_exec(
+#         *args,
+#         stdout=asyncio.subprocess.PIPE,
+#         stdin=asyncio.subprocess.PIPE,
+#     )
 
-    # Add process to agents list
-    key = (agent.guild_id, agent.channel_id)
-    agents[key] = process
+#     # Add process to agents list
+#     key = (agent.guild_id, agent.channel_id)
+#     agents[key] = process
 
-    # Start watchers/readers
-    asyncio.create_task(_watch_agent_process(key, process))
-    asyncio.create_task(_listen_agent_process(key, process))
+#     # Start watchers/readers
+#     asyncio.create_task(_watch_agent_process(key, process))
+#     asyncio.create_task(_listen_agent_process(key, process))
 
-def stop_agent_process(agent: Agent):
-    global agents
+# def stop_agent_process(agent: Agent):
+#     global agents
 
-    # Get agent process
-    if not (process:= get_agent_process(agent)):
-        logging.warn(f"No Agent Process found | Guild ID: {agent.guild_id} | Channel ID: {agent.channel_id}")
-        return False
+#     # Get agent process
+#     if not (process:= get_agent_process(agent)):
+#         logging.warn(f"No Agent Process found | Guild ID: {agent.guild_id} | Channel ID: {agent.channel_id}")
+#         return False
 
-    # Terminate the process
-    process.terminate()
+#     # Terminate the process
+#     process.terminate()
     
-    return True
+#     return True
 
 async def interaction_is_admin(interaction: discord.Interaction) -> bool:
     """Check if user is owner or administrator."""
@@ -122,6 +220,29 @@ async def interaction_is_admin(interaction: discord.Interaction) -> bool:
         guild.owner_id == interaction.user.id
         or interaction.user.guild_permissions.administrator
     )
+
+# async def send_packet(agent: Agent, packet: AgentPacket):
+#     """Send a packet to an agent"""
+
+#     global send_queue
+#     await send_queue.put(())
+
+async def create_agent(config: RoomConfig) -> AgentProcess:
+    """Create and start an agent process"""
+    global agents
+
+    logging.info(f"Creating agent... | Port {config.port}")
+
+    agent = AgentProcess(config)
+    agents[(config.guild_id, config.channel_id)] = agent
+
+    # Start agent process
+    await agent.start()
+
+def get_agent(config: RoomConfig) -> Optional[AgentProcess]:
+    """Get an agent process"""
+    global agents
+    return agents.get((config.guild_id, config.channel_id), None)
 
 async def message_agent(agent: Agent, payload: str) -> bool:
     """Send a message to an agent process"""
@@ -172,23 +293,19 @@ async def main() -> None:
 @bot.event
 async def on_ready():
     """Event handler for when discord client has connected and is ready."""
+    
+    global agents
+    
     logging.info(f"Connected to discord as {bot.user.name} ({bot.user.id})")
     logging.info(f"Syncing command tree...")
 
     await bot.tree.sync()
 
-    agent_list: List[Agent] = store.agents.get_all()
-    logging.info(f"Starting {len(agent_list)} agent(s)...")
+    logging.info("Starting agent(s)...")
 
-    for agent in agent_list:
-
-        # Find room data for port
-        if not (room:= store.rooms.get(agent.port)):
-            logging.warning(f"Room data could not be found | Port: {agent.port}")
-            continue
-
-        # Start agent process
-        asyncio.create_task(start_agent_process(agent, room))
+    # Create agents for existing room configurations
+    for config in store.configs.get_all_active():
+        await create_agent(config)
 
 @bot.tree.command(name="bind", description="Bind this channel to an Archipelago room.")
 @app_commands.describe(port="The port number of the local archipelago room.", password="(Optional) Room password")
@@ -206,34 +323,21 @@ async def bind(interaction: discord.Interaction, port: int, password: str | None
         await interaction.response.send_message("Only administrators can bind channels to rooms.", ephemeral=True)
         return
     
-    # Check if binding already exists
-    if store.agents.exists(interaction.guild_id, interaction.channel_id):
-        await interaction.response.send_message(f"The channel {interaction.channel.jump_url} is already bound to a room - please unbind it first.", ephemeral=True)
+    # Check for existing binding
+    if (room_config:= store.configs.get_by_channel(interaction.guild_id, interaction.channel_id)):
+        await interaction.response.send_message(f"{interaction.channel.jump_url} is already bound to port `:{room_config.port}` - please unbind it first.", ephemeral=True)
         return
-    
-    # Create and add binding
-    agent = Agent(
-        guild_id=interaction.guild_id,
-        channel_id=interaction.channel_id,
-        port=port,
-        password=password
-    )
 
-    # Creation of binding failed 
-    if not store.agents.upsert(agent):
-        await interaction.response.send_message(f"An error occurred when attempting to create a new binding - please wait a moment and try again.", ephemeral=True)
+    # Attempt to create binding
+    if not (room_config:= store.configs.bind(port, interaction.guild_id, interaction.channel_id)):
+        await interaction.response.send_message(f"Unable to bind {interaction.channel.jump_url} to port `:{port}` - please check that the port exists or wait a moment and try again.", ephemeral=True)
         return
     
-    # Get room data
-    if not (room_data:= store.rooms.get(agent.port)):
-        await interaction.response.send_message(f"Unable to find local room data for port `:{agent.port}`", ephemeral=True)
-        return
+    # Success response
+    await interaction.response.send_message(f"Successfully bound {interaction.channel.jump_url} to port `:{port}`!", ephemeral=True)
     
     # Start agent
-    asyncio.create_task(start_agent_process(agent, room_data))
-
-    # Success response
-    await interaction.response.send_message(f"Binding channel {interaction.channel.jump_url} to port `:{port}`...", ephemeral=True)
+    await create_agent(room_config)
 
 @bot.tree.command(name="unbind", description="Unbind this channel from its Archipelago room.")
 async def unbind(interaction: discord.Interaction):
@@ -249,20 +353,19 @@ async def unbind(interaction: discord.Interaction):
         await interaction.response.send_message("Only administrators can unbind channels from rooms.", ephemeral=True)
         return
     
-    # Attempt to get existing binding
-    if not (agent:= get_agent(interaction.guild_id, interaction.channel_id)):
-        await interaction.response.send_message(f"The channel {interaction.channel.jump_url} is not currently bound to a room.", ephemeral=True)
+    # Check for existing binding
+    if not (room_config:= store.configs.get_by_channel(interaction.guild_id, interaction.channel_id)):
+        await interaction.response.send_message(f"{interaction.channel.jump_url} is not currently bound to a port.", ephemeral=True)
         return
 
-    # Attempt to delete binding
-    if not delete_agent(agent):
-        await interaction.response.send_message(f"An error occurred when attempting to remove the binding - please wait a moment and try again.", ephemeral=True)
+    # Attempt to un-bind
+    if not (room_config:= store.configs.unbind(room_config.port)):
+        await interaction.response.send_message(f"Unable to un-bind {interaction.channel.jump_url} from port `:{room_config.port}` - please wait a moment and try again.", ephemeral=True)
         return
     
-    # Attempt to stop the process
-    if not stop_agent_process(agent):
-        await interaction.response.send_message(f"An error occurred when attempting to stop the tracker process.", ephemeral=True)
-        return
+    # Stop the process, if running
+    if (agent:= get_agent(room_config)):
+        agent.stop()
     
     # Success response
     await interaction.response.send_message(f"The channel {interaction.channel.jump_url} has been successfully unbound from port `:{agent.port}`.", ephemeral=True)
@@ -276,15 +379,14 @@ async def list(interaction: discord.Interaction):
     logging.info(f"List requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id}")
 
     # Get agent bindings for guild
-    agent_bindings: List[Agent] = store.agents.get_many(interaction.guild_id)
-    if not agent_bindings or len(agent_bindings) == 0:
-        await interaction.response.send_message(f"No channels bound to rooms could be found for this server.", ephemeral=True)
+    if not (room_configs:= store.configs.get_all_by_guild(interaction.guild_id)):
+        await interaction.response.send_message(f"No channels bound to ports could be found.", ephemeral=True)
         return
     
     # Compile response
     response: str = "This server has the following bound channel(s):"
-    for binding in agent_bindings:
-        response += f"\n- <#{binding.channel_id}> is bound to `{binding.url}`\n"
+    for config in room_configs:
+        response += f"\n- <#{config.channel_id}> is bound to `{config.url}`\n"
 
     await interaction.response.send_message(response, ephemeral=True)
 
@@ -297,17 +399,22 @@ async def status(interaction: discord.Interaction):
     global store
 
     # Check if binding exists
-    if not (agent:= store.agents.get(interaction.guild_id, interaction.channel_id)):
-        await interaction.response.send_message(f"The channel {interaction.channel.jump_url} has not been bound to a room.", ephemeral=True)
+    if not (config:= store.configs.get_by_channel(interaction.guild_id, interaction.channel_id)):
+        await interaction.response.send_message(f"{interaction.channel.jump_url} is not currently bound to a port.", ephemeral=True)
+        return
+
+    # Attempt to get process
+    if not (agent:= get_agent(config)):
+        await interaction.response.send_message(f"{interaction.channel.jump_url} is bound to a port but its process is not running.", ephemeral=True)
         return
     
-    # TODO: Request status from agent process
-    # Sending a message for now, just to test
-    if not await message_agent(agent, "Status, please!"):
-        await interaction.response.send_message(f"An error occurred when attempting to get the status - please wait a moment and try again.", ephemeral=True)
-        return
-    
-    await interaction.response.send_message(f"Status for `:{agent.port}` is currently `[Connected/Disconnected]`", ephemeral=True)
+    # Send
+    # TODO: Add to a sending queue
+    await agent.send(StatusPacket("Gimme status pls").to_json())
+
+    # Respond
+    # TODO: Work out how to get the response before responding
+    await interaction.response.send_message(f"Requesting status for {interaction.channel.jump_url} bound to port `:{agent.config.port}`...", ephemeral=True)
 
 if __name__ == "__main__":
     asyncio.run(main())

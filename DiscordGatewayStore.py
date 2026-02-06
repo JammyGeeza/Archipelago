@@ -1,3 +1,4 @@
+import logging
 import sqlite3
 from dataclasses import dataclass
 from typing import Optional, List
@@ -15,14 +16,25 @@ class Room:
     multidata: str
     savedata: str
 
+@dataclass
+class RoomConfig:
+    port: int
+    password: Optional[str]
+    multidata: str
+    savedata: str
+    guild_id: Optional[int]
+    channel_id: Optional[int]
+
 class Store:
 
     def __init__(self, path: str = "discord_gateway.db"):
         self.path = path
-        self._init()
+        # self._init()
 
-        self.agents = AgentRepo(self._conn)
-        self.rooms = RoomRepo(self._conn)
+        self.configs = RoomConfigRepo(self._conn)
+
+        # self.agents = AgentRepo(self._conn)
+        # self.rooms = RoomRepo(self._conn)
 
     def _conn(self):
         return sqlite3.connect(self.path)
@@ -153,6 +165,167 @@ class Store:
         
     #     return True
 
+class RoomConfigRepo:
+
+    def __init__(self, connection_factory: sqlite3.Connection):
+        self._conn: sqlite3.Connection = connection_factory
+        self._init()
+
+    def _init(self):
+
+        with self._conn() as connection:
+
+            connection.execute("""
+                CREATE TABLE IF NOT EXISTS room_configs (
+                    port        INTEGER PRIMARY KEY,
+                    password    TEXT,
+                    multidata   TEXT NOT NULL,
+                    savedata    TEXT NOT NULL,
+                    guild_id    INTEGER,
+                    channel_id  INTEGER,
+                               
+                    UNIQUE(guild_id, channel_id)
+                )
+            """)
+
+            connection.commit()
+
+    def bind(self, port: int, guild_id: int, channel_id: int) -> Optional[RoomConfig]:
+        """Bind a room to a discord channel"""
+
+        try:
+            with self._conn() as connection:
+
+                connection.execute("""
+                    UPDATE room_configs
+                    SET guild_id = ?, channel_id = ?
+                    WHERE port = ?
+                    """,
+                    (guild_id, channel_id, port)
+                )
+                connection.commit()
+
+            return self.get_by_port(port)
+
+        except Exception as ex:
+            logging.warning(f"Error in bind(): {ex}")
+            return None
+        
+    def create(self, port: int, multidata: str, savedata: str, password: Optional[str] = None) -> Optional[RoomConfig]:
+        """Create a room configuration."""
+
+        try:
+            with self._conn() as connection:
+
+                connection.execute("""
+                    INSERT INTO room_configs (port, multidata, savedata, password)
+                    VALUES (?, ?, ?, ?)
+                    """,
+                    (port, multidata, savedata, password)
+                )
+                connection.commit()
+
+            return self.get_by_port(port)
+        
+        except Exception as ex:
+            return None
+        
+    def get_by_port(self, port: int) -> Optional[RoomConfig]:
+        """Get a room configuration by the port"""
+
+        try:
+            with self._conn() as connection:
+
+                config = connection.execute("""
+                    SELECT port, password, multidata, savedata, guild_id, channel_id
+                    FROM room_configs
+                    WHERE port = ?
+                    """,
+                    (port,)
+                ).fetchone()
+
+            return RoomConfig(*config)
+
+        except Exception as ex:
+            return None
+        
+    def get_by_channel(self, guild_id: int, channel_id: int) -> Optional[RoomConfig]:
+        """Get a room configuration by the guild and channel ID"""
+
+        try:
+            with self._conn() as connection:
+
+                config = connection.execute("""
+                    SELECT port, password, multidata, savedata, guild_id, channel_id
+                    FROM room_configs
+                    WHERE guild_id = ?
+                        AND channel_id = ?
+                    """,
+                    (guild_id, channel_id)
+                ).fetchone()
+
+            return RoomConfig(*config)
+
+        except Exception as ex:
+            return None
+        
+    def get_all_active(self) -> List[RoomConfig]:
+        """Get all room configurations"""
+
+        try:
+            with self._conn() as connection:
+
+                configs = connection.execute("""
+                    SELECT port, password, multidata, savedata, guild_id, channel_id
+                    FROM room_configs
+                    WHERE guild_id IS NOT NULL
+                        AND channel_id IS NOT NULL
+                """).fetchall()
+
+            return [RoomConfig(*config) for config in configs]
+
+        except Exception as ex:
+            logging.warning(f"Error in get_all_active(): {ex}")
+            return []
+        
+    def get_all_by_guild(self, guild_id: int) -> List[RoomConfig]:
+        """Get a room configuration by the guild and channel ID"""
+
+        try:
+            with self._conn() as connection:
+
+                configs = connection.execute("""
+                    SELECT port, password, multidata, savedata, guild_id, channel_id
+                    FROM room_configs
+                    WHERE guild_id = ?
+                    """,
+                    (guild_id,)
+                ).fetchall()
+
+            return [RoomConfig(*config) for config in configs]
+
+        except Exception as ex:
+            return []
+        
+    def unbind(self, port: int) -> Optional[RoomConfig]:
+        """Un-bind a room from a discord channel"""
+
+        try:
+            with self._conn() as connection:
+
+                connection.execute("""
+                    UPDATE room_configs
+                    SET guild_id = NULL, channel_id = NULL
+                    WHERE port = ?
+                    """,
+                    (port,)
+                )
+                connection.commit()
+
+            return self.get_by_port(port)
+
+        except Exception as ex:
+            return None
 
 class AgentRepo:
 
