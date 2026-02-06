@@ -639,6 +639,12 @@ class DiscordGatewayOptions(Group):
     admin_only: bool = True
     loglevel: str = "info"
     logtime: bool = False
+
+class DiscordAgentOptions(Group):
+    """Options for the Discord Agents"""
+
+    loglevel: str = "info"
+    logtime: bool = False 
     
 class GeneratorOptions(Group):
     """Options for Generation"""
@@ -753,6 +759,7 @@ class Settings(Group):
     general_options: GeneralOptions = GeneralOptions()
     server_options: ServerOptions = ServerOptions()
     discord_gateway_options: DiscordGatewayOptions = DiscordGatewayOptions()
+    discord_agent_options: DiscordAgentOptions = DiscordAgentOptions()
     generator: GeneratorOptions = GeneratorOptions()
     sni_options: SNIOptions = SNIOptions()
     bizhawkclient_options: BizHawkClientOptions = BizHawkClientOptions()

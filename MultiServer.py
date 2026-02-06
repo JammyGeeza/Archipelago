@@ -2636,16 +2636,6 @@ def parse_args() -> argparse.Namespace:
     """)
     parser.add_argument('--log_network', default=defaults["log_network"], action="store_true")
 
-    # Discord args
-    # parser.add_argument('--discord_server', default=defaults["server_id"], type=str,
-    #                     help="The ID of the discord server. Right-click on the server and select 'Copy Server ID'.")
-
-    # parser.add_argument('--discord_channel', default=defaults["channel_id"], type=str,
-    #                     help="The ID of the channel within the discord server. Right-click on the channel and select 'Copy Channel ID' or 'Copy Thread ID'.")
-
-    # parser.add_argument('--discord_token', default=defaults["token"], type=str,
-    #                     help="The auth token for the discord bot/app. This is generated in the discord developer portal.")
-
     args = parser.parse_args()
     return args
 
@@ -2745,10 +2735,6 @@ async def main(args: argparse.Namespace):
     store = Store()
     store.rooms.upsert(Room(ctx.port, ctx.data_filename, ctx.save_filename))
 
-    # Get all
-    for room in store.rooms.get_all():
-        logging.info(f"Room | {room.port} | {room.multidata} | {room.savedata}")
-
     await ctx.server
     console_task = asyncio.create_task(console(ctx))
     if ctx.auto_shutdown:
@@ -2757,38 +2743,6 @@ async def main(args: argparse.Namespace):
     console_task.cancel()
     if ctx.shutdown_task:
         await ctx.shutdown_task
-
-def start_agent(host: str, port: int, multidata: str, password: str | None = None) -> None:
-    """Start the discord agent."""
-
-    import os
-    from pathlib import Path
-    import subprocess
-
-    cmd = [
-        sys.executable,
-        str(Path(__file__).with_name("Agent.py")),
-        "--url", f"{host}:{port}",
-        # "--password", password,
-        "--multidata", multidata
-    ]
-
-    # Include password, if provided
-    if password:
-        cmd.append("--password")
-        cmd.append(password)
-
-    # Inherit environment
-    env = os.environ.copy()
-
-    # Start detatched(ish)
-    return subprocess.Popen(
-        cmd,
-        env=env,
-        # stdout=subprocess.PIPE,
-        # stderr=subprocess.PIPE,
-        start_new_session=True
-    )
 
 client_message_processor = ClientMessageProcessor
 
