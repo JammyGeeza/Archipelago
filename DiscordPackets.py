@@ -5,11 +5,11 @@ from dataclasses import dataclass
 from typing import Callable, ClassVar, Dict, Optional, Type
 
 @dataclass
-class AgentPacket:
+class TrackerPacket:
     """Base class for agent packets"""
 
     _handlers: ClassVar[Dict[str, Callable[[dict], None]]] = {}
-    _types: ClassVar[Dict[str, Type["AgentPacket"]]] = {}
+    _types: ClassVar[Dict[str, Type["TrackerPacket"]]] = {}
     type: ClassVar[str]
     
     def __init__(self):
@@ -22,7 +22,7 @@ class AgentPacket:
         return dct
     
     @classmethod
-    def from_dict(cls, data: dict) -> "AgentPacket":
+    def from_dict(cls, data: dict) -> "TrackerPacket":
         pkt_type = data.get("type")
         if pkt_type not in cls._types:
             raise KeyError(f"Unregistered packet type | Type: {pkt_type}")
@@ -39,19 +39,19 @@ class AgentPacket:
     def on_received(cls, fn):
         """Handler when packet is received"""
 
-        if cls.type in AgentPacket._handlers:
+        if cls.type in TrackerPacket._handlers:
             raise RuntimeError(f"on_received() handler is already registered for {cls.type}")
         
-        AgentPacket._handlers[cls.type] = fn
+        TrackerPacket._handlers[cls.type] = fn
         return fn
     
     @staticmethod
     async def receive(payload: str, ctx: Optional[any] = None):
         """Receive a raw packet payload"""
         data = json.loads(payload)
-        packet = AgentPacket.from_dict(data)
+        packet = TrackerPacket.from_dict(data)
         
-        handler = AgentPacket._handlers.get(packet.type)
+        handler = TrackerPacket._handlers.get(packet.type)
         if not handler:
             raise KeyError(f"No handler registered for type {packet.type}")
         
@@ -59,14 +59,33 @@ class AgentPacket:
         if inspect.isawaitable(result):
             await result
 
-def register_packet(cls: Type[AgentPacket]):
+def register_packet(cls: Type[TrackerPacket]):
     """Register packet type for json parsing"""
-    AgentPacket._types[cls.type] = cls
+    TrackerPacket._types[cls.type] = cls
     return cls
 
 @register_packet
 @dataclass
-class StatusPacket(AgentPacket):
+class ConnectPacket(TrackerPacket):
+    """Packet to reque"""
+
+    type: ClassVar[str] = "Connect"
+
+    def __init__(self):
+        super().__init__()
+
+@register_packet
+@dataclass
+class ConnectedPacket(TrackerPacket):
+    """Packet received on successful connection."""
+    type: ClassVar[str] = "Connected"
+
+    def __init__(self):
+        super().__init__()
+
+@register_packet
+@dataclass
+class StatusPacket(TrackerPacket):
     """Packet to respond with the status of an agent"""
 
     type: ClassVar[str] = "StatusResponse"

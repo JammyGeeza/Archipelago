@@ -9,7 +9,7 @@ import sys
 from discord import app_commands
 from discord.ext import commands
 from DiscordGatewayStore import Agent, Store, Room, RoomConfig
-from DiscordPackets import AgentPacket, StatusPacket
+from DiscordPackets import TrackerPacket, StatusPacket
 from typing import Dict, List, Optional, Tuple
 
 # Global variables
@@ -91,7 +91,7 @@ class AgentProcess:
             
             logging.info(f"Received payload from agent process | Port: {self.config.port} | Payload: {payload}")
 
-            await AgentPacket.receive(payload, self)
+            await TrackerPacket.receive(payload, self)
 
     @StatusPacket.on_received
     async def _handle_status_packet(self, packet: StatusPacket):
@@ -221,7 +221,7 @@ async def interaction_is_admin(interaction: discord.Interaction) -> bool:
         or interaction.user.guild_permissions.administrator
     )
 
-# async def send_packet(agent: Agent, packet: AgentPacket):
+# async def send_packet(agent: Agent, packet: TrackerPacket):
 #     """Send a packet to an agent"""
 
 #     global send_queue
