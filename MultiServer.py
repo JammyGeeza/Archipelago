@@ -808,6 +808,7 @@ class Context:
             hints = [hint for hint in hints if hint not in self.hints[team, hint.finding_player]]
         if not hints:
             return
+        new_bot_hints: list[Hint] = []
         new_hint_events: typing.Set[int] = set()
         concerns = collections.defaultdict(list)
         for hint in sorted(hints, key=operator.attrgetter('found'), reverse=True):
@@ -824,6 +825,7 @@ class Context:
                 # we can check once if hint already exists
                 if hint not in self.hints[team, hint.finding_player]:
                     self.hints[team, hint.finding_player].add(hint)
+                    new_bot_hints.append(hint)
                     new_hint_events.add(hint.finding_player)
                     for player in self.slot_set(hint.receiving_player):
                         self.hints[team, player].add(hint)
@@ -840,6 +842,41 @@ class Context:
                 client_hints = [datum[1] for datum in sorted(hint_data, key=lambda x: x[0].finding_player != slot)]
                 for client in clients:
                     async_start(self.send_msgs(client, client_hints))
+
+                if not new_bot_hints:
+                    return
+
+                # Forward hints to bot clients
+                bot_clients = [
+                    client
+                    for slot, client_list in self.clients[team].items()
+                    if self.slot_is_bot(slot)
+                    for client in client_list
+                    if client.auth and any(t.lower() == "bot" for t in (client.tags or []))
+                ]
+
+                self.logger.info(f"Bot spectators: {len(bot_clients)}")
+
+                if bot_clients:
+                    # Gather new, un-found hints
+                    bot_hints = [
+                        hint.as_network_message()
+                        for hint in sorted(new_bot_hints, key=operator.attrgetter('found'), reverse=True)
+                    ]
+
+                    # Forward to bot clients
+                    for bot in bot_clients:
+                        async_start(self.send_msgs(bot, bot_hints))
+
+    def slot_is_bot(self, slot):
+        slot_info = self.slot_info.get(slot)
+        self.logger.info(f"Slot info: {slot_info}")
+        return slot_info and getattr(slot_info, "type", None) == SlotType.spectator
+
+    # def client_is_bot(self, client):
+    #     slot_info = self.slot_info[client.team].get(client.slot)
+    #     self.logger.info(f"Slot info: {slot_info}")
+    #     return slot_info and getattr(slot_info, "type", "").tolower() == "bot"
 
     def get_hint(self, team: int, finding_player: int, seeked_location: int) -> typing.Optional[Hint]:
         for hint in self.hints[team, finding_player]:
@@ -882,7 +919,6 @@ class Context:
         targets: typing.Set[Client] = set(self.stored_data_notification_clients[key])
         if targets:
             self.broadcast(targets, [{"cmd": "SetReply", "key": key, "value": self.client_game_state[team, slot]}])
-
 
 def update_aliases(ctx: Context, team: int):
     cmd = ctx.dumper([{"cmd": "RoomUpdate",

@@ -8,7 +8,7 @@ import sys
 import threading
 
 from settings import get_settings
-from DiscordPackets import TrackerPacket, ConnectPacket, ConnectedPacket, ConnectionRefusedPacket, RoomInfoPacket, StatusPacket, NetworkVersion
+from DiscordPackets import TrackerPacket, ConnectPacket, ConnectedPacket, ConnectionRefusedPacket, HintMessagePacket, ItemMessagePacket, PrintJSONPacket, RoomInfoPacket, StatusPacket, NetworkItem, NetworkVersion
 from typing import List, Optional
 from websockets.asyncio.client import connect
 from websockets.exceptions import ConnectionClosed
@@ -103,6 +103,10 @@ class StdClient:
         except Exception as ex:
             logging.error(f"Unexpected error in std client __write_loop() task: '{ex}'")
 
+    async def send(self, packet: TrackerPacket):
+        """Send a packet to the stdout pipe"""
+        await self.__send_queue.put(packet)
+
     async def start(self):
         """Start the std client connection"""
 
@@ -185,6 +189,8 @@ class TrackerClient:
     on_connection_refused = Hookable()
     on_disconnected = Hookable()
     on_error = Hookable()
+    on_hint_received = Hookable()
+    on_item_received = Hookable()
 
     def __init__(self, args):
 
@@ -281,6 +287,21 @@ class TrackerClient:
         # Disconnect
         await self.__websocket.close(reason=f"Connection refused by server for reason(s): {", ".join(packet.errors)}")
     
+    @PrintJSONPacket.on_received
+    async def __on_printjson_packet(self, packet: PrintJSONPacket):
+        """Handler for when a PrintJSON packet is received."""
+        logging.info(f"PrintJSON ({packet.type}) packet received!")
+
+        match packet.type:
+            case "ItemSend":
+                # Trigger item event
+                await self.on_item_received.run(self, packet.receiving, packet.item)
+            case "Hint":
+                # Trigger hint event
+                await self.on_hint_received.run(self, packet.receiving, packet.item)
+            case _:
+                logging.info(f"PrintJSON packet was a generic message type.")
+
 
     @RoomInfoPacket.on_received
     async def __on_room_info_packet(self, packet: RoomInfoPacket):
@@ -288,12 +309,11 @@ class TrackerClient:
         # Send connection packet
         connect_packet = ConnectPacket(
             game="",
-            items_handling=0b0011,
-            # name="Botipelago",
-            name="",
+            items_handling=0b0001,
+            name="Botipelago",
             password=self.password,
             slot_data=False,
-            tags=["Deathlink", "Tracker"],
+            tags=["Bot", "Deathlink", "Tracker"],
             uuid=f"botipelago_spectator",
             version=NetworkVersion(
                 major=0,
@@ -329,10 +349,10 @@ class TrackerClient:
 
                         # Set connected variables
                         # self.__attempt = 0
-                        self.__status = "Connected"
+                        # self.__status = "Connected"
 
                         # Trigger event
-                        await self.on_connected.run(self)
+                        # await self.on_connected.run(self)
 
                         # Create and run all asynchronous task(s), stopping when any of them complete
                         self.__tasks = [
@@ -439,45 +459,68 @@ def get_retry_timeout():
 
 @TrackerClient.on_connected
 async def on_tracker_client_connected(client):
-    """"""
+    """Handler for the tracker client connecting to the archipelago server."""
 
     logging.info("Connected event!")
 
+    global __std_client
+
+    # Create and send packet
+    status_packet = StatusPacket(
+        status="Connected"
+    )
+    await __std_client.send(status_packet)
+
+
 @TrackerClient.on_disconnected
 async def on_tracker_client_disconnected(client):
-    """"""
+    """Handler for the tracker client disconnecting from the archipelago server."""
 
     logging.info("Disconnected event!")
 
+    global __std_client
+
+    # Create and send packet
+    status_packet = StatusPacket(
+        status="Disconnected"
+    )
+    await __std_client.send(status_packet)
+
 @TrackerClient.on_error
 async def on_tracker_client_error(client, msg: str):
-    """"""
+    """Handler for the tracker client experiencing an error."""
 
     logging.info(f"Error event! Message: {msg}")
 
-# @ConnectedPacket.on_received
-# async def handle_connected_packet(_ctx, packet: ConnectedPacket):
-#     """"""
-#     global retry_attempt
+    # TODO: Forward status to the gateway?
 
-#     logging.info(f"Connected packet received")
+@TrackerClient.on_hint_received
+async def on_tracker_client_hint(client, receiver: int, item: NetworkItem):
+    """"""
 
-#     # Reset attempt count
-#     retry_attempt = 0
+    logging.info(f"The player {item.player} needs {item.player} to complete {item.location} for their {item.item} (with flag(s) {item.flags}) ")
 
-#     # Update status
-#     await update_status("Tracking")
+    # Create and send hint packet to gateway
+    hint_packet = HintMessagePacket(
+        recipient=receiver,
+        item=item
+    )
+    await __std_client.send(hint_packet)
 
-# @StatusPacket.on_received
-# async def handle_status_request(_ctx, status: StatusPacket):
-#     """Handle receiving a status request packet"""
+@TrackerClient.on_item_received
+async def on_tracker_client_item_received(client, receiver: int, item: NetworkItem):
+    """Handler for an item being received."""
 
-#     logging.info("Received status request packet")
+    logging.info(f"The player {receiver} has received their {item.item} with flag(s) {item.flags}")
 
-#     # TODO: Infer actual status
-#     await send_packet_to_gateway(
-#         StatusPacket("I'm all gucci, baby!")
-#     )
+    # TODO: 'Combine' items as per previous bot before forwarding.
+
+    # Create and send item packet to gateway
+    item_packet = ItemMessagePacket(
+        recipient=receiver,
+        items={ item.item: 1 }
+    )
+    await __std_client.send(item_packet)
 
 __std_client: StdClient = None
 __tasks: List[asyncio.Task] = []

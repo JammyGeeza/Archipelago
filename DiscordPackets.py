@@ -84,6 +84,14 @@ class Jsonable:
             return obj
 
 @dataclass
+class PrintJSONSegment(Jsonable):
+    """Object containing a PrintJSON text segment."""
+    flags: int = 0
+    player: int = 0
+    text: str = ""
+    type: str = ""
+
+@dataclass
 class NetworkItem(Jsonable):
     """Object containing item data."""
     item: int = 0
@@ -127,7 +135,8 @@ class TrackerPacket(Jsonable):
 
         pkt_type = data.get("cmd")
         if pkt_type not in cls._types:
-            raise KeyError(f"Unregistered packet type | Type: {pkt_type}")
+            logging.warning(f"Unregistered packet type '{pkt_type}'.")
+            return None
         
         pkt_cls = cls._types[pkt_type]
 
@@ -155,6 +164,8 @@ class TrackerPacket(Jsonable):
     async def receive(json_obj: Dict[Any, Any], ctx: Optional[Any] = None):
         """Receive and convert a json packet payload"""
         packet = TrackerPacket.parse(json_obj)
+        if not packet:
+            return
         
         handler = TrackerPacket._handlers.get(packet.__class__.cmd)
         if not handler:
@@ -201,14 +212,40 @@ class ConnectedPacket(TrackerPacket):
     cmd: ClassVar[str] = "Connected"
 
 
+# @register_packet
+# @dataclass
+# class ReceivedItemsPacket(TrackerPacket):
+#     """Packet received when a player receives item(s) from the multiworld."""
+#     cmd: ClassVar[str] = "ReceivedItems"
+#     index: int = 0
+#     items: List[NetworkItem] = field(default_factory=list)
+
 @register_packet
 @dataclass
-class ReceivedItemsPacket(TrackerPacket):
-    """Packet received when a player receives item(s) from the multiworld."""
-    cmd: ClassVar[str] = "ReceivedItems"
-    index: int = 0
-    items: List[NetworkItem] = field(default_factory=list)
+class ItemMessagePacket(TrackerPacket):
+    """Packet containing item(s) data to be posted to the discord channel."""
+    cmd: ClassVar[str] = "ItemMessage"
+    recipient: int = 0
+    items: Dict[int, int] = field(default_factory=dict)
 
+@register_packet
+@dataclass
+class HintMessagePacket(TrackerPacket):
+    """Packet containing hint(s) data to be posted to the discord channel"""
+    cmd: ClassVar[str] = "HintMessage"
+    recipient: int = 0
+    item: NetworkItem = field(default_factory=dict)
+
+@register_packet
+@dataclass
+class PrintJSONPacket(TrackerPacket):
+    """Packet received when messages are received."""
+    cmd: ClassVar[str] = "PrintJSON"
+    data: List[PrintJSONSegment] = field(default_factory=list)
+    found: bool = False
+    receiving: int = 0
+    item: NetworkItem = field(default_factory=NetworkItem)
+    type: str = ""
 
 @register_packet
 @dataclass

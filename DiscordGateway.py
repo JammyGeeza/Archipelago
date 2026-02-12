@@ -3,13 +3,15 @@
 import argparse
 import asyncio
 import discord
+import json
+import inspect
 import logging
 import sys
 
 from discord import app_commands
 from discord.ext import commands
 from DiscordGatewayStore import Agent, Store, Room, RoomConfig
-from DiscordPackets import TrackerPacket, StatusPacket
+from DiscordPackets import HintMessagePacket, ItemMessagePacket, NetworkItem, TrackerPacket, StatusPacket
 from typing import Dict, List, Optional, Tuple
 
 # Global variables
@@ -17,7 +19,25 @@ admin_only: bool = True
 bot = commands.Bot(command_prefix='/', intents=discord.Intents.none())
 store = Store()
 
+class Hookable:
+    def __init__(self):
+        self._funcs = []
+
+    def __call__(self, func):
+        self._funcs.append(func)
+        return func
+    
+    async def run(self, obj, *a, **k):
+        for func in self._funcs:
+            result = func(obj, *a, **k)
+            if inspect.isawaitable(result):
+                await result
+
 class AgentProcess:
+
+    on_hint_received = Hookable()
+    on_item_received = Hookable()
+    on_status_received = Hookable()
 
     def __init__(self, config: RoomConfig):
         self.config: RoomConfig = config
@@ -86,20 +106,37 @@ class AgentProcess:
         """Handle a received packet from the agent process"""
 
         while True:
-            if not (payload:= await self.rcv_queue.get()):
+            if not (data:= await self.rcv_queue.get()):
                 continue
             
-            logging.info(f"Received payload from agent process | Port: {self.config.port} | Payload: {payload}")
+            logging.info(f"Received payload from agent process | Port: {self.config.port} | Payload: {data}")
 
-            await TrackerPacket.receive(payload, self)
+            # Convert to appropriate packet type
+            await TrackerPacket.receive(data, self)
+
+    @HintMessagePacket.on_received
+    async def _on_hint_received(self, packet: HintMessagePacket):
+        """Handler for receiving a hint message packet."""
+
+        # Trigger event
+        await self.on_hint_received.run(self, packet.recipient, packet.item)
+
+    @ItemMessagePacket.on_received
+    async def _on_item_received(self, packet: ItemMessagePacket):
+        """Handler for receiving an item message packet."""
+
+        # Trigger event
+        await self.on_item_received(self, packet.recipient, packet.items)
 
     @StatusPacket.on_received
     async def _handle_status_packet(self, packet: StatusPacket):
         """Handle receipt of a status packet"""
 
-        # Cast to packet class
-        logging.info(f"Status received from agent process | Port {self.config.port} | Status: {packet.status}")
+        # Store status
         self.status = packet.status
+
+        # Trigger event
+        await self.on_status_received.run(self, packet.status)
 
     async def _read_stdout(self):
         """Listen for data received from the agent process."""
@@ -107,7 +144,11 @@ class AgentProcess:
         if self.process.stdout is not None:
             async for line in self.process.stdout:
                 payload = line.decode("utf-8", errors="replace").rstrip()
-                await self.rcv_queue.put(payload)
+
+                # Convert from json
+                for data in json.loads(payload):
+                    await self.rcv_queue.put(data)
+
 
     async def _watch(self):
         """Watch the agent process and clean-up when terminated."""
@@ -226,6 +267,34 @@ async def interaction_is_admin(interaction: discord.Interaction) -> bool:
 
 #     global send_queue
 #     await send_queue.put(())
+
+@AgentProcess.on_hint_received
+async def _on_agent_hint_received(agent: AgentProcess, recipient: int, item: NetworkItem):
+    """Handler for when a hint is received from an agent."""
+    await post_message(agent.config.channel_id, f"**[HINT]**: `{recipient}'s` **{item.item}** **_({item.flags})_** can be found at `{item.player}'s` **{item.location}** :eyes:")
+
+@AgentProcess.on_item_received
+async def _on_agent_item_received(agent: AgentProcess, recipient: int, items: Dict[int, int]):
+    """Handler for when item(s) are received from an agent."""
+
+    # Combine items and their counts
+    item_string: str = ", ".join([ f"**{item} {f"_(x{count})_" if count > 1 else ""}**" for item, count in items.items() ])
+    await post_message(agent.config.channel_id, f"`{recipient} has just received their {item_string}")
+
+
+@AgentProcess.on_status_received
+async def _on_agent_status_received(agent: AgentProcess, status: str):
+    """Handler for when the status is received from an agent."""
+    await post_message(agent.config.channel_id, f"Client at Port `{agent.config.port}` has **{status.lower()}**.")
+
+async def post_message(channel_id: int, message: str):
+    """Post a message to a discord channel."""
+    global bot
+
+    if (channel:= await bot.fetch_channel(channel_id)):
+        await channel.send(message)
+    else:
+        logging.warning(f"Discord channel with ID {channel_id} could not be found.")
 
 async def create_agent(config: RoomConfig) -> AgentProcess:
     """Create and start an agent process"""
