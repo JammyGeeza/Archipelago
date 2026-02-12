@@ -1,5 +1,6 @@
 import argparse
 import asyncio
+import inspect
 import json
 import logging
 import websockets
@@ -7,10 +8,24 @@ import sys
 import threading
 
 from settings import get_settings
-from DiscordPackets import TrackerPacket, ConnectedPacket, StatusPacket
+from DiscordPackets import TrackerPacket, ConnectPacket, ConnectedPacket, ConnectionRefusedPacket, RoomInfoPacket, StatusPacket, NetworkVersion
 from typing import List, Optional
 from websockets.asyncio.client import connect
 from websockets.exceptions import ConnectionClosed
+
+class Hookable:
+    def __init__(self):
+        self._funcs = []
+
+    def __call__(self, func):
+        self._funcs.append(func)
+        return func
+    
+    async def run(self, obj, *a, **k):
+        for func in self._funcs:
+            result = func(obj, *a, **k)
+            if inspect.isawaitable(result):
+                await result
 
 class StdClient:
 
@@ -51,8 +66,6 @@ class StdClient:
                 
                 logging.info(f"Data received from stdin: {line.rstrip()}")
                 
-                # await receive_queue.put(line.rstrip())
-
         except asyncio.CancelledError:
             logging.warning("The std client __read_loop() task has been cancelled.")
             raise
@@ -166,6 +179,12 @@ class StdClient:
         self.__run = False
 
 class TrackerClient:
+    
+    # Hookable methods
+    on_connected = Hookable()
+    on_connection_refused = Hookable()
+    on_disconnected = Hookable()
+    on_error = Hookable()
 
     def __init__(self, args):
 
@@ -199,8 +218,12 @@ class TrackerClient:
         try:
             # Continue reading while
             while self.__running:
-                data = await self.__websocket.recv()
-                await self.__handle_data(data)
+                payload = await self.__websocket.recv()
+
+                logging.info(f"Payload received: {payload}")
+
+                for packet in json.loads(payload):
+                    await TrackerPacket.receive(packet, self)
 
         except asyncio.CancelledError:
             logging.warning(f"The tracker client __listen_loop() task has been cancelled.")
@@ -212,14 +235,11 @@ class TrackerClient:
         except Exception as ex:
             logging.error(f"Unexpected error in tracker client __listen_loop() task: '{ex}'")
 
-    # def __log_info(self, message: str):
-    #     logging.info(f"{message} | Port: {self.port}")
-
-    # def __log_warn(self, message: str):
-    #     logging.info(f"{message} | Port: {self.port}")
-
-    # def __log_error(self, message: str, exception: Exception):
-    #     logging.error(f"{message}: '{exception}' | Port: {self.port}")
+    async def __send_packet(self, packet: TrackerPacket):
+        """Send a packet to the websocket server"""
+        json = packet.to_json()
+        logging.info(f"Sending payload: {json}")
+        await self.__websocket.send(json)
 
     def __stop_tasks(self):
         """Stop all running tasks"""
@@ -238,6 +258,50 @@ class TrackerClient:
     async def get_status(self) -> str:
         """Get current status."""
         return self.__status
+
+    @ConnectedPacket.on_received
+    async def __on_connected_packet(self, packet: ConnectedPacket):
+        """Handler for when a Connected packet is received."""
+        logging.info(f"Connected packet received!")
+
+        # Reset connect attempt count
+        self.__attempt = 0
+
+        # Trigger event
+        await self.on_connected.run(self)
+
+    @ConnectionRefusedPacket.on_received
+    async def __on_connection_refused_packet(self, packet: ConnectionRefusedPacket):
+        """Handler for when a ConnectionRefused packet is received."""
+        logging.info(f"ConnectionRefused packet received!")
+
+        # Trigger event
+        await self.on_connection_refused.run(self, packet.errors)
+
+        # Disconnect
+        await self.__websocket.close(reason=f"Connection refused by server for reason(s): {", ".join(packet.errors)}")
+    
+
+    @RoomInfoPacket.on_received
+    async def __on_room_info_packet(self, packet: RoomInfoPacket):
+        """Handler for when a RoomInfo packet is received."""
+        # Send connection packet
+        connect_packet = ConnectPacket(
+            game="",
+            items_handling=0b0011,
+            # name="Botipelago",
+            name="",
+            password=self.password,
+            slot_data=False,
+            tags=["Deathlink", "Tracker"],
+            uuid=f"botipelago_spectator",
+            version=NetworkVersion(
+                major=0,
+                minor=6,
+                build=4
+            )
+        )
+        await self.__send_packet(connect_packet)
 
     async def start(self):
         """Start the tracker client connection"""
@@ -264,8 +328,11 @@ class TrackerClient:
                         logging.info(f"Connection to websocket established.")
 
                         # Set connected variables
-                        self.__attempt = 0
+                        # self.__attempt = 0
                         self.__status = "Connected"
+
+                        # Trigger event
+                        await self.on_connected.run(self)
 
                         # Create and run all asynchronous task(s), stopping when any of them complete
                         self.__tasks = [
@@ -287,6 +354,9 @@ class TrackerClient:
                     logging.error(f"Unexpected error occurred in tracker client start() task: {ex}")
 
                 logging.warning("Tracker client task(s) have ended.")
+
+                # Trigger event
+                await self.on_disconnected.run(self)
 
                 # Prepare for retry
                 self.__attempt += 1
@@ -329,8 +399,6 @@ class TrackerClient:
         self.__running = False
 
 handlers = {}
-
-
 receive_queue: asyncio.Queue = asyncio.Queue()
 send_queue: asyncio.Queue = asyncio.Queue()
 websocket: websockets.WebSocketClientProtocol = None
@@ -355,66 +423,6 @@ def parse_args() -> argparse.Namespace:
     args = parser.parse_args()
     return args
 
-# async def __read_stdin_loop():
-#     """Read data from the input."""
-
-#     global receive_queue
-
-#     try:
-
-#         while True:
-#             line = await asyncio.to_thread(sys.stdin.readline)
-
-#             if line == "":
-#                 logging.info("stdin closed (EOF)")
-#                 return
-            
-#             await receive_queue.put(line.rstrip())
-
-#     except asyncio.CancelledError:
-#         logging.warning("The read_stdin_loop() task has been cancelled.")
-
-#     except Exception as ex:
-#         logging.error(f"Unexpected error in __read_stdin_loop(): '{ex}'")
-
-# async def __write_stdout_loop():
-#     """Write data to the output."""
-
-#     global send_queue
-
-#     try:
-#         while True:
-
-#             packet: TrackerPacket = await send_queue.get()
-
-#             if not packet:
-#                 continue
-
-#             sys.stdout.write(f"{packet.to_json()}\n")
-#             sys.stdout.flush()
-
-#     except asyncio.CancelledError:
-#         logging.warning("The __write_stdout_loop() task has been cancelled.")
-
-#     except Exception as ex:
-#         logging.error(f"Unexpected error in __write_stdout_loop(): '{ex}'")
-
-# async def __handle_packet():
-#     """Handle a received packet from the gateway"""
-
-#     global receive_queue
-
-#     while True:
-#         payload = await receive_queue.get()
-
-#         logging.info(f"Received payload from gateway")
-#         logging.info(f"Payload: {payload}")
-
-#         if not payload:
-#             continue
-        
-#         await TrackerPacket.receive(payload)
-
 async def update_status(status: str):
     """Send a status update to the gateway"""
     await send_packet_to_gateway(StatusPacket(status))
@@ -429,61 +437,47 @@ def get_retry_timeout():
     global retry_attempt, retry_timeouts
     return retry_timeouts[retry_attempt] if retry_attempt < len(retry_timeouts) else retry_timeouts[-1]
 
-@ConnectedPacket.on_received
-async def handle_connected_packet(_ctx, packet: ConnectedPacket):
+@TrackerClient.on_connected
+async def on_tracker_client_connected(client):
     """"""
-    global retry_attempt
 
-    logging.info(f"Connected packet received")
+    logging.info("Connected event!")
 
-    # Reset attempt count
-    retry_attempt = 0
+@TrackerClient.on_disconnected
+async def on_tracker_client_disconnected(client):
+    """"""
 
-    # Update status
-    await update_status("Tracking")
+    logging.info("Disconnected event!")
 
-@StatusPacket.on_received
-async def handle_status_request(_ctx, status: StatusPacket):
-    """Handle receiving a status request packet"""
+@TrackerClient.on_error
+async def on_tracker_client_error(client, msg: str):
+    """"""
 
-    logging.info("Received status request packet")
+    logging.info(f"Error event! Message: {msg}")
 
-    # TODO: Infer actual status
-    await send_packet_to_gateway(
-        StatusPacket("I'm all gucci, baby!")
-    )
+# @ConnectedPacket.on_received
+# async def handle_connected_packet(_ctx, packet: ConnectedPacket):
+#     """"""
+#     global retry_attempt
 
-# async def _run(url: str):
-#     """Connect to the archipelago websocket"""
+#     logging.info(f"Connected packet received")
 
-#     global retry_attempt, websocket
+#     # Reset attempt count
+#     retry_attempt = 0
 
-#     logging.info(f"Attempting to connect to websocket | URL: {url}")
+#     # Update status
+#     await update_status("Tracking")
 
-#     while True:
+# @StatusPacket.on_received
+# async def handle_status_request(_ctx, status: StatusPacket):
+#     """Handle receiving a status request packet"""
 
-#         # Send status update to gateway
-#         await update_status("Connecting")
+#     logging.info("Received status request packet")
 
-#         try:
-#             async with connect(url) as webcosket:
-#                 logging.info(f"Connected to websocket | URL {url}")
-
-#                 # Listen
-#                 await _listen_loop()
-
-#         except ConnectionRefusedError as ex:
-#             logging.warning(f"Websocket has disconnected | Reason: {ex}")
-
-#         finally:
-#             websocket = None
-
-#         # Send status update
-#         await update_status("Disconnected")
-
-#         # Increment retry count and wait
-#         retry_attempt += 1
-#         await asyncio.sleep(get_retry_timeout())
+#     # TODO: Infer actual status
+#     await send_packet_to_gateway(
+#         StatusPacket("I'm all gucci, baby!")
+#     )
 
 __std_client: StdClient = None
 __tasks: List[asyncio.Task] = []
@@ -513,9 +507,6 @@ async def main() -> None:
 
     # Gather and start all asynchronous tasks, exiting when any task completes
     __tasks = [
-        # asyncio.create_task(__read_stdin_loop()),
-        # asyncio.create_task(__write_stdout_loop()),
-        # asyncio.create_task(__handle_packet()),
         asyncio.create_task(__std_client.start()),
         asyncio.create_task(__tracker_client.start())
     ]
