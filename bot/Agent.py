@@ -1,6 +1,5 @@
 import argparse
 import asyncio
-import inspect
 import json
 import logging
 import websockets
@@ -8,24 +7,11 @@ import sys
 import threading
 
 from settings import get_settings
-from DiscordPackets import TrackerPacket, ConnectPacket, ConnectedPacket, ConnectionRefusedPacket, HintMessagePacket, ItemMessagePacket, PrintJSONPacket, RoomInfoPacket, StatusPacket, NetworkItem, NetworkVersion
+from bot.Packets import TrackerPacket, ConnectPacket, ConnectedPacket, ConnectionRefusedPacket, HintMessagePacket, ItemMessagePacket, PrintJSONPacket, RoomInfoPacket, StatusPacket, NetworkItem, NetworkVersion
+from bot.Utils import Hookable
 from typing import List, Optional
 from websockets.asyncio.client import connect
 from websockets.exceptions import ConnectionClosed
-
-class Hookable:
-    def __init__(self):
-        self._funcs = []
-
-    def __call__(self, func):
-        self._funcs.append(func)
-        return func
-    
-    async def run(self, obj, *a, **k):
-        for func in self._funcs:
-            result = func(obj, *a, **k)
-            if inspect.isawaitable(result):
-                await result
 
 class StdClient:
 
@@ -274,7 +260,7 @@ class TrackerClient:
         self.__attempt = 0
 
         # Trigger event
-        await self.on_connected.run(self)
+        await self.on_connected.run()
 
     @ConnectionRefusedPacket.on_received
     async def __on_connection_refused_packet(self, packet: ConnectionRefusedPacket):
@@ -282,7 +268,7 @@ class TrackerClient:
         logging.info(f"ConnectionRefused packet received!")
 
         # Trigger event
-        await self.on_connection_refused.run(self, packet.errors)
+        await self.on_connection_refused.run(packet.errors)
 
         # Disconnect
         await self.__websocket.close(reason=f"Connection refused by server for reason(s): {", ".join(packet.errors)}")
@@ -295,10 +281,10 @@ class TrackerClient:
         match packet.type:
             case "ItemSend":
                 # Trigger item event
-                await self.on_item_received.run(self, packet.receiving, packet.item)
+                await self.on_item_received.run(packet.receiving, packet.item)
             case "Hint":
                 # Trigger hint event
-                await self.on_hint_received.run(self, packet.receiving, packet.item)
+                await self.on_hint_received.run(packet.receiving, packet.item)
             case _:
                 logging.info(f"PrintJSON packet was a generic message type.")
 
@@ -376,7 +362,7 @@ class TrackerClient:
                 logging.warning("Tracker client task(s) have ended.")
 
                 # Trigger event
-                await self.on_disconnected.run(self)
+                await self.on_disconnected.run()
 
                 # Prepare for retry
                 self.__attempt += 1

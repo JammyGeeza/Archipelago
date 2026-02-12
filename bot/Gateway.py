@@ -4,34 +4,20 @@ import argparse
 import asyncio
 import discord
 import json
-import inspect
 import logging
 import sys
 
 from discord import app_commands
 from discord.ext import commands
-from DiscordGatewayStore import Agent, Store, Room, RoomConfig
-from DiscordPackets import HintMessagePacket, ItemMessagePacket, NetworkItem, TrackerPacket, StatusPacket
+from bot.Packets import HintMessagePacket, ItemMessagePacket, NetworkItem, TrackerPacket, StatusPacket
+from bot.Store import Agent, Store, Room, RoomConfig
+from bot.Utils import Hookable
 from typing import Dict, List, Optional, Tuple
 
 # Global variables
 admin_only: bool = True
 bot = commands.Bot(command_prefix='/', intents=discord.Intents.none())
 store = Store()
-
-class Hookable:
-    def __init__(self):
-        self._funcs = []
-
-    def __call__(self, func):
-        self._funcs.append(func)
-        return func
-    
-    async def run(self, obj, *a, **k):
-        for func in self._funcs:
-            result = func(obj, *a, **k)
-            if inspect.isawaitable(result):
-                await result
 
 class AgentProcess:
 
@@ -68,7 +54,9 @@ class AgentProcess:
         # Create command-line arguments
         args = [
             sys.executable,
-            "DiscordAgent.py",
+            "-m", "bot.Agent",
+            # sys.executable,
+            # "Agent.py",
             "--port", str(self.config.port),
             "--multidata", self.config.multidata,
             "--savedata", self.config.savedata
@@ -119,14 +107,14 @@ class AgentProcess:
         """Handler for receiving a hint message packet."""
 
         # Trigger event
-        await self.on_hint_received.run(self, packet.recipient, packet.item)
+        await self.on_hint_received.run(packet.recipient, packet.item)
 
     @ItemMessagePacket.on_received
     async def _on_item_received(self, packet: ItemMessagePacket):
         """Handler for receiving an item message packet."""
 
         # Trigger event
-        await self.on_item_received(self, packet.recipient, packet.items)
+        await self.on_item_received.run(packet.recipient, packet.items)
 
     @StatusPacket.on_received
     async def _handle_status_packet(self, packet: StatusPacket):
@@ -136,7 +124,7 @@ class AgentProcess:
         self.status = packet.status
 
         # Trigger event
-        await self.on_status_received.run(self, packet.status)
+        await self.on_status_received.run(packet.status)
 
     async def _read_stdout(self):
         """Listen for data received from the agent process."""
@@ -279,8 +267,7 @@ async def _on_agent_item_received(agent: AgentProcess, recipient: int, items: Di
 
     # Combine items and their counts
     item_string: str = ", ".join([ f"**{item} {f"_(x{count})_" if count > 1 else ""}**" for item, count in items.items() ])
-    await post_message(agent.config.channel_id, f"`{recipient} has just received their {item_string}")
-
+    await post_message(agent.config.channel_id, f"`{recipient}` has just received their {item_string}")
 
 @AgentProcess.on_status_received
 async def _on_agent_status_received(agent: AgentProcess, status: str):
