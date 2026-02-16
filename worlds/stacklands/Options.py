@@ -297,13 +297,13 @@ class RedStructureSpawn(Choice):
     All Other Values -> Red structures will attempt to spawn at a fixed point in the specified area of the current board.
     """
     display_name = "Strange Portal Spawn Location"
-    option_vanilla = RedStructureSpawnType.Vanilla
-    option_top_left = RedStructureSpawnType.TopLeft
-    option_top_right = RedStructureSpawnType.TopRight
-    option_bottom_left = RedStructureSpawnType.BottomLeft
-    option_bottom_right = RedStructureSpawnType.BottomRight
-    option_middle = RedStructureSpawnType.Middle
-    default = int(option_vanilla)
+    option_vanilla = RedStructureSpawnType.Vanilla.value
+    option_top_left = RedStructureSpawnType.TopLeft.value
+    option_top_right = RedStructureSpawnType.TopRight.value
+    option_bottom_left = RedStructureSpawnType.BottomLeft.value
+    option_bottom_right = RedStructureSpawnType.BottomRight.value
+    option_middle = RedStructureSpawnType.Middle.value
+    default = option_vanilla
 
 #endregion
 
