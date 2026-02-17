@@ -179,26 +179,33 @@ class DiscordMessagePacket(TrackerPacket):
 
 @register_packet
 @dataclass
+class GetPacket(TrackerPacket):
+    """Packet sent to server to request key data."""
+    cmd: ClassVar[str] = "Get"
+    keys: List[str] = field(default_factory=list)
+
+@register_packet
+@dataclass
 class GetDataPackagePacket(TrackerPacket):
     """Packet sent to server to request DataPackage."""
     cmd: ClassVar[str] = "GetDataPackage"
     games: List[str] = field(default_factory=dict)
 
-@register_packet
-@dataclass
-class ItemMessagePacket(TrackerPacket):
-    """Packet containing item(s) data to be posted to the discord channel."""
-    cmd: ClassVar[str] = "ItemMessage"
-    recipient: int = 0
-    items: Dict[int, int] = field(default_factory=dict)
+# @register_packet
+# @dataclass
+# class ItemMessagePacket(TrackerPacket):
+#     """Packet containing item(s) data to be posted to the discord channel."""
+#     cmd: ClassVar[str] = "ItemMessage"
+#     recipient: int = 0
+#     items: Dict[int, int] = field(default_factory=dict)
 
-@register_packet
-@dataclass
-class HintMessagePacket(TrackerPacket):
-    """Packet containing hint(s) data to be posted to the discord channel"""
-    cmd: ClassVar[str] = "HintMessage"
-    recipient: int = 0
-    item: NetworkItem = field(default_factory=dict)
+# @register_packet
+# @dataclass
+# class HintMessagePacket(TrackerPacket):
+#     """Packet containing hint(s) data to be posted to the discord channel"""
+#     cmd: ClassVar[str] = "HintMessage"
+#     recipient: int = 0
+#     item: NetworkItem = field(default_factory=dict)
 
 @register_packet
 @dataclass
@@ -209,7 +216,16 @@ class PrintJSONPacket(TrackerPacket):
     found: bool = False
     receiving: int = 0
     item: NetworkItem = field(default_factory=NetworkItem)
+    slot: int = 0
+    team: int = 0
     type: str = ""
+
+@register_packet
+@dataclass
+class RetrievedPacket(TrackerPacket):
+    """Packet received with data requested from 'Get' packet."""
+    cmd: ClassVar[str] = "Retrieved"
+    keys: Dict[str, Any] = field(default_factory=dict)
 
 @register_packet
 @dataclass
@@ -220,10 +236,27 @@ class RoomInfoPacket(TrackerPacket):
     password: bool = False
     tags: List[str] = field(default_factory=list)
 
+@register_packet
+@dataclass
+class SetNotifyPacket(TrackerPacket):
+    """Packet sent to be notified when stored keys change."""
+    cmd: ClassVar[str] = "SetNotify"
+    keys: List[str] = field(default_factory=list)
+
+@register_packet
+@dataclass
+class SetReplyPacket(TrackerPacket):
+    """Packet received when notified of a key change."""
+    cmd: ClassVar[str] = "SetReply"
+    key: str = ""
+    value: Any = ""
+    original_value: Any = ""
+    slot: int = 0
 
 @register_packet
 @dataclass
 class StatusPacket(TrackerPacket):
     """Packet to respond with the status of an agent"""
     cmd: ClassVar[str] = "StatusResponse"
+    message:str = ""
     status: str = ""

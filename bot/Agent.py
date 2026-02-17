@@ -7,7 +7,7 @@ import sys
 import threading
 
 from settings import get_settings
-from bot.Packets import TrackerPacket, ConnectPacket, ConnectedPacket, ConnectionRefusedPacket, DataPackagePacket, DiscordMessagePacket, GetDataPackagePacket, HintMessagePacket, PrintJSONPacket, RoomInfoPacket, StatusPacket, NetworkItem, NetworkVersion, NetworkSlot
+from bot.Packets import TrackerPacket, ConnectPacket, ConnectedPacket, ConnectionRefusedPacket, DataPackagePacket, DiscordMessagePacket, GetPacket, GetDataPackagePacket, PrintJSONPacket, RetrievedPacket, RoomInfoPacket, SetNotifyPacket, SetReplyPacket, StatusPacket, NetworkItem, NetworkVersion, NetworkSlot
 from bot.Utils import Hookable, ItemQueue
 from datetime import datetime
 from typing import Dict, List, Optional
@@ -178,8 +178,10 @@ class TrackerClient:
     on_connection_refused = Hookable()
     on_disconnected = Hookable()
     on_error = Hookable()
-    on_hint_received = Hookable()
-    on_item_received = Hookable()
+    on_goal = Hookable()
+    on_hint = Hookable()
+    on_item = Hookable()
+    on_release = Hookable()
 
     def __init__(self, args):
 
@@ -269,13 +271,19 @@ class TrackerClient:
         # self.__attempt = 0
 
         # Store player lookup
-        self.__player_lookup.update(packet.slot_info)
+        self.__player_lookup.update({ slot: data for slot, data in packet.slot_info.items() if data.name != "Botipelago" })
 
         logging.info(f"Player lookup: {self.__player_lookup}")
 
-        # Get data packet for each unique game (could do this all in one request, but I think some games are HUGE)
+        # Request data packet for each unique game (could do this all in one request, but I think some games are HUGE)
         for game in set([player.game for slot, player in self.__player_lookup.items() if player.game != "Archipelago" ]):
             await self.__send_packet(GetDataPackagePacket(games=[game]))
+
+        # Request all current slot statuses and notifications for changes
+        # TODO: Include team when getting lookups and also pass below
+        status_keys: List[str] = [ f"client_status_0_{player}" for player in self.__player_lookup.keys() ]
+        await self.__send_packet(SetNotifyPacket(keys=status_keys))
+        await self.__send_packet(GetPacket(keys=status_keys))
 
         # Trigger event
         await self.on_connected.run()
@@ -307,17 +315,29 @@ class TrackerClient:
         logging.info(f"PrintJSON ({packet.type}) packet received!")
 
         match packet.type:
+            case "Goal":
+                # Trigger goal event
+                await self.on_goal.run(packet.slot)
+
             case "ItemSend":
                 # Trigger item event
-                await self.on_item_received.run(packet.receiving, packet.item)
+                await self.on_item.run(packet.receiving, packet.item)
 
             case "Hint":
                 # Trigger hint event
-                await self.on_hint_received.run(packet.receiving, packet.item, packet.found)
+                await self.on_hint.run(packet.receiving, packet.item, packet.found)
+
+            case "Release":
+                # Trigger release event
+                await self.on_release.run(packet.slot)
             
             case _:
                 logging.info(f"PrintJSON packet was a generic message type.")
 
+    @RetrievedPacket.on_received
+    async def __on_retrieved_received(self, packet: RetrievedPacket):
+        """Handler for when a Retrieved packet is received."""
+        logging.info(f"Retrieved packet received!")
 
     @RoomInfoPacket.on_received
     async def __on_room_info_packet(self, packet: RoomInfoPacket):
@@ -338,6 +358,11 @@ class TrackerClient:
             )
         )
         await self.__send_packet(connect_packet)
+
+    @SetReplyPacket.on_received
+    async def __on_set_reply_received(self, packet: SetReplyPacket):
+        """Handler for when a SetReply packet is received."""
+        logging.info(f"SetReply packet received!")
 
     def get_game_name(self, slot_id: int) -> str | None:
         """Get the name of a player's game."""
@@ -473,9 +498,17 @@ def parse_args() -> argparse.Namespace:
     args = parser.parse_args()
     return args
 
-async def update_status(status: str):
-    """Send a status update to the gateway"""
-    await send_packet_to_gateway(StatusPacket(status))
+def queue_item(slot_id: int, item_id: int):
+    """Add an item to the item queue."""
+
+    global __item_queue
+
+    # Get/Create queue for recipient
+    queue: ItemQueue = __item_queue.get(slot_id, ItemQueue())
+    queue.add(item_id)
+
+    # Update recipient's queue
+    __item_queue[slot_id] = queue
 
 def split_at_separator(text: str, limit: int = 2000, separator: str = ", ") -> List[str]:
     """Split a string into chunks no longer than <limit> by <separator>"""
@@ -506,10 +539,10 @@ def split_at_separator(text: str, limit: int = 2000, separator: str = ", ") -> L
 
     return chunks
 
-async def send_packet_to_gateway(packet: TrackerPacket):
-    """Queue a packet for sending to the gateway."""
-    global send_queue
-    await send_queue.put(packet)
+async def send(packet: TrackerPacket):
+    """Send a packet to the gateway"""
+    global __std_client
+    await __std_client.send(packet)
 
 def get_retry_timeout():
     """Get the timeout duration"""
@@ -517,66 +550,60 @@ def get_retry_timeout():
     return retry_timeouts[retry_attempt] if retry_attempt < len(retry_timeouts) else retry_timeouts[-1]
 
 @TrackerClient.on_connected
-async def on_tracker_client_connected(client):
+async def on_connected_received(client):
     """Handler for the tracker client connecting to the archipelago server."""
 
     logging.info("Connected event!")
-
-    global __std_client
-
-    # Create and send packet
-    status_packet = StatusPacket(
-        status="Connected"
-    )
-    await __std_client.send(status_packet)
+    await send(StatusPacket(status="Connected",message=f"Connected to `:{client.port}`"))
 
 @TrackerClient.on_disconnected
-async def on_tracker_client_disconnected(client):
+async def on_disconnected_received(client):
     """Handler for the tracker client disconnecting from the archipelago server."""
 
     logging.info("Disconnected event!")
-
-    global __std_client
-
-    # Create and send packet
-    status_packet = StatusPacket(
-        status="Disconnected"
-    )
-    await __std_client.send(status_packet)
+    await send(StatusPacket(status="Disconnected", message=f"Disconnected from `:{client.port}`"))
 
 @TrackerClient.on_error
-async def on_tracker_client_error(client, msg: str):
+async def on_error_received(client, msg: str):
     """Handler for the tracker client experiencing an error."""
 
     logging.info(f"Error event! Message: {msg}")
+    await send(StatusPacket(status="Error", message=msg))
 
-    # TODO: Forward status to the gateway?
+@TrackerClient.on_hint
+async def on_hint_received(client, receiver: int, item: NetworkItem, found: bool):
+    """Handler for a slot receiving a hint."""
 
-@TrackerClient.on_hint_received
-async def on_tracker_client_hint(client, receiver: int, item: NetworkItem, found: bool):
-    """"""
-
-    logging.info(f"The player {item.player} needs {item.player} to complete {item.location} for their {item.item} (with flag(s) {item.flags}) ")
+    logging.info(f"Slot {item.player}'s item {item.item} (with flag(s) {item.flags}) is at {item.player}'s {item.location}")
 
     # If item flags contains 'progression' and is not already found, send to gateway
     if item.flags & 0b001 and not found:
         msg:str = f"**[HINT]**: `{get_player(receiver)}'s` **{get_item(receiver, item.item)} _({item.flags})_** is located at `{get_player(item.player)}'s` **{get_location(item.player, item.location)}** check. :eyes:"
-        await __std_client.send(DiscordMessagePacket(message=msg))
+        await send(DiscordMessagePacket(message=msg))
 
-@TrackerClient.on_item_received
-async def on_tracker_client_item_received(client, receiver: int, item: NetworkItem):
+@TrackerClient.on_goal
+async def on_goal_received(client, slot_id: int):
+    """Handler for a slot achieving its goal."""
+
+    logging.info(f"Slot {slot_id} has achieved the goal.")
+    msg: str = f"## :tada: `{get_player(slot_id)}` has just completed their goal for {get_game(slot_id)} :tada:"
+    await send(DiscordMessagePacket(message=msg))
+
+@TrackerClient.on_item
+async def on_item_received(client, receiver: int, item: NetworkItem):
     """Handler for an item being received."""
 
-    global __item_queue
+    logging.info(f"Slot {receiver} received {item.item} with flag(s) {item.flags}")
+    await queue_item(receiver, item.item)
 
-    logging.info(f"The player {receiver} has received their {item.item} with flag(s) {item.flags}")
+@TrackerClient.on_release
+async def on_release_received(client, slot_id: int):
+    """Handler for items being released from a slot."""
 
-    # Get/Create queue for recipient
-    queue: ItemQueue = __item_queue.get(receiver, ItemQueue())
-    queue.add(item.item)
+    logging.info(f"Slot {slot_id} has released their items.")
 
-    # Update recipient's queue
-    __item_queue[receiver] = queue
+    msg: str = f"`{get_player(slot_id)}` has released all their remaining items from **{get_game(slot_id)}**"
+    await send(DiscordMessagePacket(message=msg))
 
 async def __item_loop():
     """Combine mass-received items."""

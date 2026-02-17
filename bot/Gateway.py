@@ -9,7 +9,7 @@ import sys
 
 from discord import app_commands
 from discord.ext import commands
-from bot.Packets import DiscordMessagePacket, HintMessagePacket, ItemMessagePacket, NetworkItem, TrackerPacket, StatusPacket
+from bot.Packets import DiscordMessagePacket, NetworkItem, TrackerPacket, StatusPacket
 from bot.Store import Agent, Store, Room, RoomConfig
 from bot.Utils import Hookable
 from typing import Dict, List, Optional, Tuple
@@ -103,12 +103,12 @@ class AgentProcess:
             # Convert to appropriate packet type
             await TrackerPacket.receive(data, self)
 
-    @HintMessagePacket.on_received
-    async def _on_hint_received(self, packet: HintMessagePacket):
-        """Handler for receiving a hint message packet."""
+    # @HintMessagePacket.on_received
+    # async def _on_hint_received(self, packet: HintMessagePacket):
+    #     """Handler for receiving a hint message packet."""
 
-        # Trigger event
-        await self.on_hint_received.run(packet.recipient, packet.item)
+    #     # Trigger event
+    #     await self.on_hint_received.run(packet.recipient, packet.item)
 
     @DiscordMessagePacket.on_received
     async def _on_discord_message_received(self, packet: DiscordMessagePacket):
@@ -117,12 +117,12 @@ class AgentProcess:
         # Trigger event
         await self.on_discord_message_received.run(packet.message)
 
-    @ItemMessagePacket.on_received
-    async def _on_item_received(self, packet: ItemMessagePacket):
-        """Handler for receiving an item message packet."""
+    # @ItemMessagePacket.on_received
+    # async def _on_item_received(self, packet: ItemMessagePacket):
+    #     """Handler for receiving an item message packet."""
 
-        # Trigger event
-        await self.on_item_received.run(packet.recipient, packet.items)
+    #     # Trigger event
+    #     await self.on_item_received.run(packet.recipient, packet.items)
 
     @StatusPacket.on_received
     async def _handle_status_packet(self, packet: StatusPacket):
