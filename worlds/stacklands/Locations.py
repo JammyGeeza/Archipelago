@@ -147,7 +147,7 @@ location_table: List[LocationData] = [
 
     LocationData("Find the Dark Forest"                                 , RegionFlags.Forest        , ProgressionPhase.General      , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Complete the first wave"                              , RegionFlags.Forest        , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ), 
-    LocationData("Build a Stable Portal"                                , RegionFlags.Forest        , ProgressionPhase.PhaseTwo     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.PRIORITY), # <- Prioritise to aid progression 
+    LocationData("Build a Stable Portal"                                , RegionFlags.Forest        , ProgressionPhase.PhaseTwo     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ), 
     LocationData("Get to wave 6"                                        , RegionFlags.Forest        , ProgressionPhase.PhaseTwo     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ), 
     LocationData("Fight the Wicked Witch"                               , RegionFlags.Forest        , ProgressionPhase.PhaseTwo     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.EXCLUDED), # <- Goal check, don't include progression items
 
@@ -161,7 +161,7 @@ location_table: List[LocationData] = [
 #region The Island Quests
 
     # 'The Grand Scheme' Category
-    LocationData("Build a Rowboat"                                     , RegionFlags.Island        , ProgressionPhase.General       , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT),
+    LocationData("Build a Rowboat"                                     , RegionFlags.Island        , ProgressionPhase.General       , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
     LocationData("Build a Cathedral on the Mainland"                   , RegionFlags.Island        , ProgressionPhase.PhaseThree    , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
     LocationData("Bring the Island Relic to the Cathedral"             , RegionFlags.Island        , ProgressionPhase.PhaseThree    , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.EXCLUDED), # <- Summons Demon Lord immediately so shouldn't really contain any progression items
     LocationData("Kill the Demon Lord"                                 , RegionFlags.Island        , ProgressionPhase.PhaseThree    , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.EXCLUDED), # <- Goal check, don't include progression items
@@ -172,7 +172,7 @@ location_table: List[LocationData] = [
     LocationData("Have 3 Shells"                                       , RegionFlags.Island        , ProgressionPhase.General       , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
     LocationData("Catch a Fish"                                        , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
     LocationData("Make Rope"                                           , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
-    LocationData("Make a Fish Trap"                                    , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.PRIORITY), # <- Prioritise to aid progression
+    LocationData("Make a Fish Trap"                                    , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
     LocationData("Make a Sail"                                         , RegionFlags.Island        , ProgressionPhase.PhaseTwo      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
     LocationData("Build a Sloop"                                       , RegionFlags.Island        , ProgressionPhase.PhaseTwo      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
 
@@ -202,7 +202,7 @@ location_table: List[LocationData] = [
     LocationData("Build a Composter"                                   , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
     LocationData("Bribe a Pirate Boat"                                 , RegionFlags.Island        , ProgressionPhase.PhaseTwo      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
     LocationData("Befriend a Pirate"                                   , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
-    LocationData("Make a Gold Bar"                                     , RegionFlags.Island        , ProgressionPhase.PhaseTwo      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.PRIORITY), # <- Prioritise to aid progression
+    LocationData("Make a Gold Bar"                                     , RegionFlags.Island        , ProgressionPhase.PhaseTwo      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
     LocationData("Make Glass"                                          , RegionFlags.Island        , ProgressionPhase.PhaseOne      , CheckType.Check    , OptionFlags.NONE         , LocationProgressType.DEFAULT ),
     
     # 'Strengthen Up' Category

@@ -34,6 +34,14 @@ class MoonPhase(IntEnum):
     Moon_30 = 6
     Moon_36 = 7
 
+class RedStructureSpawnType(IntEnum):
+    Vanilla = 0
+    TopLeft = 1
+    TopRight = 2
+    BottomLeft = 3
+    BottomRight = 4
+    Middle = 5
+
 class ProgressionPhase(IntEnum):
     General     = 0
     PhaseOne    = 1

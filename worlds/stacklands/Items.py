@@ -265,7 +265,7 @@ def create_progression_items(world: MultiWorld, player: int, items: List[ItemDat
 
     # Add each item
     for item_data in progression_items:
-
+        
         # Generate AP item
         item: StacklandsItem = StacklandsItem(name_to_id[item_data.name], item_data, player)
 
@@ -277,6 +277,10 @@ def create_progression_items(world: MultiWorld, player: int, items: List[ItemDat
     world.itempool += item_pool
 
 def create_expansion_items(world: MultiWorld, player: int, items: List[ItemData], options: StacklandsOptions):
+
+    # Ignore if expansion items not selected
+    if not (options.board_expansion_mode & ExpansionType.Expansion_Items):
+        return
 
     # Pop all relevant board expansion items
     expansion_items: List[ItemData] = [
@@ -293,13 +297,8 @@ def create_expansion_items(world: MultiWorld, player: int, items: List[ItemData]
     # Add items
     for item_data in expansion_items:
 
-        # Add ideas to the item pool
-        if item_data.item_type is ItemType.Idea:
-            expansion_item: StacklandsItem = StacklandsItem(name_to_id[item_data.name], item_data, player)
-            item_pool.append(expansion_item)
-            
         # Add X amount of structures to the item pool
-        elif item_data.item_type is ItemType.Structure:
+        if item_data.item_type is ItemType.Structure:
             for _ in range(options.board_expansion_count.value):
                 expansion_item: StacklandsItem = StacklandsItem(name_to_id[item_data.name], item_data, player)
                 item_pool.append(expansion_item)
