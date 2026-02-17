@@ -9,7 +9,7 @@ import sys
 
 from discord import app_commands
 from discord.ext import commands
-from bot.Packets import HintMessagePacket, ItemMessagePacket, NetworkItem, TrackerPacket, StatusPacket
+from bot.Packets import DiscordMessagePacket, HintMessagePacket, ItemMessagePacket, NetworkItem, TrackerPacket, StatusPacket
 from bot.Store import Agent, Store, Room, RoomConfig
 from bot.Utils import Hookable
 from typing import Dict, List, Optional, Tuple
@@ -21,6 +21,7 @@ store = Store()
 
 class AgentProcess:
 
+    on_discord_message_received = Hookable()
     on_hint_received = Hookable()
     on_item_received = Hookable()
     on_status_received = Hookable()
@@ -108,6 +109,13 @@ class AgentProcess:
 
         # Trigger event
         await self.on_hint_received.run(packet.recipient, packet.item)
+
+    @DiscordMessagePacket.on_received
+    async def _on_discord_message_received(self, packet: DiscordMessagePacket):
+        """Handler for receiving a discord message packet."""
+
+        # Trigger event
+        await self.on_discord_message_received.run(packet.message)
 
     @ItemMessagePacket.on_received
     async def _on_item_received(self, packet: ItemMessagePacket):
@@ -255,6 +263,11 @@ async def interaction_is_admin(interaction: discord.Interaction) -> bool:
 
 #     global send_queue
 #     await send_queue.put(())
+
+@AgentProcess.on_discord_message_received
+async def _on_agent_discord_message_received(agent: AgentProcess, message: str):
+    """Handler for when a discord message is received from an agent."""
+    await post_message(agent.config.channel_id, message)
 
 @AgentProcess.on_hint_received
 async def _on_agent_hint_received(agent: AgentProcess, recipient: int, item: NetworkItem):

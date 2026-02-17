@@ -2,7 +2,8 @@ import inspect
 import json
 
 from dataclasses import MISSING, fields, is_dataclass
-from typing import Any, get_args, get_origin
+from datetime import datetime, timedelta
+from typing import Any, ClassVar, Dict, get_args, get_origin
 
 
 class Jsonable:
@@ -107,3 +108,12 @@ class Hookable:
                 return func
 
         return BoundHook()
+    
+class ItemQueue:
+    def __init__(self):
+        self.items: Dict[int, int] = {}
+        self.expires: datetime = datetime.now()
+
+    def add(self, item_id: int):
+        self.items[item_id] = self.items.get(item_id, 0) + 1
+        self.expires = datetime.now() + timedelta(seconds=2)

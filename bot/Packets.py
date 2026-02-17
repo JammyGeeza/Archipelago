@@ -135,6 +135,13 @@ class ConnectedPacket(TrackerPacket):
 
 @register_packet
 @dataclass
+class DiscordMessagePacket(TrackerPacket):
+    """Packet containing a message to be posted to the discord channel."""
+    cmd: ClassVar[str] = "DiscordMessage"
+    message: str = ""
+
+@register_packet
+@dataclass
 class ItemMessagePacket(TrackerPacket):
     """Packet containing item(s) data to be posted to the discord channel."""
     cmd: ClassVar[str] = "ItemMessage"

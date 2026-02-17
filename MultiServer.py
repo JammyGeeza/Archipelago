@@ -2767,7 +2767,7 @@ async def main(args: argparse.Namespace):
     ctx.save(now=True)
 
     # Create / update room data in the store
-    from DiscordGatewayStore import Store
+    from bot.Store import Store
     store = Store()
     store.configs.create(ctx.port, ctx.data_filename, ctx.save_filename, ctx.password)
 

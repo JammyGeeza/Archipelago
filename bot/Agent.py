@@ -7,9 +7,10 @@ import sys
 import threading
 
 from settings import get_settings
-from bot.Packets import TrackerPacket, ConnectPacket, ConnectedPacket, ConnectionRefusedPacket, HintMessagePacket, ItemMessagePacket, PrintJSONPacket, RoomInfoPacket, StatusPacket, NetworkItem, NetworkVersion
-from bot.Utils import Hookable
-from typing import List, Optional
+from bot.Packets import TrackerPacket, ConnectPacket, ConnectedPacket, ConnectionRefusedPacket, DiscordMessagePacket, HintMessagePacket, PrintJSONPacket, RoomInfoPacket, StatusPacket, NetworkItem, NetworkVersion
+from bot.Utils import Hookable, ItemQueue
+from datetime import datetime
+from typing import Dict, List, Optional
 from websockets.asyncio.client import connect
 from websockets.exceptions import ConnectionClosed
 
@@ -204,6 +205,8 @@ class TrackerClient:
         """Handle incoming data"""
         logging.info(f"Data received: '{data}'")
 
+    
+
     async def __listen_loop(self):
         """Listen to the websocket for incoming data."""
 
@@ -282,9 +285,11 @@ class TrackerClient:
             case "ItemSend":
                 # Trigger item event
                 await self.on_item_received.run(packet.receiving, packet.item)
+
             case "Hint":
                 # Trigger hint event
                 await self.on_hint_received.run(packet.receiving, packet.item)
+            
             case _:
                 logging.info(f"PrintJSON packet was a generic message type.")
 
@@ -325,20 +330,11 @@ class TrackerClient:
         self.__status = "Connecting"
 
         try:
-
             while self.__running:
-
                 # Attempt to connect
                 try:
                     async with connect(f"ws://localhost:{self.port}") as self.__websocket:
                         logging.info(f"Connection to websocket established.")
-
-                        # Set connected variables
-                        # self.__attempt = 0
-                        # self.__status = "Connected"
-
-                        # Trigger event
-                        # await self.on_connected.run(self)
 
                         # Create and run all asynchronous task(s), stopping when any of them complete
                         self.__tasks = [
@@ -413,6 +409,11 @@ websocket: websockets.WebSocketClientProtocol = None
 retry_attempt: int = 0
 retry_timeouts: List[int] = [ 5, 15, 60, 300, 900 ]
 
+__item_queue: Dict[int, ItemQueue] = {}
+__std_client: StdClient = None
+__tasks: List[asyncio.Task] = []
+__tracker_client: TrackerClient = None
+
 def parse_args() -> argparse.Namespace:
     """Parse command-line arguments"""
 
@@ -457,7 +458,6 @@ async def on_tracker_client_connected(client):
     )
     await __std_client.send(status_packet)
 
-
 @TrackerClient.on_disconnected
 async def on_tracker_client_disconnected(client):
     """Handler for the tracker client disconnecting from the archipelago server."""
@@ -497,20 +497,52 @@ async def on_tracker_client_hint(client, receiver: int, item: NetworkItem):
 async def on_tracker_client_item_received(client, receiver: int, item: NetworkItem):
     """Handler for an item being received."""
 
+    global __item_queue
+
     logging.info(f"The player {receiver} has received their {item.item} with flag(s) {item.flags}")
 
-    # TODO: 'Combine' items as per previous bot before forwarding.
+    # Get/Create queue for recipient
+    queue: ItemQueue = __item_queue.get(receiver, ItemQueue())
+    queue.add(item.item)
+
+    # Update recipient's queue
+    __item_queue[receiver] = queue
 
     # Create and send item packet to gateway
-    item_packet = ItemMessagePacket(
-        recipient=receiver,
-        items={ item.item: 1 }
-    )
-    await __std_client.send(item_packet)
+    # item_packet = ItemMessagePacket(
+    #     recipient=receiver,
+    #     items={ item.item: 1 }
+    # )
+    # await __std_client.send(item_packet)
 
-__std_client: StdClient = None
-__tasks: List[asyncio.Task] = []
-__tracker_client: TrackerClient = None
+async def __item_loop():
+    """Combine mass-received items."""
+
+    global __item_queue
+
+    try:
+        while True:
+            logging.info("Checking item queue...")
+            
+            # Get all item queues that have expired
+            now: datetime = datetime.now()
+            expired: List[int] = [key for key, val in __item_queue.items() if val.expires and len(val.items) > 0 and val.expires < now]
+
+            # Send message(s) for each expired queue
+            for recipient in expired:
+                queue: ItemQueue = __item_queue.pop(recipient, ItemQueue())
+                msg: str = f"`{recipient}` received their " + ", ".join([f"**{item_id}**" + (f" **_(x{count})_**" if count > 1 else "") for item_id, count in queue.items.items()])
+                await __std_client.send(DiscordMessagePacket(message=msg))
+            
+            # Brief timeout
+            await asyncio.sleep(2)
+
+    except asyncio.CancelledError:
+        logging.warning("The agent __item_loop() task has been cancelled.")
+        raise
+
+    except Exception as ex:
+        logging.error(f"Unexpected error in agent __item_loop() task: '{ex}'")
 
 async def main() -> None:
 
@@ -537,7 +569,8 @@ async def main() -> None:
     # Gather and start all asynchronous tasks, exiting when any task completes
     __tasks = [
         asyncio.create_task(__std_client.start()),
-        asyncio.create_task(__tracker_client.start())
+        asyncio.create_task(__tracker_client.start()),
+        asyncio.create_task(__item_loop()),
     ]
     complete, pending = await asyncio.wait(__tasks, return_when=asyncio.FIRST_COMPLETED)
     
