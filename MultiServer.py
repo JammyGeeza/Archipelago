@@ -2230,6 +2230,30 @@ async def process_client_cmd(ctx: Context, client: Client, args: dict):
             for key in args["keys"]:
                 ctx.stored_data_notification_clients[key].add(client)
 
+        elif cmd == "GetStats":
+
+            if not ctx.slot_is_bot(client.slot):
+                await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "type": "auth",
+                                              "text": "Players cannot request Stats.", "original_cmd": None}])
+                return
+            
+            elif "slots" not in args or type(args["slots"]) != list:
+                await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "type": "arguments",
+                                              "text": "Invalid 'slots' argument.", "original_cmd": cmd}])
+                return
+            
+            stats = {}
+            for slot in [slot for slot in ctx.get_players_package() if slot.slot in args["slots"]]:
+                stats.update({
+                    slot.slot: {
+                        "class": "PlayerStats",
+                        "checked": len(ctx.locations.get_checked(ctx.location_checks, slot.team, slot.slot)),
+                        "goal": ctx.read_data.get(f"client_status_{slot.team}_{slot.slot}", lambda: None)() == ClientStatus.CLIENT_GOAL.value,
+                        "remaining": len(ctx.locations.get_remaining(ctx.location_checks, slot.team, slot.slot))
+                    }
+                })
+
+            await ctx.send_msgs(client, [{ 'cmd': "Stats", "stats": stats }])
 
 def update_client_status(ctx: Context, client: Client, new_status: ClientStatus):
     current = ctx.client_game_state[client.team, client.slot]

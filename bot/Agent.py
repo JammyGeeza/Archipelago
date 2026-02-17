@@ -8,7 +8,7 @@ import threading
 import websockets
 
 from settings import get_settings
-from bot.Packets import TrackerPacket, ConnectPacket, ConnectedPacket, ConnectionRefusedPacket, DataPackagePacket, DiscordMessagePacket, GetPacket, GetDataPackagePacket, PrintJSONPacket, RetrievedPacket, RoomInfoPacket, SetNotifyPacket, SetReplyPacket, StatusPacket, NetworkItem, NetworkVersion, NetworkSlot
+from bot.Packets import TrackerPacket, ConnectPacket, ConnectedPacket, ConnectionRefusedPacket, DataPackagePacket, DiscordMessagePacket, GetPacket, GetDataPackagePacket, GetStatsPacket, PlayerStats, PrintJSONPacket, RetrievedPacket, RoomInfoPacket, SetNotifyPacket, SetReplyPacket, StatsPacket, StatusPacket, NetworkItem, NetworkVersion, NetworkSlot
 from bot.Utils import ClientStatus, Hookable, ItemQueue
 from datetime import datetime
 from typing import Dict, List, Optional
@@ -197,6 +197,7 @@ class TrackerClient:
         self.__item_lookup: Dict[str, Dict[int, str]] = {}
         self.__location_lookup: Dict[str, Dict[int, str]] = {}
         self.__player_lookup: Dict[int, NetworkSlot] = {}
+        self.__stats_lookup: Dict[int, PlayerStats] = {}
 
         self.port: int = args.port
         self.multidata_path: str = args.multidata
@@ -266,25 +267,16 @@ class TrackerClient:
     async def __on_connected_packet(self, packet: ConnectedPacket):
         """Handler for when a Connected packet is received."""
         logging.info(f"Connected packet received!")
-        logging.info(f"Slot info: {packet.slot_info}")
-
-        # Reset connect attempt count
-        # self.__attempt = 0
 
         # Store player lookup
         self.__player_lookup.update({ slot: data for slot, data in packet.slot_info.items() if data.name != "Botipelago" })
-
-        logging.info(f"Player lookup: {self.__player_lookup}")
 
         # Request data packet for each unique game (could do this all in one request, but I think some games are HUGE)
         for game in set([player.game for slot, player in self.__player_lookup.items() if player.game != "Archipelago" ]):
             await self.__send_packet(GetDataPackagePacket(games=[game]))
 
-        # Request all current slot statuses and notifications for changes
-        # TODO: Include team when getting lookups and also pass below
-        status_keys: List[str] = [ f"_read_client_status_0_{player}" for player in self.__player_lookup.keys() ]
-        await self.__send_packet(SetNotifyPacket(keys=status_keys))
-        await self.__send_packet(GetPacket(keys=status_keys))
+        # Request stats
+        await self.__send_packet(GetStatsPacket(slots=[slot for slot in self.__player_lookup.keys()]))
 
         # Trigger event
         await self.on_connected.run()
@@ -377,6 +369,18 @@ class TrackerClient:
             )
         )
         await self.__send_packet(connect_packet)
+
+    @StatsPacket.on_received
+    async def __on_stats_packet(self, packet: StatsPacket):
+        """Handler for when a Stats packet is received."""
+
+        logging.info(f"Stats packet received!")
+
+        # Update stats lookup
+        self.__stats_lookup.update({k: v for k, v in packet.stats.items()})
+
+        logging.info(f"Stats: {self.__stats_lookup}")
+
 
     # @SetReplyPacket.on_received
     # async def __on_set_reply_received(self, packet: SetReplyPacket):

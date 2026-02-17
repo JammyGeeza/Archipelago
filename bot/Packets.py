@@ -20,6 +20,14 @@ class DataPackageObject(Jsonable):
     games: Dict[str, GameData] = field(default_factory=dict)
 
 @dataclass
+class PlayerStats(Jsonable):
+    """Object containing stats for a player"""
+    class_: str = field(default="PlayerStats", metadata={"json": "class"})
+    checked: int = 0
+    goal: bool = False
+    remaining: int = 0
+
+@dataclass
 class PrintJSONSegment(Jsonable):
     """Object containing a PrintJSON text segment."""
     flags: int = 0
@@ -192,6 +200,13 @@ class GetDataPackagePacket(TrackerPacket):
     cmd: ClassVar[str] = "GetDataPackage"
     games: List[str] = field(default_factory=dict)
 
+@register_packet
+@dataclass
+class GetStatsPacket(TrackerPacket):
+    """Packet sent to server to request stats."""
+    cmd: ClassVar[str] = "GetStats"
+    slots: List[int] = field(default_factory=list)
+
 # @register_packet
 # @dataclass
 # class ItemMessagePacket(TrackerPacket):
@@ -253,6 +268,13 @@ class SetReplyPacket(TrackerPacket):
     value: Any = ""
     original_value: Any = ""
     slot: int = 0
+
+@register_packet
+@dataclass
+class StatsPacket(TrackerPacket):
+    """Packet received as a response to 'GetStats' packet."""
+    cmd: ClassVar[str] = "Stats"
+    stats: Dict[int, PlayerStats] = field(default_factory=dict)
 
 @register_packet
 @dataclass
