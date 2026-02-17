@@ -119,7 +119,8 @@ class TrackerPacket(Jsonable):
         
         handler = TrackerPacket._handlers.get(packet.__class__.cmd)
         if not handler:
-            raise KeyError(f"No handler registered for type {packet.__class__.cmd}")
+            logging.warning(f"No handler registered for type {packet.__class__.cmd}")
+            return
         
         result = handler(ctx, packet)
         if inspect.isawaitable(result):

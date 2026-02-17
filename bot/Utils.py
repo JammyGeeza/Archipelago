@@ -1,3 +1,4 @@
+import enum
 import inspect
 import json
 
@@ -5,6 +6,13 @@ from dataclasses import MISSING, fields, is_dataclass
 from datetime import datetime, timedelta
 from typing import Any, ClassVar, Dict, Union, get_args, get_origin
 
+class ClientStatus(enum.IntEnum):
+    """Client status enum values"""
+    UNKNOWN = 0
+    CONNECTED = 5
+    READY = 10
+    PLAYING = 20
+    GOAL = 30
 
 class Jsonable:
     """Base class for converting to json."""

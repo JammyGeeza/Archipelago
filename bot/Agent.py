@@ -2,13 +2,14 @@ import argparse
 import asyncio
 import json
 import logging
-import websockets
+import math
 import sys
 import threading
+import websockets
 
 from settings import get_settings
 from bot.Packets import TrackerPacket, ConnectPacket, ConnectedPacket, ConnectionRefusedPacket, DataPackagePacket, DiscordMessagePacket, GetPacket, GetDataPackagePacket, PrintJSONPacket, RetrievedPacket, RoomInfoPacket, SetNotifyPacket, SetReplyPacket, StatusPacket, NetworkItem, NetworkVersion, NetworkSlot
-from bot.Utils import Hookable, ItemQueue
+from bot.Utils import ClientStatus, Hookable, ItemQueue
 from datetime import datetime
 from typing import Dict, List, Optional
 from websockets.asyncio.client import connect
@@ -79,8 +80,6 @@ class StdClient:
                 # Skip if empty
                 if not packet:
                     continue
-
-                logging.warning(f"The std client is sending payload: {packet}")
 
                 sys.stdout.write(f"{packet.to_json()}\n")
                 sys.stdout.flush()
@@ -174,6 +173,7 @@ class StdClient:
 class TrackerClient:
     
     # Hookable methods
+    on_collect = Hookable()
     on_connected = Hookable()
     on_connection_refused = Hookable()
     on_disconnected = Hookable()
@@ -193,6 +193,7 @@ class TrackerClient:
         self.__websocket: websockets.WebSocketClientProtocol = None     # Websocket client
 
         # Lookups
+        self.__goal_lookup: Dict[int, bool] = {}
         self.__item_lookup: Dict[str, Dict[int, str]] = {}
         self.__location_lookup: Dict[str, Dict[int, str]] = {}
         self.__player_lookup: Dict[int, NetworkSlot] = {}
@@ -281,7 +282,7 @@ class TrackerClient:
 
         # Request all current slot statuses and notifications for changes
         # TODO: Include team when getting lookups and also pass below
-        status_keys: List[str] = [ f"client_status_0_{player}" for player in self.__player_lookup.keys() ]
+        status_keys: List[str] = [ f"_read_client_status_0_{player}" for player in self.__player_lookup.keys() ]
         await self.__send_packet(SetNotifyPacket(keys=status_keys))
         await self.__send_packet(GetPacket(keys=status_keys))
 
@@ -315,29 +316,47 @@ class TrackerClient:
         logging.info(f"PrintJSON ({packet.type}) packet received!")
 
         match packet.type:
+
+            case "Collect":
+                # Trigger goal event
+                await self.on_collect.run(packet.slot)
+            
             case "Goal":
+                # Update goal lookup
+                self.__goal_lookup.update({ packet.slot: True })
+
                 # Trigger goal event
                 await self.on_goal.run(packet.slot)
-
-            case "ItemSend":
-                # Trigger item event
-                await self.on_item.run(packet.receiving, packet.item)
 
             case "Hint":
                 # Trigger hint event
                 await self.on_hint.run(packet.receiving, packet.item, packet.found)
+
+            case "ItemSend":
+                # Trigger item event
+                await self.on_item.run(packet.receiving, packet.item)
 
             case "Release":
                 # Trigger release event
                 await self.on_release.run(packet.slot)
             
             case _:
-                logging.info(f"PrintJSON packet was a generic message type.")
+                logging.info(f"PrintJSON ({packet.type}) are not currently handled.")
 
     @RetrievedPacket.on_received
     async def __on_retrieved_received(self, packet: RetrievedPacket):
         """Handler for when a Retrieved packet is received."""
         logging.info(f"Retrieved packet received!")
+        
+        # Cycle through key/values
+        for key, value in packet.keys.items():
+
+            # Update goal statuses
+            if key.startswith("_read_client_status_"):
+                logging.info(f"Prcessing {key}")
+                self.__goal_lookup.update({ int(key[-1]) : int(value) == ClientStatus.GOAL.value })
+
+        logging.info(f"Current goal count: { self.get_goal_count() }")
 
     @RoomInfoPacket.on_received
     async def __on_room_info_packet(self, packet: RoomInfoPacket):
@@ -359,14 +378,31 @@ class TrackerClient:
         )
         await self.__send_packet(connect_packet)
 
-    @SetReplyPacket.on_received
-    async def __on_set_reply_received(self, packet: SetReplyPacket):
-        """Handler for when a SetReply packet is received."""
-        logging.info(f"SetReply packet received!")
+    # @SetReplyPacket.on_received
+    # async def __on_set_reply_received(self, packet: SetReplyPacket):
+    #     """Handler for when a SetReply packet is received."""
+    #     logging.info(f"SetReply packet received!")
+        
+    #     if packet.key.startswith("_read_client_status_"):
+
+    #         # TODO: If teams implemented, may need to also adjust this.
+    #         slot: int = packet.slot if packet.slot > 0 else int(packet.key[-1]) 
+            
+    #         match packet.value:
+
+    #             case ClientStatus.GOAL.value:
+    #                 await self.on_goal.run(slot)
+
+    #             case _:
+    #                 logging.info(f"Slot {slot} status has changed to {ClientStatus(packet.value)}.")
 
     def get_game_name(self, slot_id: int) -> str | None:
         """Get the name of a player's game."""
         return self.__player_lookup.get(slot_id, NetworkSlot()).game
+
+    def get_goal_count(self) -> int:
+        """Get the current amount of goals reached."""
+        return sum(1 for value in self.__goal_lookup.values() if value)
 
     def get_item_name(self, slot_id: int, item_id: int) -> str | None:
         """Get the name of an item."""
@@ -378,6 +414,10 @@ class TrackerClient:
         game: str = self.get_game_name(slot_id)
         return self.__location_lookup.get(game, {}).get(location_id, None)
     
+    def get_player_count(self) -> int:
+        """Get the amount of players."""
+        return len(self.__player_lookup)
+
     def get_player_name(self, slot_id: int) -> str | None:
         """Get the name of a player."""
         return self.__player_lookup.get(slot_id, NetworkSlot).name
@@ -549,6 +589,14 @@ def get_retry_timeout():
     global retry_attempt, retry_timeouts
     return retry_timeouts[retry_attempt] if retry_attempt < len(retry_timeouts) else retry_timeouts[-1]
 
+@TrackerClient.on_collect
+async def on_collect_received(client, slot_id: int):
+    """Handler for a slot collecting their remaining items."""
+    logging.info("Collect event!")
+    
+    msg: str = f"`{get_player(slot_id)}` has collected all of their items for **{get_game(slot_id)}** from other worlds."
+    await send(DiscordMessagePacket(message=msg))
+
 @TrackerClient.on_connected
 async def on_connected_received(client):
     """Handler for the tracker client connecting to the archipelago server."""
@@ -570,6 +618,23 @@ async def on_error_received(client, msg: str):
     logging.info(f"Error event! Message: {msg}")
     await send(StatusPacket(status="Error", message=msg))
 
+@TrackerClient.on_goal
+async def on_goal_received(client, slot_id: int):
+    """Handler for a slot achieving its goal."""
+
+    logging.info(f"Slot {slot_id} has achieved the goal.")
+    goals: int = client.get_goal_count()
+    players: int = client.get_player_count()
+    percentage: int = math.floor((goals / players) * 100)
+
+    # Construct message line(s)
+    lines: List[str] = [
+        f"## :tada: `{get_player(slot_id)}` has just completed their goal for {get_game(slot_id)} :tada:",
+        f"**{goals}/{players} _({percentage}%)_** goals have " + "been reached so far!" if goals < players else "now been reached!"
+    ]
+    
+    await send(DiscordMessagePacket(message="\n".join(lines)))
+
 @TrackerClient.on_hint
 async def on_hint_received(client, receiver: int, item: NetworkItem, found: bool):
     """Handler for a slot receiving a hint."""
@@ -578,23 +643,15 @@ async def on_hint_received(client, receiver: int, item: NetworkItem, found: bool
 
     # If item flags contains 'progression' and is not already found, send to gateway
     if item.flags & 0b001 and not found:
-        msg:str = f"**[HINT]**: `{get_player(receiver)}'s` **{get_item(receiver, item.item)} _({item.flags})_** is located at `{get_player(item.player)}'s` **{get_location(item.player, item.location)}** check. :eyes:"
+        msg:str = f"**[HINT]**: `{get_player(receiver)}'s` **{get_item(receiver, item.item)} _({item.flags})_** is located at `{get_player(item.player)}'s` **{get_location(item.player, item.location)}** check."
         await send(DiscordMessagePacket(message=msg))
-
-@TrackerClient.on_goal
-async def on_goal_received(client, slot_id: int):
-    """Handler for a slot achieving its goal."""
-
-    logging.info(f"Slot {slot_id} has achieved the goal.")
-    msg: str = f"## :tada: `{get_player(slot_id)}` has just completed their goal for {get_game(slot_id)} :tada:"
-    await send(DiscordMessagePacket(message=msg))
 
 @TrackerClient.on_item
 async def on_item_received(client, receiver: int, item: NetworkItem):
     """Handler for an item being received."""
 
     logging.info(f"Slot {receiver} received {item.item} with flag(s) {item.flags}")
-    await queue_item(receiver, item.item)
+    queue_item(receiver, item.item)
 
 @TrackerClient.on_release
 async def on_release_received(client, slot_id: int):
@@ -602,7 +659,7 @@ async def on_release_received(client, slot_id: int):
 
     logging.info(f"Slot {slot_id} has released their items.")
 
-    msg: str = f"`{get_player(slot_id)}` has released all their remaining items from **{get_game(slot_id)}**"
+    msg: str = f"`{get_player(slot_id)}` has released all of their remaining items from **{get_game(slot_id)}**."
     await send(DiscordMessagePacket(message=msg))
 
 async def __item_loop():
@@ -623,7 +680,7 @@ async def __item_loop():
 
                 # Split at "," separator to fit messages within message limit and send to gateway
                 for chunk in split_at_separator(msg):
-                    await __std_client.send(DiscordMessagePacket(message=chunk))
+                    await send(DiscordMessagePacket(message=chunk))
             
             # Brief timeout
             await asyncio.sleep(2)
