@@ -843,30 +843,30 @@ class Context:
                 for client in clients:
                     async_start(self.send_msgs(client, client_hints))
 
-                if not new_bot_hints:
-                    return
+        if not new_bot_hints:
+            return
 
-                # Forward hints to bot clients
-                bot_clients = [
-                    client
-                    for slot, client_list in self.clients[team].items()
-                    if self.slot_is_bot(slot)
-                    for client in client_list
-                    if client.auth and any(t.lower() == "bot" for t in (client.tags or []))
-                ]
+        # Forward hints to bot clients
+        bot_clients = [
+            client
+            for slot, client_list in self.clients[team].items()
+            if self.slot_is_bot(slot)
+            for client in client_list
+            if client.auth and any(t.lower() == "bot" for t in (client.tags or []))
+        ]
 
-                self.logger.info(f"Bot spectators: {len(bot_clients)}")
+        self.logger.info(f"Bot spectators: {len(bot_clients)}")
 
-                if bot_clients:
-                    # Gather new, un-found hints
-                    bot_hints = [
-                        hint.as_network_message()
-                        for hint in sorted(new_bot_hints, key=operator.attrgetter('found'), reverse=True)
-                    ]
+        if bot_clients:
+            # Gather new, un-found hints
+            bot_hints = [
+                hint.as_network_message()
+                for hint in sorted(new_bot_hints, key=operator.attrgetter('found'), reverse=True)
+            ]
 
-                    # Forward to bot clients
-                    for bot in bot_clients:
-                        async_start(self.send_msgs(bot, bot_hints))
+            # Forward to bot clients
+            for bot in bot_clients:
+                async_start(self.send_msgs(bot, bot_hints))
 
     def slot_is_bot(self, slot):
         slot_info = self.slot_info.get(slot)

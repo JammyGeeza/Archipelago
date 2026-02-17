@@ -8,6 +8,18 @@ from dataclasses import MISSING, dataclass, field
 from typing import Any, Callable, ClassVar, Dict, List, Optional, Type
 
 @dataclass
+class GameData(Jsonable):
+    """Object containing game lookup data."""
+    class_: str = field(default="GameData", metadata={"json": "class"})
+    location_name_to_id: Dict[str, int] = field(default_factory=dict)
+    item_name_to_id: Dict[str, int] = field(default_factory=dict)
+
+@dataclass
+class DataPackageObject(Jsonable):
+    """Object containing data package data"""
+    games: Dict[str, GameData] = field(default_factory=dict)
+
+@dataclass
 class PrintJSONSegment(Jsonable):
     """Object containing a PrintJSON text segment."""
     flags: int = 0
@@ -18,10 +30,26 @@ class PrintJSONSegment(Jsonable):
 @dataclass
 class NetworkItem(Jsonable):
     """Object containing item data."""
+    class_: str = field(default="NetworkItem", metadata={"json": "class"})
     item: int = 0
     location: int = 0
     player: int = 0
     flags: int = 0
+
+@dataclass
+class NetworkPlayer(Jsonable):
+    """Object containing player data."""
+    class_: str = field(default="NetworkPlayer", metadata={"json": "class"})
+    alias: str = ""
+    name: str = ""
+    slot: int = 0
+
+@dataclass
+class NetworkSlot(Jsonable):
+    """Object containing player data."""
+    class_: str = field(default="NetworkSlot", metadata={"json": "class"})
+    game: str = ""
+    name: str = ""
 
 @dataclass
 class NetworkVersion(Jsonable):
@@ -132,6 +160,15 @@ class ConnectionRefusedPacket(TrackerPacket):
 class ConnectedPacket(TrackerPacket):
     """Packet received on successful connection."""
     cmd: ClassVar[str] = "Connected"
+    players: List[NetworkPlayer] = field(default_factory=list)
+    slot_info: Dict[int, NetworkSlot] = field(default_factory=dict)
+
+@register_packet
+@dataclass
+class DataPackagePacket(TrackerPacket):
+    """Packet containing game lookup data"""
+    cmd: ClassVar[str] = "DataPackage"
+    data: DataPackageObject = field(default_factory=DataPackageObject)
 
 @register_packet
 @dataclass
@@ -139,6 +176,13 @@ class DiscordMessagePacket(TrackerPacket):
     """Packet containing a message to be posted to the discord channel."""
     cmd: ClassVar[str] = "DiscordMessage"
     message: str = ""
+
+@register_packet
+@dataclass
+class GetDataPackagePacket(TrackerPacket):
+    """Packet sent to server to request DataPackage."""
+    cmd: ClassVar[str] = "GetDataPackage"
+    games: List[str] = field(default_factory=dict)
 
 @register_packet
 @dataclass

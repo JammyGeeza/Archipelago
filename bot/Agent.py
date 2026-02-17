@@ -7,7 +7,7 @@ import sys
 import threading
 
 from settings import get_settings
-from bot.Packets import TrackerPacket, ConnectPacket, ConnectedPacket, ConnectionRefusedPacket, DiscordMessagePacket, HintMessagePacket, PrintJSONPacket, RoomInfoPacket, StatusPacket, NetworkItem, NetworkVersion
+from bot.Packets import TrackerPacket, ConnectPacket, ConnectedPacket, ConnectionRefusedPacket, DataPackagePacket, DiscordMessagePacket, GetDataPackagePacket, HintMessagePacket, PrintJSONPacket, RoomInfoPacket, StatusPacket, NetworkItem, NetworkVersion, NetworkSlot
 from bot.Utils import Hookable, ItemQueue
 from datetime import datetime
 from typing import Dict, List, Optional
@@ -79,6 +79,8 @@ class StdClient:
                 # Skip if empty
                 if not packet:
                     continue
+
+                logging.warning(f"The std client is sending payload: {packet}")
 
                 sys.stdout.write(f"{packet.to_json()}\n")
                 sys.stdout.flush()
@@ -188,6 +190,11 @@ class TrackerClient:
         self.__tasks: List[asyncio.Task] = []                           # Asynchronous tasks
         self.__websocket: websockets.WebSocketClientProtocol = None     # Websocket client
 
+        # Lookups
+        self.__item_lookup: Dict[str, Dict[int, str]] = {}
+        self.__location_lookup: Dict[str, Dict[int, str]] = {}
+        self.__player_lookup: Dict[int, NetworkSlot] = {}
+
         self.port: int = args.port
         self.multidata_path: str = args.multidata
         self.savedata_path: str = args.savedata
@@ -204,8 +211,6 @@ class TrackerClient:
     async def __handle_data(self, data: str):
         """Handle incoming data"""
         logging.info(f"Data received: '{data}'")
-
-    
 
     async def __listen_loop(self):
         """Listen to the websocket for incoming data."""
@@ -258,9 +263,19 @@ class TrackerClient:
     async def __on_connected_packet(self, packet: ConnectedPacket):
         """Handler for when a Connected packet is received."""
         logging.info(f"Connected packet received!")
+        logging.info(f"Slot info: {packet.slot_info}")
 
         # Reset connect attempt count
-        self.__attempt = 0
+        # self.__attempt = 0
+
+        # Store player lookup
+        self.__player_lookup.update(packet.slot_info)
+
+        logging.info(f"Player lookup: {self.__player_lookup}")
+
+        # Get data packet for each unique game (could do this all in one request, but I think some games are HUGE)
+        for game in set([player.game for slot, player in self.__player_lookup.items() if player.game != "Archipelago" ]):
+            await self.__send_packet(GetDataPackagePacket(games=[game]))
 
         # Trigger event
         await self.on_connected.run()
@@ -276,6 +291,16 @@ class TrackerClient:
         # Disconnect
         await self.__websocket.close(reason=f"Connection refused by server for reason(s): {", ".join(packet.errors)}")
     
+    @DataPackagePacket.on_received
+    async def __on_data_package_packet(self, packet: DataPackagePacket):
+        """Handler for when a DataPackage packet is received."""
+
+        logging.info(f"DataPackage packet received!")
+
+        # Store game lookups (and reverse to ID: Name)
+        self.__item_lookup.update({ game: { id: name for name, id in data.item_name_to_id.items() } for game, data in packet.data.games.items() })
+        self.__location_lookup.update({ game: { id: name for name, id in data.location_name_to_id.items() } for game, data in packet.data.games.items() })
+
     @PrintJSONPacket.on_received
     async def __on_printjson_packet(self, packet: PrintJSONPacket):
         """Handler for when a PrintJSON packet is received."""
@@ -288,7 +313,7 @@ class TrackerClient:
 
             case "Hint":
                 # Trigger hint event
-                await self.on_hint_received.run(packet.receiving, packet.item)
+                await self.on_hint_received.run(packet.receiving, packet.item, packet.found)
             
             case _:
                 logging.info(f"PrintJSON packet was a generic message type.")
@@ -313,6 +338,24 @@ class TrackerClient:
             )
         )
         await self.__send_packet(connect_packet)
+
+    def get_game_name(self, slot_id: int) -> str | None:
+        """Get the name of a player's game."""
+        return self.__player_lookup.get(slot_id, NetworkSlot()).game
+
+    def get_item_name(self, slot_id: int, item_id: int) -> str | None:
+        """Get the name of an item."""
+        game: str = self.get_game_name(slot_id)
+        return self.__item_lookup.get(game, {}).get(item_id, None)
+
+    def get_location_name(self, slot_id: int, location_id: int) -> str | None:
+        """Get the name of a location."""
+        game: str = self.get_game_name(slot_id)
+        return self.__location_lookup.get(game, {}).get(location_id, None)
+    
+    def get_player_name(self, slot_id: int) -> str | None:
+        """Get the name of a player."""
+        return self.__player_lookup.get(slot_id, NetworkSlot).name
 
     async def start(self):
         """Start the tracker client connection"""
@@ -434,6 +477,35 @@ async def update_status(status: str):
     """Send a status update to the gateway"""
     await send_packet_to_gateway(StatusPacket(status))
 
+def split_at_separator(text: str, limit: int = 2000, separator: str = ", ") -> List[str]:
+    """Split a string into chunks no longer than <limit> by <separator>"""
+
+    # If not longer than the limit, return it
+    if len(text) <= limit:
+        return [ text ]
+
+    parts = text.split(separator)
+    chunks = []
+    current_chunk = ""
+
+    # Cycle through split parts
+    for part in parts:
+        # Include separator if current chunk is not empty
+        test_chunk = current_chunk + separator + part if current_chunk else part
+
+        if len(test_chunk) > limit:
+            # Next chunk is too long, append what we have
+            chunks.append(current_chunk)
+            current_chunk = part
+        else:
+            current_chunk = test_chunk
+
+    # Add any remaining chunks
+    if current_chunk:
+        chunks.append(current_chunk)
+
+    return chunks
+
 async def send_packet_to_gateway(packet: TrackerPacket):
     """Queue a packet for sending to the gateway."""
     global send_queue
@@ -481,17 +553,15 @@ async def on_tracker_client_error(client, msg: str):
     # TODO: Forward status to the gateway?
 
 @TrackerClient.on_hint_received
-async def on_tracker_client_hint(client, receiver: int, item: NetworkItem):
+async def on_tracker_client_hint(client, receiver: int, item: NetworkItem, found: bool):
     """"""
 
     logging.info(f"The player {item.player} needs {item.player} to complete {item.location} for their {item.item} (with flag(s) {item.flags}) ")
 
-    # Create and send hint packet to gateway
-    hint_packet = HintMessagePacket(
-        recipient=receiver,
-        item=item
-    )
-    await __std_client.send(hint_packet)
+    # If item flags contains 'progression' and is not already found, send to gateway
+    if item.flags & 0b001 and not found:
+        msg:str = f"**[HINT]**: `{get_player(receiver)}'s` **{get_item(receiver, item.item)} _({item.flags})_** is located at `{get_player(item.player)}'s` **{get_location(item.player, item.location)}** check. :eyes:"
+        await __std_client.send(DiscordMessagePacket(message=msg))
 
 @TrackerClient.on_item_received
 async def on_tracker_client_item_received(client, receiver: int, item: NetworkItem):
@@ -508,13 +578,6 @@ async def on_tracker_client_item_received(client, receiver: int, item: NetworkIt
     # Update recipient's queue
     __item_queue[receiver] = queue
 
-    # Create and send item packet to gateway
-    # item_packet = ItemMessagePacket(
-    #     recipient=receiver,
-    #     items={ item.item: 1 }
-    # )
-    # await __std_client.send(item_packet)
-
 async def __item_loop():
     """Combine mass-received items."""
 
@@ -522,8 +585,6 @@ async def __item_loop():
 
     try:
         while True:
-            logging.info("Checking item queue...")
-            
             # Get all item queues that have expired
             now: datetime = datetime.now()
             expired: List[int] = [key for key, val in __item_queue.items() if val.expires and len(val.items) > 0 and val.expires < now]
@@ -531,8 +592,11 @@ async def __item_loop():
             # Send message(s) for each expired queue
             for recipient in expired:
                 queue: ItemQueue = __item_queue.pop(recipient, ItemQueue())
-                msg: str = f"`{recipient}` received their " + ", ".join([f"**{item_id}**" + (f" **_(x{count})_**" if count > 1 else "") for item_id, count in queue.items.items()])
-                await __std_client.send(DiscordMessagePacket(message=msg))
+                msg: str = f"`{get_player(recipient)}` received their " + ", ".join([f"**{get_item(recipient, item_id)}**" + (f" **_(x{count})_**" if count > 1 else "") for item_id, count in queue.items.items()])
+
+                # Split at "," separator to fit messages within message limit and send to gateway
+                for chunk in split_at_separator(msg):
+                    await __std_client.send(DiscordMessagePacket(message=chunk))
             
             # Brief timeout
             await asyncio.sleep(2)
@@ -543,6 +607,26 @@ async def __item_loop():
 
     except Exception as ex:
         logging.error(f"Unexpected error in agent __item_loop() task: '{ex}'")
+
+def get_game(slot_id: int) -> str | None:
+    """Get the name of a game."""
+    global __tracker_client
+    return __tracker_client.get_game_name(slot_id)
+
+def get_player(slot_id: int) -> str | None:
+    """Get the name of a player."""
+    global __tracker_client
+    return __tracker_client.get_player_name(slot_id)
+
+def get_item(slot_id: int, item_id: int) -> str | None:
+    """Get the name of an item."""
+    global __tracker_client
+    return __tracker_client.get_item_name(slot_id, item_id)
+
+def get_location(slot_id: int, location_id: int) -> str | None:
+    """Get the name of an item."""
+    global __tracker_client
+    return __tracker_client.get_location_name(slot_id, location_id)
 
 async def main() -> None:
 

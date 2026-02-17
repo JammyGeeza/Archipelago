@@ -3,7 +3,7 @@ import json
 
 from dataclasses import MISSING, fields, is_dataclass
 from datetime import datetime, timedelta
-from typing import Any, ClassVar, Dict, get_args, get_origin
+from typing import Any, ClassVar, Dict, Union, get_args, get_origin
 
 
 class Jsonable:
@@ -33,54 +33,61 @@ class Jsonable:
             if f:
                 kwargs[f.name] = cls.__decode(f.type, v)
 
-        # Fill defaults for missing fields
-        # for f in fields(cls):
-        #     if f.name in kwargs:
-        #         continue
-        #     if f.default is not MISSING:
-        #         kwargs[f.name] = f.default
-        #     elif f.default_factory is not MISSING:  # type: ignore
-        #         kwargs[f.name] = f.default_factory()  # type: ignore
-
         return cls(**kwargs)
-    
-    @classmethod
-    def from_json(cls, raw_json: str) -> "Jsonable":
-        """Create an instance of a class from a json string."""
-        return cls.from_dict(json.loads(raw_json))
-    
-    @staticmethod
-    def __encode(obj: Any):
-        """Encode a value to be used in json."""
-        if is_dataclass(obj):
-            out = {}
-            for prop in fields(obj):
-                key = prop.metadata.get("json", prop.name)
-                out[key] = Jsonable.__encode(getattr(obj, prop.name))
-            return out
-        elif isinstance(obj, list):
-            return [Jsonable.__encode(item) for item in obj]
-        elif isinstance(obj, dict):
-            return {k: Jsonable.__encode(v) for k, v in obj.items()}
-        else:
-            return obj
-        
-    @staticmethod
-    def __decode(type_param, obj: Any) -> Any:
-        """Decode a value from json"""
 
-        if obj is None:
+    @staticmethod
+    def __encode(value: Any) -> Any:
+        """Encode values for JSON serialization."""
+        if isinstance(value, Jsonable):
+            return value.to_dict()
+        if isinstance(value, dict):
+            return {str(k): Jsonable.__encode(v) for k, v in value.items()}
+        if isinstance(value, list):
+            return [Jsonable.__encode(v) for v in value]
+        return value
+
+    @staticmethod
+    def __decode(tp, value: Any) -> Any:
+        """Decode JSON values into typed Python objects."""
+        if value is None:
             return None
-        
-        origin = get_origin(type_param)
 
+        origin = get_origin(tp)
+
+        # Handle Optional[T] / Union[T, None]
+        if origin is Union:
+            args = [a for a in get_args(tp) if a is not type(None)]
+            return Jsonable.__decode(args[0], value) if args else value
+
+        # Handle List[T]
         if origin is list:
-            (inner,) = get_args(type_param)
-            return [Jsonable.__decode(inner, item) for item in obj]
-        elif isinstance(type_param, type) and is_dataclass(type_param):
-            return type_param.from_dict(obj) if issubclass(type_param, Jsonable) else type_param(**obj)
-        else:
-            return obj
+            (elem_t,) = get_args(tp)
+            return [Jsonable.__decode(elem_t, v) for v in (value or [])]
+
+        # Handle Dict[K, V]
+        if origin is dict:
+            key_t, val_t = get_args(tp)
+            out = {}
+            for k, v in (value or {}).items():
+                # JSON object keys are always strings
+                if key_t is int:
+                    k2 = int(k)
+                elif key_t is float:
+                    k2 = float(k)
+                else:
+                    k2 = k
+                out[k2] = Jsonable.__decode(val_t, v)
+            return out
+
+        # Handle nested Jsonable subclasses
+        try:
+            if isinstance(tp, type) and issubclass(tp, Jsonable):
+                return tp.from_dict(value)
+        except TypeError:
+            pass
+
+        # Primitive / fallback
+        return value
 
 class Hookable:
     def __init__(self):
