@@ -8,7 +8,7 @@ import threading
 import websockets
 
 from settings import get_settings
-from bot.Packets import TrackerPacket, ConnectPacket, ConnectedPacket, ConnectionRefusedPacket, DataPackagePacket, DiscordMessagePacket, GetPacket, GetDataPackagePacket, GetStatsPacket, PlayerStats, PrintJSONPacket, RetrievedPacket, RoomInfoPacket, SetNotifyPacket, SetReplyPacket, StatsPacket, StatusPacket, StoredResponsesPacket, StoredResponses, StoredStatsPacket, NetworkItem, NetworkVersion, NetworkSlot
+from bot.Packets import TrackerPacket, ConnectPacket, ConnectedPacket, ConnectionRefusedPacket, DataPackagePacket, DiscordMessagePacket, GetPacket, GetDataPackagePacket, GetStatsPacket, PlayerStats, PrintJSONPacket, RetrievedPacket, RoomInfoPacket, SetNotifyPacket, SetReplyPacket, StatsPacket, StatusUpdatePacket, StoredResponsesPacket, StoredResponses, StoredStatsPacket, NetworkItem, NetworkVersion, NetworkSlot
 from bot.Utils import ClientStatus, Hookable, ItemQueue
 from datetime import datetime
 from typing import Dict, List, Optional
@@ -174,10 +174,8 @@ class TrackerClient:
     
     # Hookable methods
     on_collect = Hookable()
-    on_connected = Hookable()
-    on_connection_refused = Hookable()
-    on_disconnected = Hookable()
-    on_error = Hookable()
+    on_connection_state_changed = Hookable()
+    on_error = Hookable() # TODO: Actually trigger this when things go wrong.
     on_goal = Hookable()
     on_hint = Hookable()
     on_item = Hookable()
@@ -189,7 +187,6 @@ class TrackerClient:
         self.__attempt: int = 0                                         # Current connection attempt
         self.__attempt_timeouts: List[int] = [ 5, 15, 30, 60, 300 ]     # Duration(s) to wait between connection attempts
         self.__running: bool = False                                    # Is currently running
-        self.__status: str = "Disconnected"                             # Current status
         self.__tasks: List[asyncio.Task] = []                           # Asynchronous tasks
         self.__websocket: websockets.WebSocketClientProtocol = None     # Websocket client
 
@@ -260,10 +257,6 @@ class TrackerClient:
         for task in self.__tasks:
             task.cancel()
 
-    async def get_status(self) -> str:
-        """Get current status."""
-        return self.__status
-
     @ConnectedPacket.on_received
     async def __on_connected_packet(self, packet: ConnectedPacket):
         """Handler for when a Connected packet is received."""
@@ -279,16 +272,13 @@ class TrackerClient:
         # Request stats
         await self.__send_packet(GetStatsPacket(slots=[slot for slot in self.__player_lookup.keys()]))
 
-        # Trigger event
-        await self.on_connected.run()
-
     @ConnectionRefusedPacket.on_received
     async def __on_connection_refused_packet(self, packet: ConnectionRefusedPacket):
         """Handler for when a ConnectionRefused packet is received."""
         logging.info(f"ConnectionRefused packet received!")
 
         # Trigger event
-        await self.on_connection_refused.run(packet.errors)
+        await self.on_connection_state_changed.run("Failed", packet.errors)
 
         # Disconnect
         await self.__websocket.close(reason=f"Connection refused by server for reason(s): {", ".join(packet.errors)}")
@@ -392,27 +382,12 @@ class TrackerClient:
         # Update stats lookup
         self.__stats_lookup.update({k: v for k, v in packet.stats.items()})
 
-        # Trigger event
+        # Consider this as 'connected' as agent should now have everything it needs
+        self.__attempt = 0
+        await self.on_connection_state_changed.run("Tracking")
+
+        # Trigger stats event
         await self.on_stats.run(packet.stats)
-
-
-    # @SetReplyPacket.on_received
-    # async def __on_set_reply_received(self, packet: SetReplyPacket):
-    #     """Handler for when a SetReply packet is received."""
-    #     logging.info(f"SetReply packet received!")
-        
-    #     if packet.key.startswith("_read_client_status_"):
-
-    #         # TODO: If teams implemented, may need to also adjust this.
-    #         slot: int = packet.slot if packet.slot > 0 else int(packet.key[-1]) 
-            
-    #         match packet.value:
-
-    #             case ClientStatus.GOAL.value:
-    #                 await self.on_goal.run(slot)
-
-    #             case _:
-    #                 logging.info(f"Slot {slot} status has changed to {ClientStatus(packet.value)}.")
 
     def get_all_player_stats(self) -> Dict[int, PlayerStats]:
         """Get stats for all players."""
@@ -461,7 +436,9 @@ class TrackerClient:
         # Set as running
         self.__attempt = 0
         self.__running = True
-        self.__status = "Connecting"
+
+        # Trigger connection state change
+        await self.on_connection_state_changed.run("Connecting")
 
         try:
             while self.__running:
@@ -469,6 +446,10 @@ class TrackerClient:
                 try:
                     async with connect(f"ws://localhost:{self.port}") as self.__websocket:
                         logging.info(f"Connection to websocket established.")
+
+                        # Trigger connected event if first attempt
+                        if self.__attempt == 0:
+                            await self.on_connection_state_changed.run("Connected")
 
                         # Create and run all asynchronous task(s), stopping when any of them complete
                         self.__tasks = [
@@ -491,18 +472,17 @@ class TrackerClient:
 
                 logging.warning("Tracker client task(s) have ended.")
 
-                # Trigger event
-                await self.on_disconnected.run()
-
                 # Prepare for retry
                 self.__attempt += 1
-                self.__status = "Disconnected"
                 self.__tasks = []
                 self.__websocket = None
 
-                # Exit if retry limit reached
-                if not self.__can_retry():
+                # If first retry, trigger event. If last retry, exit
+                if self.__attempt == 1:
+                    await self.on_connection_state_changed.run("Reconnecting")
+                elif not self.__can_retry():
                     logging.warning("Tracker client retry limit has been reached.")
+                    await self.on_connection_state_changed.run("Disconnected")
                     return
 
                 logging.warning("Waiting to retry tracker connection...")
@@ -623,26 +603,45 @@ async def on_collect_received(client, slot_id: int):
     msg: str = f"`{get_player(slot_id)}` has collected all of their items for **{get_game(slot_id)}** from other worlds."
     await send(DiscordMessagePacket(message=msg))
 
-@TrackerClient.on_connected
-async def on_connected_received(client):
-    """Handler for the tracker client connecting to the archipelago server."""
+@TrackerClient.on_connection_state_changed
+async def on_connection_state_changed(client, state: str, errors: List[str] = []):
+    """Handler for the tracker's connection state changing."""
 
-    logging.info("Connected event!")
-    await send(StatusPacket(status="Connected",message=f"Connected to `:{client.port}`"))
+    logging.info(f"Connection state: {state}")
+    
+    msg: str = ""
+    match state:
 
-@TrackerClient.on_disconnected
-async def on_disconnected_received(client):
-    """Handler for the tracker client disconnecting from the archipelago server."""
+        case "Connected":
+            msg = f"Client has successfully connected to `:{client.port}`"
 
-    logging.info("Disconnected event!")
-    await send(StatusPacket(status="Disconnected", message=f"Disconnected from `:{client.port}`"))
+        case "Connecting":
+            msg = f"Client is attempting to connect to `:{client.port}`"
+
+        case "Disconnected":
+            msg = f"Client has disconnected from `:{client.port}`"
+
+        case "Failed": 
+            msg = f"Client has failed to connect to `:{client.port}`. Error(s): {" | ".join(errors)}"
+
+        case "Reconnecting":
+            msg = f"Client is attempting to reconnect to `:{client.port}`"
+
+        case "Tracking":
+            msg = f"Client is now tracking `:{client.port}`"
+
+        case _:
+            return
+    
+    # Send status update
+    await send(StatusUpdatePacket(status=state, message=msg))
 
 @TrackerClient.on_error
 async def on_error_received(client, msg: str):
     """Handler for the tracker client experiencing an error."""
 
     logging.info(f"Error event! Message: {msg}")
-    await send(StatusPacket(status="Error", message=msg))
+    await send(DiscordMessagePacket(message=f"Client encountered an unexpected error: '{msg}'."))
 
 @TrackerClient.on_goal
 async def on_goal_received(client, slot_id: int):
@@ -707,17 +706,6 @@ async def on_stats_received(client, stats: Dict[int, PlayerStats]):
         get_player(k): v
         for k, v in stats.items()
     }))
-
-    # Send stored response update
-    # await send(StoredResponsesPacket(responses={
-    #     get_player(slot_id) :
-    #     StoredResponses(
-    #         stats=f"> ## Stats for `{get_player(slot_id)}`\n"
-    #         f"> **Locations**: {stat.checked}/{stat.checked + stat.remaining} _({math.floor((stat.checked / (stat.checked + stat.remaining)) * 100)}%)_\n"
-    #         f"> **Goal Reached**: {"Yes" if stat.goal else "No"}"
-    #     )
-    #     for slot_id, stat in stats.items()
-    # }))
 
 async def __item_loop():
     """Combine mass-received items."""

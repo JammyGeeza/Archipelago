@@ -10,7 +10,7 @@ import sys
 
 from discord import app_commands
 from discord.ext import commands
-from bot.Packets import DiscordMessagePacket, PlayerStats, NetworkItem, TrackerPacket, StatsPacket, StatusPacket, StoredResponsesPacket, StoredResponses, StoredStatsPacket
+from bot.Packets import DiscordMessagePacket, PlayerStats, NetworkItem, TrackerPacket, StatsPacket, StatusUpdatePacket, StoredStatsPacket
 from bot.Store import Agent, Store, Room, RoomConfig
 from bot.Utils import Hookable
 from typing import Dict, List, Optional, Tuple
@@ -31,7 +31,6 @@ class AgentProcess:
 
         self.config: RoomConfig = config
         self.process: asyncio.subprocess.Process = None
-        self.responses: Dict[str, StoredResponses] = {}
         self.stats: Dict[str, PlayerStats] = {}
         self.status: str = "Stopped"
 
@@ -112,31 +111,15 @@ class AgentProcess:
         # Trigger event
         await self.on_discord_message_received.run(packet.message)
 
-    # @StatsPacket.on_received
-    # async def _handle_stats_packet(self, packet: StatsPacket):
-    #     """Handler for receiving a stats packet"""
-
-    #     logging.info(f"Stats packet received!")
-
-    #     # Update stored stats
-    #     self.stats.update({ k: v for k, v in packet.stats.items()})
-
-    @StatusPacket.on_received
-    async def _handle_status_packet(self, packet: StatusPacket):
+    @StatusUpdatePacket.on_received
+    async def _handle_status_packet(self, packet: StatusUpdatePacket):
         """Handle receipt of a status packet"""
 
         # Store status
         self.status = packet.status
 
         # Trigger event
-        await self.on_status_received.run(packet.status)
-
-    @StoredResponsesPacket.on_received
-    async def _handle_stored_responses_packet(self, packet: StoredResponsesPacket):
-        """Handler for receiving stored responses."""
-
-        # Update stored responses
-        self.responses.update({ k: v for k, v in packet.responses.items() })
+        await self.on_status_received.run(packet.message)
 
     @StoredStatsPacket.on_received
     async def _handle_stored_stats_packet(self, packet: StoredStatsPacket):
@@ -168,13 +151,28 @@ class AgentProcess:
         self.process = None
         self.status = "Stopped"
 
-    def get_stored_stats(self, player_name: str) -> StoredResponses | None:
+    def get_player_count(self) -> int:
+        """Get amount of players."""
+        return len(self.stats.keys())
+
+    def get_player_stats(self, player_name: str) -> PlayerStats | None:
         """Get stats for a player."""
         return self.stats.get(player_name, None)
 
-    def get_stored_responses(self, player_name: str) -> StoredResponses | None:
-        """Get stats for a player."""
-        return self.responses.get(player_name, None)
+    def get_session_stats(self) -> PlayerStats | None:
+        """Returns stats for the entire session."""
+        stats: PlayerStats = PlayerStats(
+            checked=sum(stats.checked for stats in self.stats.values()),
+            goal=sum(1 for stats in self.stats.values() if stats.goal), # HACK
+            remaining=sum(stats.remaining for stats in self.stats.values()),
+            received=sum(stats.received for stats in self.stats.values())
+        )
+
+        return stats
+
+    def get_status(self) -> str:
+        """Get current status."""
+        return self.status
 
 
 agents: Dict[Tuple[int, int], AgentProcess] = {}
@@ -231,9 +229,9 @@ async def _on_agent_item_received(agent: AgentProcess, recipient: int, items: Di
     await post_message(agent.config.channel_id, f"`{recipient}` has just received their {item_string}")
 
 @AgentProcess.on_status_received
-async def _on_agent_status_received(agent: AgentProcess, status: str):
+async def _on_agent_status_received(agent: AgentProcess, message: str):
     """Handler for when the status is received from an agent."""
-    await post_message(agent.config.channel_id, f"Client at Port `{agent.config.port}` has **{status.lower()}**.")
+    await post_message(agent.config.channel_id, message)
 
 async def post_message(channel_id: int, message: str):
     """Post a message to a discord channel."""
@@ -408,7 +406,8 @@ async def list(interaction: discord.Interaction):
     await interaction.response.send_message(response, ephemeral=True)
 
 @bot.tree.command(name="stats", description="Get stats for a slot.")
-async def stats(interaction: discord.Interaction, player: str):
+@app_commands.describe(player="(Optional) Name of the player.")
+async def stats(interaction: discord.Interaction, player: Optional[str] = None):
     """Command to list stats for a player."""
 
     global store
@@ -425,30 +424,29 @@ async def stats(interaction: discord.Interaction, player: str):
         await interaction.response.send_message(f"{interaction.channel.jump_url} is bound to a port but its process is not running.", ephemeral=True)
         return
     
-    # Attempt to get stats for player
-    # if not (responses:= agent.get_stored_responses(player)):
-    #     await interaction.response.send_message(f"Could not find stats for player `{player}` - please ensure the player name is correct.", ephemeral=True)
-    #     return
-
-    if not (stats:= agent.get_stored_stats(player)):
-        await interaction.response.send_message(f"Could not find stats for player `{player}` - please ensure the player name is correct.", ephemeral=True)
+    # Get stats
+    if not (stats:= agent.get_player_stats(player) if player else agent.get_session_stats()):
+        await interaction.response.send_message(f"Unable to retrieve stats for {f"`{player}`" if player else "session"} - please {"ensure the name is correct" if player else "wait a moment"} and try again.", ephemeral=True)
         return
 
+    # Calculate totals/percentages
+    players: int = agent.get_player_count()
     total: int = stats.checked + stats.remaining
-    percentage: int = math.floor((stats.checked / total) * 100)
+    items_perc: int = math.floor((stats.received / total) * 100)
+    locs_perc: int = math.floor((stats.checked / total) * 100)
 
     # Craft embed
     embed: discord.Embed = discord.Embed(
         color=discord.Color.red(),
-        title=f"Stats for {player}",
-        description=f"**Deaths**: 000\n"
-                    f"**Items**: {stats.received}/XXX _(0%)_\n"
-                    f"**Locations**: {stats.checked}/{total} _({percentage}%)_\n"
-                    f"**Goal Reached**: {"Yes" if stats.goal else "No"}",
+        title=player or "Session",
+        description= # f"**Deaths**: 000\n"
+                    f"**Items**: {stats.received}/{total} _({items_perc}%)_\n"
+                    + f"**Locations**: {stats.checked}/{total} _({locs_perc}%)_\n"
+                    + (f"**Goal Reached**: {"Yes" if stats.goal else "No"}" if player else f"**Goals**: {stats.goal}/{players} _({math.floor((stats.goal / players) * 100)}%)_")
     )
     embed.set_thumbnail(url="https://storage.ficsit.app/file/smr-prod-s3/images/mods/9mg7TSpp5gB6jU/logo.webp")
 
-    # Respond with stored stats response
+    # Respond with stats
     await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
@@ -467,16 +465,11 @@ async def status(interaction: discord.Interaction):
 
     # Attempt to get process
     if not (agent:= get_agent(config)):
-        await interaction.response.send_message(f"{interaction.channel.jump_url} is bound to a port but its process is not running.", ephemeral=True)
+        await interaction.response.send_message(f"{interaction.channel.jump_url} is bound to `:{config.port}` but its process is not running.", ephemeral=True)
         return
-    
-    # Send
-    # TODO: Add to a sending queue
-    await agent.send(StatusPacket("Gimme status pls").to_json())
 
-    # Respond
-    # TODO: Work out how to get the response before responding
-    await interaction.response.send_message(f"Requesting status for {interaction.channel.jump_url} bound to port `:{agent.config.port}`...", ephemeral=True)
+    # Respond with status
+    await interaction.response.send_message(f"{interaction.channel.jump_url} is currently `{agent.get_status()}`", ephemeral=True)
 
 if __name__ == "__main__":
     asyncio.run(main())

@@ -68,11 +68,11 @@ class NetworkVersion(Jsonable):
     minor: int = 0
     build: int = 0
 
-@dataclass
-class StoredResponses(Jsonable):
-    """Object containing stored responses."""
-    class_: str = field(default="StoredResponse", metadata={"json": "class"})
-    stats: str = ""
+# @dataclass
+# class StoredResponses(Jsonable):
+#     """Object containing stored responses."""
+#     class_: str = field(default="StoredResponse", metadata={"json": "class"})
+#     stats: str = ""
 
 @dataclass
 class TrackerPacket(Jsonable):
@@ -161,7 +161,6 @@ class ConnectPacket(TrackerPacket):
     tags: List[str] = field(default_factory=list)
     uuid: str = ""
     version: NetworkVersion = field(default_factory=NetworkVersion)
-
 
 @register_packet
 @dataclass
@@ -285,18 +284,18 @@ class StatsPacket(TrackerPacket):
 
 @register_packet
 @dataclass
-class StatusPacket(TrackerPacket):
-    """Packet to respond with the status of an agent"""
+class StatusUpdatePacket(TrackerPacket):
+    """Packet containing the updated status of a tracker."""
     cmd: ClassVar[str] = "StatusResponse"
     message:str = ""
     status: str = ""
 
-@register_packet
-@dataclass
-class StoredResponsesPacket(TrackerPacket):
-    """Packet sent to update a stored response for a slot"""
-    cmd: ClassVar[str] = "StoredResponse"
-    responses: Dict[str, StoredResponses] = field(default_factory=dict)
+# @register_packet
+# @dataclass
+# class StoredResponsesPacket(TrackerPacket):
+#     """Packet sent to update a stored response for a slot"""
+#     cmd: ClassVar[str] = "StoredResponse"
+#     responses: Dict[str, StoredResponses] = field(default_factory=dict)
 
 @register_packet
 @dataclass
