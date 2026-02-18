@@ -10,7 +10,7 @@ import sys
 
 from discord import app_commands
 from discord.ext import commands
-from bot.Packets import DiscordMessagePacket, PlayerStats, NetworkItem, TrackerPacket, StatsPacket, StatusUpdatePacket, StoredStatsPacket
+from bot.Packets import DiscordMessagePacket, PlayerStats, NetworkItem, TrackerPacket, StatusUpdatePacket, StoredStatsPacket
 from bot.Store import Agent, Store, Room, RoomConfig
 from bot.Utils import Hookable
 from typing import Dict, List, Optional, Tuple

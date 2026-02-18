@@ -68,12 +68,6 @@ class NetworkVersion(Jsonable):
     minor: int = 0
     build: int = 0
 
-# @dataclass
-# class StoredResponses(Jsonable):
-#     """Object containing stored responses."""
-#     class_: str = field(default="StoredResponse", metadata={"json": "class"})
-#     stats: str = ""
-
 @dataclass
 class TrackerPacket(Jsonable):
     """Base class for agent packets"""
@@ -213,22 +207,6 @@ class GetStatsPacket(TrackerPacket):
     cmd: ClassVar[str] = "GetStats"
     slots: List[int] = field(default_factory=list)
 
-# @register_packet
-# @dataclass
-# class ItemMessagePacket(TrackerPacket):
-#     """Packet containing item(s) data to be posted to the discord channel."""
-#     cmd: ClassVar[str] = "ItemMessage"
-#     recipient: int = 0
-#     items: Dict[int, int] = field(default_factory=dict)
-
-# @register_packet
-# @dataclass
-# class HintMessagePacket(TrackerPacket):
-#     """Packet containing hint(s) data to be posted to the discord channel"""
-#     cmd: ClassVar[str] = "HintMessage"
-#     recipient: int = 0
-#     item: NetworkItem = field(default_factory=dict)
-
 @register_packet
 @dataclass
 class PrintJSONPacket(TrackerPacket):
@@ -289,13 +267,6 @@ class StatusUpdatePacket(TrackerPacket):
     cmd: ClassVar[str] = "StatusResponse"
     message:str = ""
     status: str = ""
-
-# @register_packet
-# @dataclass
-# class StoredResponsesPacket(TrackerPacket):
-#     """Packet sent to update a stored response for a slot"""
-#     cmd: ClassVar[str] = "StoredResponse"
-#     responses: Dict[str, StoredResponses] = field(default_factory=dict)
 
 @register_packet
 @dataclass

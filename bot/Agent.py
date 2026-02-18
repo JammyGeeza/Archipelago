@@ -8,7 +8,7 @@ import threading
 import websockets
 
 from settings import get_settings
-from bot.Packets import TrackerPacket, ConnectPacket, ConnectedPacket, ConnectionRefusedPacket, DataPackagePacket, DiscordMessagePacket, GetPacket, GetDataPackagePacket, GetStatsPacket, PlayerStats, PrintJSONPacket, RetrievedPacket, RoomInfoPacket, SetNotifyPacket, SetReplyPacket, StatsPacket, StatusUpdatePacket, StoredResponsesPacket, StoredResponses, StoredStatsPacket, NetworkItem, NetworkVersion, NetworkSlot
+from bot.Packets import TrackerPacket, ConnectPacket, ConnectedPacket, ConnectionRefusedPacket, DataPackagePacket, DiscordMessagePacket, GetDataPackagePacket, GetStatsPacket, PlayerStats, PrintJSONPacket, RetrievedPacket, RoomInfoPacket, StatsPacket, StatusUpdatePacket, StoredStatsPacket, NetworkItem, NetworkVersion, NetworkSlot
 from bot.Utils import ClientStatus, Hookable, ItemQueue
 from datetime import datetime
 from typing import Dict, List, Optional
