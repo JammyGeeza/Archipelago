@@ -25,6 +25,7 @@ class PlayerStats(Jsonable):
     class_: str = field(default="PlayerStats", metadata={"json": "class"})
     checked: int = 0
     goal: bool = False
+    received: int = 0
     remaining: int = 0
 
 @dataclass
@@ -66,6 +67,12 @@ class NetworkVersion(Jsonable):
     major: int = 0
     minor: int = 0
     build: int = 0
+
+@dataclass
+class StoredResponses(Jsonable):
+    """Object containing stored responses."""
+    class_: str = field(default="StoredResponse", metadata={"json": "class"})
+    stats: str = ""
 
 @dataclass
 class TrackerPacket(Jsonable):
@@ -283,3 +290,17 @@ class StatusPacket(TrackerPacket):
     cmd: ClassVar[str] = "StatusResponse"
     message:str = ""
     status: str = ""
+
+@register_packet
+@dataclass
+class StoredResponsesPacket(TrackerPacket):
+    """Packet sent to update a stored response for a slot"""
+    cmd: ClassVar[str] = "StoredResponse"
+    responses: Dict[str, StoredResponses] = field(default_factory=dict)
+
+@register_packet
+@dataclass
+class StoredStatsPacket(TrackerPacket):
+    """Packet sent to gateway to update stored stats."""
+    cmd: ClassVar[str] = "StoredStats"
+    stats: Dict[str, PlayerStats] = field(default_factory=dict)

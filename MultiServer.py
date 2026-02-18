@@ -2248,8 +2248,9 @@ async def process_client_cmd(ctx: Context, client: Client, args: dict):
                     slot.slot: {
                         "class": "PlayerStats",
                         "checked": len(ctx.locations.get_checked(ctx.location_checks, slot.team, slot.slot)),
+                        "received": len(get_received_items(ctx, slot.team, slot.slot, True)),
                         "goal": ctx.read_data.get(f"client_status_{slot.team}_{slot.slot}", lambda: None)() == ClientStatus.CLIENT_GOAL.value,
-                        "remaining": len(ctx.locations.get_remaining(ctx.location_checks, slot.team, slot.slot))
+                        "remaining": len(ctx.locations.get_remaining(ctx.location_checks, slot.team, slot.slot)),
                     }
                 })
 

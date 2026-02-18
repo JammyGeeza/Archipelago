@@ -5,11 +5,12 @@ import asyncio
 import discord
 import json
 import logging
+import math
 import sys
 
 from discord import app_commands
 from discord.ext import commands
-from bot.Packets import DiscordMessagePacket, NetworkItem, TrackerPacket, StatusPacket
+from bot.Packets import DiscordMessagePacket, PlayerStats, NetworkItem, TrackerPacket, StatsPacket, StatusPacket, StoredResponsesPacket, StoredResponses, StoredStatsPacket
 from bot.Store import Agent, Store, Room, RoomConfig
 from bot.Utils import Hookable
 from typing import Dict, List, Optional, Tuple
@@ -27,8 +28,11 @@ class AgentProcess:
     on_status_received = Hookable()
 
     def __init__(self, config: RoomConfig):
+
         self.config: RoomConfig = config
         self.process: asyncio.subprocess.Process = None
+        self.responses: Dict[str, StoredResponses] = {}
+        self.stats: Dict[str, PlayerStats] = {}
         self.status: str = "Stopped"
 
         self.rcv_queue: asyncio.Queue = asyncio.Queue()
@@ -56,8 +60,6 @@ class AgentProcess:
         args = [
             sys.executable,
             "-m", "bot.Agent",
-            # sys.executable,
-            # "Agent.py",
             "--port", str(self.config.port),
             "--multidata", self.config.multidata,
             "--savedata", self.config.savedata
@@ -103,13 +105,6 @@ class AgentProcess:
             # Convert to appropriate packet type
             await TrackerPacket.receive(data, self)
 
-    # @HintMessagePacket.on_received
-    # async def _on_hint_received(self, packet: HintMessagePacket):
-    #     """Handler for receiving a hint message packet."""
-
-    #     # Trigger event
-    #     await self.on_hint_received.run(packet.recipient, packet.item)
-
     @DiscordMessagePacket.on_received
     async def _on_discord_message_received(self, packet: DiscordMessagePacket):
         """Handler for receiving a discord message packet."""
@@ -117,12 +112,14 @@ class AgentProcess:
         # Trigger event
         await self.on_discord_message_received.run(packet.message)
 
-    # @ItemMessagePacket.on_received
-    # async def _on_item_received(self, packet: ItemMessagePacket):
-    #     """Handler for receiving an item message packet."""
+    # @StatsPacket.on_received
+    # async def _handle_stats_packet(self, packet: StatsPacket):
+    #     """Handler for receiving a stats packet"""
 
-    #     # Trigger event
-    #     await self.on_item_received.run(packet.recipient, packet.items)
+    #     logging.info(f"Stats packet received!")
+
+    #     # Update stored stats
+    #     self.stats.update({ k: v for k, v in packet.stats.items()})
 
     @StatusPacket.on_received
     async def _handle_status_packet(self, packet: StatusPacket):
@@ -133,6 +130,20 @@ class AgentProcess:
 
         # Trigger event
         await self.on_status_received.run(packet.status)
+
+    @StoredResponsesPacket.on_received
+    async def _handle_stored_responses_packet(self, packet: StoredResponsesPacket):
+        """Handler for receiving stored responses."""
+
+        # Update stored responses
+        self.responses.update({ k: v for k, v in packet.responses.items() })
+
+    @StoredStatsPacket.on_received
+    async def _handle_stored_stats_packet(self, packet: StoredStatsPacket):
+        """Handler for receiving stored stats."""
+
+        # Update stored stats
+        self.stats.update({ k: v for k, v in packet.stats.items() })
 
     async def _read_stdout(self):
         """Listen for data received from the agent process."""
@@ -157,6 +168,15 @@ class AgentProcess:
         self.process = None
         self.status = "Stopped"
 
+    def get_stored_stats(self, player_name: str) -> StoredResponses | None:
+        """Get stats for a player."""
+        return self.stats.get(player_name, None)
+
+    def get_stored_responses(self, player_name: str) -> StoredResponses | None:
+        """Get stats for a player."""
+        return self.responses.get(player_name, None)
+
+
 agents: Dict[Tuple[int, int], AgentProcess] = {}
 
 def parse_args() -> argparse.Namespace:
@@ -175,76 +195,10 @@ def parse_args() -> argparse.Namespace:
     args = parser.parse_args()
     return args
 
-# async def _listen_agent_process(key: tuple[int, int], process: asyncio.subprocess.Process):
-#     """Read the stdout of an agent process and handle incoming data."""
-#     if process.stdout is not None:
-#         async for line in process.stdout:
-#             payload = line.decode("utf-8", errors="replace").rstrip()
-#             logging.info(f"Received from Agent Process {key}: {payload}")
-
-# async def _watch_agent_process(key: tuple[int, int], process: asyncio.subprocess.Process):
-#     """Watch an agent and clean-up when it terminates."""
-#     global agents
-    
-#     # Wait for process to finish
-#     code = await process.wait()
-#     logging.warning(f"Agent process {key} exited with code {code}")
-
-#     # Remove
-#     agents.pop(key)
-
 def get_agent(guild_id: int, channel_id: int) -> Optional[AgentProcess]:
     """Get an agent process, if it exists."""
     global agents
     return agents.get((guild_id, channel_id), None)
-
-# async def start_agent_process(agent: Agent, room: Room):
-#     """Create and start an agent"""
-
-#     global agents
-
-#     logging.info(f"Starting Agent... | Port: {agent.port} | Password: {agent.password} | Multidata: {room.multidata} | Save Data: {room.savedata}")
-
-#     # Create command-line arguments
-#     args = [
-#         sys.executable,
-#         "DiscordAgent.py",
-#         "--port", str(agent.port),
-#         "--multidata", room.multidata,
-#         "--savedata", room.savedata
-#     ]
-
-#     # Add password arg if provided
-#     if agent.password:
-#         args += ["--password", agent.password]
-
-#     # Create agent process
-#     process = await asyncio.create_subprocess_exec(
-#         *args,
-#         stdout=asyncio.subprocess.PIPE,
-#         stdin=asyncio.subprocess.PIPE,
-#     )
-
-#     # Add process to agents list
-#     key = (agent.guild_id, agent.channel_id)
-#     agents[key] = process
-
-#     # Start watchers/readers
-#     asyncio.create_task(_watch_agent_process(key, process))
-#     asyncio.create_task(_listen_agent_process(key, process))
-
-# def stop_agent_process(agent: Agent):
-#     global agents
-
-#     # Get agent process
-#     if not (process:= get_agent_process(agent)):
-#         logging.warn(f"No Agent Process found | Guild ID: {agent.guild_id} | Channel ID: {agent.channel_id}")
-#         return False
-
-#     # Terminate the process
-#     process.terminate()
-    
-#     return True
 
 async def interaction_is_admin(interaction: discord.Interaction) -> bool:
     """Check if user is owner or administrator."""
@@ -257,12 +211,6 @@ async def interaction_is_admin(interaction: discord.Interaction) -> bool:
         guild.owner_id == interaction.user.id
         or interaction.user.guild_permissions.administrator
     )
-
-# async def send_packet(agent: Agent, packet: TrackerPacket):
-#     """Send a packet to an agent"""
-
-#     global send_queue
-#     await send_queue.put(())
 
 @AgentProcess.on_discord_message_received
 async def _on_agent_discord_message_received(agent: AgentProcess, message: str):
@@ -458,6 +406,51 @@ async def list(interaction: discord.Interaction):
         response += f"\n- <#{config.channel_id}> is bound to `{config.url}`\n"
 
     await interaction.response.send_message(response, ephemeral=True)
+
+@bot.tree.command(name="stats", description="Get stats for a slot.")
+async def stats(interaction: discord.Interaction, player: str):
+    """Command to list stats for a player."""
+
+    global store
+
+    logging.info(f"Stats requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id}")
+
+    # Check if binding exists
+    if not (config:= store.configs.get_by_channel(interaction.guild_id, interaction.channel_id)):
+        await interaction.response.send_message(f"{interaction.channel.jump_url} is not currently bound to a port.", ephemeral=True)
+        return
+    
+    # Attempt to get process
+    if not (agent:= get_agent(config)):
+        await interaction.response.send_message(f"{interaction.channel.jump_url} is bound to a port but its process is not running.", ephemeral=True)
+        return
+    
+    # Attempt to get stats for player
+    # if not (responses:= agent.get_stored_responses(player)):
+    #     await interaction.response.send_message(f"Could not find stats for player `{player}` - please ensure the player name is correct.", ephemeral=True)
+    #     return
+
+    if not (stats:= agent.get_stored_stats(player)):
+        await interaction.response.send_message(f"Could not find stats for player `{player}` - please ensure the player name is correct.", ephemeral=True)
+        return
+
+    total: int = stats.checked + stats.remaining
+    percentage: int = math.floor((stats.checked / total) * 100)
+
+    # Craft embed
+    embed: discord.Embed = discord.Embed(
+        color=discord.Color.red(),
+        title=f"Stats for {player}",
+        description=f"**Deaths**: 000\n"
+                    f"**Items**: {stats.received}/XXX _(0%)_\n"
+                    f"**Locations**: {stats.checked}/{total} _({percentage}%)_\n"
+                    f"**Goal Reached**: {"Yes" if stats.goal else "No"}",
+    )
+    embed.set_thumbnail(url="https://storage.ficsit.app/file/smr-prod-s3/images/mods/9mg7TSpp5gB6jU/logo.webp")
+
+    # Respond with stored stats response
+    await interaction.response.send_message(embed=embed, ephemeral=True)
+
 
 @bot.tree.command(name="status", description="Get the status of this channel, if bound to a room.")
 async def status(interaction: discord.Interaction):

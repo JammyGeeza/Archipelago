@@ -8,7 +8,7 @@ import threading
 import websockets
 
 from settings import get_settings
-from bot.Packets import TrackerPacket, ConnectPacket, ConnectedPacket, ConnectionRefusedPacket, DataPackagePacket, DiscordMessagePacket, GetPacket, GetDataPackagePacket, GetStatsPacket, PlayerStats, PrintJSONPacket, RetrievedPacket, RoomInfoPacket, SetNotifyPacket, SetReplyPacket, StatsPacket, StatusPacket, NetworkItem, NetworkVersion, NetworkSlot
+from bot.Packets import TrackerPacket, ConnectPacket, ConnectedPacket, ConnectionRefusedPacket, DataPackagePacket, DiscordMessagePacket, GetPacket, GetDataPackagePacket, GetStatsPacket, PlayerStats, PrintJSONPacket, RetrievedPacket, RoomInfoPacket, SetNotifyPacket, SetReplyPacket, StatsPacket, StatusPacket, StoredResponsesPacket, StoredResponses, StoredStatsPacket, NetworkItem, NetworkVersion, NetworkSlot
 from bot.Utils import ClientStatus, Hookable, ItemQueue
 from datetime import datetime
 from typing import Dict, List, Optional
@@ -182,6 +182,7 @@ class TrackerClient:
     on_hint = Hookable()
     on_item = Hookable()
     on_release = Hookable()
+    on_stats = Hookable()
 
     def __init__(self, args):
 
@@ -314,8 +315,12 @@ class TrackerClient:
                 await self.on_collect.run(packet.slot)
             
             case "Goal":
-                # Update goal lookup
-                self.__goal_lookup.update({ packet.slot: True })
+                # Update player goal in stats
+                if (stats:= self.get_player_stats(packet.slot)):
+                    stats.goal = True
+                else:
+                    # Request stats if they don't exist
+                    await self.__send_packet(GetStatsPacket(slots=[packet.slot]))
 
                 # Trigger goal event
                 await self.on_goal.run(packet.slot)
@@ -325,6 +330,14 @@ class TrackerClient:
                 await self.on_hint.run(packet.receiving, packet.item, packet.found)
 
             case "ItemSend":
+                # Update SENDING player's location checks in stats
+                if (stats:= self.get_player_stats(packet.item.player)):
+                    stats.checked += 1
+                    stats.remaining -= 1
+                else:
+                    # Request stats if they don't exist
+                    await self.__send_packet(GetStatsPacket(slots=[packet.item.player]))
+
                 # Trigger item event
                 await self.on_item.run(packet.receiving, packet.item)
 
@@ -379,7 +392,8 @@ class TrackerClient:
         # Update stats lookup
         self.__stats_lookup.update({k: v for k, v in packet.stats.items()})
 
-        logging.info(f"Stats: {self.__stats_lookup}")
+        # Trigger event
+        await self.on_stats.run(packet.stats)
 
 
     # @SetReplyPacket.on_received
@@ -400,13 +414,17 @@ class TrackerClient:
     #             case _:
     #                 logging.info(f"Slot {slot} status has changed to {ClientStatus(packet.value)}.")
 
+    def get_all_player_stats(self) -> Dict[int, PlayerStats]:
+        """Get stats for all players."""
+        return self.__player_lookup
+
     def get_game_name(self, slot_id: int) -> str | None:
         """Get the name of a player's game."""
         return self.__player_lookup.get(slot_id, NetworkSlot()).game
 
     def get_goal_count(self) -> int:
         """Get the current amount of goals reached."""
-        return sum(1 for value in self.__goal_lookup.values() if value)
+        return sum(1 for stat in self.__stats_lookup.values() if stat.goal)
 
     def get_item_name(self, slot_id: int, item_id: int) -> str | None:
         """Get the name of an item."""
@@ -425,6 +443,10 @@ class TrackerClient:
     def get_player_name(self, slot_id: int) -> str | None:
         """Get the name of a player."""
         return self.__player_lookup.get(slot_id, NetworkSlot).name
+    
+    def get_player_stats(self, slot_id: int) -> PlayerStats | None:
+        """Get the stats for a player"""
+        return self.__stats_lookup.get(slot_id, None)
 
     async def start(self):
         """Start the tracker client connection"""
@@ -627,6 +649,7 @@ async def on_goal_received(client, slot_id: int):
     """Handler for a slot achieving its goal."""
 
     logging.info(f"Slot {slot_id} has achieved the goal.")
+
     goals: int = client.get_goal_count()
     players: int = client.get_player_count()
     percentage: int = math.floor((goals / players) * 100)
@@ -657,14 +680,44 @@ async def on_item_received(client, receiver: int, item: NetworkItem):
     logging.info(f"Slot {receiver} received {item.item} with flag(s) {item.flags}")
     queue_item(receiver, item.item)
 
+    # Send stats update
+    stats: PlayerStats = client.get_player_stats(item.player)
+    await send(StoredStatsPacket(stats={
+        get_player(item.player): stats
+    }))
+
 @TrackerClient.on_release
 async def on_release_received(client, slot_id: int):
     """Handler for items being released from a slot."""
 
     logging.info(f"Slot {slot_id} has released their items.")
 
+    # Send release message
     msg: str = f"`{get_player(slot_id)}` has released all of their remaining items from **{get_game(slot_id)}**."
     await send(DiscordMessagePacket(message=msg))
+
+@TrackerClient.on_stats
+async def on_stats_received(client, stats: Dict[int, PlayerStats]):
+    """Handler for player stats being received."""
+
+    logging.info(f"Received stats for player(s) {[ player for player in stats.keys() ]}")
+
+    # Send stats update
+    await send(StoredStatsPacket(stats={
+        get_player(k): v
+        for k, v in stats.items()
+    }))
+
+    # Send stored response update
+    # await send(StoredResponsesPacket(responses={
+    #     get_player(slot_id) :
+    #     StoredResponses(
+    #         stats=f"> ## Stats for `{get_player(slot_id)}`\n"
+    #         f"> **Locations**: {stat.checked}/{stat.checked + stat.remaining} _({math.floor((stat.checked / (stat.checked + stat.remaining)) * 100)}%)_\n"
+    #         f"> **Goal Reached**: {"Yes" if stat.goal else "No"}"
+    #     )
+    #     for slot_id, stat in stats.items()
+    # }))
 
 async def __item_loop():
     """Combine mass-received items."""
@@ -695,6 +748,11 @@ async def __item_loop():
 
     except Exception as ex:
         logging.error(f"Unexpected error in agent __item_loop() task: '{ex}'")
+
+def get_all_stats() -> Dict[int, PlayerStats]:
+    """Get stats for all players"""
+    global __tracker_client
+    return __tracker_client.get_all_player_stats()
 
 def get_game(slot_id: int) -> str | None:
     """Get the name of a game."""
