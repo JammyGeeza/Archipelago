@@ -13,7 +13,7 @@ from discord.ext import commands
 from bot.Packets import DiscordMessagePacket, PlayerStats, NetworkItem, TrackerPacket, StatusUpdatePacket, StoredStatsPacket
 from bot.Store import Agent, Store, Room, RoomConfig
 from bot.Utils import Hookable
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, Literal, List, Optional, Tuple
 
 # Global variables
 admin_only: bool = True
@@ -151,6 +151,8 @@ class AgentProcess:
         self.process = None
         self.status = "Stopped"
 
+    
+
     def get_player_count(self) -> int:
         """Get amount of players."""
         return len(self.stats.keys())
@@ -173,6 +175,10 @@ class AgentProcess:
     def get_status(self) -> str:
         """Get current status."""
         return self.status
+    
+    def player_exists(self, player: str) -> bool:
+        """Check if a player name exists."""
+        return any(True for key in self.stats.keys() if key.casefold() == player.casefold())
 
 
 agents: Dict[Tuple[int, int], AgentProcess] = {}
@@ -470,6 +476,121 @@ async def status(interaction: discord.Interaction):
 
     # Respond with status
     await interaction.response.send_message(f"{interaction.channel.jump_url} is currently `{agent.get_status()}`", ephemeral=True)
+
+@bot.tree.command(name="notify_hints", description="Notify on hints received")
+@app_commands.describe(finder="The finding player name", action="Action to perform")
+async def notify_hints(interaction: discord.Interaction, finder: str, action: Literal["Add", "Remove"]):
+    """Command to modify notifications for targeted hints."""
+
+    logging.info(f"Notify Hints requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id}")
+
+    # Check if binding exists
+    if not (config:= store.configs.get_by_channel(interaction.guild_id, interaction.channel_id)):
+        await interaction.response.send_message(f"{interaction.channel.jump_url} is not currently bound to a port.", ephemeral=True)
+        return
+    
+    # Attempt to get process
+    if not (agent:= get_agent(config)):
+        await interaction.response.send_message(f"{interaction.channel.jump_url} is bound to a port but its process is not running.", ephemeral=True)
+        return
+    
+    # Check if player exists
+    if not agent.player_exists(finder):
+        await interaction.response.send_message(f"No player found with name `{finder}` - please check the name and try again.", ephemeral=True)
+        return
+
+    match action:
+        case "Add":
+            # TODO: Actually implement this
+            await interaction.response.send_message(f"You will now receive a {interaction.user.mention} when `{finder}` is the target of **Progression** hints.", ephemeral=True)
+
+        case "Remove":
+            # TODO: Actually implement this
+            await interaction.response.send_message(f"You will no longer be mentioned when `{finder}` is the target for hints.", ephemeral=True)
+
+
+@bot.tree.command(name="notify_items_terms", description="Notify on item terms received")
+@app_commands.describe(recipient="Player receiving the item(s)", action="Action to perform", terms="E.g. Orb,Frame,Scraps etc.")
+async def notify_items_terms(interaction: discord.Interaction, recipient: str, action: Literal["Add", "Remove", "Clear"], terms: Optional[str] = ""):
+    """Command to modify notifications for received item terms."""
+
+    logging.info(f"Notify Item Terms requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id}")
+
+    # Check if binding exists
+    if not (config:= store.configs.get_by_channel(interaction.guild_id, interaction.channel_id)):
+        await interaction.response.send_message(f"{interaction.channel.jump_url} is not currently bound to a port.", ephemeral=True)
+        return
+    
+    # Attempt to get process
+    if not (agent:= get_agent(config)):
+        await interaction.response.send_message(f"{interaction.channel.jump_url} is bound to a port but its process is not running.", ephemeral=True)
+        return
+    
+    # Check if player exists
+    if not agent.player_exists(recipient):
+        await interaction.response.send_message(f"No player found with name `{recipient}` - please check the name and try again.", ephemeral=True)
+        return
+    
+    # Split terms by ',' delimiter
+    term_list: List[str] = [term.strip() for term in terms.split(",") if term]
+
+    # Validate params
+    if action in [ "Add", "Remove" ] and not terms or not term_list:
+        await interaction.response.send_message(f"Please provide a valid, comma-separated list of terms to {action.lower()}. _(E.g. `Frame,Orb,Scraps`)_ ", ephemeral=True)
+        return
+    
+    match action:
+        case "Add":
+            # TODO: Actually implement this
+            await interaction.response.send_message(f"You will now receive a {interaction.user.mention} when `{recipient}` receives items containing the term(s) {", ".join([f"`{term}`" for term in term_list])}", ephemeral=True)
+
+        case "Remove": 
+            # TODO: Actually implement this
+            await interaction.response.send_message(f"You will no longer be mentioned when `{recipient}` receives items containing the term(s) `{", ".join([f"`{term}`" for term in term_list])}`.", ephemeral=True)
+
+        case "Clear":
+            # TODO: Actually implement this
+            await interaction.response.send_message(f"You will no longer be mentioned for any item terms for `{recipient}`.", ephemeral=True)
+
+@bot.tree.command(name="notify_items_types", description="Notify on item types received")
+@app_commands.describe(recipient="Player receiving the item(s)", action="Action to perform", type="Item type")
+async def notify_items_types(interaction: discord.Interaction, recipient: str, action: Literal["Add", "Remove", "Clear"], type: Optional[Literal["Progression", "Useful", "Filler", "All"]] = ""):
+    """Command to modify notifications for received item types."""
+
+    logging.info(f"Notify Item Types requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id}")
+
+    # Check if binding exists
+    if not (config:= store.configs.get_by_channel(interaction.guild_id, interaction.channel_id)):
+        await interaction.response.send_message(f"{interaction.channel.jump_url} is not currently bound to a port.", ephemeral=True)
+        return
+    
+    # Attempt to get process
+    if not (agent:= get_agent(config)):
+        await interaction.response.send_message(f"{interaction.channel.jump_url} is bound to a port but its process is not running.", ephemeral=True)
+        return
+    
+    # Check if player exists
+    if not agent.player_exists(recipient):
+        await interaction.response.send_message(f"No player found with name `{recipient}` - please check the name and try again.", ephemeral=True)
+        return
+    
+    # Validate params
+    if action in [ "Add", "Remove" ] and not type:
+        await interaction.response.send_message(f"Please provide an item type to {action.lower()}. _(E.g. `Useful`)_", ephemeral=True)
+        return
+    
+    match action:
+        case "Add":
+            # TODO: Actually implement this
+            await interaction.response.send_message(f"You will now receive a {interaction.user.mention} when `{recipient}` receives '{type}' items.", ephemeral=True)
+
+        case "Remove": 
+            # TODO: Actually implement this
+            await interaction.response.send_message(f"You will no longer be mentioned when `{recipient}` receives `{type}` items.", ephemeral=True)
+
+        case "Clear":
+            # TODO: Actually implement this
+            await interaction.response.send_message(f"You will no longer be mentioned for any item types for `{recipient}`.", ephemeral=True)
 
 if __name__ == "__main__":
     asyncio.run(main())
