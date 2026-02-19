@@ -1,7 +1,7 @@
 import logging
 import sqlite3
 from dataclasses import dataclass
-from typing import Optional, List
+from typing import ClassVar, Optional, List
 
 @dataclass
 class Agent:
@@ -9,6 +9,16 @@ class Agent:
     channel_id: int
     port: int
     password: Optional[str]
+
+@dataclass
+class Notification:
+    port: int
+    user_id: int
+    channel_id: int
+    slot_id: int
+    hints: Optional[int]
+    types: Optional[int]
+    terms: Optional[str]
 
 @dataclass
 class Room:
@@ -32,6 +42,7 @@ class Store:
         # self._init()
 
         self.configs = RoomConfigRepo(self._conn)
+        # self.notifications = NotificationRepo(self._conn)
 
         # self.agents = AgentRepo(self._conn)
         # self.rooms = RoomRepo(self._conn)
@@ -72,98 +83,96 @@ class Store:
 
             connection.commit()
 
-    # def add_agent(self, agent: Agent) -> bool:
-    #     """Add an agent binding to the store."""
+class NotificationRepo:
 
-    #     try:
-    #         with self._conn() as connection:
-    #             connection.execute("""
-    #                 INSERT INTO agents (guild_id, channel_id, url, password)
-    #                 VALUES (?, ?, ?, ?)
-    #                 """,
-    #                 (agent.guild_id, agent.channel_id, agent.url, agent.password)
-    #             )
-    #             connection.commit()
+    table_name: ClassVar[str] = "notifications"
 
-    #     except Exception as ex:
-    #         return False
+    def __init__(self, connection_factory: sqlite3.Connection):
+        self._conn: sqlite3.Connection = connection_factory
+        self._init()
+
+    def _init(self):
+        with self._conn() as connection:
+            connection.execute("""
+                CREATE TABLE IF NOT EXISTS notifications (
+                    port        INTEGER PRIMARY KEY,
+                    user_Id     INTEGER NOT NULL,
+                    channel_id  INTEGER NOT NULL,
+                    slot_id     INTEGER NOT NULL,
+                    hints       INTEGER,
+                    types       INTEGER,
+                    terms       TEXT,
+                    
+                    UNIQUE(port, user_id channel_id, slot_id)
+                )
+            """)
+
+    def upsert(self, notif: Notification) -> Optional[Notification]:
+        """Insert or update a notification."""
+
+        try:
+            with self._conn() as connection:
+                connection.execute(f"""
+                    INSERT INTO {self.table_name} (port, user_id, channel_id, slot_id, hints, types, terms)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                    ON CONFLICT(port, user_id, channel_id, slot_id) DO UPDATE SET
+                        hints = excluded.hints,
+                        types = excluded.types,
+                        terms = excluded.terms
+                    """,
+                    (notif.port, notif.user_id, notif.channel_id, notif.slot_id, notif.hints, notif.types, notif.terms)
+                )
+                connection.commit()
+
+            return self.get(notif.port, notif.user_id, notif.channel_id, notif.slot_id)
+
+        except Exception as ex:
+            logging.warning(f"Error in {self.table_name} upsert: {ex}")
+            return None
+
+    def get(self, port: int, user_id: int, channel_id: int, slot_id: int) -> Optional[Notification]:
+        """Get a notification."""
+
+        try:
+            with self._conn() as connection:
+                notif = connection.execute(f"""
+                    SELECT port, user_id, channel_id, slot_id, hints, types, terms
+                    FROM {self.table_name}
+                    WHERE port = ?
+                        AND user_id = ?
+                        AND channel_id = ?
+                        AND slot_id = ?
+                    """,
+                    (port, user_id, channel_id, slot_id)
+                ).fetchone()
+                
+                return Notification(*notif)
+            
+        except Exception as ex:
+            logging.warning(f"Error in {self.table_name} get: {ex}")
+            return None
         
-    #     return True
+    def delete(self, notif: Notification) -> bool:
+        """Delete a notification"""
 
-    # def exists_agent(self, guild_id: int, channel_id: int) -> bool:
-    #     """Check if an agent binding exists in the store by its guild and channel ids."""
-
-    #     with self._conn() as connection:
-    #         agent = connection.execute("""
-    #             SELECT 1
-    #             FROM agents
-    #             WHERE guild_id = ?
-    #                 AND channel_id = ?
-    #             """,
-    #             (guild_id, channel_id)
-    #         ).fetchone()
-
-    #         return agent is not None
-
-    # def get_agent(self, guild_id: int, channel_id: int) -> Optional[Agent]:
-    #     """Get an agent binding from the store by its guild and channel ids."""
-
-    #     with self._conn() as connection:
-    #         agent = connection.execute("""
-    #             SELECT guild_id, channel_id, url, password
-    #             FROM agents 
-    #             WHERE guild_id = ?
-    #                 AND channel_id = ?
-    #             """,
-    #             (guild_id, channel_id)
-    #         ).fetchone()
-
-    #     return Agent(*agent) if agent else None
-    
-    # def get_all_agents(self) -> List[Agent]:
-    #     """Get all agent bindings from the store."""
-
-    #     with self._conn() as connection:
-    #         agents = connection.execute("""
-    #             SELECT guild_id, channel_id, url, password
-    #             FROM agents
-    #         """).fetchall()
-
-    #         return [Agent(*agent) for agent in agents]
-        
-    # def get_all_guild_agents(self, guild_id: int) -> List[Agent]:
-    #     """Get all agent bindings from the store for a specified guild."""
-
-    #     with self._conn() as connection:
-    #         agents = connection.execute("""
-    #             SELECT guild_id, channel_id, url, password
-    #             FROM agents
-    #             WHERE guild_id = ?
-    #             """,
-    #             (guild_id,)
-    #         ).fetchall()
-
-    #         return [Agent(*agent) for agent in agents]
-    
-    # def delete_agent(self, guild_id: int, channel_id: int) -> bool:
-    #     """Delete an agent binding from the store by its guild and channel ids."""
-
-    #     try:
-    #         with self._conn() as connection:
-    #             connection.execute("""
-    #                 DELETE
-    #                 FROM agents
-    #                 WHERE guild_id = ?
-    #                     AND channel_id = ?
-    #                 """,
-    #                 (guild_id, channel_id)
-    #             )
-    #             connection.commit()
-
-    #     except Exception as ex:
-    #         return False
-        
-    #     return True
+        try:
+            with self._conn() as connection:
+                notif = connection.execute(f"""
+                    DELETE
+                    FROM {self.table_name}
+                    WHERE port = ?
+                        AND user_id = ?
+                        AND channel_id = ?
+                        AND slot_id = ?
+                    """,
+                    (notif.port, notif.user_id, notif.channel_id, notif.slot_id)
+                )
+                
+                return True
+            
+        except Exception as ex:
+            logging.warning(f"Error in {self.table_name} delete: {ex}")
+            return False
 
 class RoomConfigRepo:
 
@@ -174,7 +183,6 @@ class RoomConfigRepo:
     def _init(self):
 
         with self._conn() as connection:
-
             connection.execute("""
                 CREATE TABLE IF NOT EXISTS room_configs (
                     port        INTEGER PRIMARY KEY,

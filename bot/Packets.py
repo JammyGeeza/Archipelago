@@ -135,11 +135,38 @@ class TrackerPacket(Jsonable):
         if inspect.isawaitable(result):
             await result
 
-
 def register_packet(cls: Type[TrackerPacket]):
     """Register packet type for json parsing"""
     TrackerPacket._types[cls.cmd] = cls
     return cls
+
+#region Request Packets
+
+@dataclass
+class IdentifiablePacket(TrackerPacket):
+    """Base class for request packets"""
+    cmd: ClassVar[str] = "Request"
+    id: str
+
+    def __post_init__(self):
+        # Force an ID to be provided
+        if not self.id or not isinstance(self.id, str):
+            raise ValueError(f"{self.__class__.__name__} must contain a valid 'id' value.")
+
+@register_packet
+@dataclass
+class StatusRequestPacket(IdentifiablePacket):
+    """Packet sent to agent to request its current status."""
+    cmd: ClassVar[str] = "StatusRequest"
+
+@register_packet
+@dataclass
+class StatusResponsePacket(IdentifiablePacket):
+    """Packet sent to gateway in response to StatusRequest packet."""
+    cmd: ClassVar[str] = "StatusResponse"
+    status: str = ""
+ 
+#endregion
 
 
 @register_packet
@@ -264,7 +291,7 @@ class StatsPacket(TrackerPacket):
 @dataclass
 class StatusUpdatePacket(TrackerPacket):
     """Packet containing the updated status of a tracker."""
-    cmd: ClassVar[str] = "StatusResponse"
+    cmd: ClassVar[str] = "StatusUpdate"
     message:str = ""
     status: str = ""
 

@@ -1,5 +1,6 @@
 import argparse
 import asyncio
+# import bot.Packets as pkts
 import json
 import logging
 import math
@@ -8,7 +9,7 @@ import threading
 import websockets
 
 from settings import get_settings
-from bot.Packets import TrackerPacket, ConnectPacket, ConnectedPacket, ConnectionRefusedPacket, DataPackagePacket, DiscordMessagePacket, GetDataPackagePacket, GetStatsPacket, PlayerStats, PrintJSONPacket, RetrievedPacket, RoomInfoPacket, StatsPacket, StatusUpdatePacket, StoredStatsPacket, NetworkItem, NetworkVersion, NetworkSlot
+from bot.Packets import TrackerPacket, ConnectPacket, ConnectedPacket, ConnectionRefusedPacket, DataPackagePacket, DiscordMessagePacket, GetDataPackagePacket, GetStatsPacket, PlayerStats, PrintJSONPacket, RetrievedPacket, RoomInfoPacket, StatsPacket, StatusRequestPacket, StatusResponsePacket, StatusUpdatePacket, StoredStatsPacket, NetworkItem, NetworkVersion, NetworkSlot
 from bot.Utils import ClientStatus, Hookable, ItemQueue
 from datetime import datetime
 from typing import Dict, List, Optional
@@ -16,6 +17,9 @@ from websockets.asyncio.client import connect
 from websockets.exceptions import ConnectionClosed
 
 class StdClient:
+
+    # Events
+    on_status_request = Hookable()
 
     def __init__(self):
         self.__attempt: int = 0
@@ -52,7 +56,11 @@ class StdClient:
                 if line == "":
                     raise Exception("The stdin pipe has closed (EOF).")
                 
-                logging.info(f"Data received from stdin: {line.rstrip()}")
+                logging.info(f"Data received from stdin: {line}")
+
+                # Convert from json
+                for data in json.loads(line):
+                    await TrackerPacket.receive(data, self)
                 
         except asyncio.CancelledError:
             logging.warning("The std client __read_loop() task has been cancelled.")
@@ -170,6 +178,15 @@ class StdClient:
         # Prevent further re-runs
         self.__run = False
 
+    @StatusRequestPacket.on_received
+    async def __on_status_request(self, packet: StatusRequestPacket):
+        """Handler for receiving StatusRequest packet from gateway."""
+
+        logging.info(f"Received {packet.cmd} from Gateway... | ID: {packet.id}")
+
+        # Trigger event
+        await self.on_status_request.run(packet.id)
+
 class TrackerClient:
     
     # Hookable methods
@@ -187,6 +204,7 @@ class TrackerClient:
         self.__attempt: int = 0                                         # Current connection attempt
         self.__attempt_timeouts: List[int] = [ 5, 15, 30, 60, 300 ]     # Duration(s) to wait between connection attempts
         self.__running: bool = False                                    # Is currently running
+        self.__state: str = "Disconnected"                              # Current state
         self.__tasks: List[asyncio.Task] = []                           # Asynchronous tasks
         self.__websocket: websockets.WebSocketClientProtocol = None     # Websocket client
 
@@ -209,10 +227,6 @@ class TrackerClient:
     def __get_next_timeout(self) -> int:
         """Get next attempt timeout duration (in seconds)"""
         return self.__attempt_timeouts[self.__attempt - 1] if self.__attempt < len(self.__attempt_timeouts) else self.__attempt_timeouts[-1]
-    
-    async def __handle_data(self, data: str):
-        """Handle incoming data"""
-        logging.info(f"Data received: '{data}'")
 
     async def __listen_loop(self):
         """Listen to the websocket for incoming data."""
@@ -242,6 +256,13 @@ class TrackerClient:
         json = packet.to_json()
         logging.info(f"Sending payload: {json}")
         await self.__websocket.send(json)
+
+    async def __set_state(self, new_state: str):
+        """Set the current state of the tracker."""
+        self.__state = new_state
+
+        # Trigger event
+        await self.on_connection_state_changed.run(new_state)
 
     def __stop_tasks(self):
         """Stop all running tasks"""
@@ -278,7 +299,7 @@ class TrackerClient:
         logging.info(f"ConnectionRefused packet received!")
 
         # Trigger event
-        await self.on_connection_state_changed.run("Failed", packet.errors)
+        await self.__set_state("Failed", packet.errors)
 
         # Disconnect
         await self.__websocket.close(reason=f"Connection refused by server for reason(s): {", ".join(packet.errors)}")
@@ -382,9 +403,9 @@ class TrackerClient:
         # Update stats lookup
         self.__stats_lookup.update({k: v for k, v in packet.stats.items()})
 
-        # Consider this as 'connected' as agent should now have everything it needs
+        # Consider this as "properly connected" as agent should now have everything it needs
         self.__attempt = 0
-        await self.on_connection_state_changed.run("Tracking")
+        await self.__set_state("Tracking")
 
         # Trigger stats event
         await self.on_stats.run(packet.stats)
@@ -423,6 +444,10 @@ class TrackerClient:
         """Get the stats for a player"""
         return self.__stats_lookup.get(slot_id, None)
 
+    def get_status(self) -> str:
+        """Get the current status."""
+        return self.__state
+
     async def start(self):
         """Start the tracker client connection"""
 
@@ -438,7 +463,7 @@ class TrackerClient:
         self.__running = True
 
         # Trigger connection state change
-        await self.on_connection_state_changed.run("Connecting")
+        await self.__set_state("Connecting")
 
         try:
             while self.__running:
@@ -449,7 +474,7 @@ class TrackerClient:
 
                         # Trigger connected event if first attempt
                         if self.__attempt == 0:
-                            await self.on_connection_state_changed.run("Connected")
+                            await self.__set_state("Connected")
 
                         # Create and run all asynchronous task(s), stopping when any of them complete
                         self.__tasks = [
@@ -479,10 +504,10 @@ class TrackerClient:
 
                 # If first retry, trigger event. If last retry, exit
                 if self.__attempt == 1:
-                    await self.on_connection_state_changed.run("Reconnecting")
+                    await self.__set_state("Reconnecting")
                 elif not self.__can_retry():
                     logging.warning("Tracker client retry limit has been reached.")
-                    await self.on_connection_state_changed.run("Disconnected")
+                    await self.__set_state("Disconnected")
                     return
 
                 logging.warning("Waiting to retry tracker connection...")
@@ -706,6 +731,18 @@ async def on_stats_received(client, stats: Dict[int, PlayerStats]):
         get_player(k): v
         for k, v in stats.items()
     }))
+
+@StdClient.on_status_request
+async def __on_status_request(client: StdClient, request_id: str):
+    """Handler for receiving a status request."""
+
+    global __tracker_client
+
+    # Respond with current status
+    await client.send(StatusResponsePacket(
+        id=request_id,
+        status=__tracker_client.get_status()
+    ))
 
 async def __item_loop():
     """Combine mass-received items."""

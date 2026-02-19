@@ -2,16 +2,18 @@
 
 import argparse
 import asyncio
+# import bot.Packets as pkts
 import discord
 import json
 import logging
 import math
 import sys
+import uuid
 
 from discord import app_commands
 from discord.ext import commands
-from bot.Packets import DiscordMessagePacket, PlayerStats, NetworkItem, TrackerPacket, StatusUpdatePacket, StoredStatsPacket
-from bot.Store import Agent, Store, Room, RoomConfig
+from bot.Packets import DiscordMessagePacket, IdentifiablePacket, PlayerStats, NetworkItem, StatusResponsePacket, StatusRequestPacket, StatusUpdatePacket, StoredStatsPacket, TrackerPacket
+from bot.Store import Agent, Notification, Store, RoomConfig
 from bot.Utils import Hookable
 from typing import Dict, Literal, List, Optional, Tuple
 
@@ -34,17 +36,29 @@ class AgentProcess:
         self.stats: Dict[str, PlayerStats] = {}
         self.status: str = "Stopped"
 
+        self.__req_queue: dict[int, asyncio.Future] = {}
+
         self.rcv_queue: asyncio.Queue = asyncio.Queue()
         self.snd_queue: asyncio.Queue = asyncio.Queue()
 
-    async def send(self, payload: str):
+    async def send(self, packet: TrackerPacket):
         """Send a payload to the agent process."""
+        logging.info(f"Sending {packet.cmd} to gateway...")
+        await self.__send(packet.to_json())
 
-        logging.info(f"Sending payload to agent process... | Port: {self.config.port}")
-        logging.info(f"Payload: {payload}")
+    async def request(self, request: IdentifiablePacket) -> IdentifiablePacket:
+        """Request an action and await a response."""
 
-        self.process.stdin.write(f"{payload}\n".encode("utf-8"))
-        await self.process.stdin.drain()
+        logging.info(f"Sending request... | Type: {request.cmd} | ID: {request.id}")
+
+        response: asyncio.Future = asyncio.get_running_loop().create_future()
+        self.__req_queue[request.id] = response
+
+        # Send packet
+        await self.send(request)
+
+        # Wait for response
+        return await response
 
     async def start(self):
         """Start the agent process"""
@@ -99,14 +113,19 @@ class AgentProcess:
             if not (data:= await self.rcv_queue.get()):
                 continue
             
-            logging.info(f"Received payload from agent process | Port: {self.config.port} | Payload: {data}")
-
             # Convert to appropriate packet type
             await TrackerPacket.receive(data, self)
+
+    async def __send(self, json: str):
+        """Send data to the agent process."""
+        self.process.stdin.write(f"{json}\n".encode("utf-8"))
+        await self.process.stdin.drain()
 
     @DiscordMessagePacket.on_received
     async def _on_discord_message_received(self, packet: DiscordMessagePacket):
         """Handler for receiving a discord message packet."""
+
+        logging.info(f"Received {packet.cmd} from :{self.config.port}")
 
         # Trigger event
         await self.on_discord_message_received.run(packet.message)
@@ -114,12 +133,24 @@ class AgentProcess:
     @StatusUpdatePacket.on_received
     async def _handle_status_packet(self, packet: StatusUpdatePacket):
         """Handle receipt of a status packet"""
+        
+        logging.info(f"Received {packet.cmd} from :{self.config.port}")
 
         # Store status
         self.status = packet.status
 
         # Trigger event
         await self.on_status_received.run(packet.message)
+
+    @StatusResponsePacket.on_received
+    async def __on_status_response(self, packet: StatusResponsePacket):
+        """Handler for receiving a StatusResponse packet"""
+
+        logging.info(f"Received {packet.cmd} from :{self.config.port}")
+
+        # If waiting for this response, set packet as result
+        if (future:= self.__req_queue.get(packet.id)):
+            future.set_result(packet)
 
     @StoredStatsPacket.on_received
     async def _handle_stored_stats_packet(self, packet: StoredStatsPacket):
@@ -179,7 +210,6 @@ class AgentProcess:
     def player_exists(self, player: str) -> bool:
         """Check if a player name exists."""
         return any(True for key in self.stats.keys() if key.casefold() == player.casefold())
-
 
 agents: Dict[Tuple[int, int], AgentProcess] = {}
 
@@ -473,6 +503,11 @@ async def status(interaction: discord.Interaction):
     if not (agent:= get_agent(config)):
         await interaction.response.send_message(f"{interaction.channel.jump_url} is bound to `:{config.port}` but its process is not running.", ephemeral=True)
         return
+    
+    # Request status from agent
+    await agent.request(StatusRequestPacket(
+        id=uuid.uuid4().hex
+    ))
 
     # Respond with status
     await interaction.response.send_message(f"{interaction.channel.jump_url} is currently `{agent.get_status()}`", ephemeral=True)
@@ -481,6 +516,8 @@ async def status(interaction: discord.Interaction):
 @app_commands.describe(finder="The finding player name", action="Action to perform")
 async def notify_hints(interaction: discord.Interaction, finder: str, action: Literal["Add", "Remove"]):
     """Command to modify notifications for targeted hints."""
+
+    global store
 
     logging.info(f"Notify Hints requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id}")
 
@@ -498,6 +535,9 @@ async def notify_hints(interaction: discord.Interaction, finder: str, action: Li
     if not agent.player_exists(finder):
         await interaction.response.send_message(f"No player found with name `{finder}` - please check the name and try again.", ephemeral=True)
         return
+
+    # Get existing notification, if exists
+    notification: Notification = store.notifications.get(agent.config.port, interaction.user.id, interaction.channel_id)
 
     match action:
         case "Add":
