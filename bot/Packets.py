@@ -1,7 +1,9 @@
 import json
 import inspect
 import logging
+import math
 import sys
+import uuid
 
 from bot.Utils import Jsonable
 from dataclasses import MISSING, dataclass, field
@@ -69,6 +71,15 @@ class NetworkVersion(Jsonable):
     build: int = 0
 
 @dataclass
+class SessionStats(Jsonable):
+    """Object containing stats for a session."""
+    class_: str = field(default="SessionStats", metadata={"json": "class"})
+    checked: int = 0
+    goals: int = 0
+    # players: int = 0
+    remaining: int = 0
+
+@dataclass
 class TrackerPacket(Jsonable):
     """Base class for agent packets"""
 
@@ -89,8 +100,6 @@ class TrackerPacket(Jsonable):
     
     @classmethod
     def parse(cls, data: dict) -> "TrackerPacket":
-
-        logging.info(data)
 
         pkt_type = data.get("cmd")
         if pkt_type not in cls._types:
@@ -151,7 +160,44 @@ class IdentifiablePacket(TrackerPacket):
     def __post_init__(self):
         # Force an ID to be provided
         if not self.id or not isinstance(self.id, str):
-            raise ValueError(f"{self.__class__.__name__} must contain a valid 'id' value.")
+            self.id = uuid.uuid4().hex
+
+@register_packet
+@dataclass
+class NotificationsRequestPacket(IdentifiablePacket):
+    """Packet sent to agent to request Notification setup."""
+    cmd: ClassVar[str] = "NotificationsRequest"
+    action: int = 0
+    channel_id: int = 0
+    user_id: int = 0
+    slot_id: int = 0
+    hints: Optional[int] = None
+    types: Optional[int] = None
+    terms: Optional[List[str]] = None
+
+@register_packet
+@dataclass
+class NotificationsResponsePacket(IdentifiablePacket):
+    """Packet sent to gateway in response to a NotificationRequest packet."""
+    cmd: ClassVar[str] = "NotificationsResponse"
+    success: bool = False
+    message: str = ""
+
+@register_packet
+@dataclass
+class StatisticsRequestPacket(IdentifiablePacket):
+    """Packet sent to agent to request statistics for players."""
+    cmd: ClassVar[str] = "StatisticsRequest"
+    slots: List[int] = field(default_factory=list)
+    session: bool = False
+
+@register_packet
+@dataclass
+class StatisticsResponsePacket(IdentifiablePacket):
+    """Packet sent to gateway in response to StatisticsRequest packet."""
+    cmd: ClassVar[str] = "StatisticsResponse"
+    slots: Dict[int, PlayerStats] = field(default_factory=dict)
+    session: Optional[SessionStats] = None
 
 @register_packet
 @dataclass
@@ -301,3 +347,10 @@ class StoredStatsPacket(TrackerPacket):
     """Packet sent to gateway to update stored stats."""
     cmd: ClassVar[str] = "StoredStats"
     stats: Dict[str, PlayerStats] = field(default_factory=dict)
+
+@register_packet
+@dataclass
+class TrackerInfoPacket(TrackerPacket):
+    """Packet sent to gateway containing basic tracker data."""
+    cmd: ClassVar[str] = "TrackerInfo"
+    players: Dict[int, str] = field(default_factory=dict)

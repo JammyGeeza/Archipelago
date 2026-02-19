@@ -1,6 +1,6 @@
 import argparse
 import asyncio
-# import bot.Packets as pkts
+import bot.Packets as pkts
 import json
 import logging
 import math
@@ -9,7 +9,6 @@ import threading
 import websockets
 
 from settings import get_settings
-from bot.Packets import TrackerPacket, ConnectPacket, ConnectedPacket, ConnectionRefusedPacket, DataPackagePacket, DiscordMessagePacket, GetDataPackagePacket, GetStatsPacket, PlayerStats, PrintJSONPacket, RetrievedPacket, RoomInfoPacket, StatsPacket, StatusRequestPacket, StatusResponsePacket, StatusUpdatePacket, StoredStatsPacket, NetworkItem, NetworkVersion, NetworkSlot
 from bot.Utils import ClientStatus, Hookable, ItemQueue
 from datetime import datetime
 from typing import Dict, List, Optional
@@ -19,6 +18,9 @@ from websockets.exceptions import ConnectionClosed
 class StdClient:
 
     # Events
+    on_error = Hookable()
+    on_notifications_request = Hookable()
+    on_statistics_request = Hookable()
     on_status_request = Hookable()
 
     def __init__(self):
@@ -35,6 +37,29 @@ class StdClient:
     def __get_next_timeout(self) -> int:
         """Get the next timeout duration."""
         return self.__attempt_timeouts[self.__attempt - 1] if self.__attempt < len(self.__attempt_timeouts) else self.__attempt_timeouts[-1]
+
+    async def __handle_packet(self, packet: pkts.TrackerPacket):
+        """Handle an incoming packet"""
+
+        logging.info(f"Received {packet.cmd} from gateway.")
+
+        try:
+            match packet.cmd:
+                case pkts.NotificationsRequestPacket.cmd:
+                    await self.on_notifications_request.run(packet)
+
+                case pkts.StatisticsRequestPacket.cmd:
+                    await self.on_statistics_request.run(packet)
+
+                case pkts.StatusRequestPacket.cmd:
+                    await self.on_status_request.run(packet)
+                    
+                case _:
+                    logging.warning(f"{packet.cmd} is an unhandled packet type.")
+        
+        except Exception as ex:
+            logging.error(f"Unexpected error handling {packet.cmd} packet: {ex}")
+            await self.on_error.run(ex)
 
     async def __read_loop(self):
         """Read data from the stdin pipe."""
@@ -56,11 +81,11 @@ class StdClient:
                 if line == "":
                     raise Exception("The stdin pipe has closed (EOF).")
                 
-                logging.info(f"Data received from stdin: {line}")
-
                 # Convert from json
                 for data in json.loads(line):
-                    await TrackerPacket.receive(data, self)
+                    await self.__handle_packet(
+                        pkts.TrackerPacket.parse(data)
+                    )
                 
         except asyncio.CancelledError:
             logging.warning("The std client __read_loop() task has been cancelled.")
@@ -83,7 +108,7 @@ class StdClient:
         try:
             while self.__run:
 
-                packet: TrackerPacket = await self.__send_queue.get()
+                packet: pkts.TrackerPacket = await self.__send_queue.get()
 
                 # Skip if empty
                 if not packet:
@@ -99,7 +124,7 @@ class StdClient:
         except Exception as ex:
             logging.error(f"Unexpected error in std client __write_loop() task: '{ex}'")
 
-    async def send(self, packet: TrackerPacket):
+    async def send(self, packet: pkts.TrackerPacket):
         """Send a packet to the stdout pipe"""
         await self.__send_queue.put(packet)
 
@@ -178,15 +203,6 @@ class StdClient:
         # Prevent further re-runs
         self.__run = False
 
-    @StatusRequestPacket.on_received
-    async def __on_status_request(self, packet: StatusRequestPacket):
-        """Handler for receiving StatusRequest packet from gateway."""
-
-        logging.info(f"Received {packet.cmd} from Gateway... | ID: {packet.id}")
-
-        # Trigger event
-        await self.on_status_request.run(packet.id)
-
 class TrackerClient:
     
     # Hookable methods
@@ -197,7 +213,8 @@ class TrackerClient:
     on_hint = Hookable()
     on_item = Hookable()
     on_release = Hookable()
-    on_stats = Hookable()
+
+    #region Private Methods
 
     def __init__(self, args):
 
@@ -212,8 +229,8 @@ class TrackerClient:
         self.__goal_lookup: Dict[int, bool] = {}
         self.__item_lookup: Dict[str, Dict[int, str]] = {}
         self.__location_lookup: Dict[str, Dict[int, str]] = {}
-        self.__player_lookup: Dict[int, NetworkSlot] = {}
-        self.__stats_lookup: Dict[int, PlayerStats] = {}
+        self.__player_lookup: Dict[int, pkts.NetworkSlot] = {}
+        self.__stats_lookup: Dict[int, pkts.PlayerStats] = {}
 
         self.port: int = args.port
         self.multidata_path: str = args.multidata
@@ -228,6 +245,154 @@ class TrackerClient:
         """Get next attempt timeout duration (in seconds)"""
         return self.__attempt_timeouts[self.__attempt - 1] if self.__attempt < len(self.__attempt_timeouts) else self.__attempt_timeouts[-1]
 
+    async def __handle_packet(self, packet: pkts.TrackerPacket):
+        """Handle an incoming packet."""
+
+        logging.info(f"Handling {packet.cmd} packet...")
+
+        try:
+            match packet.cmd:
+
+                case pkts.ConnectedPacket.cmd:
+                    await self.__handle_connected_packet(packet)
+
+                case pkts.ConnectionRefusedPacket.cmd:
+                    await self.__handle_connection_refused_packet(packet)
+
+                case pkts.DataPackagePacket.cmd:
+                    await self.__handle_datapackage_packet(packet)
+
+                case pkts.PrintJSONPacket.cmd:
+                    await self.__handle_printjson_packet(packet)
+
+                case pkts.RetrievedPacket.cmd:
+                    await self.__handle_retrieved_packet(packet)
+
+                case pkts.RoomInfoPacket.cmd:
+                    await self.__handle_roominfo_packet(packet)
+
+                case pkts.StatsPacket.cmd:
+                    await self.__handle_stats_packet(packet)
+
+                case _:
+                    logging.warning(f"{packet.cmd} is an unhandled packet type.")
+
+        except Exception as ex:
+            logging.error(f"Unexpected error handling {packet.cmd} packet: {ex}")
+            await self.on_error.run(ex)
+
+    async def __handle_connected_packet(self, packet: pkts.ConnectedPacket):
+        """Handle an incoming Connected packet."""
+
+        # Store player lookup
+        self.__player_lookup.update({ slot: data for slot, data in packet.slot_info.items() if data.name != "Botipelago" })
+
+        # Request data packet for each unique game (could do this all in one request, but I think some games are HUGE)
+        for game in set([player.game for slot, player in self.__player_lookup.items() if player.game != "Archipelago" ]):
+            await self.__send_packet(pkts.GetDataPackagePacket(games=[game]))
+
+        # Request stats
+        await self.__send_packet(pkts.GetStatsPacket(slots=[slot for slot in self.__player_lookup.keys()]))
+
+    async def __handle_connection_refused_packet(self, packet: pkts.ConnectionRefusedPacket):
+        """Handle an incoming ConnectionRefused packet."""
+
+        # Trigger event
+        await self.__set_connection_state("Failed", packet.errors)
+
+        # Disconnect
+        await self.__websocket.close(reason=f"Connection refused by server for reason(s): {", ".join(packet.errors)}")
+
+    async def __handle_datapackage_packet(self, packet: pkts.DataPackagePacket):
+        """Handle an incoming DataPackage packet."""
+
+        # Store game lookups (and reverse to ID: Name)
+        self.__item_lookup.update({ game: { id: name for name, id in data.item_name_to_id.items() } for game, data in packet.data.games.items() })
+        self.__location_lookup.update({ game: { id: name for name, id in data.location_name_to_id.items() } for game, data in packet.data.games.items() })
+
+    async def __handle_printjson_packet(self, packet: pkts.PrintJSONPacket):
+        """Handle an incoming PrintJSON packet"""
+
+        match packet.type:
+
+            case "Collect":
+                # Trigger goal event
+                await self.on_collect.run(packet.slot)
+            
+            case "Goal":
+                # Update player goal in stats
+                if (stats:= self.get_player_stats(packet.slot)):
+                    stats.goal = True
+                else:
+                    # Request stats if they don't exist
+                    await self.__send_packet(pkts.GetStatsPacket(slots=[packet.slot]))
+
+                # Trigger goal event
+                await self.on_goal.run(packet.slot)
+
+            case "Hint":
+                # Trigger hint event
+                await self.on_hint.run(packet.receiving, packet.item, packet.found)
+
+            case "ItemSend":
+                # Update SENDING player's location checks in stats
+                if (stats:= self.get_player_stats(packet.item.player)):
+                    stats.checked += 1
+                    stats.remaining -= 1
+                else:
+                    # Request stats if they don't exist
+                    await self.__send_packet(pkts.GetStatsPacket(slots=[packet.item.player]))
+
+                # Trigger item event
+                await self.on_item.run(packet.receiving, packet.item)
+
+            case "Release":
+                # Trigger release event
+                await self.on_release.run(packet.slot)
+            
+            case _:
+                logging.info(f"PrintJSON ({packet.type}) are not currently handled.")
+
+    async def __handle_retrieved_packet(self, packet: pkts.RetrievedPacket):
+        """Handle an incoming Retrieved packet."""
+
+        # Cycle through key/values
+        for key, value in packet.keys.items():
+
+            # Update goal statuses
+            if key.startswith("_read_client_status_"):
+                self.__goal_lookup.update({ int(key[-1]) : int(value) == ClientStatus.GOAL.value })
+
+    async def __handle_roominfo_packet(self, packet: pkts.RoomInfoPacket):
+        """Handle an incoming RoomInfo packet."""
+
+        # Send connection packet
+        connect_packet = pkts.ConnectPacket(
+            game="",
+            items_handling=0b0001,
+            name="Botipelago",
+            password=self.password,
+            slot_data=False,
+            tags=["Bot", "Deathlink", "Tracker"],
+            uuid=f"botipelago_spectator",
+            version=pkts.NetworkVersion(
+                major=0,
+                minor=6,
+                build=4
+            )
+        )
+        await self.__send_packet(connect_packet)
+
+    async def __handle_stats_packet(self, packet: pkts.StatsPacket):
+        """Handler for when a Stats packet is received."""
+
+        # Update stats lookup
+        self.__stats_lookup.update({k: v for k, v in packet.stats.items()})
+
+        # Consider this as "properly connected" as agent should now have everything it needs
+        self.__attempt = 0
+        await self.__set_connection_state("Tracking")
+
     async def __listen_loop(self):
         """Listen to the websocket for incoming data."""
 
@@ -236,10 +401,10 @@ class TrackerClient:
             while self.__running:
                 payload = await self.__websocket.recv()
 
-                logging.info(f"Payload received: {payload}")
-
                 for packet in json.loads(payload):
-                    await TrackerPacket.receive(packet, self)
+                    await self.__handle_packet(
+                        pkts.TrackerPacket.parse(packet)
+                    )
 
         except asyncio.CancelledError:
             logging.warning(f"The tracker client __listen_loop() task has been cancelled.")
@@ -251,13 +416,15 @@ class TrackerClient:
         except Exception as ex:
             logging.error(f"Unexpected error in tracker client __listen_loop() task: '{ex}'")
 
-    async def __send_packet(self, packet: TrackerPacket):
+    async def __send_packet(self, packet: pkts.TrackerPacket):
         """Send a packet to the websocket server"""
+
+        logging.info(f"Sending {packet.cmd} packet...")
+
         json = packet.to_json()
-        logging.info(f"Sending payload: {json}")
         await self.__websocket.send(json)
 
-    async def __set_state(self, new_state: str):
+    async def __set_connection_state(self, new_state: str):
         """Set the current state of the tracker."""
         self.__state = new_state
 
@@ -278,145 +445,17 @@ class TrackerClient:
         for task in self.__tasks:
             task.cancel()
 
-    @ConnectedPacket.on_received
-    async def __on_connected_packet(self, packet: ConnectedPacket):
-        """Handler for when a Connected packet is received."""
-        logging.info(f"Connected packet received!")
+    #endregion
 
-        # Store player lookup
-        self.__player_lookup.update({ slot: data for slot, data in packet.slot_info.items() if data.name != "Botipelago" })
+    #region Public Methods
 
-        # Request data packet for each unique game (could do this all in one request, but I think some games are HUGE)
-        for game in set([player.game for slot, player in self.__player_lookup.items() if player.game != "Archipelago" ]):
-            await self.__send_packet(GetDataPackagePacket(games=[game]))
-
-        # Request stats
-        await self.__send_packet(GetStatsPacket(slots=[slot for slot in self.__player_lookup.keys()]))
-
-    @ConnectionRefusedPacket.on_received
-    async def __on_connection_refused_packet(self, packet: ConnectionRefusedPacket):
-        """Handler for when a ConnectionRefused packet is received."""
-        logging.info(f"ConnectionRefused packet received!")
-
-        # Trigger event
-        await self.__set_state("Failed", packet.errors)
-
-        # Disconnect
-        await self.__websocket.close(reason=f"Connection refused by server for reason(s): {", ".join(packet.errors)}")
-    
-    @DataPackagePacket.on_received
-    async def __on_data_package_packet(self, packet: DataPackagePacket):
-        """Handler for when a DataPackage packet is received."""
-
-        logging.info(f"DataPackage packet received!")
-
-        # Store game lookups (and reverse to ID: Name)
-        self.__item_lookup.update({ game: { id: name for name, id in data.item_name_to_id.items() } for game, data in packet.data.games.items() })
-        self.__location_lookup.update({ game: { id: name for name, id in data.location_name_to_id.items() } for game, data in packet.data.games.items() })
-
-    @PrintJSONPacket.on_received
-    async def __on_printjson_packet(self, packet: PrintJSONPacket):
-        """Handler for when a PrintJSON packet is received."""
-        logging.info(f"PrintJSON ({packet.type}) packet received!")
-
-        match packet.type:
-
-            case "Collect":
-                # Trigger goal event
-                await self.on_collect.run(packet.slot)
-            
-            case "Goal":
-                # Update player goal in stats
-                if (stats:= self.get_player_stats(packet.slot)):
-                    stats.goal = True
-                else:
-                    # Request stats if they don't exist
-                    await self.__send_packet(GetStatsPacket(slots=[packet.slot]))
-
-                # Trigger goal event
-                await self.on_goal.run(packet.slot)
-
-            case "Hint":
-                # Trigger hint event
-                await self.on_hint.run(packet.receiving, packet.item, packet.found)
-
-            case "ItemSend":
-                # Update SENDING player's location checks in stats
-                if (stats:= self.get_player_stats(packet.item.player)):
-                    stats.checked += 1
-                    stats.remaining -= 1
-                else:
-                    # Request stats if they don't exist
-                    await self.__send_packet(GetStatsPacket(slots=[packet.item.player]))
-
-                # Trigger item event
-                await self.on_item.run(packet.receiving, packet.item)
-
-            case "Release":
-                # Trigger release event
-                await self.on_release.run(packet.slot)
-            
-            case _:
-                logging.info(f"PrintJSON ({packet.type}) are not currently handled.")
-
-    @RetrievedPacket.on_received
-    async def __on_retrieved_received(self, packet: RetrievedPacket):
-        """Handler for when a Retrieved packet is received."""
-        logging.info(f"Retrieved packet received!")
-        
-        # Cycle through key/values
-        for key, value in packet.keys.items():
-
-            # Update goal statuses
-            if key.startswith("_read_client_status_"):
-                logging.info(f"Prcessing {key}")
-                self.__goal_lookup.update({ int(key[-1]) : int(value) == ClientStatus.GOAL.value })
-
-        logging.info(f"Current goal count: { self.get_goal_count() }")
-
-    @RoomInfoPacket.on_received
-    async def __on_room_info_packet(self, packet: RoomInfoPacket):
-        """Handler for when a RoomInfo packet is received."""
-        # Send connection packet
-        connect_packet = ConnectPacket(
-            game="",
-            items_handling=0b0001,
-            name="Botipelago",
-            password=self.password,
-            slot_data=False,
-            tags=["Bot", "Deathlink", "Tracker"],
-            uuid=f"botipelago_spectator",
-            version=NetworkVersion(
-                major=0,
-                minor=6,
-                build=4
-            )
-        )
-        await self.__send_packet(connect_packet)
-
-    @StatsPacket.on_received
-    async def __on_stats_packet(self, packet: StatsPacket):
-        """Handler for when a Stats packet is received."""
-
-        logging.info(f"Stats packet received!")
-
-        # Update stats lookup
-        self.__stats_lookup.update({k: v for k, v in packet.stats.items()})
-
-        # Consider this as "properly connected" as agent should now have everything it needs
-        self.__attempt = 0
-        await self.__set_state("Tracking")
-
-        # Trigger stats event
-        await self.on_stats.run(packet.stats)
-
-    def get_all_player_stats(self) -> Dict[int, PlayerStats]:
+    def get_all_player_stats(self) -> Dict[int, pkts.PlayerStats]:
         """Get stats for all players."""
         return self.__player_lookup
 
     def get_game_name(self, slot_id: int) -> str | None:
         """Get the name of a player's game."""
-        return self.__player_lookup.get(slot_id, NetworkSlot()).game
+        return self.__player_lookup.get(slot_id, pkts.NetworkSlot()).game
 
     def get_goal_count(self) -> int:
         """Get the current amount of goals reached."""
@@ -432,17 +471,30 @@ class TrackerClient:
         game: str = self.get_game_name(slot_id)
         return self.__location_lookup.get(game, {}).get(location_id, None)
     
+    def get_players(self) -> Dict[int, str]:
+        """Get all players."""
+        return self.__player_lookup
+
     def get_player_count(self) -> int:
         """Get the amount of players."""
         return len(self.__player_lookup)
 
     def get_player_name(self, slot_id: int) -> str | None:
         """Get the name of a player."""
-        return self.__player_lookup.get(slot_id, NetworkSlot).name
+        return self.__player_lookup.get(slot_id, pkts.NetworkSlot).name
     
-    def get_player_stats(self, slot_id: int) -> PlayerStats | None:
-        """Get the stats for a player"""
+    def get_player_stats(self, slot_id: int) -> pkts.PlayerStats | None:
+        """Get the stats for a player."""
         return self.__stats_lookup.get(slot_id, None)
+
+    def get_session_stats(self) -> pkts.SessionStats:
+        """Get the stats for the session."""
+        return pkts.SessionStats(
+            checked=sum(stats.checked for stats in self.__stats_lookup.values()),
+            goals=sum(1 for stats in self.__stats_lookup.values() if stats.goal),
+            # players=self.get_player_count(),
+            remaining=sum(stats.remaining for stats in self.__stats_lookup.values()),
+        )
 
     def get_status(self) -> str:
         """Get the current status."""
@@ -463,7 +515,7 @@ class TrackerClient:
         self.__running = True
 
         # Trigger connection state change
-        await self.__set_state("Connecting")
+        await self.__set_connection_state("Connecting")
 
         try:
             while self.__running:
@@ -474,7 +526,7 @@ class TrackerClient:
 
                         # Trigger connected event if first attempt
                         if self.__attempt == 0:
-                            await self.__set_state("Connected")
+                            await self.__set_connection_state("Connected")
 
                         # Create and run all asynchronous task(s), stopping when any of them complete
                         self.__tasks = [
@@ -504,10 +556,10 @@ class TrackerClient:
 
                 # If first retry, trigger event. If last retry, exit
                 if self.__attempt == 1:
-                    await self.__set_state("Reconnecting")
+                    await self.__set_connection_state("Reconnecting")
                 elif not self.__can_retry():
                     logging.warning("Tracker client retry limit has been reached.")
-                    await self.__set_state("Disconnected")
+                    await self.__set_connection_state("Disconnected")
                     return
 
                 logging.warning("Waiting to retry tracker connection...")
@@ -539,35 +591,18 @@ class TrackerClient:
         # Stop from further running
         self.__running = False
 
-handlers = {}
-receive_queue: asyncio.Queue = asyncio.Queue()
-send_queue: asyncio.Queue = asyncio.Queue()
-websocket: websockets.WebSocketClientProtocol = None
+    #endregion
 
-# Retry timeouts
-retry_attempt: int = 0
-retry_timeouts: List[int] = [ 5, 15, 60, 300, 900 ]
+# Arguments
+__args: argparse.Namespace
 
+# Variables
 __item_queue: Dict[int, ItemQueue] = {}
-__std_client: StdClient = None
 __tasks: List[asyncio.Task] = []
-__tracker_client: TrackerClient = None
 
-def parse_args() -> argparse.Namespace:
-    """Parse command-line arguments"""
-
-    defaults = get_settings().discord_agent_options.as_dict()
-
-    parser = argparse.ArgumentParser(prog="Tracker Client.py", description="Archipelago Discord Tracker Client")
-    parser.add_argument("--port", type=int, help="The full URL to the archipelago session.")
-    parser.add_argument("--password", type=str, help="The password for the server or slot.")
-    parser.add_argument("--multidata", type=str, help="The path to the multidata file.")
-    parser.add_argument("--savedata", type=str, help="The path to the save data file.")
-    parser.add_argument("--loglevel", default=defaults["loglevel"], type=str)
-    parser.add_argument("--logtime", default=defaults["logtime"], type=bool)
-
-    args = parser.parse_args()
-    return args
+# Clients
+__std_client: StdClient
+__tracker_client: TrackerClient
 
 def queue_item(slot_id: int, item_id: int):
     """Add an item to the item queue."""
@@ -610,29 +645,22 @@ def split_at_separator(text: str, limit: int = 2000, separator: str = ", ") -> L
 
     return chunks
 
-async def send(packet: TrackerPacket):
+async def send(packet: pkts.TrackerPacket):
     """Send a packet to the gateway"""
     global __std_client
     await __std_client.send(packet)
 
-def get_retry_timeout():
-    """Get the timeout duration"""
-    global retry_attempt, retry_timeouts
-    return retry_timeouts[retry_attempt] if retry_attempt < len(retry_timeouts) else retry_timeouts[-1]
+#region Tracker Event Handlers
 
 @TrackerClient.on_collect
-async def on_collect_received(client, slot_id: int):
+async def __on_collect(client, slot_id: int):
     """Handler for a slot collecting their remaining items."""
-    logging.info("Collect event!")
-    
     msg: str = f"`{get_player(slot_id)}` has collected all of their items for **{get_game(slot_id)}** from other worlds."
-    await send(DiscordMessagePacket(message=msg))
+    await send(pkts.DiscordMessagePacket(message=msg))
 
 @TrackerClient.on_connection_state_changed
-async def on_connection_state_changed(client, state: str, errors: List[str] = []):
+async def __on_connection_state_changed(client, state: str, errors: List[str] = []):
     """Handler for the tracker's connection state changing."""
-
-    logging.info(f"Connection state: {state}")
     
     msg: str = ""
     match state:
@@ -655,24 +683,25 @@ async def on_connection_state_changed(client, state: str, errors: List[str] = []
         case "Tracking":
             msg = f"Client is now tracking `:{client.port}`"
 
+            # Send tracker info
+            await send(pkts.TrackerInfoPacket(
+                players={ k: v.name for k, v in client.get_players().items() }
+            ))
+
         case _:
             return
     
     # Send status update
-    await send(StatusUpdatePacket(status=state, message=msg))
+    await send(pkts.DiscordMessagePacket(message=msg))
 
 @TrackerClient.on_error
-async def on_error_received(client, msg: str):
+async def __on_error(client, msg: str):
     """Handler for the tracker client experiencing an error."""
-
-    logging.info(f"Error event! Message: {msg}")
-    await send(DiscordMessagePacket(message=f"Client encountered an unexpected error: '{msg}'."))
+    await send(pkts.DiscordMessagePacket(message=f"Client encountered an unexpected error: '{msg}'."))
 
 @TrackerClient.on_goal
-async def on_goal_received(client, slot_id: int):
+async def __on_goal(client, slot_id: int):
     """Handler for a slot achieving its goal."""
-
-    logging.info(f"Slot {slot_id} has achieved the goal.")
 
     goals: int = client.get_goal_count()
     players: int = client.get_player_count()
@@ -684,65 +713,81 @@ async def on_goal_received(client, slot_id: int):
         f"**{goals}/{players} _({percentage}%)_** goals have " + "been reached so far!" if goals < players else "now been reached!"
     ]
     
-    await send(DiscordMessagePacket(message="\n".join(lines)))
+    await send(pkts.DiscordMessagePacket(message="\n".join(lines)))
 
 @TrackerClient.on_hint
-async def on_hint_received(client, receiver: int, item: NetworkItem, found: bool):
+async def __on_hint(client, receiver: int, item: pkts.NetworkItem, found: bool):
     """Handler for a slot receiving a hint."""
-
-    logging.info(f"Slot {item.player}'s item {item.item} (with flag(s) {item.flags}) is at {item.player}'s {item.location}")
 
     # If item flags contains 'progression' and is not already found, send to gateway
     if item.flags & 0b001 and not found:
         msg:str = f"**[HINT]**: `{get_player(receiver)}'s` **{get_item(receiver, item.item)} _({item.flags})_** is located at `{get_player(item.player)}'s` **{get_location(item.player, item.location)}** check."
-        await send(DiscordMessagePacket(message=msg))
+        await send(pkts.DiscordMessagePacket(message=msg))
 
 @TrackerClient.on_item
-async def on_item_received(client, receiver: int, item: NetworkItem):
+async def __on_item(client, receiver: int, item: pkts.NetworkItem):
     """Handler for an item being received."""
 
-    logging.info(f"Slot {receiver} received {item.item} with flag(s) {item.flags}")
+    # Add to item queue
     queue_item(receiver, item.item)
 
-    # Send stats update
-    stats: PlayerStats = client.get_player_stats(item.player)
-    await send(StoredStatsPacket(stats={
-        get_player(item.player): stats
-    }))
-
 @TrackerClient.on_release
-async def on_release_received(client, slot_id: int):
+async def __on_release(client, slot_id: int):
     """Handler for items being released from a slot."""
-
-    logging.info(f"Slot {slot_id} has released their items.")
 
     # Send release message
     msg: str = f"`{get_player(slot_id)}` has released all of their remaining items from **{get_game(slot_id)}**."
-    await send(DiscordMessagePacket(message=msg))
+    await send(pkts.DiscordMessagePacket(message=msg))
 
-@TrackerClient.on_stats
-async def on_stats_received(client, stats: Dict[int, PlayerStats]):
-    """Handler for player stats being received."""
+#endregion
 
-    logging.info(f"Received stats for player(s) {[ player for player in stats.keys() ]}")
+#region StdClient Event Handlers
 
-    # Send stats update
-    await send(StoredStatsPacket(stats={
-        get_player(k): v
-        for k, v in stats.items()
-    }))
+@StdClient.on_error
+async def __on_std_error(client: StdClient, msg: str):
+    """Handle an error from the std client."""
+
+    # TODO: Figure out if this is the right thing to do...
+    await send(pkts.DiscordMessagePacket(message=f"Client encountered an unexpected error: '{msg}'."))
+
+@StdClient.on_notifications_request
+async def __on_notifications_request(client: StdClient, packet: pkts.NotificationsRequestPacket):
+    """Handle an incoming notifications request."""
+
+    logging.info("Got the notification request!")
+
+@StdClient.on_statistics_request
+async def __on_statistics_request(client: StdClient, packet: pkts.StatisticsRequestPacket):
+    """Handle an incoming statistics request."""
+
+    global __tracker_client
+
+    # Add stats for each valid slot requested
+    player_stats: Dict[int, pkts.PlayerStats] = {}
+    for slot in packet.slots:
+        if (stat:= __tracker_client.get_player_stats(slot)):
+            player_stats.update({ slot: stat })
+
+    # Respond with stats for player
+    await client.send(pkts.StatisticsResponsePacket(
+        id=packet.id,
+        slots=player_stats,
+        session=__tracker_client.get_session_stats() if packet.session else None
+    ))
 
 @StdClient.on_status_request
-async def __on_status_request(client: StdClient, request_id: str):
-    """Handler for receiving a status request."""
+async def __on_status_request(client: StdClient, packet: pkts.StatusRequestPacket):
+    """Handle an incoming status request."""
 
     global __tracker_client
 
     # Respond with current status
-    await client.send(StatusResponsePacket(
-        id=request_id,
+    await client.send(pkts.StatusResponsePacket(
+        id=packet.id,
         status=__tracker_client.get_status()
     ))
+
+#endregion
 
 async def __item_loop():
     """Combine mass-received items."""
@@ -762,7 +807,7 @@ async def __item_loop():
 
                 # Split at "," separator to fit messages within message limit and send to gateway
                 for chunk in split_at_separator(msg):
-                    await send(DiscordMessagePacket(message=chunk))
+                    await send(pkts.DiscordMessagePacket(message=chunk))
             
             # Brief timeout
             await asyncio.sleep(2)
@@ -774,7 +819,7 @@ async def __item_loop():
     except Exception as ex:
         logging.error(f"Unexpected error in agent __item_loop() task: '{ex}'")
 
-def get_all_stats() -> Dict[int, PlayerStats]:
+def get_all_stats() -> Dict[int, pkts.PlayerStats]:
     """Get stats for all players"""
     global __tracker_client
     return __tracker_client.get_all_player_stats()
@@ -801,25 +846,24 @@ def get_location(slot_id: int, location_id: int) -> str | None:
 
 async def main() -> None:
 
+    global __args
     global __std_client
     global __tasks
     global __tracker_client
 
-    args = parse_args()
+    # Parse commandline args
+    __args = parse_args()
 
     # Configure logging
     logging.basicConfig(
-        level=getattr(logging, args.loglevel.upper(), logging.INFO),
-        format=f"[AGENT]    {'%(asctime)s\t' if args.logtime else ''}%(levelname)s:\t%(message)s | Port: {args.port}",
+        level=getattr(logging, __args.loglevel.upper(), logging.INFO),
+        format=f"[AGENT]    {'%(asctime)s\t' if __args.logtime else ''}%(levelname)s:\t%(message)s | Port: {__args.port}",
         handlers=[logging.StreamHandler(sys.stderr)]
     )
 
-    # Just print the values
-    logging.info(f"Starting tracker client process...")
-
-    # Create new tracker client instance
+    # Instantiate clients
     __std_client = StdClient()
-    __tracker_client = TrackerClient(args)
+    __tracker_client = TrackerClient(__args)
 
     # Gather and start all asynchronous tasks, exiting when any task completes
     __tasks = [
@@ -839,6 +883,22 @@ async def main() -> None:
 
     # Exit
     sys.exit()
+
+def parse_args() -> argparse.Namespace:
+    """Parse command-line arguments"""
+
+    defaults = get_settings().discord_agent_options.as_dict()
+
+    parser = argparse.ArgumentParser(prog="Tracker Client.py", description="Archipelago Discord Tracker Client")
+    parser.add_argument("--port", type=int, help="The full URL to the archipelago session.")
+    parser.add_argument("--password", type=str, help="The password for the server or slot.")
+    parser.add_argument("--multidata", type=str, help="The path to the multidata file.")
+    parser.add_argument("--savedata", type=str, help="The path to the save data file.")
+    parser.add_argument("--loglevel", default=defaults["loglevel"], type=str)
+    parser.add_argument("--logtime", default=defaults["logtime"], type=bool)
+
+    args = parser.parse_args()
+    return args
 
 if __name__ == "__main__":
     asyncio.run(main())

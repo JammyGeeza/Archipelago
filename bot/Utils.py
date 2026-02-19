@@ -6,13 +6,26 @@ from dataclasses import MISSING, fields, is_dataclass
 from datetime import datetime, timedelta
 from typing import Any, ClassVar, Dict, Union, get_args, get_origin
 
+class Action(enum.IntEnum):
+    """Action enum values"""
+    ADD         = 1 >> 0
+    REMOVE      = 1 >> 1
+    CLEAR       = 1 >> 2
+
 class ClientStatus(enum.IntEnum):
     """Client status enum values"""
-    UNKNOWN = 0
-    CONNECTED = 5
-    READY = 10
-    PLAYING = 20
-    GOAL = 30
+    UNKNOWN     = 0
+    CONNECTED   = 5
+    READY       = 10
+    PLAYING     = 20
+    GOAL        = 30
+
+class ItemFlags(enum.IntFlag):
+    """Item classification flags"""
+    FILLER      = 0b000
+    PROGRESSION = 0b001
+    USEFUL      = 0b010
+    TRAP        = 0b100
 
 class Jsonable:
     """Base class for converting to json."""
