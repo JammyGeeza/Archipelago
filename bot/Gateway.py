@@ -119,7 +119,7 @@ class AgentProcess:
             # case pkts.StatusUpdatePacket.cmd:
             #     await self.__handle_statusupdate_packet(packet)
 
-            case pkts.StatisticsResponsePacket.cmd | pkts.StatusResponsePacket.cmd:
+            case pkts.NotificationsResponsePacket.cmd | pkts.StatisticsResponsePacket.cmd | pkts.StatusResponsePacket.cmd:
                 await self.__handle_response_packet(packet)
 
             # case pkts.StoredStatsPacket.cmd:
@@ -696,25 +696,22 @@ async def notify_hints(interaction: discord.Interaction, finder: str, action: in
     if not (agent:= get_agent(config)):
         await interaction.followup.send(f"{interaction.channel.jump_url} is bound to a port but its process is not running.", ephemeral=True)
         return
-    
-    # Check if player exists
-    if not (slot_id:= agent.get_player_slot(finder)):
-        await interaction.followup.send(f"No player found with name `{finder}` - please check the name and try again.", ephemeral=True)
-        return
 
     # Request notification change and await response
     response: pkts.NotificationsResponsePacket = await agent.request(pkts.NotificationsRequestPacket(
         id=uuid.uuid4().hex,
         action=action,
         user_id=interaction.user.id,
-        channel_id=interaction.channel_id,
-        slot_id=slot_id,
+        player=finder,
         hints=item_type,
     ))
 
     # Validate response
-    if not response or not response.success:
+    if not response:
         await interaction.followup.send(f"Unable to set hint notification preferences - please wait a moment and try again.", ephemeral=True)
+        return
+    elif not response.success:
+        await interaction.followup.send(response.message)
         return
 
     match action:

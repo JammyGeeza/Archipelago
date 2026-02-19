@@ -14,7 +14,6 @@ class Agent:
 class Notification:
     port: int
     user_id: int
-    channel_id: int
     slot_id: int
     hints: Optional[int]
     types: Optional[int]
@@ -42,46 +41,10 @@ class Store:
         # self._init()
 
         self.configs = RoomConfigRepo(self._conn)
-        # self.notifications = NotificationRepo(self._conn)
-
-        # self.agents = AgentRepo(self._conn)
-        # self.rooms = RoomRepo(self._conn)
+        self.notifications = NotificationRepo(self._conn)
 
     def _conn(self):
         return sqlite3.connect(self.path)
-    
-    def _init(self):
-
-        # Create table if it doesn't exist already
-        with self._conn() as connection:
-
-            # Create table for agent bindings
-            connection.execute("""
-                CREATE TABLE IF NOT EXISTS agents (
-                      id            INTEGER PRIMARY KEY AUTOINCREMENT,
-                      guild_id      INTEGER NOT NULL,
-                      channel_id    INTEGER NOT NULL,
-                      port          INTEGER NOT NULL,
-                      password      TEXT,
-
-                      UNIQUE (guild_id, channel_id),
-                      UNIQUE (port)
-                )
-            """)
-
-            # Create table for room data
-            connection.execute("""
-                CREATE TABLE IF NOT EXISTS rooms (
-                    port        INTEGER PRIMARY KEY,
-                    multidata   TEXT    NOT NULL,
-                    savedata    TEXT    NOT NULL,
-                               
-                    UNIQUE(multidata),
-                    UNIQUE(savedata)
-                )
-            """)
-
-            connection.commit()
 
 class NotificationRepo:
 
@@ -93,19 +56,36 @@ class NotificationRepo:
 
     def _init(self):
         with self._conn() as connection:
-            connection.execute("""
-                CREATE TABLE IF NOT EXISTS notifications (
-                    port        INTEGER PRIMARY KEY,
+            connection.execute(f"""
+                CREATE TABLE IF NOT EXISTS {self.table_name} (
+                    port        INTEGER NOT NULL,
                     user_Id     INTEGER NOT NULL,
-                    channel_id  INTEGER NOT NULL,
                     slot_id     INTEGER NOT NULL,
                     hints       INTEGER,
                     types       INTEGER,
                     terms       TEXT,
                     
-                    UNIQUE(port, user_id channel_id, slot_id)
+                    UNIQUE(port, user_id, slot_id)
                 )
             """)
+            connection.commit()
+
+    def get_or_create(self, port: int, user_id: int, slot_id: int) -> Optional[Notification]:
+        """Get a notification item or create one if it doesn't exist."""
+
+        try:
+            if (notification:= self.get(port, user_id, slot_id)):
+                return notification
+            else:
+                return self.upsert(Notification(
+                    port=port,
+                    user_id=user_id,
+                    slot_id=slot_id
+                )) 
+
+        except Exception as ex:
+            logging.warning(f"Error in {self.table_name} get_or_create(): {ex}")
+            return None
 
     def upsert(self, notif: Notification) -> Optional[Notification]:
         """Insert or update a notification."""
@@ -113,14 +93,14 @@ class NotificationRepo:
         try:
             with self._conn() as connection:
                 connection.execute(f"""
-                    INSERT INTO {self.table_name} (port, user_id, channel_id, slot_id, hints, types, terms)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
-                    ON CONFLICT(port, user_id, channel_id, slot_id) DO UPDATE SET
+                    INSERT INTO {self.table_name} (port, user_id, slot_id, hints, types, terms)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                    ON CONFLICT(port, user_id, slot_id) DO UPDATE SET
                         hints = excluded.hints,
                         types = excluded.types,
                         terms = excluded.terms
                     """,
-                    (notif.port, notif.user_id, notif.channel_id, notif.slot_id, notif.hints, notif.types, notif.terms)
+                    (notif.port, notif.user_id, notif.slot_id, notif.hints, notif.types, notif.terms)
                 )
                 connection.commit()
 
@@ -130,20 +110,19 @@ class NotificationRepo:
             logging.warning(f"Error in {self.table_name} upsert: {ex}")
             return None
 
-    def get(self, port: int, user_id: int, channel_id: int, slot_id: int) -> Optional[Notification]:
+    def get(self, port: int, user_id: int, slot_id: int) -> Optional[Notification]:
         """Get a notification."""
 
         try:
             with self._conn() as connection:
                 notif = connection.execute(f"""
-                    SELECT port, user_id, channel_id, slot_id, hints, types, terms
+                    SELECT port, user_id, slot_id, hints, types, terms
                     FROM {self.table_name}
                     WHERE port = ?
                         AND user_id = ?
-                        AND channel_id = ?
                         AND slot_id = ?
                     """,
-                    (port, user_id, channel_id, slot_id)
+                    (port, user_id, slot_id)
                 ).fetchone()
                 
                 return Notification(*notif)
@@ -162,10 +141,9 @@ class NotificationRepo:
                     FROM {self.table_name}
                     WHERE port = ?
                         AND user_id = ?
-                        AND channel_id = ?
                         AND slot_id = ?
                     """,
-                    (notif.port, notif.user_id, notif.channel_id, notif.slot_id)
+                    (notif.port, notif.user_id, notif.slot_id)
                 )
                 
                 return True

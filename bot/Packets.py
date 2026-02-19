@@ -164,13 +164,21 @@ class IdentifiablePacket(TrackerPacket):
 
 @register_packet
 @dataclass
+class InvalidRequestPacket(IdentifiablePacket):
+    """Packet sent to gateway in response to an invalid Request packet"""
+    cmd: ClassVar[str] = "InvalidRequest"
+    original_cmd: str = ""
+    message: str = ""
+
+@register_packet
+@dataclass
 class NotificationsRequestPacket(IdentifiablePacket):
     """Packet sent to agent to request Notification setup."""
     cmd: ClassVar[str] = "NotificationsRequest"
     action: int = 0
     channel_id: int = 0
     user_id: int = 0
-    slot_id: int = 0
+    player: str = ""
     hints: Optional[int] = None
     types: Optional[int] = None
     terms: Optional[List[str]] = None

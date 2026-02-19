@@ -9,7 +9,8 @@ import threading
 import websockets
 
 from settings import get_settings
-from bot.Utils import ClientStatus, Hookable, ItemQueue
+from bot.Store import Store, Notification
+from bot.Utils import Action, ClientStatus, Hookable, ItemFlags, ItemQueue
 from datetime import datetime
 from typing import Dict, List, Optional
 from websockets.asyncio.client import connect
@@ -487,6 +488,10 @@ class TrackerClient:
         """Get the stats for a player."""
         return self.__stats_lookup.get(slot_id, None)
 
+    def get_slot(self, name: str) -> int | None:
+        """Get the slot id for a player by name."""
+        return next((slot for slot, player in self.__player_lookup.items() if name.casefold() == player.name.casefold()), None)
+
     def get_session_stats(self) -> pkts.SessionStats:
         """Get the stats for the session."""
         return pkts.SessionStats(
@@ -595,6 +600,9 @@ class TrackerClient:
 
 # Arguments
 __args: argparse.Namespace
+
+# Store
+__store: Store
 
 # Variables
 __item_queue: Dict[int, ItemQueue] = {}
@@ -754,7 +762,56 @@ async def __on_std_error(client: StdClient, msg: str):
 async def __on_notifications_request(client: StdClient, packet: pkts.NotificationsRequestPacket):
     """Handle an incoming notifications request."""
 
-    logging.info("Got the notification request!")
+    global __store
+    global __tracker_client
+
+    # Validate the player name
+    if not (slot_id:= __tracker_client.get_slot(packet.player)):
+        await send(pkts.NotificationsResponsePacket(
+            id=packet.id,
+            success=False,
+            message=f"Player with name `{packet.player}` could not be found."
+        ))
+        return
+    
+    # TODO: Validate the flags??
+    #       I could probably do this in __post_init__()...
+    
+    # Check if notification exists, create if it doesn't
+    if not (notif:= __store.notifications.get_or_create(__tracker_client.port, packet.user_id, slot_id)):
+        await send(pkts.NotificationsResponsePacket(
+            id=packet.id,
+            success=False,
+            message="An error occurred while attempting to get or create notification preferences."
+        ))
+        return
+    
+    # Adjust hints if provided
+    if packet.hints:
+        notif.hints = (notif.hints | packet.hints) if packet.action == Action.ADD else (notif.hints & ~packet.hints)
+
+    # Adjust types if provided
+    if packet.types:
+        notif.types = (notif.types | packet.types) if packet.action == Action.ADD else (notif.types & ~packet.types)
+
+    # Adjust terms if provided
+    if packet.terms:
+        notif.terms = list(set(notif.terms) | set(packet.terms)) if packet.action == Action.ADD else list(set(notif.terms) - set(packet.terms))
+
+    # Save changes
+    if not (notif:= __store.notifications.upsert(notif)):
+        await send(pkts.NotificationsResponsePacket(
+            id=packet.id,
+            success=False,
+            message="An error occurred while attempting to store the notification preferences."
+        ))
+        return
+    
+    # Respond
+    await send(pkts.NotificationsResponsePacket(
+        id=packet.id,
+        success=True
+    ))
 
 @StdClient.on_statistics_request
 async def __on_statistics_request(client: StdClient, packet: pkts.StatisticsRequestPacket):
@@ -847,6 +904,7 @@ def get_location(slot_id: int, location_id: int) -> str | None:
 async def main() -> None:
 
     global __args
+    global __store
     global __std_client
     global __tasks
     global __tracker_client
@@ -860,6 +918,9 @@ async def main() -> None:
         format=f"[AGENT]    {'%(asctime)s\t' if __args.logtime else ''}%(levelname)s:\t%(message)s | Port: {__args.port}",
         handlers=[logging.StreamHandler(sys.stderr)]
     )
+
+    # Instantiate store
+    __store = Store()
 
     # Instantiate clients
     __std_client = StdClient()
