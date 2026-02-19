@@ -2,7 +2,8 @@
 
 import argparse
 import asyncio
-import bot.Packets as pkts
+# import bot.Packets as pkts
+import bot.Utils as utils
 import discord
 import json
 import logging
@@ -12,8 +13,8 @@ import uuid
 
 from discord import app_commands
 from discord.ext import commands
-from bot.Store import Agent, Notification, Store, RoomConfig
-from bot.Utils import Action, Hookable, ItemFlags
+from bot.Store import Agent, Store, RoomConfig
+# from bot.Utils import Action, Hookable, NotifyFlags
 from typing import Dict, Literal, List, Optional, Tuple
 
 # Global variables
@@ -23,16 +24,16 @@ store = Store()
 
 class AgentProcess:
 
-    on_discord_message_received = Hookable()
-    on_hint_received = Hookable()
-    on_item_received = Hookable()
-    on_status_received = Hookable()
+    on_discord_message_received = utils.Hookable()
+    on_hint_received = utils.Hookable()
+    on_item_received = utils.Hookable()
+    on_status_received = utils.Hookable()
 
     def __init__(self, config: RoomConfig):
 
         self.config: RoomConfig = config
         self.process: asyncio.subprocess.Process = None
-        # self.stats: Dict[str, pkts.PlayerStats] = {}
+        # self.stats: Dict[str, utils.PlayerStats] = {}
         self.status: str = "Stopped"
         
         self.__player_lookup: dict[str, int] = {}               # Player Name-to-Id lookup
@@ -41,12 +42,12 @@ class AgentProcess:
         self.rcv_queue: asyncio.Queue = asyncio.Queue()
         self.snd_queue: asyncio.Queue = asyncio.Queue()
 
-    async def send(self, packet: pkts.TrackerPacket):
+    async def send(self, packet: utils.TrackerPacket):
         """Send a payload to the agent process."""
         logging.info(f"Sending {packet.cmd} to gateway...")
         await self.__send(packet.to_json())
 
-    async def request(self, request: pkts.IdentifiablePacket) -> pkts.IdentifiablePacket:
+    async def request(self, request: utils.IdentifiablePacket) -> utils.IdentifiablePacket:
         """Request an action and await a response."""
 
         logging.info(f"Sending request... | Type: {request.cmd} | ID: {request.id}")
@@ -106,26 +107,31 @@ class AgentProcess:
         # Terminate process
         self.process.terminate()
 
-    async def __handle_packet(self, packet: pkts.TrackerPacket):
+    async def __handle_packet(self, packet: utils.TrackerPacket):
         """Handle a received packet from the agent process"""
 
         logging.info(f"Handling {packet.cmd} packet...")
 
         match packet.cmd:
 
-            case pkts.DiscordMessagePacket.cmd:
+            case utils.DiscordMessagePacket.cmd:
                 await self.__handle_discordmessage_packet(packet)
 
-            # case pkts.StatusUpdatePacket.cmd:
+            # case utils.StatusUpdatePacket.cmd:
             #     await self.__handle_statusupdate_packet(packet)
 
-            case pkts.NotificationsResponsePacket.cmd | pkts.StatisticsResponsePacket.cmd | pkts.StatusResponsePacket.cmd:
+            case utils.ErrorPacket.cmd | utils.InvalidPacket.cmd:
+                logging.warning(f"Received {packet.cmd} packet with message: '{packet.message}'")
+                if packet.id:
+                    await self.__handle_response_packet(packet)
+
+            case utils.NotificationsResponsePacket.cmd | utils.StatisticsResponsePacket.cmd | utils.StatusResponsePacket.cmd:
                 await self.__handle_response_packet(packet)
 
-            # case pkts.StoredStatsPacket.cmd:
+            # case utils.StoredStatsPacket.cmd:
             #     await self.__handle_storedstats_packet(packet)
 
-            case pkts.TrackerInfoPacket.cmd:
+            case utils.TrackerInfoPacket.cmd:
                 await self.__handle_trackerinfo_packet(packet)
 
             case _:
@@ -137,15 +143,15 @@ class AgentProcess:
             
         #     # Convert to appropriate packet type
 
-        #     await pkts.TrackerPacket.receive(data, self)
+        #     await utils.TrackerPacket.receive(data, self)
 
     async def __send(self, json: str):
         """Send data to the agent process."""
         self.process.stdin.write(f"{json}\n".encode("utf-8"))
         await self.process.stdin.drain()
 
-    # @pkts.DiscordMessagePacket.on_received
-    async def __handle_discordmessage_packet(self, packet: pkts.DiscordMessagePacket):
+    # @utils.DiscordMessagePacket.on_received
+    async def __handle_discordmessage_packet(self, packet: utils.DiscordMessagePacket):
         """Handler for receiving a discord message packet."""
 
         logging.info(f"Received {packet.cmd} from :{self.config.port}")
@@ -153,8 +159,8 @@ class AgentProcess:
         # Trigger event
         await self.on_discord_message_received.run(packet.message)
 
-    # @pkts.StatusUpdatePacket.on_received
-    # async def __handle_statusupdate_packet(self, packet: pkts.StatusUpdatePacket):
+    # @utils.StatusUpdatePacket.on_received
+    # async def __handle_statusupdate_packet(self, packet: utils.StatusUpdatePacket):
     #     """Handle receipt of a status packet"""
         
     #     logging.info(f"Received {packet.cmd} from :{self.config.port}")
@@ -165,9 +171,9 @@ class AgentProcess:
     #     # Trigger event
     #     await self.on_status_received.run(packet.message)
 
-    # @pkts.StatisticsResponsePacket.on_received
-    # @pkts.StatusResponsePacket.on_received
-    async def __handle_response_packet(self, packet: pkts.IdentifiablePacket):
+    # @utils.StatisticsResponsePacket.on_received
+    # @utils.StatusResponsePacket.on_received
+    async def __handle_response_packet(self, packet: utils.IdentifiablePacket):
         """Handler for receiving a response packet"""
 
         logging.info(f"Received {packet.cmd} from :{self.config.port}")
@@ -176,14 +182,14 @@ class AgentProcess:
         if (future:= self.__request_queue.get(packet.id)):
             future.set_result(packet)
 
-    # @pkts.StoredStatsPacket.on_received
-    # async def __handle_storedstats_packet(self, packet: pkts.StoredStatsPacket):
+    # @utils.StoredStatsPacket.on_received
+    # async def __handle_storedstats_packet(self, packet: utils.StoredStatsPacket):
     #     """Handler for receiving stored stats."""
 
     #     # Update stored stats
     #     self.stats.update({ k: v for k, v in packet.stats.items() })
 
-    async def __handle_trackerinfo_packet(self, packet: pkts.TrackerInfoPacket):
+    async def __handle_trackerinfo_packet(self, packet: utils.TrackerInfoPacket):
         """Handle an incoming TrackerInfo packet"""
 
         # Update player lookup (and reverse to name-to-id)
@@ -199,7 +205,7 @@ class AgentProcess:
                 # Convert from json and handle
                 for data in json.loads(payload):
                     await self.__handle_packet(
-                        pkts.TrackerPacket.parse(data)
+                        utils.TrackerPacket.parse(data)
                     )
 
     async def __watch(self):
@@ -225,13 +231,13 @@ class AgentProcess:
         """Get the slot number for a player by name (ignoring case)"""
         return next((slot for name, slot in self.__player_lookup.items() if player_name.casefold() == name.casefold()), None)
 
-    def get_player_stats(self, player_name: str) -> pkts.PlayerStats | None:
+    def get_player_stats(self, player_name: str) -> utils.PlayerStats | None:
         """Get stats for a player."""
         return self.stats.get(player_name, None)
 
-    def get_session_stats(self) -> pkts.PlayerStats | None:
+    def get_session_stats(self) -> utils.PlayerStats | None:
         """Returns stats for the entire session."""
-        stats: pkts.PlayerStats = pkts.PlayerStats(
+        stats: utils.PlayerStats = utils.PlayerStats(
             checked=sum(stats.checked for stats in self.stats.values()),
             goal=sum(1 for stats in self.stats.values() if stats.goal), # HACK
             remaining=sum(stats.remaining for stats in self.stats.values()),
@@ -289,7 +295,7 @@ async def _on_agent_discord_message_received(agent: AgentProcess, message: str):
     await post_message(agent.config.channel_id, message)
 
 @AgentProcess.on_hint_received
-async def _on_agent_hint_received(agent: AgentProcess, recipient: int, item: pkts.NetworkItem):
+async def _on_agent_hint_received(agent: AgentProcess, recipient: int, item: utils.NetworkItem):
     """Handler for when a hint is received from an agent."""
     await post_message(agent.config.channel_id, f"**[HINT]**: `{recipient}'s` **{item.item}** **_({item.flags})_** can be found at `{item.player}'s` **{item.location}** :eyes:")
 
@@ -327,7 +333,7 @@ async def create_agent(config: RoomConfig) -> AgentProcess:
     # Start agent process
     await agent.start()
 
-def generate_player_stats_embed(agent: AgentProcess, slot_id: int, stats: pkts.PlayerStats) -> discord.Embed:
+def generate_player_stats_embed(agent: AgentProcess, slot_id: int, stats: utils.PlayerStats) -> discord.Embed:
     """Generate an embed for a stats command response."""
 
     embed = discord.Embed(
@@ -341,7 +347,7 @@ def generate_player_stats_embed(agent: AgentProcess, slot_id: int, stats: pkts.P
 
     return embed
 
-def generate_player_stats_description(agent: AgentProcess, stats: pkts.PlayerStats) -> str:
+def generate_player_stats_description(agent: AgentProcess, stats: utils.PlayerStats) -> str:
     """Generate the description string for a player stats embed."""
 
     # Calculate totals and percentages
@@ -355,7 +361,7 @@ def generate_player_stats_description(agent: AgentProcess, stats: pkts.PlayerSta
         f"**Goaled**: {"Yes" if stats.goal else "No"}"
     )
 
-def generate_session_stats_embed(agent: AgentProcess, stats: pkts.SessionStats) -> discord.Embed:
+def generate_session_stats_embed(agent: AgentProcess, stats: utils.SessionStats) -> discord.Embed:
     """Generate an embed for a session stats command response"""
 
     embed = discord.Embed(
@@ -369,7 +375,7 @@ def generate_session_stats_embed(agent: AgentProcess, stats: pkts.SessionStats) 
 
     return embed
 
-def generate_session_stats_description(agent: AgentProcess, stats: pkts.SessionStats) -> str:
+def generate_session_stats_description(agent: AgentProcess, stats: utils.SessionStats) -> str:
     """Generate the description string for a session stats embed."""
 
     # Calculate totals and percentages
@@ -535,14 +541,15 @@ async def _list(interaction: discord.Interaction):
 
     # Get agent bindings for guild
     if not (room_configs:= store.configs.get_all_by_guild(interaction.guild_id)):
-        await interaction.followup.send(f"No channels bound to ports could be found.", ephemeral=True)
+        await interaction.followup.send(f"No channels are bound to any sessions - use the `/bind` command to bind one.", ephemeral=True)
         return
     
     # Compile response
-    response: str = "This server has the following bound channel(s):"
+    response: str = "This server has the following bindings:"
     for config in room_configs:
-        response += f"\n- <#{config.channel_id}> is bound to `{config.url}`\n"
+        response += f"\n- <#{config.channel_id}> is bound to the session at `:{config.port}`\n"
 
+    # Respond
     await interaction.followup.send(response, ephemeral=True)
 
 @bot.tree.command(name="stats_session", description="List of players. E.g. Player1,Player2 etc.")
@@ -567,14 +574,14 @@ async def stats_session(interaction: discord.Interaction):
         return
 
     # Request stats
-    response = await agent.request(pkts.StatisticsRequestPacket(
+    response = await agent.request(utils.StatisticsRequestPacket(
         id=uuid.uuid4().hex,
-        slots=[],
-        session=True
+        players=[],
+        include_session=True
     ))
 
     # Validate stats
-    if not response or not response.session:
+    if response.is_error() or not response.session:
         await interaction.followup.send("Failed to retrieve stats - please wait a moment and try again.", ephemeral=True)
         return
 
@@ -606,30 +613,27 @@ async def stats_players(interaction: discord.Interaction, players: str):
         await interaction.followup.send(f"{interaction.channel.jump_url} is bound to a port but its process is not running.", ephemeral=True)
         return
 
-    # Validate player names
-    if not (names:= list(dict.fromkeys(player for player in players.strip().split(",") if player))):
+    # Validate player input
+    if not (names:= list(dict.fromkeys(player.strip() for player in players.strip().split(",") if player and player.strip()))):
         await interaction.followup.send(f"Please provide a list of comma-separated player names. _(E.g. `Player1,Player2,Player3`)_", ephemeral=True)
         return
     
-    # Validate slots
-    slots: Dict[str, int] = { name: agent.get_player_slot(name) for name in names }
-    if (invalid_names:= [ name for name, id in slots.items() if not id ]):
-        await interaction.followup.send(f"Could not find player(s) with name(s) {", ".join([f"`{inv_name}`" for inv_name in invalid_names])} - please check the names and try again.", ephemeral=True)
-        return
-    
     # Request stats
-    response = await agent.request(pkts.StatisticsRequestPacket(
+    response = await agent.request(utils.StatisticsRequestPacket(
         id=uuid.uuid4().hex,
-        slots=[slot_id for slot_id in slots.values()],
-        session=False
+        players=names,
+        include_session=False
     ))
 
-    # Validate stats
-    if not response or not response.slots:
-        await interaction.followup.send("Failed to retrieve stats - please wait a moment and try again.", ephemeral=True)
+    # Validate response
+    if response.is_error():
+        await interaction.followup.send(f"Error retrieving player stats: '**_{response.message}_**'.", ephemeral=True)
+        return
+    elif not response.slots:
+        await interaction.followup.send(f"Unable to retrieve player stats - please wait a moment and try again.", ephemeral=True)
         return
 
-    # Respond with stats embeds
+    # Respond with stats embed(s)   
     await interaction.followup.send(
         embeds=[ generate_player_stats_embed(agent, slot, stats) for slot, stats in response.slots.items() ],
         ephemeral=True
@@ -648,33 +652,38 @@ async def status(interaction: discord.Interaction):
 
     # Check if binding exists
     if not (config:= store.configs.get_by_channel(interaction.guild_id, interaction.channel_id)):
-        await interaction.followup.send(f"{interaction.channel.jump_url} is not currently bound to a port.", ephemeral=True)
+        await interaction.followup.send(f"This channel is not currently bound to a session - use the `/bind` command to bind it", ephemeral=True)
         return
 
     # Attempt to get process
     if not (agent:= get_agent(config)):
-        await interaction.followup.send(f"{interaction.channel.jump_url} is bound to `:{config.port}` but its process is not running.", ephemeral=True)
+        await interaction.followup.send(f"The client bound to `:{config.port}` is not currently running - use the `/connect` command to connect it.", ephemeral=True)
         return
     
     # Request status from agent
-    await agent.request(pkts.StatusRequestPacket(
+    response = await agent.request(utils.StatusRequestPacket(
         id=uuid.uuid4().hex
     ))
 
+    # Validate response
+    if response.is_error():
+        await interaction.followup.send(f"Error retrieving current status: **_{response.message}_**", ephemeral=True)
+        return
+
     # Respond with status
-    await interaction.followup.send(f"{interaction.channel.jump_url} is currently `{agent.get_status()}`", ephemeral=True)
+    await interaction.followup.send(f"The client bound to the session at `:{agent.config.port}` is currently `{response.status}`.", ephemeral=True)
 
 @bot.tree.command(name="notify_hints", description="Notify on hints received")
 @app_commands.describe(finder="The finding player name", action="Action to perform", item_type="Notify for item type")
 @app_commands.choices(
     action=[
-        app_commands.Choice(name="Add", value=Action.ADD),
-        app_commands.Choice(name="Remove", value=Action.REMOVE),
+        app_commands.Choice(name="Add", value=utils.Action.ADD),
+        app_commands.Choice(name="Remove", value=utils.Action.REMOVE),
     ],
     item_type=[
-        app_commands.Choice(name="Progression", value=ItemFlags.PROGRESSION),
-        app_commands.Choice(name="Useful", value=ItemFlags.USEFUL),
-        app_commands.Choice(name="Both", value=ItemFlags.PROGRESSION | ItemFlags.USEFUL)
+        app_commands.Choice(name="Progression", value=utils.NotifyFlags.PROGRESSION),
+        app_commands.Choice(name="Useful", value=utils.NotifyFlags.USEFUL),
+        app_commands.Choice(name="Both", value=utils.NotifyFlags.PROGRESSION | utils.NotifyFlags.USEFUL)
     ]
 )
 async def notify_hints(interaction: discord.Interaction, finder: str, action: int, item_type: int):
@@ -698,7 +707,7 @@ async def notify_hints(interaction: discord.Interaction, finder: str, action: in
         return
 
     # Request notification change and await response
-    response: pkts.NotificationsResponsePacket = await agent.request(pkts.NotificationsRequestPacket(
+    response: utils.NotificationsResponsePacket = await agent.request(utils.NotificationsRequestPacket(
         id=uuid.uuid4().hex,
         action=action,
         user_id=interaction.user.id,
@@ -707,26 +716,28 @@ async def notify_hints(interaction: discord.Interaction, finder: str, action: in
     ))
 
     # Validate response
-    if not response:
-        await interaction.followup.send(f"Unable to set hint notification preferences - please wait a moment and try again.", ephemeral=True)
+    if response.is_error():
+        await interaction.followup.send(f"Error setting hint preferences: '**_{response.message}_**'.", ephemeral=True)
         return
-    elif not response.success:
-        await interaction.followup.send(response.message)
-        return
+    
+    # Respond with appropriate message
+    if response.notification.hints == utils.NotifyFlags.NONE.value:
+        await interaction.followup.send(f"You now have no hint notifications for `{finder}`.", ephemeral=True)
+    else:
+        await interaction.followup.send(f"You will now receive a {interaction.user.mention} when `{finder}` is the target of **{utils.NotifyFlags(response.notification.hints).to_text()}** item hints.", ephemeral=True)
 
-    match action:
-        case Action.ADD:
-            await interaction.followup.send(f"You will now receive a {interaction.user.mention} when `{finder}` is the target of **Progression** hints.", ephemeral=True)
-
-        case Action.REMOVE:
-            await interaction.followup.send(f"You will no longer be mentioned when `{finder}` is the target for hints.", ephemeral=True)
-
-@bot.tree.command(name="notify_items_terms", description="Notify on item terms received")
+@bot.tree.command(name="notify_terms", description="Notify on item terms received")
 @app_commands.describe(recipient="Player receiving the item(s)", action="Action to perform", terms="E.g. Orb,Frame,Scraps etc.")
-async def notify_items_terms(interaction: discord.Interaction, recipient: str, action: Literal["Add", "Remove", "Clear"], terms: Optional[str] = ""):
+@app_commands.choices(
+    action=[
+        app_commands.Choice(name="Add", value=utils.Action.ADD),
+        app_commands.Choice(name="Remove", value=utils.Action.REMOVE),
+    ]
+)
+async def notify_terms(interaction: discord.Interaction, recipient: str, action: int, terms: str):
     """Command to modify notifications for received item terms."""
 
-    logging.info(f"Notify Item Terms requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id}")
+    logging.info(f"Notify Terms requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id}")
 
     # Defer response
     await interaction.response.defer(thinking=True, ephemeral=True)
@@ -741,38 +752,50 @@ async def notify_items_terms(interaction: discord.Interaction, recipient: str, a
         await interaction.followup.send(f"{interaction.channel.jump_url} is bound to a port but its process is not running.", ephemeral=True)
         return
     
-    # Check if player exists
-    if not agent.player_exists(recipient):
-        await interaction.followup.send(f"No player found with name `{recipient}` - please check the name and try again.", ephemeral=True)
+    # Validate arguments
+    if not (term_list:= list(dict.fromkeys(term.strip() for term in terms.strip().split(",") if term and term.strip()))):
+        await interaction.followup.send(f"Please provide a valid, comma-separated list of terms to {utils.Action(action).name.lower()}. _(E.g. `Frame,Orb,Scraps`)_ ", ephemeral=True)
         return
     
-    # Split terms by ',' delimiter
-    term_list: List[str] = [term.strip() for term in terms.split(",") if term]
+    # Request notification change and await response
+    response: utils.NotificationsResponsePacket = await agent.request(utils.NotificationsRequestPacket(
+        id=uuid.uuid4().hex,
+        action=action,
+        user_id=interaction.user.id,
+        player=recipient,
+        terms=term_list
+    ))
 
-    # Validate params
-    if action in [ "Add", "Remove" ] and not terms or not term_list:
-        await interaction.followup.send(f"Please provide a valid, comma-separated list of terms to {action.lower()}. _(E.g. `Frame,Orb,Scraps`)_ ", ephemeral=True)
+    # Validate response
+    if response.is_error():
+        await interaction.followup.send(f"Error setting hint preferences: '**_{response.message}_**'.", ephemeral=True)
         return
     
-    match action:
-        case "Add":
-            # TODO: Actually implement this
-            await interaction.followup.send(f"You will now receive a {interaction.user.mention} when `{recipient}` receives items containing the term(s) {", ".join([f"`{term}`" for term in term_list])}", ephemeral=True)
+    # Respond with appropriate message
+    if not response.notification.terms:
+        await interaction.followup.send(f"You now have no item term notifications for `{recipient}`.", ephemeral=True)
+    else:
+        await interaction.followup.send(f"You will now receive a {interaction.user.mention} when `{recipient}` receives items containing term(s): {", ".join([f"`{term}`" for term in response.notification.terms.split(",")])}.", ephemeral=True)
 
-        case "Remove": 
-            # TODO: Actually implement this
-            await interaction.followup.send(f"You will no longer be mentioned when `{recipient}` receives items containing the term(s) `{", ".join([f"`{term}`" for term in term_list])}`.", ephemeral=True)
-
-        case "Clear":
-            # TODO: Actually implement this
-            await interaction.followup.send(f"You will no longer be mentioned for any item terms for `{recipient}`.", ephemeral=True)
-
-@bot.tree.command(name="notify_items_types", description="Notify on item types received")
-@app_commands.describe(recipient="Player receiving the item(s)", action="Action to perform", type="Item type")
-async def notify_items_types(interaction: discord.Interaction, recipient: str, action: Literal["Add", "Remove", "Clear"], type: Optional[Literal["Progression", "Useful", "Filler", "All"]] = ""):
+@bot.tree.command(name="notify_types", description="Notify on item types received")
+@app_commands.describe(recipient="Player receiving the item(s)", action="Action to perform", item_type="Type of item to notify")
+@app_commands.choices(
+    action=[
+        app_commands.Choice(name="Add", value=utils.Action.ADD),
+        app_commands.Choice(name="Remove", value=utils.Action.REMOVE),
+    ],
+    item_type=[
+        app_commands.Choice(name="Progression", value=utils.NotifyFlags.PROGRESSION),
+        app_commands.Choice(name="Useful", value=utils.NotifyFlags.USEFUL),
+        app_commands.Choice(name="Trap", value=utils.NotifyFlags.TRAP),
+        app_commands.Choice(name="Filler", value=utils.NotifyFlags.FILLER),
+        app_commands.Choice(name="All", value=utils.NotifyFlags.PROGRESSION | utils.NotifyFlags.USEFUL | utils.NotifyFlags.TRAP | utils.NotifyFlags.FILLER)
+    ]
+)
+async def notify_types(interaction: discord.Interaction, recipient: str, action: int, item_type: int):
     """Command to modify notifications for received item types."""
 
-    logging.info(f"Notify Item Types requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id}")
+    logging.info(f"Notify Types requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id}")
 
     # Defer response
     await interaction.response.defer(thinking=True, ephemeral=True)
@@ -787,28 +810,25 @@ async def notify_items_types(interaction: discord.Interaction, recipient: str, a
         await interaction.followup.send(f"{interaction.channel.jump_url} is bound to a port but its process is not running.", ephemeral=True)
         return
     
-    # Check if player exists
-    if not agent.player_exists(recipient):
-        await interaction.followup.send(f"No player found with name `{recipient}` - please check the name and try again.", ephemeral=True)
+    # Request notification change and await response
+    response: utils.NotificationsResponsePacket = await agent.request(utils.NotificationsRequestPacket(
+        id=uuid.uuid4().hex,
+        action=action,
+        user_id=interaction.user.id,
+        player=recipient,
+        types=item_type
+    ))
+
+    # Validate response
+    if response.is_error():
+        await interaction.followup.send(f"Error setting hint preferences: '**_{response.message}_**'.", ephemeral=True)
         return
     
-    # Validate params
-    if action in [ "Add", "Remove" ] and not type:
-        await interaction.followup.send(f"Please provide an item type to {action.lower()}. _(E.g. `Useful`)_", ephemeral=True)
-        return
-    
-    match action:
-        case "Add":
-            # TODO: Actually implement this
-            await interaction.followup.send(f"You will now receive a {interaction.user.mention} when `{recipient}` receives '{type}' items.", ephemeral=True)
-
-        case "Remove": 
-            # TODO: Actually implement this
-            await interaction.followup.send(f"You will no longer be mentioned when `{recipient}` receives `{type}` items.", ephemeral=True)
-
-        case "Clear":
-            # TODO: Actually implement this
-            await interaction.followup.send(f"You will no longer be mentioned for any item types for `{recipient}`.", ephemeral=True)
+    # Respond with appropriate message
+    if response.notification.types == utils.NotifyFlags.NONE.value:
+        await interaction.followup.send(f"You now have no item type notifications for `{recipient}`.", ephemeral=True)
+    else:
+        await interaction.followup.send(f"You will now receive a {interaction.user.mention} when `{recipient}` receives **{utils.NotifyFlags(response.notification.types).to_text()}** items.", ephemeral=True)
 
 #endregion
 

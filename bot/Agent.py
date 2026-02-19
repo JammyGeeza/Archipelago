@@ -1,6 +1,6 @@
 import argparse
 import asyncio
-import bot.Packets as pkts
+import bot.Utils as utils
 import json
 import logging
 import math
@@ -9,8 +9,7 @@ import threading
 import websockets
 
 from settings import get_settings
-from bot.Store import Store, Notification
-from bot.Utils import Action, ClientStatus, Hookable, ItemFlags, ItemQueue
+from bot.Store import Store
 from datetime import datetime
 from typing import Dict, List, Optional
 from websockets.asyncio.client import connect
@@ -19,10 +18,10 @@ from websockets.exceptions import ConnectionClosed
 class StdClient:
 
     # Events
-    on_error = Hookable()
-    on_notifications_request = Hookable()
-    on_statistics_request = Hookable()
-    on_status_request = Hookable()
+    on_error = utils.Hookable()
+    on_notifications_request = utils.Hookable()
+    on_statistics_request = utils.Hookable()
+    on_status_request = utils.Hookable()
 
     def __init__(self):
         self.__attempt: int = 0
@@ -39,20 +38,20 @@ class StdClient:
         """Get the next timeout duration."""
         return self.__attempt_timeouts[self.__attempt - 1] if self.__attempt < len(self.__attempt_timeouts) else self.__attempt_timeouts[-1]
 
-    async def __handle_packet(self, packet: pkts.TrackerPacket):
+    async def __handle_packet(self, packet: utils.TrackerPacket):
         """Handle an incoming packet"""
 
         logging.info(f"Received {packet.cmd} from gateway.")
 
         try:
             match packet.cmd:
-                case pkts.NotificationsRequestPacket.cmd:
+                case utils.NotificationsRequestPacket.cmd:
                     await self.on_notifications_request.run(packet)
 
-                case pkts.StatisticsRequestPacket.cmd:
+                case utils.StatisticsRequestPacket.cmd:
                     await self.on_statistics_request.run(packet)
 
-                case pkts.StatusRequestPacket.cmd:
+                case utils.StatusRequestPacket.cmd:
                     await self.on_status_request.run(packet)
                     
                 case _:
@@ -60,7 +59,12 @@ class StdClient:
         
         except Exception as ex:
             logging.error(f"Unexpected error handling {packet.cmd} packet: {ex}")
-            await self.on_error.run(ex)
+
+            await self.send(utils.InvalidPacket(
+                id=packet.id or "",
+                original_cmd=packet.cmd or "",
+                message=f"{ex}"
+            ))
 
     async def __read_loop(self):
         """Read data from the stdin pipe."""
@@ -85,7 +89,7 @@ class StdClient:
                 # Convert from json
                 for data in json.loads(line):
                     await self.__handle_packet(
-                        pkts.TrackerPacket.parse(data)
+                        utils.TrackerPacket.parse(data)
                     )
                 
         except asyncio.CancelledError:
@@ -109,7 +113,7 @@ class StdClient:
         try:
             while self.__run:
 
-                packet: pkts.TrackerPacket = await self.__send_queue.get()
+                packet: utils.TrackerPacket = await self.__send_queue.get()
 
                 # Skip if empty
                 if not packet:
@@ -125,7 +129,7 @@ class StdClient:
         except Exception as ex:
             logging.error(f"Unexpected error in std client __write_loop() task: '{ex}'")
 
-    async def send(self, packet: pkts.TrackerPacket):
+    async def send(self, packet: utils.TrackerPacket):
         """Send a packet to the stdout pipe"""
         await self.__send_queue.put(packet)
 
@@ -207,13 +211,13 @@ class StdClient:
 class TrackerClient:
     
     # Hookable methods
-    on_collect = Hookable()
-    on_connection_state_changed = Hookable()
-    on_error = Hookable() # TODO: Actually trigger this when things go wrong.
-    on_goal = Hookable()
-    on_hint = Hookable()
-    on_item = Hookable()
-    on_release = Hookable()
+    on_collect = utils.Hookable()
+    on_connection_state_changed = utils.Hookable()
+    on_error = utils.Hookable() # TODO: Actually trigger this when things go wrong.
+    on_goal = utils.Hookable()
+    on_hint = utils.Hookable()
+    on_item = utils.Hookable()
+    on_release = utils.Hookable()
 
     #region Private Methods
 
@@ -230,8 +234,8 @@ class TrackerClient:
         self.__goal_lookup: Dict[int, bool] = {}
         self.__item_lookup: Dict[str, Dict[int, str]] = {}
         self.__location_lookup: Dict[str, Dict[int, str]] = {}
-        self.__player_lookup: Dict[int, pkts.NetworkSlot] = {}
-        self.__stats_lookup: Dict[int, pkts.PlayerStats] = {}
+        self.__player_lookup: Dict[int, utils.NetworkSlot] = {}
+        self.__stats_lookup: Dict[int, utils.PlayerStats] = {}
 
         self.port: int = args.port
         self.multidata_path: str = args.multidata
@@ -246,7 +250,7 @@ class TrackerClient:
         """Get next attempt timeout duration (in seconds)"""
         return self.__attempt_timeouts[self.__attempt - 1] if self.__attempt < len(self.__attempt_timeouts) else self.__attempt_timeouts[-1]
 
-    async def __handle_packet(self, packet: pkts.TrackerPacket):
+    async def __handle_packet(self, packet: utils.TrackerPacket):
         """Handle an incoming packet."""
 
         logging.info(f"Handling {packet.cmd} packet...")
@@ -254,25 +258,25 @@ class TrackerClient:
         try:
             match packet.cmd:
 
-                case pkts.ConnectedPacket.cmd:
+                case utils.ConnectedPacket.cmd:
                     await self.__handle_connected_packet(packet)
 
-                case pkts.ConnectionRefusedPacket.cmd:
+                case utils.ConnectionRefusedPacket.cmd:
                     await self.__handle_connection_refused_packet(packet)
 
-                case pkts.DataPackagePacket.cmd:
+                case utils.DataPackagePacket.cmd:
                     await self.__handle_datapackage_packet(packet)
 
-                case pkts.PrintJSONPacket.cmd:
+                case utils.PrintJSONPacket.cmd:
                     await self.__handle_printjson_packet(packet)
 
-                case pkts.RetrievedPacket.cmd:
+                case utils.RetrievedPacket.cmd:
                     await self.__handle_retrieved_packet(packet)
 
-                case pkts.RoomInfoPacket.cmd:
+                case utils.RoomInfoPacket.cmd:
                     await self.__handle_roominfo_packet(packet)
 
-                case pkts.StatsPacket.cmd:
+                case utils.StatsPacket.cmd:
                     await self.__handle_stats_packet(packet)
 
                 case _:
@@ -280,9 +284,10 @@ class TrackerClient:
 
         except Exception as ex:
             logging.error(f"Unexpected error handling {packet.cmd} packet: {ex}")
+            # TODO: Respond with InvalidPacket instead
             await self.on_error.run(ex)
 
-    async def __handle_connected_packet(self, packet: pkts.ConnectedPacket):
+    async def __handle_connected_packet(self, packet: utils.ConnectedPacket):
         """Handle an incoming Connected packet."""
 
         # Store player lookup
@@ -290,12 +295,12 @@ class TrackerClient:
 
         # Request data packet for each unique game (could do this all in one request, but I think some games are HUGE)
         for game in set([player.game for slot, player in self.__player_lookup.items() if player.game != "Archipelago" ]):
-            await self.__send_packet(pkts.GetDataPackagePacket(games=[game]))
+            await self.__send_packet(utils.GetDataPackagePacket(games=[game]))
 
         # Request stats
-        await self.__send_packet(pkts.GetStatsPacket(slots=[slot for slot in self.__player_lookup.keys()]))
+        await self.__send_packet(utils.GetStatsPacket(slots=[slot for slot in self.__player_lookup.keys()]))
 
-    async def __handle_connection_refused_packet(self, packet: pkts.ConnectionRefusedPacket):
+    async def __handle_connection_refused_packet(self, packet: utils.ConnectionRefusedPacket):
         """Handle an incoming ConnectionRefused packet."""
 
         # Trigger event
@@ -304,14 +309,14 @@ class TrackerClient:
         # Disconnect
         await self.__websocket.close(reason=f"Connection refused by server for reason(s): {", ".join(packet.errors)}")
 
-    async def __handle_datapackage_packet(self, packet: pkts.DataPackagePacket):
+    async def __handle_datapackage_packet(self, packet: utils.DataPackagePacket):
         """Handle an incoming DataPackage packet."""
 
         # Store game lookups (and reverse to ID: Name)
         self.__item_lookup.update({ game: { id: name for name, id in data.item_name_to_id.items() } for game, data in packet.data.games.items() })
         self.__location_lookup.update({ game: { id: name for name, id in data.location_name_to_id.items() } for game, data in packet.data.games.items() })
 
-    async def __handle_printjson_packet(self, packet: pkts.PrintJSONPacket):
+    async def __handle_printjson_packet(self, packet: utils.PrintJSONPacket):
         """Handle an incoming PrintJSON packet"""
 
         match packet.type:
@@ -326,7 +331,7 @@ class TrackerClient:
                     stats.goal = True
                 else:
                     # Request stats if they don't exist
-                    await self.__send_packet(pkts.GetStatsPacket(slots=[packet.slot]))
+                    await self.__send_packet(utils.GetStatsPacket(slots=[packet.slot]))
 
                 # Trigger goal event
                 await self.on_goal.run(packet.slot)
@@ -342,7 +347,7 @@ class TrackerClient:
                     stats.remaining -= 1
                 else:
                     # Request stats if they don't exist
-                    await self.__send_packet(pkts.GetStatsPacket(slots=[packet.item.player]))
+                    await self.__send_packet(utils.GetStatsPacket(slots=[packet.item.player]))
 
                 # Trigger item event
                 await self.on_item.run(packet.receiving, packet.item)
@@ -354,7 +359,7 @@ class TrackerClient:
             case _:
                 logging.info(f"PrintJSON ({packet.type}) are not currently handled.")
 
-    async def __handle_retrieved_packet(self, packet: pkts.RetrievedPacket):
+    async def __handle_retrieved_packet(self, packet: utils.RetrievedPacket):
         """Handle an incoming Retrieved packet."""
 
         # Cycle through key/values
@@ -362,13 +367,13 @@ class TrackerClient:
 
             # Update goal statuses
             if key.startswith("_read_client_status_"):
-                self.__goal_lookup.update({ int(key[-1]) : int(value) == ClientStatus.GOAL.value })
+                self.__goal_lookup.update({ int(key[-1]) : int(value) == utils.ClientStatus.GOAL.value })
 
-    async def __handle_roominfo_packet(self, packet: pkts.RoomInfoPacket):
+    async def __handle_roominfo_packet(self, packet: utils.RoomInfoPacket):
         """Handle an incoming RoomInfo packet."""
 
         # Send connection packet
-        connect_packet = pkts.ConnectPacket(
+        connect_packet = utils.ConnectPacket(
             game="",
             items_handling=0b0001,
             name="Botipelago",
@@ -376,7 +381,7 @@ class TrackerClient:
             slot_data=False,
             tags=["Bot", "Deathlink", "Tracker"],
             uuid=f"botipelago_spectator",
-            version=pkts.NetworkVersion(
+            version=utils.NetworkVersion(
                 major=0,
                 minor=6,
                 build=4
@@ -384,7 +389,7 @@ class TrackerClient:
         )
         await self.__send_packet(connect_packet)
 
-    async def __handle_stats_packet(self, packet: pkts.StatsPacket):
+    async def __handle_stats_packet(self, packet: utils.StatsPacket):
         """Handler for when a Stats packet is received."""
 
         # Update stats lookup
@@ -404,7 +409,7 @@ class TrackerClient:
 
                 for packet in json.loads(payload):
                     await self.__handle_packet(
-                        pkts.TrackerPacket.parse(packet)
+                        utils.TrackerPacket.parse(packet)
                     )
 
         except asyncio.CancelledError:
@@ -417,7 +422,7 @@ class TrackerClient:
         except Exception as ex:
             logging.error(f"Unexpected error in tracker client __listen_loop() task: '{ex}'")
 
-    async def __send_packet(self, packet: pkts.TrackerPacket):
+    async def __send_packet(self, packet: utils.TrackerPacket):
         """Send a packet to the websocket server"""
 
         logging.info(f"Sending {packet.cmd} packet...")
@@ -450,13 +455,13 @@ class TrackerClient:
 
     #region Public Methods
 
-    def get_all_player_stats(self) -> Dict[int, pkts.PlayerStats]:
+    def get_all_player_stats(self) -> Dict[int, utils.PlayerStats]:
         """Get stats for all players."""
         return self.__player_lookup
 
     def get_game_name(self, slot_id: int) -> str | None:
         """Get the name of a player's game."""
-        return self.__player_lookup.get(slot_id, pkts.NetworkSlot()).game
+        return self.__player_lookup.get(slot_id, utils.NetworkSlot()).game
 
     def get_goal_count(self) -> int:
         """Get the current amount of goals reached."""
@@ -482,9 +487,9 @@ class TrackerClient:
 
     def get_player_name(self, slot_id: int) -> str | None:
         """Get the name of a player."""
-        return self.__player_lookup.get(slot_id, pkts.NetworkSlot).name
+        return self.__player_lookup.get(slot_id, utils.NetworkSlot).name
     
-    def get_player_stats(self, slot_id: int) -> pkts.PlayerStats | None:
+    def get_player_stats(self, slot_id: int) -> utils.PlayerStats | None:
         """Get the stats for a player."""
         return self.__stats_lookup.get(slot_id, None)
 
@@ -492,9 +497,9 @@ class TrackerClient:
         """Get the slot id for a player by name."""
         return next((slot for slot, player in self.__player_lookup.items() if name.casefold() == player.name.casefold()), None)
 
-    def get_session_stats(self) -> pkts.SessionStats:
+    def get_session_stats(self) -> utils.SessionStats:
         """Get the stats for the session."""
-        return pkts.SessionStats(
+        return utils.SessionStats(
             checked=sum(stats.checked for stats in self.__stats_lookup.values()),
             goals=sum(1 for stats in self.__stats_lookup.values() if stats.goal),
             # players=self.get_player_count(),
@@ -605,7 +610,7 @@ __args: argparse.Namespace
 __store: Store
 
 # Variables
-__item_queue: Dict[int, ItemQueue] = {}
+__item_queue: Dict[int, utils.ItemQueue] = {}
 __tasks: List[asyncio.Task] = []
 
 # Clients
@@ -618,7 +623,7 @@ def queue_item(slot_id: int, item_id: int):
     global __item_queue
 
     # Get/Create queue for recipient
-    queue: ItemQueue = __item_queue.get(slot_id, ItemQueue())
+    queue: utils.ItemQueue = __item_queue.get(slot_id, utils.ItemQueue())
     queue.add(item_id)
 
     # Update recipient's queue
@@ -653,7 +658,7 @@ def split_at_separator(text: str, limit: int = 2000, separator: str = ", ") -> L
 
     return chunks
 
-async def send(packet: pkts.TrackerPacket):
+async def send(packet: utils.TrackerPacket):
     """Send a packet to the gateway"""
     global __std_client
     await __std_client.send(packet)
@@ -664,7 +669,7 @@ async def send(packet: pkts.TrackerPacket):
 async def __on_collect(client, slot_id: int):
     """Handler for a slot collecting their remaining items."""
     msg: str = f"`{get_player(slot_id)}` has collected all of their items for **{get_game(slot_id)}** from other worlds."
-    await send(pkts.DiscordMessagePacket(message=msg))
+    await send(utils.DiscordMessagePacket(message=msg))
 
 @TrackerClient.on_connection_state_changed
 async def __on_connection_state_changed(client, state: str, errors: List[str] = []):
@@ -692,7 +697,7 @@ async def __on_connection_state_changed(client, state: str, errors: List[str] = 
             msg = f"Client is now tracking `:{client.port}`"
 
             # Send tracker info
-            await send(pkts.TrackerInfoPacket(
+            await send(utils.TrackerInfoPacket(
                 players={ k: v.name for k, v in client.get_players().items() }
             ))
 
@@ -700,12 +705,12 @@ async def __on_connection_state_changed(client, state: str, errors: List[str] = 
             return
     
     # Send status update
-    await send(pkts.DiscordMessagePacket(message=msg))
+    await send(utils.DiscordMessagePacket(message=msg))
 
 @TrackerClient.on_error
 async def __on_error(client, msg: str):
     """Handler for the tracker client experiencing an error."""
-    await send(pkts.DiscordMessagePacket(message=f"Client encountered an unexpected error: '{msg}'."))
+    await send(utils.DiscordMessagePacket(message=f"Client encountered an unexpected error: '{msg}'."))
 
 @TrackerClient.on_goal
 async def __on_goal(client, slot_id: int):
@@ -721,19 +726,19 @@ async def __on_goal(client, slot_id: int):
         f"**{goals}/{players} _({percentage}%)_** goals have " + "been reached so far!" if goals < players else "now been reached!"
     ]
     
-    await send(pkts.DiscordMessagePacket(message="\n".join(lines)))
+    await send(utils.DiscordMessagePacket(message="\n".join(lines)))
 
 @TrackerClient.on_hint
-async def __on_hint(client, receiver: int, item: pkts.NetworkItem, found: bool):
+async def __on_hint(client, receiver: int, item: utils.NetworkItem, found: bool):
     """Handler for a slot receiving a hint."""
 
     # If item flags contains 'progression' and is not already found, send to gateway
     if item.flags & 0b001 and not found:
         msg:str = f"**[HINT]**: `{get_player(receiver)}'s` **{get_item(receiver, item.item)} _({item.flags})_** is located at `{get_player(item.player)}'s` **{get_location(item.player, item.location)}** check."
-        await send(pkts.DiscordMessagePacket(message=msg))
+        await send(utils.DiscordMessagePacket(message=msg))
 
 @TrackerClient.on_item
-async def __on_item(client, receiver: int, item: pkts.NetworkItem):
+async def __on_item(client, receiver: int, item: utils.NetworkItem):
     """Handler for an item being received."""
 
     # Add to item queue
@@ -745,7 +750,7 @@ async def __on_release(client, slot_id: int):
 
     # Send release message
     msg: str = f"`{get_player(slot_id)}` has released all of their remaining items from **{get_game(slot_id)}**."
-    await send(pkts.DiscordMessagePacket(message=msg))
+    await send(utils.DiscordMessagePacket(message=msg))
 
 #endregion
 
@@ -756,10 +761,10 @@ async def __on_std_error(client: StdClient, msg: str):
     """Handle an error from the std client."""
 
     # TODO: Figure out if this is the right thing to do...
-    await send(pkts.DiscordMessagePacket(message=f"Client encountered an unexpected error: '{msg}'."))
+    await send(utils.DiscordMessagePacket(message=f"Client encountered an unexpected error: '{msg}'."))
 
 @StdClient.on_notifications_request
-async def __on_notifications_request(client: StdClient, packet: pkts.NotificationsRequestPacket):
+async def __on_notifications_request(client: StdClient, packet: utils.NotificationsRequestPacket):
     """Handle an incoming notifications request."""
 
     global __store
@@ -767,9 +772,9 @@ async def __on_notifications_request(client: StdClient, packet: pkts.Notificatio
 
     # Validate the player name
     if not (slot_id:= __tracker_client.get_slot(packet.player)):
-        await send(pkts.NotificationsResponsePacket(
+        await send(utils.InvalidPacket(
             id=packet.id,
-            success=False,
+            original_cmd=packet.cmd,
             message=f"Player with name `{packet.player}` could not be found."
         ))
         return
@@ -779,67 +784,75 @@ async def __on_notifications_request(client: StdClient, packet: pkts.Notificatio
     
     # Check if notification exists, create if it doesn't
     if not (notif:= __store.notifications.get_or_create(__tracker_client.port, packet.user_id, slot_id)):
-        await send(pkts.NotificationsResponsePacket(
+        await send(utils.ErrorPacket(
             id=packet.id,
-            success=False,
+            original_cmd=packet.cmd,
             message="An error occurred while attempting to get or create notification preferences."
         ))
         return
     
     # Adjust hints if provided
     if packet.hints:
-        notif.hints = (notif.hints | packet.hints) if packet.action == Action.ADD else (notif.hints & ~packet.hints)
+        notif.hints = ((notif.hints or utils.NotifyFlags.NONE) | packet.hints) if packet.action == utils.Action.ADD else ((notif.hints or utils.NotifyFlags.NONE) & ~packet.hints)
 
     # Adjust types if provided
     if packet.types:
-        notif.types = (notif.types | packet.types) if packet.action == Action.ADD else (notif.types & ~packet.types)
+        notif.types = ((notif.types or utils.NotifyFlags.NONE) | packet.types) if packet.action == utils.Action.ADD else ((notif.types or utils.NotifyFlags.NONE) & ~packet.types)
 
     # Adjust terms if provided
     if packet.terms:
-        notif.terms = list(set(notif.terms) | set(packet.terms)) if packet.action == Action.ADD else list(set(notif.terms) - set(packet.terms))
+        notif.terms = ",".join(list(set([term for term in notif.terms.split(",") if term] or []) | set(packet.terms)) if packet.action == utils.Action.ADD else list(set([term for term in notif.terms.split(",") if term] or []) - set(packet.terms)))
 
     # Save changes
     if not (notif:= __store.notifications.upsert(notif)):
-        await send(pkts.NotificationsResponsePacket(
+        await send(utils.ErrorPacket(
             id=packet.id,
-            success=False,
             message="An error occurred while attempting to store the notification preferences."
         ))
         return
     
     # Respond
-    await send(pkts.NotificationsResponsePacket(
+    await send(utils.NotificationsResponsePacket(
         id=packet.id,
-        success=True
+        notification=notif
     ))
 
 @StdClient.on_statistics_request
-async def __on_statistics_request(client: StdClient, packet: pkts.StatisticsRequestPacket):
+async def __on_statistics_request(client: StdClient, packet: utils.StatisticsRequestPacket):
     """Handle an incoming statistics request."""
 
     global __tracker_client
 
+    # Validate player names
+    slot_ids = { name: __tracker_client.get_slot(name) for name in packet.players }
+    if (invalid_names:= [ name for name, slot_id in slot_ids.items() if not slot_id ]):
+        await send(utils.InvalidPacket(
+            id=packet.id,
+            message=f"No player(s) found with name(s) {", ".join([f"`{invalid}`" for invalid in invalid_names ])}"
+        ))
+        return
+
     # Add stats for each valid slot requested
-    player_stats: Dict[int, pkts.PlayerStats] = {}
-    for slot in packet.slots:
+    player_stats: Dict[int, utils.PlayerStats] = {}
+    for slot in slot_ids.values():
         if (stat:= __tracker_client.get_player_stats(slot)):
             player_stats.update({ slot: stat })
 
     # Respond with stats for player
-    await client.send(pkts.StatisticsResponsePacket(
+    await client.send(utils.StatisticsResponsePacket(
         id=packet.id,
         slots=player_stats,
-        session=__tracker_client.get_session_stats() if packet.session else None
+        session=__tracker_client.get_session_stats() if packet.include_session else None
     ))
 
 @StdClient.on_status_request
-async def __on_status_request(client: StdClient, packet: pkts.StatusRequestPacket):
+async def __on_status_request(client: StdClient, packet: utils.StatusRequestPacket):
     """Handle an incoming status request."""
 
     global __tracker_client
 
     # Respond with current status
-    await client.send(pkts.StatusResponsePacket(
+    await client.send(utils.StatusResponsePacket(
         id=packet.id,
         status=__tracker_client.get_status()
     ))
@@ -859,12 +872,12 @@ async def __item_loop():
 
             # Send message(s) for each expired queue
             for recipient in expired:
-                queue: ItemQueue = __item_queue.pop(recipient, ItemQueue())
+                queue: utils.ItemQueue = __item_queue.pop(recipient, utils.ItemQueue())
                 msg: str = f"`{get_player(recipient)}` received their " + ", ".join([f"**{get_item(recipient, item_id)}**" + (f" **_(x{count})_**" if count > 1 else "") for item_id, count in queue.items.items()])
 
                 # Split at "," separator to fit messages within message limit and send to gateway
                 for chunk in split_at_separator(msg):
-                    await send(pkts.DiscordMessagePacket(message=chunk))
+                    await send(utils.DiscordMessagePacket(message=chunk))
             
             # Brief timeout
             await asyncio.sleep(2)
@@ -876,7 +889,7 @@ async def __item_loop():
     except Exception as ex:
         logging.error(f"Unexpected error in agent __item_loop() task: '{ex}'")
 
-def get_all_stats() -> Dict[int, pkts.PlayerStats]:
+def get_all_stats() -> Dict[int, utils.PlayerStats]:
     """Get stats for all players"""
     global __tracker_client
     return __tracker_client.get_all_player_stats()

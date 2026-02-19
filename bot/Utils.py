@@ -1,16 +1,18 @@
 import enum
 import inspect
+import logging
 import json
+import uuid
 
-from dataclasses import MISSING, fields, is_dataclass
+from dataclasses import MISSING, dataclass, field, fields, is_dataclass
 from datetime import datetime, timedelta
-from typing import Any, ClassVar, Dict, Union, get_args, get_origin
+from typing import Any, Callable, ClassVar, Dict, List, Optional, Type, Union, get_args, get_origin
 
 class Action(enum.IntEnum):
     """Action enum values"""
-    ADD         = 1 >> 0
-    REMOVE      = 1 >> 1
-    CLEAR       = 1 >> 2
+    ADD         = 1 << 0
+    REMOVE      = 1 << 1
+    CLEAR       = 1 << 2
 
 class ClientStatus(enum.IntEnum):
     """Client status enum values"""
@@ -20,12 +22,22 @@ class ClientStatus(enum.IntEnum):
     PLAYING     = 20
     GOAL        = 30
 
-class ItemFlags(enum.IntFlag):
+class NotifyFlags(enum.IntFlag):
     """Item classification flags"""
-    FILLER      = 0b000
-    PROGRESSION = 0b001
-    USEFUL      = 0b010
-    TRAP        = 0b100
+    NONE        = 0
+    FILLER      = 1 << 0
+    PROGRESSION = 1 << 1
+    USEFUL      = 1 << 2
+    TRAP        = 1 << 3
+
+    def to_text(self) -> str:
+        """Get text representation of all applied flags."""
+        if self == NotifyFlags.NONE:
+            return NotifyFlags.NONE.name.title()
+        
+        return ", ".join(
+            flag.name.title() for flag in type(self) if flag != 0 and flag in self
+        )
 
 class Jsonable:
     """Base class for converting to json."""
@@ -137,6 +149,23 @@ class Hookable:
 
         return BoundHook()
     
+
+
+#region Data Objects
+
+@dataclass
+class GameData(Jsonable):
+    """Object containing game lookup data."""
+    class_: str = field(default="GameData", metadata={"json": "class"})
+    location_name_to_id: Dict[str, int] = field(default_factory=dict)
+    item_name_to_id: Dict[str, int] = field(default_factory=dict)
+
+@dataclass
+class DataPackageObject(Jsonable):
+    """Object containing data package data"""
+    games: Dict[str, GameData] = field(default_factory=dict)
+
+# TODO: Make this match other data classes
 class ItemQueue:
     def __init__(self):
         self.items: Dict[int, int] = {}
@@ -145,3 +174,373 @@ class ItemQueue:
     def add(self, item_id: int):
         self.items[item_id] = self.items.get(item_id, 0) + 1
         self.expires = datetime.now() + timedelta(seconds=2)
+
+@dataclass
+class PlayerStats(Jsonable):
+    """Object containing stats for a player"""
+    class_: str = field(default="PlayerStats", metadata={"json": "class"})
+    checked: int = 0
+    goal: bool = False
+    received: int = 0
+    remaining: int = 0
+
+@dataclass
+class PrintJSONSegment(Jsonable):
+    """Object containing a PrintJSON text segment."""
+    flags: int = 0
+    player: int = 0
+    text: str = ""
+    type: str = ""
+
+@dataclass
+class NetworkItem(Jsonable):
+    """Object containing item data."""
+    class_: str = field(default="NetworkItem", metadata={"json": "class"})
+    item: int = 0
+    location: int = 0
+    player: int = 0
+    flags: int = 0
+
+@dataclass
+class NetworkPlayer(Jsonable):
+    """Object containing player data."""
+    class_: str = field(default="NetworkPlayer", metadata={"json": "class"})
+    alias: str = ""
+    name: str = ""
+    slot: int = 0
+
+@dataclass
+class NetworkSlot(Jsonable):
+    """Object containing player data."""
+    class_: str = field(default="NetworkSlot", metadata={"json": "class"})
+    game: str = ""
+    name: str = ""
+
+@dataclass
+class NetworkVersion(Jsonable):
+    """Object containing the 'supported' archipelago version"""
+    class_: str = field(default="Version", metadata={"json": "class"})
+    major: int = 0
+    minor: int = 0
+    build: int = 0
+
+@dataclass
+class Notification(Jsonable):
+    port: int
+    user_id: int
+    slot_id: int
+    hints: int = 0
+    types: int = 0
+    terms: str = ""
+    class_: str = field(default="Notification", metadata={"json": "class"})
+
+@dataclass
+class SessionStats(Jsonable):
+    """Object containing stats for a session."""
+    class_: str = field(default="SessionStats", metadata={"json": "class"})
+    checked: int = 0
+    goals: int = 0
+    remaining: int = 0
+
+#endregion
+
+#region Packet Base Classes
+
+@dataclass
+class TrackerPacket(Jsonable):
+    """Base class for agent packets"""
+
+    _handlers: ClassVar[Dict[str, Callable[[dict], None]]] = {}
+    _types: ClassVar[Dict[str, Type["TrackerPacket"]]] = {}
+    cmd: ClassVar[str]
+    
+    def __post_init__(self):
+        if not getattr(self.__class__, "cmd", None):
+            raise NotImplementedError(
+                f"{self.__class__.__name__} must define a class-level type."
+            )
+    
+    def is_error(self) -> bool:
+        """Is this packet related to an error?"""
+        return self.cmd in [
+            InvalidPacket.cmd,
+            ErrorPacket.cmd
+        ]
+
+    def to_dict(self) -> Dict[Any, Any]:
+        dct = super().to_dict()
+        dct["cmd"] = self.__class__.cmd
+        return dct
+    
+    def to_json(self) -> str:
+        return json.dumps([self.to_dict()])
+    
+    @classmethod
+    def parse(cls, data: dict) -> "TrackerPacket":
+
+        pkt_type = data.get("cmd")
+        if pkt_type not in cls._types:
+            logging.warning(f"Unregistered packet type '{pkt_type}'.")
+            return None
+        
+        pkt_cls = cls._types[pkt_type]
+
+        data = dict(data)
+        data.pop("cmd", None)
+
+        return pkt_cls.from_dict(data)
+    
+    @classmethod
+    def register_packet(cls, packet_cls: Type["TrackerPacket"]):
+        """Register packet type for json parsing"""
+        TrackerPacket._types[packet_cls.cmd] = packet_cls
+        return packet_cls
+    
+    # @classmethod
+    # def on_received(cls, fn):
+    #     """Handler when packet is received"""
+
+    #     if cls.cmd in TrackerPacket._handlers:
+    #         raise RuntimeError(
+    #             f"on_received() handler is already registered for {cls.cmd}"
+    #         )
+        
+    #     TrackerPacket._handlers[cls.cmd] = fn
+    #     return fn
+    
+    # @staticmethod
+    # async def receive(json_obj: Dict[Any, Any], ctx: Optional[Any] = None):
+    #     """Receive and convert a json packet payload"""
+    #     packet = TrackerPacket.parse(json_obj)
+    #     if not packet:
+    #         return
+        
+    #     handler = TrackerPacket._handlers.get(packet.__class__.cmd)
+    #     if not handler:
+    #         logging.warning(f"No handler registered for type {packet.__class__.cmd}")
+    #         return
+        
+    #     result = handler(ctx, packet)
+    #     if inspect.isawaitable(result):
+    #         await result
+
+@dataclass
+class IdentifiablePacket(TrackerPacket):
+    """Base class for request packets"""
+    cmd: ClassVar[str] = "Request"
+    id: str
+
+    def __post_init__(self):
+        # Force an ID to be provided
+        if not self.id or not isinstance(self.id, str):
+            self.id = uuid.uuid4().hex
+
+#endregion
+
+#region Archipelago Packets
+
+@TrackerPacket.register_packet
+@dataclass
+class ConnectPacket(TrackerPacket):
+    """Packet to request connection to server"""
+    cmd: ClassVar[str] = "Connect"
+    game: str = ""
+    items_handling: int = 0b000
+    name: str = ""
+    password: Optional[str] = None
+    slot_data: bool = False
+    tags: List[str] = field(default_factory=list)
+    uuid: str = ""
+    version: NetworkVersion = field(default_factory=NetworkVersion)
+
+@TrackerPacket.register_packet
+@dataclass
+class ConnectionRefusedPacket(TrackerPacket):
+    """Packet received when connection is refused by the server"""
+    cmd: ClassVar[str] = "ConnectionRefused"
+    errors: List[str] = field(default_factory=list)
+
+
+@TrackerPacket.register_packet
+@dataclass
+class ConnectedPacket(TrackerPacket):
+    """Packet received on successful connection."""
+    cmd: ClassVar[str] = "Connected"
+    players: List[NetworkPlayer] = field(default_factory=list)
+    slot_info: Dict[int, NetworkSlot] = field(default_factory=dict)
+
+@TrackerPacket.register_packet
+@dataclass
+class DataPackagePacket(TrackerPacket):
+    """Packet containing game lookup data"""
+    cmd: ClassVar[str] = "DataPackage"
+    data: DataPackageObject = field(default_factory=DataPackageObject)
+
+@TrackerPacket.register_packet
+@dataclass
+class GetPacket(TrackerPacket):
+    """Packet sent to server to request key data."""
+    cmd: ClassVar[str] = "Get"
+    keys: List[str] = field(default_factory=list)
+
+@TrackerPacket.register_packet
+@dataclass
+class GetDataPackagePacket(TrackerPacket):
+    """Packet sent to server to request DataPackage."""
+    cmd: ClassVar[str] = "GetDataPackage"
+    games: List[str] = field(default_factory=dict)
+
+@TrackerPacket.register_packet
+@dataclass
+class GetStatsPacket(TrackerPacket):
+    """Packet sent to server to request stats."""
+    cmd: ClassVar[str] = "GetStats"
+    slots: List[int] = field(default_factory=list)
+
+@TrackerPacket.register_packet
+@dataclass
+class InvalidPacket(TrackerPacket):
+    """Packet received when a packet is invalid."""
+    cmd: ClassVar[str] = "InvalidPacket"
+    id: Optional[str] = ""
+    original_cmd: Optional[str] = ""
+    message: str = ""
+
+@TrackerPacket.register_packet
+@dataclass
+class PrintJSONPacket(TrackerPacket):
+    """Packet received when messages are received."""
+    cmd: ClassVar[str] = "PrintJSON"
+    data: List[PrintJSONSegment] = field(default_factory=list)
+    found: bool = False
+    receiving: int = 0
+    item: NetworkItem = field(default_factory=NetworkItem)
+    slot: int = 0
+    team: int = 0
+    type: str = ""
+
+@TrackerPacket.register_packet
+@dataclass
+class RetrievedPacket(TrackerPacket):
+    """Packet received with data requested from 'Get' packet."""
+    cmd: ClassVar[str] = "Retrieved"
+    keys: Dict[str, Any] = field(default_factory=dict)
+
+@TrackerPacket.register_packet
+@dataclass
+class RoomInfoPacket(TrackerPacket):
+    """Packet received on websocket connection."""
+    cmd: ClassVar[str] = "RoomInfo"
+    games: List[str] = field(default_factory=list)
+    password: bool = False
+    tags: List[str] = field(default_factory=list)
+
+@TrackerPacket.register_packet
+@dataclass
+class SetNotifyPacket(TrackerPacket):
+    """Packet sent to be notified when stored keys change."""
+    cmd: ClassVar[str] = "SetNotify"
+    keys: List[str] = field(default_factory=list)
+
+@TrackerPacket.register_packet
+@dataclass
+class SetReplyPacket(TrackerPacket):
+    """Packet received when notified of a key change."""
+    cmd: ClassVar[str] = "SetReply"
+    key: str = ""
+    value: Any = ""
+    original_value: Any = ""
+    slot: int = 0
+
+@TrackerPacket.register_packet
+@dataclass
+class StatsPacket(TrackerPacket):
+    """Packet received as a response to 'GetStats' packet."""
+    cmd: ClassVar[str] = "Stats"
+    stats: Dict[int, PlayerStats] = field(default_factory=dict)
+
+#endregion
+
+#region Tracker Packets
+
+@TrackerPacket.register_packet
+@dataclass
+class DiscordMessagePacket(TrackerPacket):
+    """Packet containing a message to be posted to the discord channel."""
+    cmd: ClassVar[str] = "DiscordMessage"
+    message: str = ""
+
+@TrackerPacket.register_packet
+@dataclass
+class ErrorPacket(TrackerPacket):
+    """Packet sent when an error occurs during an operation."""
+    cmd: ClassVar[str] = "Error"
+    id: Optional[str] = ""
+    original_cmd: Optional[str] = ""
+    message: str = ""
+
+@TrackerPacket.register_packet
+@dataclass
+class InvalidRequestPacket(IdentifiablePacket):
+    """Packet sent to gateway in response to an invalid Request packet"""
+    cmd: ClassVar[str] = "InvalidRequest"
+    original_cmd: str = ""
+    message: str = ""
+
+@TrackerPacket.register_packet
+@dataclass
+class NotificationsRequestPacket(IdentifiablePacket):
+    """Packet sent to agent to request Notification setup."""
+    cmd: ClassVar[str] = "NotificationsRequest"
+    action: int = 0
+    channel_id: int = 0
+    user_id: int = 0
+    player: str = ""
+    hints: Optional[int] = None
+    types: Optional[int] = None
+    terms: Optional[List[str]] = None
+
+@TrackerPacket.register_packet
+@dataclass
+class NotificationsResponsePacket(IdentifiablePacket):
+    """Packet sent to gateway in response to a NotificationRequest packet."""
+    cmd: ClassVar[str] = "NotificationsResponse"
+    notification: Notification
+
+@TrackerPacket.register_packet
+@dataclass
+class StatisticsRequestPacket(IdentifiablePacket):
+    """Packet sent to agent to request statistics for players."""
+    cmd: ClassVar[str] = "StatisticsRequest"
+    players: List[str] = field(default_factory=list)
+    include_session: bool = False
+
+@TrackerPacket.register_packet
+@dataclass
+class StatisticsResponsePacket(IdentifiablePacket):
+    """Packet sent to gateway in response to StatisticsRequest packet."""
+    cmd: ClassVar[str] = "StatisticsResponse"
+    slots: Dict[int, PlayerStats] = field(default_factory=dict)
+    session: Optional[SessionStats] = None
+
+@TrackerPacket.register_packet
+@dataclass
+class StatusRequestPacket(IdentifiablePacket):
+    """Packet sent to agent to request its current status."""
+    cmd: ClassVar[str] = "StatusRequest"
+
+@TrackerPacket.register_packet
+@dataclass
+class StatusResponsePacket(IdentifiablePacket):
+    """Packet sent to gateway in response to StatusRequest packet."""
+    cmd: ClassVar[str] = "StatusResponse"
+    status: str = ""
+
+@TrackerPacket.register_packet
+@dataclass
+class TrackerInfoPacket(TrackerPacket):
+    """Packet sent to gateway containing basic tracker data."""
+    cmd: ClassVar[str] = "TrackerInfo"
+    players: Dict[int, str] = field(default_factory=dict)
+
+#endregion

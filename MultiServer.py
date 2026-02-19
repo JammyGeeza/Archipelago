@@ -2789,6 +2789,7 @@ async def main(args: argparse.Namespace):
                                                  'No password' if not ctx.password else 'Password: %s' % ctx.password))
     
     # Force-create the save file so it exists before the agent starts
+    # TODO: Remove, as no longer using the file???
     ctx.save(now=True)
 
     # Create / update room data in the store

@@ -1,5 +1,6 @@
 import logging
 import sqlite3
+import bot.Utils as utils
 from dataclasses import dataclass
 from typing import ClassVar, Optional, List
 
@@ -10,14 +11,14 @@ class Agent:
     port: int
     password: Optional[str]
 
-@dataclass
-class Notification:
-    port: int
-    user_id: int
-    slot_id: int
-    hints: Optional[int]
-    types: Optional[int]
-    terms: Optional[str]
+# @dataclass
+# class Notification:
+#     port: int
+#     user_id: int
+#     slot_id: int
+#     hints: int = 0
+#     types: int = 0
+#     terms: str = ""
 
 @dataclass
 class Room:
@@ -61,8 +62,8 @@ class NotificationRepo:
                     port        INTEGER NOT NULL,
                     user_Id     INTEGER NOT NULL,
                     slot_id     INTEGER NOT NULL,
-                    hints       INTEGER,
-                    types       INTEGER,
+                    hints       INTEGER NOT NULL,
+                    types       INTEGER NOT NULL,
                     terms       TEXT,
                     
                     UNIQUE(port, user_id, slot_id)
@@ -70,14 +71,14 @@ class NotificationRepo:
             """)
             connection.commit()
 
-    def get_or_create(self, port: int, user_id: int, slot_id: int) -> Optional[Notification]:
+    def get_or_create(self, port: int, user_id: int, slot_id: int) -> Optional[utils.Notification]:
         """Get a notification item or create one if it doesn't exist."""
 
         try:
             if (notification:= self.get(port, user_id, slot_id)):
                 return notification
             else:
-                return self.upsert(Notification(
+                return self.upsert(utils.Notification(
                     port=port,
                     user_id=user_id,
                     slot_id=slot_id
@@ -87,7 +88,7 @@ class NotificationRepo:
             logging.warning(f"Error in {self.table_name} get_or_create(): {ex}")
             return None
 
-    def upsert(self, notif: Notification) -> Optional[Notification]:
+    def upsert(self, notif: utils.Notification) -> Optional[utils.Notification]:
         """Insert or update a notification."""
 
         try:
@@ -104,13 +105,13 @@ class NotificationRepo:
                 )
                 connection.commit()
 
-            return self.get(notif.port, notif.user_id, notif.channel_id, notif.slot_id)
+            return self.get(notif.port, notif.user_id, notif.slot_id)
 
         except Exception as ex:
             logging.warning(f"Error in {self.table_name} upsert: {ex}")
             return None
 
-    def get(self, port: int, user_id: int, slot_id: int) -> Optional[Notification]:
+    def get(self, port: int, user_id: int, slot_id: int) -> Optional[utils.Notification]:
         """Get a notification."""
 
         try:
@@ -125,13 +126,13 @@ class NotificationRepo:
                     (port, user_id, slot_id)
                 ).fetchone()
                 
-                return Notification(*notif)
+                return utils.Notification(*notif) if notif else None
             
         except Exception as ex:
             logging.warning(f"Error in {self.table_name} get: {ex}")
             return None
         
-    def delete(self, notif: Notification) -> bool:
+    def delete(self, notif: utils.Notification) -> bool:
         """Delete a notification"""
 
         try:
