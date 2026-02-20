@@ -22,13 +22,37 @@ class ClientStatus(enum.IntEnum):
     PLAYING     = 20
     GOAL        = 30
 
+class ItemFlags(enum.IntEnum):
+    """Archipelago's item type flags"""
+    FILLER      = 0
+    PROGRESSION = 1 << 0
+    USEFUL      = 1 << 1
+    TRAP        = 1 << 2
+
 class NotifyFlags(enum.IntFlag):
-    """Item classification flags"""
+    """Notification item type flags"""
     NONE        = 0
     FILLER      = 1 << 0
     PROGRESSION = 1 << 1
     USEFUL      = 1 << 2
     TRAP        = 1 << 3
+
+    @staticmethod
+    def item_to_notify_flags(item_flags: int) -> "NotifyFlags":
+        """Convert an AP item flag to the Notify flags."""
+
+        notify_flags = NotifyFlags.NONE
+
+        # Map to notify flags
+        if item_flags & ItemFlags.PROGRESSION: notify_flags |= NotifyFlags.PROGRESSION
+        if item_flags & ItemFlags.USEFUL: notify_flags |= NotifyFlags.USEFUL
+        if item_flags & ItemFlags.TRAP: notify_flags |= NotifyFlags.TRAP
+
+        # If no meaningful flags are set, default it to filler
+        if notify_flags is NotifyFlags.NONE: notify_flags = NotifyFlags.FILLER
+        
+        return notify_flags
+
 
     def to_text(self) -> str:
         """Get text representation of all applied flags."""
@@ -165,15 +189,25 @@ class DataPackageObject(Jsonable):
     """Object containing data package data"""
     games: Dict[str, GameData] = field(default_factory=dict)
 
-# TODO: Make this match other data classes
+# TODO: Make this match other data classes??
 class ItemQueue:
     def __init__(self):
-        self.items: Dict[int, int] = {}
+        self.items: Dict[int, QueuedItemData] = {}
         self.expires: datetime = datetime.now()
 
-    def add(self, item_id: int):
-        self.items[item_id] = self.items.get(item_id, 0) + 1
+    def add(self, item: "NetworkItem"):
+        # Get or create existing queued item and increment count
+        queued_item = self.items.get(item.item, QueuedItemData(item.flags, 0))
+        queued_item.count += 1
+
+        # Update item and set expiry
+        self.items[item.item] = queued_item
         self.expires = datetime.now() + timedelta(seconds=2)
+
+@dataclass
+class QueuedItemData:
+    flags: int
+    count: int
 
 @dataclass
 class PlayerStats(Jsonable):
@@ -231,8 +265,9 @@ class Notification(Jsonable):
     slot_id: int
     hints: int = 0
     types: int = 0
-    terms: str = ""
+    terms: List[str] = field(default_factory=list)
     class_: str = field(default="Notification", metadata={"json": "class"})
+    id: Optional[int] = None
 
 @dataclass
 class SessionStats(Jsonable):
@@ -498,7 +533,7 @@ class NotificationsRequestPacket(IdentifiablePacket):
     player: str = ""
     hints: Optional[int] = None
     types: Optional[int] = None
-    terms: Optional[List[str]] = None
+    terms: Optional[List[str]] = field(default_factory=list)
 
 @TrackerPacket.register_packet
 @dataclass

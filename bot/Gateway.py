@@ -757,6 +757,8 @@ async def notify_terms(interaction: discord.Interaction, recipient: str, action:
         await interaction.followup.send(f"Please provide a valid, comma-separated list of terms to {utils.Action(action).name.lower()}. _(E.g. `Frame,Orb,Scraps`)_ ", ephemeral=True)
         return
     
+    logging.info(f"Terms list: {term_list}")
+    
     # Request notification change and await response
     response: utils.NotificationsResponsePacket = await agent.request(utils.NotificationsRequestPacket(
         id=uuid.uuid4().hex,
@@ -775,7 +777,7 @@ async def notify_terms(interaction: discord.Interaction, recipient: str, action:
     if not response.notification.terms:
         await interaction.followup.send(f"You now have no item term notifications for `{recipient}`.", ephemeral=True)
     else:
-        await interaction.followup.send(f"You will now receive a {interaction.user.mention} when `{recipient}` receives items containing term(s): {", ".join([f"`{term}`" for term in response.notification.terms.split(",")])}.", ephemeral=True)
+        await interaction.followup.send(f"You will now receive a {interaction.user.mention} when `{recipient}` receives items containing term(s): {", ".join([f"`{term}`" for term in response.notification.terms])}.", ephemeral=True)
 
 @bot.tree.command(name="notify_types", description="Notify on item types received")
 @app_commands.describe(recipient="Player receiving the item(s)", action="Action to perform", item_type="Type of item to notify")

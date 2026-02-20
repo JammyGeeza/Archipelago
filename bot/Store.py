@@ -11,15 +11,6 @@ class Agent:
     port: int
     password: Optional[str]
 
-# @dataclass
-# class Notification:
-#     port: int
-#     user_id: int
-#     slot_id: int
-#     hints: int = 0
-#     types: int = 0
-#     terms: str = ""
-
 @dataclass
 class Room:
     port: int
@@ -39,13 +30,13 @@ class Store:
 
     def __init__(self, path: str = "discord_gateway.db"):
         self.path = path
-        # self._init()
-
         self.configs = RoomConfigRepo(self._conn)
         self.notifications = NotificationRepo(self._conn)
 
     def _conn(self):
-        return sqlite3.connect(self.path)
+        conn = sqlite3.connect(self.path)
+        conn.row_factory = sqlite3.Row
+        return conn
 
 class NotificationRepo:
 
@@ -59,17 +50,46 @@ class NotificationRepo:
         with self._conn() as connection:
             connection.execute(f"""
                 CREATE TABLE IF NOT EXISTS {self.table_name} (
+                    id          INTEGER PRIMARY KEY AUTOINCREMENT,
                     port        INTEGER NOT NULL,
-                    user_Id     INTEGER NOT NULL,
+                    user_id     INTEGER NOT NULL,
                     slot_id     INTEGER NOT NULL,
                     hints       INTEGER NOT NULL,
                     types       INTEGER NOT NULL,
-                    terms       TEXT,
                     
                     UNIQUE(port, user_id, slot_id)
                 )
             """)
+            
+            connection.execute(f"""
+                CREATE TABLE IF NOT EXISTS {self.table_name}_terms (
+                    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+                    notification_id INTEGER NOT NULL,
+                    term            TEXT NOT NULL,
+
+                    FOREIGN KEY (notification_id)
+                        REFERENCES notifications(id)
+                        ON DELETE CASCADE,
+
+                    UNIQUE(notification_id, term)
+                )
+            """)
+
             connection.commit()
+
+    def __bind(self, row) -> Optional[utils.Notification]:
+        """Bind a returned row as a Notification object."""
+        if not row: return None
+        else: return utils.Notification(
+            id=row["id"],
+            port=row["port"],
+            user_id=row["user_id"],
+            slot_id=row["slot_id"],
+            hints=row["hints"],
+            types=row["types"],
+            terms=row["terms"].split(",") if row["terms"] else []
+            # terms=self.__get_terms(row["id"])
+        )
 
     def get_or_create(self, port: int, user_id: int, slot_id: int) -> Optional[utils.Notification]:
         """Get a notification item or create one if it doesn't exist."""
@@ -87,24 +107,56 @@ class NotificationRepo:
         except Exception as ex:
             logging.warning(f"Error in {self.table_name} get_or_create(): {ex}")
             return None
-
+        
     def upsert(self, notif: utils.Notification) -> Optional[utils.Notification]:
         """Insert or update a notification."""
 
         try:
             with self._conn() as connection:
                 connection.execute(f"""
-                    INSERT INTO {self.table_name} (port, user_id, slot_id, hints, types, terms)
-                    VALUES (?, ?, ?, ?, ?, ?)
+                    INSERT INTO {self.table_name} (port, user_id, slot_id, hints, types)
+                    VALUES (?, ?, ?, ?, ?)
                     ON CONFLICT(port, user_id, slot_id) DO UPDATE SET
                         hints = excluded.hints,
-                        types = excluded.types,
-                        terms = excluded.terms
+                        types = excluded.types
                     """,
-                    (notif.port, notif.user_id, notif.slot_id, notif.hints, notif.types, notif.terms)
+                    (notif.port, notif.user_id, notif.slot_id, notif.hints, notif.types)
                 )
+
+                # Get the ID if it didn't already have one
+                if not notif.id:
+                    row = connection.execute(f"""
+                        SELECT id
+                        FROM {self.table_name}
+                        WHERE port = ?
+                            AND user_id = ?
+                            AND slot_id = ?
+                        """,
+                        (notif.port, notif.user_id, notif.slot_id)
+                    ).fetchone()
+
+                    # Set the ID
+                    notif.id = row[0]
+
+                # Wipe all existing terms
+                connection.execute(f"""
+                    DELETE FROM {self.table_name}_terms
+                    WHERE notification_id = ?
+                    """,
+                    (notif.id,)
+                )
+
+                # Insert terms
+                connection.executemany(f"""
+                    INSERT INTO {self.table_name}_terms (notification_id, term)
+                    VALUES(?, ?)
+                    """,
+                    [(notif.id, term) for term in notif.terms]
+                )
+
                 connection.commit()
 
+            # Return newly created
             return self.get(notif.port, notif.user_id, notif.slot_id)
 
         except Exception as ex:
@@ -116,22 +168,111 @@ class NotificationRepo:
 
         try:
             with self._conn() as connection:
-                notif = connection.execute(f"""
-                    SELECT port, user_id, slot_id, hints, types, terms
-                    FROM {self.table_name}
-                    WHERE port = ?
-                        AND user_id = ?
-                        AND slot_id = ?
+                row = connection.execute(f"""
+                    SELECT n.id, n.port, n.user_id, n.slot_id, n.hints, n.types, GROUP_CONCAT(t.term) AS terms
+                    FROM {self.table_name} n
+                    LEFT JOIN {self.table_name}_terms t
+                        ON t.notification_id = n.id
+                    WHERE n.port = ?
+                        AND n.user_id = ?
+                        AND n.slot_id = ?
+                    GROUP BY n.id
                     """,
                     (port, user_id, slot_id)
                 ).fetchone()
-                
-                return utils.Notification(*notif) if notif else None
+
+                return self.__bind(row)
             
         except Exception as ex:
             logging.warning(f"Error in {self.table_name} get: {ex}")
             return None
+    
+    def get_for_hint_flags(self, port: int, slot_id: int, notify_flags: utils.NotifyFlags) -> List[int]:
+        """Get user IDs subscribed to notifications for a slot with matching hint flags."""
+
+        try:
+
+            logging.info(f"Checking Port: {port} | Slot: {slot_id} | Flags: {notify_flags.value}")
+
+            with self._conn() as connection:
+                rows = connection.execute(f"""
+                    SELECT DISTINCT n.user_id
+                    FROM {self.table_name} n
+                    WHERE n.port = ?
+                        AND n.slot_id = ?
+                        AND (n.hints & ?) != 0
+                    """,
+                    (port, slot_id, notify_flags.value)
+                ).fetchall()
+
+                logging.info(f"Found hint_flag user ids: {rows}")
+
+                return [ row["user_id"] for row in rows ] if rows else []
+
+        except Exception as ex:
+            logging.warning(f"Error in {self.table_name} get_for_hint_flags(): {ex}")
+            return []
         
+    def get_for_item_flags(self, port: int, slot_id: int, notify_flags: utils.NotifyFlags) -> List[int]:
+        """Get user IDs subscribed to notifications for a slot with matching item flags."""
+
+        try:
+            with self._conn() as connection:
+                rows = connection.execute(f"""
+                    SELECT DISTINCT n.user_id
+                    FROM {self.table_name} n
+                    WHERE n.port = ?
+                        AND n.slot_id = ?
+                        AND (n.types & ?) != 0
+                    """,
+                    (port, slot_id, notify_flags)
+                ).fetchall()
+
+                return [ row["user_id"] for row in rows ] if rows else []
+
+        except Exception as ex:
+            logging.warning(f"Error in {self.table_name} get_for_item_flags(): {ex}")
+            return []
+        
+    def get_for_terms(self, port: int, slot_id: int, item_names: List[str]) -> List[int]:
+        """Get user IDs subscribed to notifications for a slot with matching terms."""
+
+        logging.info(f"Checking item name(s): {item_names}")
+
+        try:
+            temp_table_name: str = "tmp_item_names"
+
+            with self._conn() as connection:
+                # Create a temporary table and populate with all item names
+                connection.execute(f"CREATE TEMP TABLE IF NOT EXISTS {temp_table_name} (name TEXT NOT NULL)")
+                connection.execute(f"DELETE FROM {temp_table_name}")
+                connection.executemany(f"""
+                    INSERT INTO {temp_table_name}
+                    VALUES (?)
+                    """,
+                    ([(item_name,) for item_name in item_names])
+                )
+
+                # Query matches against temporary table
+                rows = connection.execute(f"""
+                    SELECT DISTINCT n.user_id
+                    FROM {self.table_name} n
+                    JOIN {self.table_name}_terms t
+                        ON t.notification_id = n.id
+                    JOIN {temp_table_name} i
+                    WHERE n.port = ?
+                        AND n.slot_id = ?
+                        AND LOWER(i.name) LIKE '%' || lower(t.term) || '%'
+                """,
+                (port, slot_id)
+            ).fetchall()
+                
+            return [ row["user_id"] for row in rows ] if rows else []
+
+        except Exception as ex:
+            logging.warning(f"Error in {self.table_name} get_for_terms(): {ex}")
+            return []
+
     def delete(self, notif: utils.Notification) -> bool:
         """Delete a notification"""
 
@@ -140,12 +281,11 @@ class NotificationRepo:
                 notif = connection.execute(f"""
                     DELETE
                     FROM {self.table_name}
-                    WHERE port = ?
-                        AND user_id = ?
-                        AND slot_id = ?
+                    WHERE id = ?
                     """,
-                    (notif.port, notif.user_id, notif.slot_id)
+                    (notif.id,)
                 )
+                connection.commit()
                 
                 return True
             

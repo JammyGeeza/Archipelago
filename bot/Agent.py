@@ -584,7 +584,6 @@ class TrackerClient:
         except Exception as ex:
             logging.warning(f"Unexpected error in tracker client start() task: {ex}")
 
-
     def stop(self):
         """Stop the tracker client"""
 
@@ -617,14 +616,14 @@ __tasks: List[asyncio.Task] = []
 __std_client: StdClient
 __tracker_client: TrackerClient
 
-def queue_item(slot_id: int, item_id: int):
+def queue_item(slot_id: int, item: utils.NetworkItem):
     """Add an item to the item queue."""
 
     global __item_queue
 
     # Get/Create queue for recipient
     queue: utils.ItemQueue = __item_queue.get(slot_id, utils.ItemQueue())
-    queue.add(item_id)
+    queue.add(item)
 
     # Update recipient's queue
     __item_queue[slot_id] = queue
@@ -662,6 +661,39 @@ async def send(packet: utils.TrackerPacket):
     """Send a packet to the gateway"""
     global __std_client
     await __std_client.send(packet)
+
+def append_mentions(text: str, user_ids: List[int]) -> str:
+    """Append notification mentions to a string."""
+
+    # Append mentions if provided
+    if not user_ids: return text
+    else: return text + f" -> ({", ".join(f"<@{user_id}>" for user_id in user_ids)})"
+
+def generate_hint_text(recipient: int, item: utils.NetworkItem) -> str:
+    """Generate the text for a hint message."""
+
+    # Generate hint text with mentions, if applicable
+    return append_mentions(
+        f"**[HINT]**: `{get_player(recipient)}`'s item **{get_item(recipient, item.item)} _({utils.NotifyFlags.item_to_notify_flags(item.flags).name.title()})_** is at `{get_player(item.player)}`'s location **{get_location(item.player, item.location)}** check.",
+        get_hint_flag_notifications(item.player, item.flags),
+    )
+
+def generate_items_text(recipient: int, items: Dict[int, utils.QueuedItemData]) -> str:
+    """Generate the text for an item received message."""
+
+    # Convert item IDs to names and counts
+    item_counts: Dict[str, int] = { get_item(recipient, item_id): item_data.count for item_id, item_data in items.items() }
+    
+    # Combine all item flags for notifications
+    combined_flags: int = 0
+    for flag in [ item_data.flags for item_data in items.values() ]:
+        combined_flags |= flag
+
+    # Generate item text with mentions, if applicable
+    return append_mentions(
+        f"`{get_player(recipient)}` received their " + ", ".join([f"**{item_name}**" + (f" **_(x{count})_**" if count > 1 else "") for item_name, count in item_counts.items()]),
+        list(set(get_item_flag_notifications(recipient, combined_flags)) | set(get_item_term_notifications(recipient, [ name for name in item_counts.keys() ])))
+    )
 
 #region Tracker Event Handlers
 
@@ -729,12 +761,12 @@ async def __on_goal(client, slot_id: int):
     await send(utils.DiscordMessagePacket(message="\n".join(lines)))
 
 @TrackerClient.on_hint
-async def __on_hint(client, receiver: int, item: utils.NetworkItem, found: bool):
+async def __on_hint(client, recipient: int, item: utils.NetworkItem, found: bool):
     """Handler for a slot receiving a hint."""
 
-    # If item flags contains 'progression' and is not already found, send to gateway
-    if item.flags & 0b001 and not found:
-        msg:str = f"**[HINT]**: `{get_player(receiver)}'s` **{get_item(receiver, item.item)} _({item.flags})_** is located at `{get_player(item.player)}'s` **{get_location(item.player, item.location)}** check."
+    # Check if item is progression/useful and not already found
+    if item.flags & (utils.ItemFlags.PROGRESSION | utils.ItemFlags.USEFUL) and not found:
+        msg: str = generate_hint_text(recipient, item)
         await send(utils.DiscordMessagePacket(message=msg))
 
 @TrackerClient.on_item
@@ -742,7 +774,7 @@ async def __on_item(client, receiver: int, item: utils.NetworkItem):
     """Handler for an item being received."""
 
     # Add to item queue
-    queue_item(receiver, item.item)
+    queue_item(receiver, item)
 
 @TrackerClient.on_release
 async def __on_release(client, slot_id: int):
@@ -791,6 +823,8 @@ async def __on_notifications_request(client: StdClient, packet: utils.Notificati
         ))
         return
     
+    logging.info(f"Pre-adjust terms: {notif.terms}")
+    
     # Adjust hints if provided
     if packet.hints:
         notif.hints = ((notif.hints or utils.NotifyFlags.NONE) | packet.hints) if packet.action == utils.Action.ADD else ((notif.hints or utils.NotifyFlags.NONE) & ~packet.hints)
@@ -801,7 +835,11 @@ async def __on_notifications_request(client: StdClient, packet: utils.Notificati
 
     # Adjust terms if provided
     if packet.terms:
-        notif.terms = ",".join(list(set([term for term in notif.terms.split(",") if term] or []) | set(packet.terms)) if packet.action == utils.Action.ADD else list(set([term for term in notif.terms.split(",") if term] or []) - set(packet.terms)))
+        notif.terms = list(set(notif.terms or []) | set(packet.terms)) if packet.action == utils.Action.ADD else list(set(notif.terms or []) - set(packet.terms))
+
+    logging.info(f"Pre-store hints: {utils.NotifyFlags(notif.hints).name}")
+    logging.info(f"Pre-store types: {utils.NotifyFlags(notif.types).name}")
+    logging.info(f"Pre-store terms: {notif.terms}")
 
     # Save changes
     if not (notif:= __store.notifications.upsert(notif)):
@@ -810,6 +848,10 @@ async def __on_notifications_request(client: StdClient, packet: utils.Notificati
             message="An error occurred while attempting to store the notification preferences."
         ))
         return
+    
+    logging.info(f"Post-store hints: {utils.NotifyFlags(notif.hints).name}")
+    logging.info(f"Post-store types: {utils.NotifyFlags(notif.types).name}")
+    logging.info(f"Post-store terms: {notif.terms}")
     
     # Respond
     await send(utils.NotificationsResponsePacket(
@@ -873,7 +915,7 @@ async def __item_loop():
             # Send message(s) for each expired queue
             for recipient in expired:
                 queue: utils.ItemQueue = __item_queue.pop(recipient, utils.ItemQueue())
-                msg: str = f"`{get_player(recipient)}` received their " + ", ".join([f"**{get_item(recipient, item_id)}**" + (f" **_(x{count})_**" if count > 1 else "") for item_id, count in queue.items.items()])
+                msg: str = generate_items_text(recipient, queue.items)
 
                 # Split at "," separator to fit messages within message limit and send to gateway
                 for chunk in split_at_separator(msg):
@@ -913,6 +955,45 @@ def get_location(slot_id: int, location_id: int) -> str | None:
     """Get the name of an item."""
     global __tracker_client
     return __tracker_client.get_location_name(slot_id, location_id)
+
+def get_hint_flag_notifications(slot_id: int, item_flags: int) -> List[int]:
+    """Get user IDs subscribed to 'hinted item' notifications with these flags."""
+
+    global __store
+    global __tracker_client
+
+    # Get notifications from store
+    return __store.notifications.get_for_hint_flags(
+        __tracker_client.port,
+        slot_id,
+        utils.NotifyFlags.item_to_notify_flags(item_flags)
+    )
+
+def get_item_flag_notifications(slot_id: int, item_flags: int) -> List[int]:
+    """Get user IDs subscribed to 'item received' notifications with these flags."""
+
+    global __store
+    global __tracker_client
+
+    # Get notifications from store
+    return __store.notifications.get_for_item_flags(
+        __tracker_client.port,
+        slot_id,
+        utils.NotifyFlags.item_to_notify_flags(item_flags)
+    )
+
+def get_item_term_notifications(slot_id: int, item_names: List[str]) -> List[int]:
+    """Get user IDs subscribed to 'item received' notifications with terms within these item names."""
+
+    global __store
+    global __tracker_client
+
+    # Get notifications from store
+    return __store.notifications.get_for_terms(
+       __tracker_client.port,
+       slot_id,
+       item_names
+    )
 
 async def main() -> None:
 
