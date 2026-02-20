@@ -16,6 +16,7 @@ class Action(enum.IntEnum):
     ADD         = 1 << 0
     REMOVE      = 1 << 1
     CLEAR       = 1 << 2
+    VIEW        = 1 << 3
 
 class ClientStatus(enum.IntEnum):
     """Client status enum values"""

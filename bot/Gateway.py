@@ -336,6 +336,15 @@ def generate_player_stats_description(agent: AgentProcess, stats: utils.PlayerSt
         f"**Goaled**: {"Yes" if stats.goal else "No"}"
     )
 
+def generate_notifications_text(agent: AgentProcess, notif: utils.Notification) -> str:
+    """Generate a notifications view command response"""
+    return (
+        f"## Notifications for `{agent.get_player_name(notif.slot_id)}`\n" +
+        "- " + (f"When a hint reveals **{utils.NotifyFlags(notif.hints).to_text()}** items are in their world\n" if notif.hints != utils.NotifyFlags.NONE else f"No hint notifications\n") +
+        "- " + (f"When **{utils.NotifyFlags(notif.types).to_text()}** items are received\n" if notif.types != utils.NotifyFlags.NONE else f"No item type notifications\n") +
+        "- " + (f"When items containing the term(s) {", ".join(f"`{term}`" for term in notif.terms)} are received\n" if notif.terms else f"No item term notifications\n")
+    )
+
 def generate_session_stats_embed(agent: AgentProcess, stats: utils.SessionStats) -> discord.Embed:
     """Generate an embed for a session stats command response"""
 
@@ -698,6 +707,39 @@ async def notify_types(interaction: discord.Interaction, recipient: str, action:
         await interaction.followup.send(f"You now have no item type notifications for `{recipient}`.", ephemeral=True)
     else:
         await interaction.followup.send(f"You will now receive a {interaction.user.mention} when `{recipient}` receives **{utils.NotifyFlags(response.notification.types).to_text()}** items.", ephemeral=True)
+
+@bot.tree.command(name="notify_view", description="View all notifications for a slot")
+@app_commands.describe(slot="Slot to view notifications for")
+async def notify_view(interaction: discord.Interaction, slot: str):
+    """Command to view notifications for a slot"""
+
+    global store
+
+    logging.info(f"Notify View requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id}")
+
+    # Defer response
+    await interaction.response.defer(thinking=True, ephemeral=True)
+
+    # Attempt to get process
+    if not (agent:= get_agent(interaction.channel_id)):
+        await interaction.followup.send(f"No client is running for this channel - use `/connect` to start or `/bind` to bind it to a session.", ephemeral=True)
+        return
+
+    # Request notifications and await response
+    response = await agent.request(utils.NotificationsRequestPacket(
+        id=uuid.uuid4().hex,
+        action=utils.Action.VIEW,
+        user_id=interaction.user.id,
+        player=slot
+    ))
+
+    # Respond appropriately
+    if response.is_error() or not response.notification:
+        await interaction.followup.send(f"Error getting hint preferences: '**_{response.message}_**'.", ephemeral=True)
+        return
+    
+    # Respond
+    await interaction.followup.send(generate_notifications_text(agent, response.notification), ephemeral=True)
 
 @bot.tree.command(name="stats_session", description="List of players - E.g. Player1,Player2 etc.")
 async def stats_session(interaction: discord.Interaction):

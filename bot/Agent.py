@@ -842,6 +842,13 @@ async def __on_notifications_request(client: StdClient, packet: utils.Notificati
             notif.types = utils.NotifyFlags.NONE
             notif.terms = []
 
+        case utils.Action.VIEW:
+            await send(utils.NotificationsResponsePacket(
+                id=packet.id,
+                notification=notif
+            ))
+            return
+
         case _:
             await send(utils.InvalidPacket(
                 id=packet.id,
@@ -854,7 +861,7 @@ async def __on_notifications_request(client: StdClient, packet: utils.Notificati
     if not (notif:= __store.notifications.upsert(notif)):
         await send(utils.ErrorPacket(
             id=packet.id,
-            message="An error occurred while attempting to store the notification preferences."
+            message="An error occurred while attempting to update the notification preferences."
         ))
         return
     
