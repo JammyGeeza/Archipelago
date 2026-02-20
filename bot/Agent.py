@@ -60,7 +60,7 @@ class StdClient:
         except Exception as ex:
             logging.error(f"Unexpected error handling {packet.cmd} packet: {ex}")
 
-            await self.send(utils.InvalidPacket(
+            await self.send(utils.ErrorPacket(
                 id=packet.id or "",
                 original_cmd=packet.cmd or "",
                 message=f"{ex}"
@@ -253,7 +253,6 @@ class TrackerClient:
         """Handle an incoming packet."""
 
         logging.info(f"Handling {packet.cmd} packet...")
-        logging.info(packet)
 
         try:
             match packet.cmd:
@@ -383,7 +382,7 @@ class TrackerClient:
             password=self.password,
             slot_data=False,
             tags=["Bot", "Deathlink", "Tracker"],
-            uuid=f"botipelago_spectator",
+            uuid=f"bot_spectator_{self.slot_name}",
             version=utils.NetworkVersion(
                 major=0,
                 minor=6,
@@ -827,17 +826,29 @@ async def __on_notifications_request(client: StdClient, packet: utils.Notificati
         ))
         return
     
-    # Adjust hints if provided
-    if packet.hints:
-        notif.hints = ((notif.hints or utils.NotifyFlags.NONE) | packet.hints) if packet.action == utils.Action.ADD else ((notif.hints or utils.NotifyFlags.NONE) & ~packet.hints)
+    match packet.action:
+        case utils.Action.ADD:
+            notif.hints = ((notif.hints or utils.NotifyFlags.NONE) | (packet.hints or utils.NotifyFlags.NONE))
+            notif.types = ((notif.types or utils.NotifyFlags.NONE) | (packet.types or utils.NotifyFlags.NONE))
+            notif.terms = list(set(notif.terms or []) | set(packet.terms or []))
 
-    # Adjust types if provided
-    if packet.types:
-        notif.types = ((notif.types or utils.NotifyFlags.NONE) | packet.types) if packet.action == utils.Action.ADD else ((notif.types or utils.NotifyFlags.NONE) & ~packet.types)
+        case utils.Action.REMOVE:
+            notif.hints = ((notif.hints or utils.NotifyFlags.NONE) & ~(packet.hints or utils.NotifyFlags.NONE))
+            notif.types = ((notif.types or utils.NotifyFlags.NONE) & ~(packet.types or utils.NotifyFlags.NONE))
+            notif.terms = list(set(notif.terms or []) - set(packet.terms or []))
+        
+        case utils.Action.CLEAR:
+            notif.hints = utils.NotifyFlags.NONE
+            notif.types = utils.NotifyFlags.NONE
+            notif.terms = []
 
-    # Adjust terms if provided
-    if packet.terms:
-        notif.terms = list(set(notif.terms or []) | set(packet.terms)) if packet.action == utils.Action.ADD else list(set(notif.terms or []) - set(packet.terms))
+        case _:
+            await send(utils.InvalidPacket(
+                id=packet.id,
+                original_cmd=packet.cmd,
+                message=f"Invalid action type '{packet.action}'"
+            ))
+            return
 
     # Save changes
     if not (notif:= __store.notifications.upsert(notif)):

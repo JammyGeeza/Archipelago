@@ -12,7 +12,7 @@ import uuid
 
 from discord import app_commands
 from discord.ext import commands
-from bot.Store import Agent, Store
+from bot.Store import Store
 from typing import Dict, Optional
 
 # Global variables
@@ -113,9 +113,6 @@ class AgentProcess:
             case utils.DiscordMessagePacket.cmd:
                 await self.__handle_discordmessage_packet(packet)
 
-            # case utils.StatusUpdatePacket.cmd:
-            #     await self.__handle_statusupdate_packet(packet)
-
             case utils.ErrorPacket.cmd | utils.InvalidPacket.cmd:
                 logging.warning(f"Received {packet.cmd} packet with message: '{packet.message}'")
                 if packet.id:
@@ -124,29 +121,17 @@ class AgentProcess:
             case utils.NotificationsResponsePacket.cmd | utils.StatisticsResponsePacket.cmd | utils.StatusResponsePacket.cmd:
                 await self.__handle_response_packet(packet)
 
-            # case utils.StoredStatsPacket.cmd:
-            #     await self.__handle_storedstats_packet(packet)
-
             case utils.TrackerInfoPacket.cmd:
                 await self.__handle_trackerinfo_packet(packet)
 
             case _:
                 logging.warning(f"{packet.cmd} is an unhandled packet type.")
 
-        # while True:
-        #     if not (data:= await self.rcv_queue.get()):
-        #         continue
-            
-        #     # Convert to appropriate packet type
-
-        #     await utils.TrackerPacket.receive(data, self)
-
     async def __send(self, json: str):
         """Send data to the agent process."""
         self.process.stdin.write(f"{json}\n".encode("utf-8"))
         await self.process.stdin.drain()
 
-    # @utils.DiscordMessagePacket.on_received
     async def __handle_discordmessage_packet(self, packet: utils.DiscordMessagePacket):
         """Handler for receiving a discord message packet."""
 
@@ -155,20 +140,6 @@ class AgentProcess:
         # Trigger event
         await self.on_discord_message_received.run(packet.message)
 
-    # @utils.StatusUpdatePacket.on_received
-    # async def __handle_statusupdate_packet(self, packet: utils.StatusUpdatePacket):
-    #     """Handle receipt of a status packet"""
-        
-    #     logging.info(f"Received {packet.cmd} from :{self.config.port}")
-
-    #     # Store status
-    #     self.status = packet.status
-
-    #     # Trigger event
-    #     await self.on_status_received.run(packet.message)
-
-    # @utils.StatisticsResponsePacket.on_received
-    # @utils.StatusResponsePacket.on_received
     async def __handle_response_packet(self, packet: utils.IdentifiablePacket):
         """Handler for receiving a response packet"""
 
@@ -177,13 +148,6 @@ class AgentProcess:
         # If waiting for this response, set packet as result
         if (future:= self.__request_queue.get(packet.id)):
             future.set_result(packet)
-
-    # @utils.StoredStatsPacket.on_received
-    # async def __handle_storedstats_packet(self, packet: utils.StoredStatsPacket):
-    #     """Handler for receiving stored stats."""
-
-    #     # Update stored stats
-    #     self.stats.update({ k: v for k, v in packet.stats.items() })
 
     async def __handle_trackerinfo_packet(self, packet: utils.TrackerInfoPacket):
         """Handle an incoming TrackerInfo packet"""
@@ -400,30 +364,6 @@ def generate_session_stats_description(agent: AgentProcess, stats: utils.Session
         f"**Goals**: {stats.goals}/{players} _({goal_perc}%)_"
     )
 
-async def message_agent(agent: Agent, payload: str) -> bool:
-    """Send a message to an agent process"""
-
-    global agents
-
-    logging.info(f"Attempting to send payload to Agent Process... | Guild ID: {agent.guild_id} | Channel ID: {agent.channel_id} | Port: {agent.port}")
-
-    try:
-        # Attempt to get agent process
-        if not (process:= agents.get((agent.guild_id, agent.channel_id), None)):
-            logging.warning(f"No agent process found for port {agent.port}")
-            return
-
-        # Send message
-        process.stdin.write(f"{payload}\n".encode("utf-8"))
-        await process.stdin.drain()
-
-    except Exception as ex:
-        logging.error(f"Error in message_agent(): {ex}")
-        return False
-
-    return True 
-
-
 async def main() -> None:
     args = parse_args()
 
@@ -468,8 +408,8 @@ async def on_ready():
 
     logging.info(f"Ready!")
 
-@bot.tree.command(name="bind", description="Bind this channel to an Archipelago room.")
-@app_commands.describe(port="The port number of the local archipelago room.", password="(Optional) Room password")
+@bot.tree.command(name="bind", description="Bind this channel to an Archipelago room")
+@app_commands.describe(port="The port number of the local archipelago room", slot_name="Name of the slot to connect to")
 async def bind(interaction: discord.Interaction, port: int, slot_name: str, password: str | None = None):
     """Command to bind a channel to a room."""
 
@@ -500,7 +440,7 @@ async def bind(interaction: discord.Interaction, port: int, slot_name: str, pass
     # Success response
     await interaction.followup.send(f"Successfully bound {interaction.channel.jump_url} to port `:{new_binding.port}` - please use `/connect` to connect a client.", ephemeral=True)
 
-@bot.tree.command(name="connect", description="Connect to the archipelago session bound to this channel.")
+@bot.tree.command(name="connect", description="Connect to the archipelago session bound to this channel")
 async def connect(interaction: discord.Interaction):
     """Command to connect to archipelago session."""
 
@@ -535,7 +475,7 @@ async def connect(interaction: discord.Interaction):
     # Create and start agent
     await create_agent(binding)
 
-@bot.tree.command(name="disconnect", description="Disconnect from the archipelago session bound to this channel.")
+@bot.tree.command(name="disconnect", description="Disconnect from the archipelago session bound to this channel")
 async def disconnect(interaction: discord.Interaction):
     """Command to disconnect from the archipelago session."""
 
@@ -562,7 +502,7 @@ async def disconnect(interaction: discord.Interaction):
     # Respond
     await interaction.followup.send(f"Stopping the client at `:{agent.config.port}` - this may take a moment.", ephemeral=True)
 
-@bot.tree.command(name="list", description="List all bound channels.")
+@bot.tree.command(name="list", description="List all bound channels")
 async def _list(interaction: discord.Interaction):
     """Command to list all bound channels in the guild."""
 
@@ -585,6 +525,37 @@ async def _list(interaction: discord.Interaction):
 
     # Respond
     await interaction.followup.send(response, ephemeral=True)
+
+@bot.tree.command(name="notify_clear", description="Clear all notifications")
+@app_commands.describe(slot="Slot to clear notifications for")
+async def notify_clear(interaction: discord.Interaction, slot: str):
+    """Command to clear notifications for a slot"""
+
+    global store
+
+    logging.info(f"Notify Clear requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id}")
+
+    # Defer response
+    await interaction.response.defer(thinking=True, ephemeral=True)
+
+    # Attempt to get process
+    if not (agent:= get_agent(interaction.channel_id)):
+        await interaction.followup.send(f"No client is running for this channel - use `/connect` to start or `/bind` to bind it to a session.", ephemeral=True)
+        return
+
+    # Request notification change and await response
+    response: utils.NotificationsResponsePacket = await agent.request(utils.NotificationsRequestPacket(
+        id=uuid.uuid4().hex,
+        action=utils.Action.CLEAR,
+        user_id=interaction.user.id,
+        player=slot
+    ))
+
+    # Respond appropriately
+    if response.is_error():
+        await interaction.followup.send(f"Error setting hint preferences: '**_{response.message}_**'.", ephemeral=True)
+    else:    
+        await interaction.followup.send(f"You have cleared all notifications for `{slot}`.", ephemeral=True)
 
 @bot.tree.command(name="notify_hints", description="Notify on hints received")
 @app_commands.describe(finder="The finding player name", action="Action to perform", item_type="Notify for item type")
@@ -609,14 +580,9 @@ async def notify_hints(interaction: discord.Interaction, finder: str, action: in
     # Defer response
     await interaction.response.defer(thinking=True, ephemeral=True)
 
-    # Check if binding exists
-    if not (binding:= store.bindings.get_one(interaction.channel_id)):
-        await interaction.followup.send(f"{interaction.channel.jump_url} is not currently bound to a port.", ephemeral=True)
-        return
-    
     # Attempt to get process
-    if not (agent:= get_agent(binding.channel_id)):
-        await interaction.followup.send(f"{interaction.channel.jump_url} is bound to a port but its process is not running.", ephemeral=True)
+    if not (agent:= get_agent(interaction.channel_id)):
+        await interaction.followup.send(f"No client is running for this channel - use `/connect` to start or `/bind` to bind it to a session.", ephemeral=True)
         return
 
     # Request notification change and await response
@@ -733,7 +699,7 @@ async def notify_types(interaction: discord.Interaction, recipient: str, action:
     else:
         await interaction.followup.send(f"You will now receive a {interaction.user.mention} when `{recipient}` receives **{utils.NotifyFlags(response.notification.types).to_text()}** items.", ephemeral=True)
 
-@bot.tree.command(name="stats_session", description="List of players. E.g. Player1,Player2 etc.")
+@bot.tree.command(name="stats_session", description="List of players - E.g. Player1,Player2 etc.")
 async def stats_session(interaction: discord.Interaction):
     """Command to list stats for a player."""
 
@@ -767,8 +733,8 @@ async def stats_session(interaction: discord.Interaction):
         ephemeral=True
     )
 
-@bot.tree.command(name="stats_players", description="Get statistics for a player or session.")
-@app_commands.describe(players="List of players. E.g. Player1,Player2 etc.")
+@bot.tree.command(name="stats_players", description="Get statistics for a player or session")
+@app_commands.describe(players="List of players - E.g. Player1,Player2 etc.")
 async def stats_players(interaction: discord.Interaction, players: str):
     """Command to list stats for a player."""
 
@@ -810,7 +776,7 @@ async def stats_players(interaction: discord.Interaction, players: str):
         ephemeral=True
     )
 
-@bot.tree.command(name="status", description="Get the status of this channel, if bound to a room.")
+@bot.tree.command(name="status", description="Get the status of this channel, if bound to a room")
 async def status(interaction: discord.Interaction):
     """Command to check the status of a bound channel in the guild."""
 
@@ -839,7 +805,43 @@ async def status(interaction: discord.Interaction):
     # Respond with status
     await interaction.followup.send(f"The client bound to the session at `:{agent.config.port}` is currently `{response.status}`.", ephemeral=True)
 
-@bot.tree.command(name="unbind", description="Unbind this channel from its Archipelago room.")
+@bot.tree.command(name="rebind", description="Update this channel's current binding")
+@app_commands.describe(port="The port number of the local archipelago room", slot_name="The name of the slot to connect to")
+async def bind(interaction: discord.Interaction, port: int, slot_name: str, password: str | None = None):
+    """Command to re-bind a channel."""
+
+    global admin_only
+    global agents
+    global store
+
+    logging.info(f"Rebinding requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id} | Port: {port}")
+    
+    # Defer response
+    await interaction.response.defer(thinking=True, ephemeral=True)
+
+    # Check user is an admin, if required
+    if admin_only and not await interaction_is_admin(interaction):
+        await interaction.followup.send("Only administrators can re-bind channels.", ephemeral=True)
+        return
+
+    # Find existing binding
+    if not (binding:= store.bindings.get_one(interaction.channel_id)):
+        await interaction.followup.send(f"This channel is not currently bound - use `/bind` to bind it first.", ephemeral=True)
+        return
+
+    # Attempt to update binding
+    if not (binding:= store.bindings.upsert(utils.Binding(interaction.channel_id, interaction.guild_id, port, slot_name, password))):
+        await interaction.followup.send(f"Unable to re-bind this channel to port `:{port}` - please wait a moment and try again.", ephemeral=True)
+        return
+    
+    # Stop the agent process, if running
+    if (agent:= get_agent(binding.channel_id)):
+        agent.stop()
+    
+    # Success response
+    await interaction.followup.send(f"Successfully re-bound to port `:{binding.port}` - please use `/connect` to re-connect the client.", ephemeral=True)
+
+@bot.tree.command(name="unbind", description="Unbind this channel from its Archipelago room")
 async def unbind(interaction: discord.Interaction):
     """Command to unbind a channel from a room."""
 

@@ -1,37 +1,12 @@
 import logging
 import sqlite3
 import bot.Utils as utils
-from dataclasses import dataclass
 from typing import ClassVar, Optional, List
-
-@dataclass
-class Agent:
-    guild_id: int
-    channel_id: int
-    port: int
-    password: Optional[str]
-
-# @dataclass
-# class Room:
-#     port: int
-#     multidata: str
-#     savedata: str
-
-@dataclass
-class RoomConfig:
-    port: int
-    password: Optional[str]
-    multidata: str
-    savedata: str
-    guild_id: Optional[int]
-    channel_id: Optional[int]
 
 class Store:
     def __init__(self, path: str = "bot.db"):
         self.path = path
         self.bindings = BindingRepo(self._conn)
-        # self.rooms = RoomRepo(self._conn)
-        # self.configs = RoomConfigRepo(self._conn)
         self.notifications = NotificationRepo(self._conn)
 
     def _conn(self):
