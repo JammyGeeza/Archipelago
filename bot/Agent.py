@@ -238,8 +238,7 @@ class TrackerClient:
         self.__stats_lookup: Dict[int, utils.PlayerStats] = {}
 
         self.port: int = args.port
-        self.multidata_path: str = args.multidata
-        self.savedata_path: str = args.savedata
+        self.slot_name: str = args.slot_name
         self.password: Optional[str] = args.password
 
     def __can_retry(self) -> bool:
@@ -254,6 +253,7 @@ class TrackerClient:
         """Handle an incoming packet."""
 
         logging.info(f"Handling {packet.cmd} packet...")
+        logging.info(packet)
 
         try:
             match packet.cmd:
@@ -291,9 +291,9 @@ class TrackerClient:
         """Handle an incoming Connected packet."""
 
         # Store player lookup
-        self.__player_lookup.update({ slot: data for slot, data in packet.slot_info.items() if data.name != "Botipelago" })
+        self.__player_lookup.update({ slot: data for slot, data in packet.slot_info.items() if data.name != self.slot_name })
 
-        # Request data packet for each unique game (could do this all in one request, but I think some games are HUGE)
+        # Request data packet for each unique game (could do this all in one request, but I think some games can be HUGE)
         for game in set([player.game for slot, player in self.__player_lookup.items() if player.game != "Archipelago" ]):
             await self.__send_packet(utils.GetDataPackagePacket(games=[game]))
 
@@ -305,6 +305,9 @@ class TrackerClient:
 
         # Trigger event
         await self.__set_connection_state("Failed", packet.errors)
+
+        # Don't retry
+        self.__attempt = len(self.__attempt_timeouts)
 
         # Disconnect
         await self.__websocket.close(reason=f"Connection refused by server for reason(s): {", ".join(packet.errors)}")
@@ -376,7 +379,7 @@ class TrackerClient:
         connect_packet = utils.ConnectPacket(
             game="",
             items_handling=0b0001,
-            name="Botipelago",
+            name=self.slot_name,
             password=self.password,
             slot_data=False,
             tags=["Bot", "Deathlink", "Tracker"],
@@ -430,12 +433,12 @@ class TrackerClient:
         json = packet.to_json()
         await self.__websocket.send(json)
 
-    async def __set_connection_state(self, new_state: str):
+    async def __set_connection_state(self, new_state: str, errors: List[str] = []):
         """Set the current state of the tracker."""
         self.__state = new_state
 
         # Trigger event
-        await self.on_connection_state_changed.run(new_state)
+        await self.on_connection_state_changed.run(new_state, errors)
 
     def __stop_tasks(self):
         """Stop all running tasks"""
@@ -674,7 +677,7 @@ def generate_hint_text(recipient: int, item: utils.NetworkItem) -> str:
 
     # Generate hint text with mentions, if applicable
     return append_mentions(
-        f"**[HINT]**: `{get_player(recipient)}`'s item **{get_item(recipient, item.item)} _({utils.NotifyFlags.item_to_notify_flags(item.flags).name.title()})_** is at `{get_player(item.player)}`'s location **{get_location(item.player, item.location)}** check.",
+        f"**[HINT]**: `{get_player(recipient)}`'s item **{get_item(recipient, item.item)} _({utils.NotifyFlags.item_to_notify_flags(item.flags).to_text()})_** is at `{get_player(item.player)}`'s location **{get_location(item.player, item.location)}** check.",
         get_hint_flag_notifications(item.player, item.flags),
     )
 
@@ -710,23 +713,24 @@ async def __on_connection_state_changed(client, state: str, errors: List[str] = 
     msg: str = ""
     match state:
 
-        case "Connected":
-            msg = f"Client has successfully connected to `:{client.port}`"
+        case "Connected":   # TODO: Is this misleading? Maybe re-word?
+            # msg = f"Client has successfully connected to `:{client.port}`"
+            return
 
         case "Connecting":
-            msg = f"Client is attempting to connect to `:{client.port}`"
+            msg = f"Client is attempting to connect to `:{client.port}`..."
 
         case "Disconnected":
-            msg = f"Client has disconnected from `:{client.port}`"
+            msg = f"Client has disconnected from `:{client.port}` - please use the `/connect` command to retry."
 
         case "Failed": 
-            msg = f"Client has failed to connect to `:{client.port}`. Error(s): {" | ".join(errors)}"
+            msg = f"Client has failed to connect to `:{client.port}`. Error(s): {", ".join(errors)}"
 
         case "Reconnecting":
-            msg = f"Client is attempting to reconnect to `:{client.port}`"
+            msg = f"Client connection has failed, attempting to retry connection to `:{client.port}` - this may take a few minutes."
 
         case "Tracking":
-            msg = f"Client is now tracking `:{client.port}`"
+            msg = f"Client is now tracking the session at `:{client.port}`"
 
             # Send tracker info
             await send(utils.TrackerInfoPacket(
@@ -823,8 +827,6 @@ async def __on_notifications_request(client: StdClient, packet: utils.Notificati
         ))
         return
     
-    logging.info(f"Pre-adjust terms: {notif.terms}")
-    
     # Adjust hints if provided
     if packet.hints:
         notif.hints = ((notif.hints or utils.NotifyFlags.NONE) | packet.hints) if packet.action == utils.Action.ADD else ((notif.hints or utils.NotifyFlags.NONE) & ~packet.hints)
@@ -837,10 +839,6 @@ async def __on_notifications_request(client: StdClient, packet: utils.Notificati
     if packet.terms:
         notif.terms = list(set(notif.terms or []) | set(packet.terms)) if packet.action == utils.Action.ADD else list(set(notif.terms or []) - set(packet.terms))
 
-    logging.info(f"Pre-store hints: {utils.NotifyFlags(notif.hints).name}")
-    logging.info(f"Pre-store types: {utils.NotifyFlags(notif.types).name}")
-    logging.info(f"Pre-store terms: {notif.terms}")
-
     # Save changes
     if not (notif:= __store.notifications.upsert(notif)):
         await send(utils.ErrorPacket(
@@ -848,10 +846,6 @@ async def __on_notifications_request(client: StdClient, packet: utils.Notificati
             message="An error occurred while attempting to store the notification preferences."
         ))
         return
-    
-    logging.info(f"Post-store hints: {utils.NotifyFlags(notif.hints).name}")
-    logging.info(f"Post-store types: {utils.NotifyFlags(notif.types).name}")
-    logging.info(f"Post-store terms: {notif.terms}")
     
     # Respond
     await send(utils.NotificationsResponsePacket(
@@ -1044,11 +1038,10 @@ def parse_args() -> argparse.Namespace:
 
     defaults = get_settings().discord_agent_options.as_dict()
 
-    parser = argparse.ArgumentParser(prog="Tracker Client.py", description="Archipelago Discord Tracker Client")
-    parser.add_argument("--port", type=int, help="The full URL to the archipelago session.")
+    parser = argparse.ArgumentParser(prog="Agent.py", description="Archipelago Discord Tracker Client")
+    parser.add_argument("--port", type=int, help="The port of the local archipelago session.")
+    parser.add_argument("--slot_name", type=str, help="The slot name to connect to.")
     parser.add_argument("--password", type=str, help="The password for the server or slot.")
-    parser.add_argument("--multidata", type=str, help="The path to the multidata file.")
-    parser.add_argument("--savedata", type=str, help="The path to the save data file.")
     parser.add_argument("--loglevel", default=defaults["loglevel"], type=str)
     parser.add_argument("--logtime", default=defaults["logtime"], type=bool)
 

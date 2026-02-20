@@ -2787,15 +2787,12 @@ async def main(args: argparse.Namespace):
     ip = args.host if args.host else Utils.get_public_ipv4()
     logging.info('Hosting game at %s:%d (%s)' % (ip, ctx.port,
                                                  'No password' if not ctx.password else 'Password: %s' % ctx.password))
-    
-    # Force-create the save file so it exists before the agent starts
-    # TODO: Remove, as no longer using the file???
-    ctx.save(now=True)
 
-    # Create / update room data in the store
-    from bot.Store import Store
-    store = Store()
-    store.configs.create(ctx.port, ctx.data_filename, ctx.save_filename, ctx.password)
+    # # Create / update room data in the store
+    # from bot.Utils import Room
+    # from bot.Store import Store
+    # store = Store()
+    # store.rooms.upsert(Room(ctx.port, ctx.seed_name))
 
     await ctx.server
     console_task = asyncio.create_task(console(ctx))

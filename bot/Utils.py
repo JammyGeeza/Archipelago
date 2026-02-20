@@ -2,11 +2,14 @@ import enum
 import inspect
 import logging
 import json
+import sqlite3
 import uuid
 
 from dataclasses import MISSING, dataclass, field, fields, is_dataclass
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any, Callable, ClassVar, Dict, List, Optional, Type, Union, get_args, get_origin
+
+#region Enums / Flags
 
 class Action(enum.IntEnum):
     """Action enum values"""
@@ -53,7 +56,6 @@ class NotifyFlags(enum.IntFlag):
         
         return notify_flags
 
-
     def to_text(self) -> str:
         """Get text representation of all applied flags."""
         if self == NotifyFlags.NONE:
@@ -62,6 +64,8 @@ class NotifyFlags(enum.IntFlag):
         return ", ".join(
             flag.name.title() for flag in type(self) if flag != 0 and flag in self
         )
+    
+#endregion
 
 class Jsonable:
     """Base class for converting to json."""
@@ -172,8 +176,65 @@ class Hookable:
                 return func
 
         return BoundHook()
-    
 
+#region Store Objects
+
+@dataclass
+class Binding:
+    channel_id: int
+    guild_id: int
+    port: int
+    slot_name: str
+    password: Optional[str] = None
+
+    # Exclude from constructor
+    last_modified: datetime = field(default=None, init=False)
+
+    @classmethod
+    def from_row(cls, row: sqlite3.Row) -> "Binding":
+        """Create a binding instance from a row."""
+
+        binding = cls(
+            channel_id=row["channel_id"],
+            guild_id=row["guild_id"],
+            port=row["port"],
+            slot_name=row["slot_name"],
+            password=row["password"]
+        )
+        binding.last_modified = row["last_modified"]
+        return binding
+
+@dataclass
+class Notification(Jsonable):
+    port: int
+    user_id: int
+    slot_id: int
+    hints: int = 0
+    types: int = 0
+    terms: List[str] = field(default_factory=list)
+    class_: str = field(default="Notification", metadata={"json": "class"})
+    id: Optional[int] = field(default=None)
+
+    @classmethod
+    def from_row(cls, row: sqlite3.Row) -> "Notification":
+        """Create a notification instance from a row."""
+
+        # TODO: Also include last_modified for notifs?
+        #       Why does excluding ID from the constructor break it?
+
+        notif = cls(
+            id=row["id"],
+            port=row["port"],
+            user_id=row["user_id"],
+            slot_id=row["slot_id"],
+            hints=row["hints"],
+            types=row["types"],
+            terms=row["terms"].split(",") if row["terms"] else []
+        )
+
+        return notif
+
+#endregion
 
 #region Data Objects
 
@@ -258,16 +319,7 @@ class NetworkVersion(Jsonable):
     minor: int = 0
     build: int = 0
 
-@dataclass
-class Notification(Jsonable):
-    port: int
-    user_id: int
-    slot_id: int
-    hints: int = 0
-    types: int = 0
-    terms: List[str] = field(default_factory=list)
-    class_: str = field(default="Notification", metadata={"json": "class"})
-    id: Optional[int] = None
+
 
 @dataclass
 class SessionStats(Jsonable):
@@ -330,34 +382,6 @@ class TrackerPacket(Jsonable):
         """Register packet type for json parsing"""
         TrackerPacket._types[packet_cls.cmd] = packet_cls
         return packet_cls
-    
-    # @classmethod
-    # def on_received(cls, fn):
-    #     """Handler when packet is received"""
-
-    #     if cls.cmd in TrackerPacket._handlers:
-    #         raise RuntimeError(
-    #             f"on_received() handler is already registered for {cls.cmd}"
-    #         )
-        
-    #     TrackerPacket._handlers[cls.cmd] = fn
-    #     return fn
-    
-    # @staticmethod
-    # async def receive(json_obj: Dict[Any, Any], ctx: Optional[Any] = None):
-    #     """Receive and convert a json packet payload"""
-    #     packet = TrackerPacket.parse(json_obj)
-    #     if not packet:
-    #         return
-        
-    #     handler = TrackerPacket._handlers.get(packet.__class__.cmd)
-    #     if not handler:
-    #         logging.warning(f"No handler registered for type {packet.__class__.cmd}")
-    #         return
-        
-    #     result = handler(ctx, packet)
-    #     if inspect.isawaitable(result):
-    #         await result
 
 @dataclass
 class IdentifiablePacket(TrackerPacket):

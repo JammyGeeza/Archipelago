@@ -11,11 +11,11 @@ class Agent:
     port: int
     password: Optional[str]
 
-@dataclass
-class Room:
-    port: int
-    multidata: str
-    savedata: str
+# @dataclass
+# class Room:
+#     port: int
+#     multidata: str
+#     savedata: str
 
 @dataclass
 class RoomConfig:
@@ -27,10 +27,11 @@ class RoomConfig:
     channel_id: Optional[int]
 
 class Store:
-
-    def __init__(self, path: str = "discord_gateway.db"):
+    def __init__(self, path: str = "bot.db"):
         self.path = path
-        self.configs = RoomConfigRepo(self._conn)
+        self.bindings = BindingRepo(self._conn)
+        # self.rooms = RoomRepo(self._conn)
+        # self.configs = RoomConfigRepo(self._conn)
         self.notifications = NotificationRepo(self._conn)
 
     def _conn(self):
@@ -38,58 +39,179 @@ class Store:
         conn.row_factory = sqlite3.Row
         return conn
 
-class NotificationRepo:
-
-    table_name: ClassVar[str] = "notifications"
+class RepoBase:
+    table_name: ClassVar[str]
 
     def __init__(self, connection_factory: sqlite3.Connection):
-        self._conn: sqlite3.Connection = connection_factory
-        self._init()
+        self._conn = connection_factory
+        self._create()
 
-    def _init(self):
-        with self._conn() as connection:
-            connection.execute(f"""
-                CREATE TABLE IF NOT EXISTS {self.table_name} (
-                    id          INTEGER PRIMARY KEY AUTOINCREMENT,
-                    port        INTEGER NOT NULL,
-                    user_id     INTEGER NOT NULL,
-                    slot_id     INTEGER NOT NULL,
-                    hints       INTEGER NOT NULL,
-                    types       INTEGER NOT NULL,
-                    
-                    UNIQUE(port, user_id, slot_id)
+    def _create(self):
+        """Create the repo to store this data type."""
+        raise NotImplementedError(f"The _create() method for {self.__class__.__name__} has not been overridden.")
+
+class BindingRepo(RepoBase):
+    table_name: ClassVar[str] = "bindings"
+
+    def _create(self):
+        """Create the repo to store binding data."""
+
+        try:
+
+            with self._conn() as conn:
+                conn.execute(f"""
+                    CREATE TABLE IF NOT EXISTS {self.table_name} (
+                        channel_id      INTEGER PRIMARY KEY NOT NULL,
+                        guild_id        INTEGER NOT NULL,
+                        port            INTEGER NOT NULL,
+                        slot_name       TEXT NOT NULL,
+                        password        TEXT,
+                        last_modified   INTEGER NOT NULL DEFAULT (unixepoch())
+                    )
+                """)
+
+                conn.commit()
+
+        except Exception as ex:
+            logging.error(f"Error in {self.__class__.__name__}._create(): {ex}")
+
+    def delete(self, binding: utils.Binding) -> bool:
+        """Delete a room binding."""
+
+        try:
+            with self._conn() as conn:
+                conn.execute(f"""
+                    DELETE FROM {self.table_name}
+                    WHERE channel_id = ?
+                    """,
+                    (binding.channel_id,)
                 )
-            """)
+                conn.commit()
+
+                return True
+
+        except Exception as ex:
+            logging.error(f"ERROR in {self.__class__.__name__}.delete(): {ex}")
+            return False
+
+    def get_all(self) -> List[utils.Binding]:
+        """Get all room bindings."""
+
+        try:
+            with self._conn() as conn:
+                rows = conn.execute(f"""
+                    SELECT *
+                    FROM {self.table_name}
+                """).fetchall()
+
+                return [ utils.Binding.from_row(row) for row in rows] if rows else []
             
-            connection.execute(f"""
-                CREATE TABLE IF NOT EXISTS {self.table_name}_terms (
-                    id              INTEGER PRIMARY KEY AUTOINCREMENT,
-                    notification_id INTEGER NOT NULL,
-                    term            TEXT NOT NULL,
+        except Exception as ex:
+            logging.error(f"ERROR in {self.__class__.__name__}.get_all_for_guild(): {ex}")
+            return []
 
-                    FOREIGN KEY (notification_id)
-                        REFERENCES notifications(id)
-                        ON DELETE CASCADE,
+    def get_all_for_guild(self, guild_id: int) -> List[utils.Binding]:
+        """Get all room bindings for a specified guild."""
 
-                    UNIQUE(notification_id, term)
+        try:
+            with self._conn() as conn:
+                rows = conn.execute(f"""
+                    SELECT *
+                    FROM {self.table_name}
+                    WHERE guild_id = ?
+                    """,
+                    (guild_id,)
+                ).fetchall()
+
+                return [ utils.Binding.from_row(row) for row in rows] if rows else []
+            
+        except Exception as ex:
+            logging.error(f"ERROR in {self.__class__.__name__}.get_all_for_guild(): {ex}")
+            return []
+
+    def get_one(self, channel_id: int) -> Optional[utils.Binding]:
+        """Get an existing room binding."""
+
+        try:
+            with self._conn() as conn:
+                row = conn.execute(f"""
+                    SELECT *
+                    FROM {self.table_name}
+                    WHERE channel_id = ?
+                    """,
+                    (channel_id,)
+                ).fetchone()
+
+                return utils.Binding.from_row(row) if row else None
+            
+        except Exception as ex:
+            logging.error(f"ERROR in {self.__class__.__name__}.get_one(): {ex}")
+            return None
+
+    def upsert(self, binding: utils.Binding) -> Optional[utils.Binding]:
+        """Insert or update a room binding"""
+
+        try:
+            with self._conn() as conn:
+                conn.execute(f"""
+                    INSERT INTO {self.table_name} (channel_id, guild_id, port, slot_name, password, last_modified)
+                    VALUES (?, ?, ?, ?, ?, unixepoch())
+                    ON CONFLICT(channel_id) DO UPDATE SET
+                        guild_id = excluded.guild_id,
+                        port = excluded.port,
+                        slot_name = excluded.slot_name,
+                        password = excluded.password,
+                        last_modified = unixepoch()
+                    """,
+                    (binding.channel_id, binding.guild_id, binding.port, binding.slot_name, binding.password)
                 )
-            """)
+                
+                conn.commit()
 
-            connection.commit()
+                return self.get_one(binding.channel_id)
+            
+        except Exception as ex:
+            logging.error(f"ERROR in {self.__class__.__name__}.upsert(): {ex}")
+            return None
 
-    def __bind(self, row) -> Optional[utils.Notification]:
-        """Bind a returned row as a Notification object."""
-        if not row: return None
-        else: return utils.Notification(
-            id=row["id"],
-            port=row["port"],
-            user_id=row["user_id"],
-            slot_id=row["slot_id"],
-            hints=row["hints"],
-            types=row["types"],
-            terms=row["terms"].split(",") if row["terms"] else []
-            # terms=self.__get_terms(row["id"])
-        )
+class NotificationRepo(RepoBase):
+    table_name: ClassVar[str] = "notifications"
+
+    def _create(self):
+
+        try:
+            with self._conn() as connection:
+                connection.execute(f"""
+                    CREATE TABLE IF NOT EXISTS {self.table_name} (
+                        id          INTEGER PRIMARY KEY AUTOINCREMENT,
+                        port        INTEGER NOT NULL,
+                        user_id     INTEGER NOT NULL,
+                        slot_id     INTEGER NOT NULL,
+                        hints       INTEGER NOT NULL,
+                        types       INTEGER NOT NULL,
+                        
+                        UNIQUE(port, user_id, slot_id)
+                    )
+                """)
+                
+                connection.execute(f"""
+                    CREATE TABLE IF NOT EXISTS {self.table_name}_terms (
+                        id              INTEGER PRIMARY KEY AUTOINCREMENT,
+                        notification_id INTEGER NOT NULL,
+                        term            TEXT NOT NULL,
+
+                        FOREIGN KEY (notification_id)
+                            REFERENCES notifications(id)
+                            ON DELETE CASCADE,
+
+                        UNIQUE(notification_id, term)
+                    )
+                """)
+
+                connection.commit()
+
+        except Exception as ex:
+            logging.error(f"ERROR in {self.__class__.__name__}._init(): {ex}")
 
     def get_or_create(self, port: int, user_id: int, slot_id: int) -> Optional[utils.Notification]:
         """Get a notification item or create one if it doesn't exist."""
@@ -181,7 +303,7 @@ class NotificationRepo:
                     (port, user_id, slot_id)
                 ).fetchone()
 
-                return self.__bind(row)
+                return utils.Notification.from_row(row)
             
         except Exception as ex:
             logging.warning(f"Error in {self.table_name} get: {ex}")
@@ -292,345 +414,3 @@ class NotificationRepo:
         except Exception as ex:
             logging.warning(f"Error in {self.table_name} delete: {ex}")
             return False
-
-class RoomConfigRepo:
-
-    def __init__(self, connection_factory: sqlite3.Connection):
-        self._conn: sqlite3.Connection = connection_factory
-        self._init()
-
-    def _init(self):
-
-        with self._conn() as connection:
-            connection.execute("""
-                CREATE TABLE IF NOT EXISTS room_configs (
-                    port        INTEGER PRIMARY KEY,
-                    password    TEXT,
-                    multidata   TEXT NOT NULL,
-                    savedata    TEXT NOT NULL,
-                    guild_id    INTEGER,
-                    channel_id  INTEGER,
-                               
-                    UNIQUE(guild_id, channel_id)
-                )
-            """)
-
-            connection.commit()
-
-    def bind(self, port: int, guild_id: int, channel_id: int) -> Optional[RoomConfig]:
-        """Bind a room to a discord channel"""
-
-        try:
-            with self._conn() as connection:
-
-                connection.execute("""
-                    UPDATE room_configs
-                    SET guild_id = ?, channel_id = ?
-                    WHERE port = ?
-                    """,
-                    (guild_id, channel_id, port)
-                )
-                connection.commit()
-
-            return self.get_by_port(port)
-
-        except Exception as ex:
-            logging.warning(f"Error in bind(): {ex}")
-            return None
-        
-    def create(self, port: int, multidata: str, savedata: str, password: Optional[str] = None) -> Optional[RoomConfig]:
-        """Create a room configuration."""
-
-        try:
-            with self._conn() as connection:
-
-                connection.execute("""
-                    INSERT INTO room_configs (port, multidata, savedata, password)
-                    VALUES (?, ?, ?, ?)
-                    """,
-                    (port, multidata, savedata, password)
-                )
-                connection.commit()
-
-            return self.get_by_port(port)
-        
-        except Exception as ex:
-            return None
-        
-    def get_by_port(self, port: int) -> Optional[RoomConfig]:
-        """Get a room configuration by the port"""
-
-        try:
-            with self._conn() as connection:
-
-                config = connection.execute("""
-                    SELECT port, password, multidata, savedata, guild_id, channel_id
-                    FROM room_configs
-                    WHERE port = ?
-                    """,
-                    (port,)
-                ).fetchone()
-
-            return RoomConfig(*config)
-
-        except Exception as ex:
-            return None
-        
-    def get_by_channel(self, guild_id: int, channel_id: int) -> Optional[RoomConfig]:
-        """Get a room configuration by the guild and channel ID"""
-
-        try:
-            with self._conn() as connection:
-
-                config = connection.execute("""
-                    SELECT port, password, multidata, savedata, guild_id, channel_id
-                    FROM room_configs
-                    WHERE guild_id = ?
-                        AND channel_id = ?
-                    """,
-                    (guild_id, channel_id)
-                ).fetchone()
-
-            return RoomConfig(*config)
-
-        except Exception as ex:
-            return None
-        
-    def get_all_active(self) -> List[RoomConfig]:
-        """Get all room configurations"""
-
-        try:
-            with self._conn() as connection:
-
-                configs = connection.execute("""
-                    SELECT port, password, multidata, savedata, guild_id, channel_id
-                    FROM room_configs
-                    WHERE guild_id IS NOT NULL
-                        AND channel_id IS NOT NULL
-                """).fetchall()
-
-            return [RoomConfig(*config) for config in configs]
-
-        except Exception as ex:
-            logging.warning(f"Error in get_all_active(): {ex}")
-            return []
-        
-    def get_all_by_guild(self, guild_id: int) -> List[RoomConfig]:
-        """Get a room configuration by the guild and channel ID"""
-
-        try:
-            with self._conn() as connection:
-
-                configs = connection.execute("""
-                    SELECT port, password, multidata, savedata, guild_id, channel_id
-                    FROM room_configs
-                    WHERE guild_id = ?
-                    """,
-                    (guild_id,)
-                ).fetchall()
-
-            return [RoomConfig(*config) for config in configs]
-
-        except Exception as ex:
-            return []
-        
-    def unbind(self, port: int) -> Optional[RoomConfig]:
-        """Un-bind a room from a discord channel"""
-
-        try:
-            with self._conn() as connection:
-
-                connection.execute("""
-                    UPDATE room_configs
-                    SET guild_id = NULL, channel_id = NULL
-                    WHERE port = ?
-                    """,
-                    (port,)
-                )
-                connection.commit()
-
-            return self.get_by_port(port)
-
-        except Exception as ex:
-            return None
-
-class AgentRepo:
-
-    def __init__(self, conn_factory):
-        self._conn = conn_factory
-
-    def delete(self, agent: Agent) -> bool:
-        """Delete an agent from the store."""
-
-        try:
-            with self._conn() as connection:
-                connection.execute("""
-                    DELETE
-                    FROM agents
-                    WHERE guild_id = ?
-                        AND channel_id = ?
-                    """,
-                    (agent.guild_id, agent.channel_id)
-                )
-                connection.commit()
-
-        except Exception as ex:
-            return False
-        
-        return True
-
-    def exists(self, guild_id: int, channel_id: int) -> bool:
-        """Check if an agent exists in the store."""
-
-        with self._conn() as connection:
-            agent = connection.execute("""
-                SELECT 1
-                FROM agents
-                WHERE guild_id = ?
-                    AND channel_id = ?
-                """,
-                (guild_id, channel_id)
-            ).fetchone()
-
-            return agent is not None
-
-    def get(self, guild_id: int, channel_id: int) -> Optional[Agent]:
-        """Get an agent from the store."""
-
-        with self._conn() as connection:
-            agent = connection.execute("""
-                SELECT guild_id, channel_id, port, password
-                FROM agents 
-                WHERE guild_id = ?
-                    AND channel_id = ?
-                """,
-                (guild_id, channel_id)
-            ).fetchone()
-
-        return Agent(*agent) if agent else None
-    
-    def get_many(self, guild_id: int) -> List[Agent]:
-        """Get agents from the store for a guild."""
-
-        with self._conn() as connection:
-            agents = connection.execute("""
-                SELECT guild_id, channel_id, port, password
-                FROM agents
-                WHERE guild_id = ?
-                """,
-                (guild_id,)
-            ).fetchall()
-
-            return [Agent(*agent) for agent in agents]
-        
-    def get_all(self) -> List[Agent]:
-        """Get all agents from the store."""
-
-        with self._conn() as connection:
-            agents = connection.execute("""
-                SELECT guild_id, channel_id, port, password
-                FROM agents
-            """).fetchall()
-
-            return [Agent(*agent) for agent in agents]
-
-    def upsert(self, agent: Agent) -> bool:
-        """Add/Update an agent in the store."""
-
-        try:
-            with self._conn() as connection:
-
-                connection.execute("""
-                    INSERT INTO agents (guild_id, channel_id, port, password)
-                    VALUES (?, ?, ?, ?)
-                    """,
-                    (agent.guild_id, agent.channel_id, agent.port, agent.password)
-                )
-                connection.commit()
-
-        except Exception:
-            return False
-        
-        return True
-    
-class RoomRepo:
-
-    def __init__(self, conn_factory):
-        self._conn = conn_factory
-
-    def delete(self, agent: Room) -> bool:
-        """Delete a room from the store."""
-
-        try:
-            with self._conn() as connection:
-                connection.execute("""
-                    DELETE
-                    FROM rooms
-                    WHERE port = ?
-                    """,
-                    (agent.port,)
-                )
-                connection.commit()
-
-        except Exception as ex:
-            return False
-        
-        return True
-
-    def exists(self, port: int) -> bool:
-        """Check if an agent exists in the store."""
-
-        with self._conn() as connection:
-            agent = connection.execute("""
-                SELECT 1
-                FROM rooms
-                WHERE port = ?
-                """,
-                (port,)
-            ).fetchone()
-
-            return agent is not None
-
-    def get(self, port: int) -> Optional[Room]:
-        """Get an agent from the store."""
-
-        with self._conn() as connection:
-            room = connection.execute("""
-                SELECT port, multidata, savedata
-                FROM rooms 
-                WHERE port = ?
-                """,
-                (port,)
-            ).fetchone()
-
-        return Room(*room) if room else None
-        
-    def get_all(self) -> List[Room]:
-        """Get all rooms from the store."""
-
-        with self._conn() as connection:
-            rooms = connection.execute("""
-                SELECT port, multidata, savedata
-                FROM rooms
-            """).fetchall()
-
-            return [Room(*room) for room in rooms]
-
-    def upsert(self, room: Room) -> bool:
-        """Add/Update a room in the store."""
-
-        try:
-            with self._conn() as connection:
-
-                connection.execute("""
-                    INSERT INTO rooms (port, multidata, savedata)
-                    VALUES (?, ?, ?)
-                    """,
-                    (room.port, room.multidata, room.savedata)
-                )
-                connection.commit()
-
-        except Exception:
-            return False
-        
-        return True

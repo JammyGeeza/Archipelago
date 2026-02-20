@@ -2,7 +2,6 @@
 
 import argparse
 import asyncio
-# import bot.Packets as pkts
 import bot.Utils as utils
 import discord
 import json
@@ -13,9 +12,8 @@ import uuid
 
 from discord import app_commands
 from discord.ext import commands
-from bot.Store import Agent, Store, RoomConfig
-# from bot.Utils import Action, Hookable, NotifyFlags
-from typing import Dict, Literal, List, Optional, Tuple
+from bot.Store import Agent, Store
+from typing import Dict, Optional
 
 # Global variables
 admin_only: bool = True
@@ -28,12 +26,12 @@ class AgentProcess:
     on_hint_received = utils.Hookable()
     on_item_received = utils.Hookable()
     on_status_received = utils.Hookable()
+    on_stopped = utils.Hookable()
 
-    def __init__(self, config: RoomConfig):
+    def __init__(self, binding: utils.Binding):
 
-        self.config: RoomConfig = config
+        self.config: utils.RoomBinding = binding
         self.process: asyncio.subprocess.Process = None
-        # self.stats: Dict[str, utils.PlayerStats] = {}
         self.status: str = "Stopped"
         
         self.__player_lookup: dict[str, int] = {}               # Player Name-to-Id lookup
@@ -75,8 +73,7 @@ class AgentProcess:
             sys.executable,
             "-m", "bot.Agent",
             "--port", str(self.config.port),
-            "--multidata", self.config.multidata,
-            "--savedata", self.config.savedata
+            "--slot_name", self.config.slot_name,
         ]
 
         # Add password arg if provided
@@ -93,7 +90,6 @@ class AgentProcess:
         # Start watchers/readers
         asyncio.create_task(self.__watch())
         asyncio.create_task(self.__read_stdout())
-        # asyncio.create_task(self._handle_packet())
 
     def stop(self):
         """Stop the agent process"""
@@ -219,6 +215,9 @@ class AgentProcess:
         self.process = None
         self.status = "Stopped"
 
+        # Trigger event
+        await self.on_stopped.run(code)
+
     def get_player_count(self) -> int:
         """Get amount of players."""
         return len(self.__player_lookup.keys())
@@ -254,7 +253,7 @@ class AgentProcess:
         """Check if a player name exists."""
         return any(True for key in self.stats.keys() if key.casefold() == player.casefold())
 
-agents: Dict[Tuple[int, int], AgentProcess] = {}
+agents: Dict[int, AgentProcess] = {}
 
 def parse_args() -> argparse.Namespace:
     """Parse command-line arguments, providing defaults from host.yaml file if argument not provided."""
@@ -272,10 +271,10 @@ def parse_args() -> argparse.Namespace:
     args = parser.parse_args()
     return args
 
-def get_agent(guild_id: int, channel_id: int) -> Optional[AgentProcess]:
+def get_agent(channel_id: int) -> Optional[AgentProcess]:
     """Get an agent process, if it exists."""
     global agents
-    return agents.get((guild_id, channel_id), None)
+    return agents.get(channel_id, None)
 
 async def interaction_is_admin(interaction: discord.Interaction) -> bool:
     """Check if user is owner or administrator."""
@@ -312,6 +311,18 @@ async def _on_agent_status_received(agent: AgentProcess, message: str):
     """Handler for when the status is received from an agent."""
     await post_message(agent.config.channel_id, message)
 
+@AgentProcess.on_stopped
+async def _on_agent_stopped(agent: AgentProcess, code: int):
+    """Handler for when an agent process has stopped."""
+
+    global agents
+
+    # Remove agent from list
+    agents[agent.config.channel_id] = None
+
+    # Send message
+    await post_message(agent.config.channel_id, f"The client at `:{agent.config.port}` has stopped.")
+
 async def post_message(channel_id: int, message: str):
     """Post a message to a discord channel."""
     global bot
@@ -321,14 +332,14 @@ async def post_message(channel_id: int, message: str):
     else:
         logging.warning(f"Discord channel with ID {channel_id} could not be found.")
 
-async def create_agent(config: RoomConfig) -> AgentProcess:
+async def create_agent(binding: utils.Binding) -> AgentProcess:
     """Create and start an agent process"""
     global agents
 
-    logging.info(f"Creating agent... | Port {config.port}")
+    logging.info(f"Creating agent... | Port: {binding.port}")
 
-    agent = AgentProcess(config)
-    agents[(config.guild_id, config.channel_id)] = agent
+    agent = AgentProcess(binding)
+    agents[binding.channel_id] = agent
 
     # Start agent process
     await agent.start()
@@ -389,11 +400,6 @@ def generate_session_stats_description(agent: AgentProcess, stats: utils.Session
         f"**Goals**: {stats.goals}/{players} _({goal_perc}%)_"
     )
 
-def get_agent(config: RoomConfig) -> Optional[AgentProcess]:
-    """Get an agent process"""
-    global agents
-    return agents.get((config.guild_id, config.channel_id), None)
-
 async def message_agent(agent: Agent, payload: str) -> bool:
     """Send a message to an agent process"""
 
@@ -451,17 +457,20 @@ async def on_ready():
     logging.info(f"Connected to discord as {bot.user.name} ({bot.user.id})")
     logging.info(f"Syncing command tree...")
 
+    # Sync the command tree
     await bot.tree.sync()
 
-    logging.info("Starting agent(s)...")
+    # Create and start any existing, actively-bound agents
+    if (active_bindings:= store.bindings.get_all()):
+        logging.info(f"Starting {len(active_bindings)} bound agent(s)...")
+        for binding in active_bindings:
+            await create_agent(binding)
 
-    # Create agents for existing room configurations
-    for config in store.configs.get_all_active():
-        await create_agent(config)
+    logging.info(f"Ready!")
 
 @bot.tree.command(name="bind", description="Bind this channel to an Archipelago room.")
 @app_commands.describe(port="The port number of the local archipelago room.", password="(Optional) Room password")
-async def bind(interaction: discord.Interaction, port: int, password: str | None = None):
+async def bind(interaction: discord.Interaction, port: int, slot_name: str, password: str | None = None):
     """Command to bind a channel to a room."""
 
     global admin_only
@@ -478,55 +487,80 @@ async def bind(interaction: discord.Interaction, port: int, password: str | None
         await interaction.followup.send("Only administrators can bind channels to rooms.", ephemeral=True)
         return
     
-    # Check for existing binding
-    if (room_config:= store.configs.get_by_channel(interaction.guild_id, interaction.channel_id)):
-        await interaction.followup.send(f"{interaction.channel.jump_url} is already bound to port `:{room_config.port}` - please unbind it first.", ephemeral=True)
+    # Check if an agent is already running for it
+    if (agent:= get_agent(interaction.channel_id)) or (binding:= store.bindings.get_one(interaction.channel_id)):
+        await interaction.followup.send(f"This channel is already bound to `:{agent.config.port}` - please use `/unbind` to unbind it first.", ephemeral=True)
         return
 
     # Attempt to create binding
-    if not (room_config:= store.configs.bind(port, interaction.guild_id, interaction.channel_id)):
-        await interaction.followup.send(f"Unable to bind {interaction.channel.jump_url} to port `:{port}` - please check that the port exists or wait a moment and try again.", ephemeral=True)
+    if not (new_binding:= store.bindings.upsert(utils.Binding(interaction.channel_id, interaction.guild_id, port, slot_name, password))):
+        await interaction.followup.send(f"Unable to bind this channel to port `:{port}` - please wait a moment and try again.", ephemeral=True)
         return
     
     # Success response
-    await interaction.followup.send(f"Successfully bound {interaction.channel.jump_url} to port `:{port}`!", ephemeral=True)
-    
-    # Start agent
-    await create_agent(room_config)
+    await interaction.followup.send(f"Successfully bound {interaction.channel.jump_url} to port `:{new_binding.port}` - please use `/connect` to connect a client.", ephemeral=True)
 
-@bot.tree.command(name="unbind", description="Unbind this channel from its Archipelago room.")
-async def unbind(interaction: discord.Interaction):
-    """Command to unbind a channel from a room."""
+@bot.tree.command(name="connect", description="Connect to the archipelago session bound to this channel.")
+async def connect(interaction: discord.Interaction):
+    """Command to connect to archipelago session."""
 
-    global admin_only
     global store
 
-    logging.info(f"Unbind requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id}")
+    logging.info(f"Connect requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id}")
+
+    # Defer response
+    await interaction.response.defer(thinking=True, ephemeral=True)
+
+    # Check if an agent is already running for it
+    if (agent:= get_agent(interaction.channel_id)):
+
+        # Get status
+        response = await agent.request(utils.StatusRequestPacket(id=uuid.uuid4().hex))
+        
+        # Validate response
+        if response.is_error():
+            await interaction.followup.send(f"An unexpected error occurred: {response.message}", ephemeral=True)
+        else:        
+            await interaction.followup.send(f"The client for this channel is already running with status: `{response.status}`.", ephemeral=True)
+        return
+
+    # Check for existing binding
+    if not (binding:= store.bindings.get_one(interaction.channel_id)):
+        await interaction.followup.send(f"This channel is not currently bound to a port - please use `/bind` to bind it to a session.", ephemeral=True)
+        return
     
+    # Respond
+    await interaction.followup.send(f"Starting client connection to `:{binding.port}` - this may take a moment.", ephemeral=True)
+    
+    # Create and start agent
+    await create_agent(binding)
+
+@bot.tree.command(name="disconnect", description="Disconnect from the archipelago session bound to this channel.")
+async def disconnect(interaction: discord.Interaction):
+    """Command to disconnect from the archipelago session."""
+
+    global store
+
+    logging.info(f"Disconnect requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id}")
+
     # Defer response
     await interaction.response.defer(thinking=True, ephemeral=True)
 
     # Check user is an admin, if required
     if admin_only and not await interaction_is_admin(interaction):
-        await interaction.followup.send("Only administrators can unbind channels from rooms.", ephemeral=True)
-        return
-    
-    # Check for existing binding
-    if not (room_config:= store.configs.get_by_channel(interaction.guild_id, interaction.channel_id)):
-        await interaction.followup.send(f"{interaction.channel.jump_url} is not currently bound to a port.", ephemeral=True)
+        await interaction.followup.send("Only administrators can disconnect clients.", ephemeral=True)
         return
 
-    # Attempt to un-bind
-    if not (room_config:= store.configs.unbind(room_config.port)):
-        await interaction.followup.send(f"Unable to un-bind {interaction.channel.jump_url} from port `:{room_config.port}` - please wait a moment and try again.", ephemeral=True)
+    # Check if an agent is already running for it
+    if not (agent:= get_agent(interaction.channel_id)):
+        await interaction.followup.send(f"This channel does not currently have an active client.", ephemeral=True)
         return
-    
-    # Stop the process, if running
-    if (agent:= get_agent(room_config)):
-        agent.stop()
-    
-    # Success response
-    await interaction.followup.send(f"The channel {interaction.channel.jump_url} has been successfully unbound from port `:{agent.port}`.", ephemeral=True)
+
+    # Stop client
+    agent.stop()
+
+    # Respond
+    await interaction.followup.send(f"Stopping the client at `:{agent.config.port}` - this may take a moment.", ephemeral=True)
 
 @bot.tree.command(name="list", description="List all bound channels.")
 async def _list(interaction: discord.Interaction):
@@ -540,138 +574,17 @@ async def _list(interaction: discord.Interaction):
     await interaction.response.defer(thinking=True, ephemeral=True)
 
     # Get agent bindings for guild
-    if not (room_configs:= store.configs.get_all_by_guild(interaction.guild_id)):
+    if not (room_configs:= store.bindings.get_all_for_guild(interaction.guild_id)):
         await interaction.followup.send(f"No channels are bound to any sessions - use the `/bind` command to bind one.", ephemeral=True)
         return
     
     # Compile response
     response: str = "This server has the following bindings:"
     for config in room_configs:
-        response += f"\n- <#{config.channel_id}> is bound to the session at `:{config.port}`\n"
+        response += f"\n- <#{config.channel_id}> is bound to `:{config.port}`\n"
 
     # Respond
     await interaction.followup.send(response, ephemeral=True)
-
-@bot.tree.command(name="stats_session", description="List of players. E.g. Player1,Player2 etc.")
-async def stats_session(interaction: discord.Interaction):
-    """Command to list stats for a player."""
-
-    global store
-
-    logging.info(f"Session Stats requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id}")
-
-    # Defer response
-    await interaction.response.defer(thinking=True, ephemeral=True)
-
-    # Check if binding exists
-    if not (config:= store.configs.get_by_channel(interaction.guild_id, interaction.channel_id)):
-        await interaction.followup.send(f"{interaction.channel.jump_url} is not currently bound to a port.", ephemeral=True)
-        return
-    
-    # Attempt to get process
-    if not (agent:= get_agent(config)):
-        await interaction.followup.send(f"{interaction.channel.jump_url} is bound to a port but its process is not running.", ephemeral=True)
-        return
-
-    # Request stats
-    response = await agent.request(utils.StatisticsRequestPacket(
-        id=uuid.uuid4().hex,
-        players=[],
-        include_session=True
-    ))
-
-    # Validate stats
-    if response.is_error() or not response.session:
-        await interaction.followup.send("Failed to retrieve stats - please wait a moment and try again.", ephemeral=True)
-        return
-
-    # Respond with stats embeds
-    await interaction.followup.send(
-        embed=generate_session_stats_embed(agent, response.session),
-        ephemeral=True
-    )
-
-@bot.tree.command(name="stats_players", description="Get statistics for a player or session.")
-@app_commands.describe(players="List of players. E.g. Player1,Player2 etc.")
-async def stats_players(interaction: discord.Interaction, players: str):
-    """Command to list stats for a player."""
-
-    global store
-
-    logging.info(f"Player Stats requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id}")
-
-    # Defer response
-    await interaction.response.defer(thinking=True, ephemeral=True)
-
-    # Check if binding exists
-    if not (config:= store.configs.get_by_channel(interaction.guild_id, interaction.channel_id)):
-        await interaction.followup.send(f"{interaction.channel.jump_url} is not currently bound to a port.", ephemeral=True)
-        return
-    
-    # Attempt to get process
-    if not (agent:= get_agent(config)):
-        await interaction.followup.send(f"{interaction.channel.jump_url} is bound to a port but its process is not running.", ephemeral=True)
-        return
-
-    # Validate player input
-    if not (names:= list(dict.fromkeys(player.strip() for player in players.strip().split(",") if player and player.strip()))):
-        await interaction.followup.send(f"Please provide a list of comma-separated player names. _(E.g. `Player1,Player2,Player3`)_", ephemeral=True)
-        return
-    
-    # Request stats
-    response = await agent.request(utils.StatisticsRequestPacket(
-        id=uuid.uuid4().hex,
-        players=names,
-        include_session=False
-    ))
-
-    # Validate response
-    if response.is_error():
-        await interaction.followup.send(f"Error retrieving player stats: '**_{response.message}_**'.", ephemeral=True)
-        return
-    elif not response.slots:
-        await interaction.followup.send(f"Unable to retrieve player stats - please wait a moment and try again.", ephemeral=True)
-        return
-
-    # Respond with stats embed(s)   
-    await interaction.followup.send(
-        embeds=[ generate_player_stats_embed(agent, slot, stats) for slot, stats in response.slots.items() ],
-        ephemeral=True
-    )
-
-@bot.tree.command(name="status", description="Get the status of this channel, if bound to a room.")
-async def status(interaction: discord.Interaction):
-    """Command to check the status of a bound channel in the guild."""
-
-    logging.info(f"Status requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id}")
-
-    global store
-
-    # Defer response
-    await interaction.response.defer(thinking=True, ephemeral=True)
-
-    # Check if binding exists
-    if not (config:= store.configs.get_by_channel(interaction.guild_id, interaction.channel_id)):
-        await interaction.followup.send(f"This channel is not currently bound to a session - use the `/bind` command to bind it", ephemeral=True)
-        return
-
-    # Attempt to get process
-    if not (agent:= get_agent(config)):
-        await interaction.followup.send(f"The client bound to `:{config.port}` is not currently running - use the `/connect` command to connect it.", ephemeral=True)
-        return
-    
-    # Request status from agent
-    response = await agent.request(utils.StatusRequestPacket(
-        id=uuid.uuid4().hex
-    ))
-
-    # Validate response
-    if response.is_error():
-        await interaction.followup.send(f"Error retrieving current status: **_{response.message}_**", ephemeral=True)
-        return
-
-    # Respond with status
-    await interaction.followup.send(f"The client bound to the session at `:{agent.config.port}` is currently `{response.status}`.", ephemeral=True)
 
 @bot.tree.command(name="notify_hints", description="Notify on hints received")
 @app_commands.describe(finder="The finding player name", action="Action to perform", item_type="Notify for item type")
@@ -697,12 +610,12 @@ async def notify_hints(interaction: discord.Interaction, finder: str, action: in
     await interaction.response.defer(thinking=True, ephemeral=True)
 
     # Check if binding exists
-    if not (config:= store.configs.get_by_channel(interaction.guild_id, interaction.channel_id)):
+    if not (binding:= store.bindings.get_one(interaction.channel_id)):
         await interaction.followup.send(f"{interaction.channel.jump_url} is not currently bound to a port.", ephemeral=True)
         return
     
     # Attempt to get process
-    if not (agent:= get_agent(config)):
+    if not (agent:= get_agent(binding.channel_id)):
         await interaction.followup.send(f"{interaction.channel.jump_url} is bound to a port but its process is not running.", ephemeral=True)
         return
 
@@ -741,23 +654,16 @@ async def notify_terms(interaction: discord.Interaction, recipient: str, action:
 
     # Defer response
     await interaction.response.defer(thinking=True, ephemeral=True)
-
-    # Check if binding exists
-    if not (config:= store.configs.get_by_channel(interaction.guild_id, interaction.channel_id)):
-        await interaction.followup.send(f"{interaction.channel.jump_url} is not currently bound to a port.", ephemeral=True)
-        return
-    
-    # Attempt to get process
-    if not (agent:= get_agent(config)):
-        await interaction.followup.send(f"{interaction.channel.jump_url} is bound to a port but its process is not running.", ephemeral=True)
-        return
     
     # Validate arguments
     if not (term_list:= list(dict.fromkeys(term.strip() for term in terms.strip().split(",") if term and term.strip()))):
         await interaction.followup.send(f"Please provide a valid, comma-separated list of terms to {utils.Action(action).name.lower()}. _(E.g. `Frame,Orb,Scraps`)_ ", ephemeral=True)
         return
-    
-    logging.info(f"Terms list: {term_list}")
+
+    # Attempt to get process
+    if not (agent:= get_agent(interaction.channel_id)):
+        await interaction.followup.send(f"No client is running for this channel - use `/connect` to start or `/bind` to bind it to a session.", ephemeral=True)
+        return
     
     # Request notification change and await response
     response: utils.NotificationsResponsePacket = await agent.request(utils.NotificationsRequestPacket(
@@ -802,14 +708,9 @@ async def notify_types(interaction: discord.Interaction, recipient: str, action:
     # Defer response
     await interaction.response.defer(thinking=True, ephemeral=True)
 
-    # Check if binding exists
-    if not (config:= store.configs.get_by_channel(interaction.guild_id, interaction.channel_id)):
-        await interaction.followup.send(f"{interaction.channel.jump_url} is not currently bound to a port.", ephemeral=True)
-        return
-    
     # Attempt to get process
-    if not (agent:= get_agent(config)):
-        await interaction.followup.send(f"{interaction.channel.jump_url} is bound to a port but its process is not running.", ephemeral=True)
+    if not (agent:= get_agent(interaction.channel_id)):
+        await interaction.followup.send(f"No client is running for this channel - use `/connect` to start or `/bind` to bind it to a session.", ephemeral=True)
         return
     
     # Request notification change and await response
@@ -831,6 +732,146 @@ async def notify_types(interaction: discord.Interaction, recipient: str, action:
         await interaction.followup.send(f"You now have no item type notifications for `{recipient}`.", ephemeral=True)
     else:
         await interaction.followup.send(f"You will now receive a {interaction.user.mention} when `{recipient}` receives **{utils.NotifyFlags(response.notification.types).to_text()}** items.", ephemeral=True)
+
+@bot.tree.command(name="stats_session", description="List of players. E.g. Player1,Player2 etc.")
+async def stats_session(interaction: discord.Interaction):
+    """Command to list stats for a player."""
+
+    global store
+
+    logging.info(f"Session Stats requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id}")
+
+    # Defer response
+    await interaction.response.defer(thinking=True, ephemeral=True)
+
+    # Attempt to get process
+    if not (agent:= get_agent(interaction.channel_id)):
+        await interaction.followup.send(f"No client is running for this channel - use `/connect` to start or `/bind` to bind it to a session.", ephemeral=True)
+        return
+
+    # Request stats
+    response = await agent.request(utils.StatisticsRequestPacket(
+        id=uuid.uuid4().hex,
+        players=[],
+        include_session=True
+    ))
+
+    # Validate stats
+    if response.is_error() or not response.session:
+        await interaction.followup.send("Failed to retrieve stats - please wait a moment and try again.", ephemeral=True)
+        return
+
+    # Respond with stats embeds
+    await interaction.followup.send(
+        embed=generate_session_stats_embed(agent, response.session),
+        ephemeral=True
+    )
+
+@bot.tree.command(name="stats_players", description="Get statistics for a player or session.")
+@app_commands.describe(players="List of players. E.g. Player1,Player2 etc.")
+async def stats_players(interaction: discord.Interaction, players: str):
+    """Command to list stats for a player."""
+
+    global store
+
+    logging.info(f"Player Stats requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id}")
+
+    # Defer response
+    await interaction.response.defer(thinking=True, ephemeral=True)
+
+    # Validate player input
+    if not (names:= list(dict.fromkeys(player.strip() for player in players.strip().split(",") if player and player.strip()))):
+        await interaction.followup.send(f"Please provide a list of comma-separated player names. _(E.g. `Player1,Player2,Player3`)_", ephemeral=True)
+        return
+
+    # Attempt to get process
+    if not (agent:= get_agent(interaction.channel_id)):
+        await interaction.followup.send(f"No client is running for this channel - use `/connect` to start or `/bind` to bind it to a session.", ephemeral=True)
+        return
+    
+    # Request stats
+    response = await agent.request(utils.StatisticsRequestPacket(
+        id=uuid.uuid4().hex,
+        players=names,
+        include_session=False
+    ))
+
+    # Validate response
+    if response.is_error():
+        await interaction.followup.send(f"Error retrieving player stats: '**_{response.message}_**'.", ephemeral=True)
+        return
+    elif not response.slots:
+        await interaction.followup.send(f"Unable to retrieve player stats - please wait a moment and try again.", ephemeral=True)
+        return
+
+    # Respond with stats embed(s)   
+    await interaction.followup.send(
+        embeds=[ generate_player_stats_embed(agent, slot, stats) for slot, stats in response.slots.items() ],
+        ephemeral=True
+    )
+
+@bot.tree.command(name="status", description="Get the status of this channel, if bound to a room.")
+async def status(interaction: discord.Interaction):
+    """Command to check the status of a bound channel in the guild."""
+
+    logging.info(f"Status requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id}")
+
+    global store
+
+    # Defer response
+    await interaction.response.defer(thinking=True, ephemeral=True)
+
+    # Attempt to get process
+    if not (agent:= get_agent(interaction.channel_id)):
+        await interaction.followup.send(f"No client is running for this channel - use `/connect` to start or `/bind` to bind it to a session.", ephemeral=True)
+        return
+    
+    # Request status from agent
+    response = await agent.request(utils.StatusRequestPacket(
+        id=uuid.uuid4().hex
+    ))
+
+    # Validate response
+    if response.is_error():
+        await interaction.followup.send(f"Error retrieving current status: **_{response.message}_**", ephemeral=True)
+        return
+
+    # Respond with status
+    await interaction.followup.send(f"The client bound to the session at `:{agent.config.port}` is currently `{response.status}`.", ephemeral=True)
+
+@bot.tree.command(name="unbind", description="Unbind this channel from its Archipelago room.")
+async def unbind(interaction: discord.Interaction):
+    """Command to unbind a channel from a room."""
+
+    global admin_only
+    global store
+
+    logging.info(f"Unbind requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id}")
+    
+    # Defer response
+    await interaction.response.defer(thinking=True, ephemeral=True)
+
+    # Check user is an admin, if required
+    if admin_only and not await interaction_is_admin(interaction):
+        await interaction.followup.send("Only administrators can unbind channels from rooms.", ephemeral=True)
+        return
+    
+    # Check for existing binding
+    if not (binding:= store.bindings.get_one(interaction.channel_id)):
+        await interaction.followup.send(f"This channel is not currently bound to a port.", ephemeral=True)
+        return
+
+    # Attempt to un-bind
+    if not store.bindings.delete(binding):
+        await interaction.followup.send(f"Unable to un-bind this channel from port `:{binding.port}` - please wait a moment and try again.", ephemeral=True)
+        return
+    
+    # Stop the agent process, if running
+    if (agent:= get_agent(binding.channel_id)):
+        agent.stop()
+    
+    # Success response
+    await interaction.followup.send(f"This channel has been successfully unbound from port `:{binding.port}`.", ephemeral=True)
 
 #endregion
 
