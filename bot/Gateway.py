@@ -419,7 +419,8 @@ async def on_ready():
 
 @bot.tree.command(name="bind", description="Bind this channel to an Archipelago room")
 @app_commands.describe(port="The port number of the local archipelago room", slot_name="Name of the slot to connect to")
-async def bind(interaction: discord.Interaction, port: int, slot_name: str, password: str | None = None):
+@commands.has_permissions(manage_guild=True, administrator=True)
+async def bind(interaction: discord.Interaction, port: app_commands.Range[int, 1, 65535], slot_name: str, password: str | None = None):
     """Command to bind a channel to a room."""
 
     global admin_only
@@ -431,10 +432,10 @@ async def bind(interaction: discord.Interaction, port: int, slot_name: str, pass
     # Defer response
     await interaction.response.defer(thinking=True, ephemeral=True)
 
-    # Check user is an admin, if required
-    if admin_only and not await interaction_is_admin(interaction):
-        await interaction.followup.send("Only administrators can bind channels to rooms.", ephemeral=True)
-        return
+    # # Check user is an admin, if required
+    # if admin_only and not await interaction_is_admin(interaction):
+    #     await interaction.followup.send("Only administrators can bind channels to rooms.", ephemeral=True)
+    #     return
     
     # Check if an agent is already running for it
     if (agent:= get_agent(interaction.channel_id)) or (binding:= store.bindings.get_one(interaction.channel_id)):
@@ -485,6 +486,7 @@ async def connect(interaction: discord.Interaction):
     await create_agent(binding)
 
 @bot.tree.command(name="disconnect", description="Disconnect from the archipelago session bound to this channel")
+@commands.has_permissions(manage_guild=True, administrator=True)
 async def disconnect(interaction: discord.Interaction):
     """Command to disconnect from the archipelago session."""
 
@@ -495,10 +497,10 @@ async def disconnect(interaction: discord.Interaction):
     # Defer response
     await interaction.response.defer(thinking=True, ephemeral=True)
 
-    # Check user is an admin, if required
-    if admin_only and not await interaction_is_admin(interaction):
-        await interaction.followup.send("Only administrators can disconnect clients.", ephemeral=True)
-        return
+    # # Check user is an admin, if required
+    # if admin_only and not await interaction_is_admin(interaction):
+    #     await interaction.followup.send("Only administrators can disconnect clients.", ephemeral=True)
+    #     return
 
     # Check if an agent is already running for it
     if not (agent:= get_agent(interaction.channel_id)):
@@ -537,7 +539,7 @@ async def _list(interaction: discord.Interaction):
 
 @bot.tree.command(name="notify_clear", description="Clear all notifications")
 @app_commands.describe(slot="Slot to clear notifications for")
-async def notify_clear(interaction: discord.Interaction, slot: str):
+async def notify_clear(interaction: discord.Interaction, slot: app_commands.Range[str, 1, 16]):
     """Command to clear notifications for a slot"""
 
     global store
@@ -566,6 +568,47 @@ async def notify_clear(interaction: discord.Interaction, slot: str):
     else:    
         await interaction.followup.send(f"You have cleared all notifications for `{slot}`.", ephemeral=True)
 
+@bot.tree.command(name="notify_count", description="Notify on X of an item received")
+@app_commands.describe(recipient="Player receiving the item", action="Action to perform", item="Full item name", count="Times received to notify")
+@app_commands.choices(
+    action=[
+        app_commands.Choice(name="Add", value=utils.Action.ADD),
+        app_commands.Choice(name="Remove", value=utils.Action.REMOVE),
+    ]
+)
+async def notify_count(interaction: discord.Interaction, recipient: app_commands.Range[str, 1, 16], action: int, item: app_commands.Range[str, 1, 100], count: app_commands.Range[int, 1, 2000]):
+    """Command to modify notifications for received item counts."""
+
+    logging.info(f"Notify Count requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id}")
+
+    # Defer response
+    await interaction.response.defer(thinking=True, ephemeral=True)
+
+    # Attempt to get process
+    if not (agent:= get_agent(interaction.channel_id)):
+        await interaction.followup.send(f"No client is running for this channel - use `/connect` to start or `/bind` to bind it to a session.", ephemeral=True)
+        return
+    
+    # Request notification change and await response
+    response: utils.NotificationsResponsePacket = await agent.request(utils.NotificationsRequestPacket(
+        id=uuid.uuid4().hex,
+        action=action,
+        user_id=interaction.user.id,
+        player=recipient,
+        counts={ item: count }
+    ))
+
+    # Validate response
+    if response.is_error():
+        await interaction.followup.send(f"Error setting hint preferences: '**_{response.message}_**'.", ephemeral=True)
+        return
+    
+    # Respond with appropriate message
+    if not response.notification.counts:
+        await interaction.followup.send(f"You now have no item count notifications for `{recipient}`.", ephemeral=True)
+    else:
+        await interaction.followup.send(f"Success! _(Need to figure out what to write here, as I can't translate item IDs...)_.", ephemeral=True)
+
 @bot.tree.command(name="notify_hints", description="Notify on hints received")
 @app_commands.describe(finder="The finding player name", action="Action to perform", item_type="Notify for item type")
 @app_commands.choices(
@@ -579,7 +622,7 @@ async def notify_clear(interaction: discord.Interaction, slot: str):
         app_commands.Choice(name="Both", value=utils.NotifyFlags.PROGRESSION | utils.NotifyFlags.USEFUL)
     ]
 )
-async def notify_hints(interaction: discord.Interaction, finder: str, action: int, item_type: int):
+async def notify_hints(interaction: discord.Interaction, finder: app_commands.Range[str, 1, 16], action: int, item_type: int):
     """Command to modify notifications for targeted hints."""
 
     global store
@@ -622,7 +665,7 @@ async def notify_hints(interaction: discord.Interaction, finder: str, action: in
         app_commands.Choice(name="Remove", value=utils.Action.REMOVE),
     ]
 )
-async def notify_terms(interaction: discord.Interaction, recipient: str, action: int, terms: str):
+async def notify_terms(interaction: discord.Interaction, recipient: app_commands.Range[str, 1, 16], action: int, terms: str):
     """Command to modify notifications for received item terms."""
 
     logging.info(f"Notify Terms requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id}")
@@ -675,7 +718,7 @@ async def notify_terms(interaction: discord.Interaction, recipient: str, action:
         app_commands.Choice(name="All", value=utils.NotifyFlags.PROGRESSION | utils.NotifyFlags.USEFUL | utils.NotifyFlags.TRAP | utils.NotifyFlags.FILLER)
     ]
 )
-async def notify_types(interaction: discord.Interaction, recipient: str, action: int, item_type: int):
+async def notify_types(interaction: discord.Interaction, recipient: app_commands.Range[str, 1, 16], action: int, item_type: int):
     """Command to modify notifications for received item types."""
 
     logging.info(f"Notify Types requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id}")
@@ -710,7 +753,7 @@ async def notify_types(interaction: discord.Interaction, recipient: str, action:
 
 @bot.tree.command(name="notify_view", description="View all notifications for a slot")
 @app_commands.describe(slot="Slot to view notifications for")
-async def notify_view(interaction: discord.Interaction, slot: str):
+async def notify_view(interaction: discord.Interaction, slot: app_commands.Range[str, 1, 16]):
     """Command to view notifications for a slot"""
 
     global store
@@ -849,7 +892,8 @@ async def status(interaction: discord.Interaction):
 
 @bot.tree.command(name="rebind", description="Update this channel's current binding")
 @app_commands.describe(port="The port number of the local archipelago room", slot_name="The name of the slot to connect to")
-async def bind(interaction: discord.Interaction, port: int, slot_name: str, password: str | None = None):
+@commands.has_permissions(manage_guild=True, administrator=True)
+async def bind(interaction: discord.Interaction, port: app_commands.Range[int, 1, 65535], slot_name: app_commands.Range[str, 1, 16], password: str | None = None):
     """Command to re-bind a channel."""
 
     global admin_only
@@ -861,10 +905,10 @@ async def bind(interaction: discord.Interaction, port: int, slot_name: str, pass
     # Defer response
     await interaction.response.defer(thinking=True, ephemeral=True)
 
-    # Check user is an admin, if required
-    if admin_only and not await interaction_is_admin(interaction):
-        await interaction.followup.send("Only administrators can re-bind channels.", ephemeral=True)
-        return
+    # # Check user is an admin, if required
+    # if admin_only and not await interaction_is_admin(interaction):
+    #     await interaction.followup.send("Only administrators can re-bind channels.", ephemeral=True)
+    #     return
 
     # Find existing binding
     if not (binding:= store.bindings.get_one(interaction.channel_id)):
@@ -884,6 +928,7 @@ async def bind(interaction: discord.Interaction, port: int, slot_name: str, pass
     await interaction.followup.send(f"Successfully re-bound to port `:{binding.port}` - please use `/connect` to re-connect the client.", ephemeral=True)
 
 @bot.tree.command(name="unbind", description="Unbind this channel from its Archipelago room")
+@commands.has_permissions(manage_guild=True, administrator=True)
 async def unbind(interaction: discord.Interaction):
     """Command to unbind a channel from a room."""
 
@@ -895,10 +940,10 @@ async def unbind(interaction: discord.Interaction):
     # Defer response
     await interaction.response.defer(thinking=True, ephemeral=True)
 
-    # Check user is an admin, if required
-    if admin_only and not await interaction_is_admin(interaction):
-        await interaction.followup.send("Only administrators can unbind channels from rooms.", ephemeral=True)
-        return
+    # # Check user is an admin, if required
+    # if admin_only and not await interaction_is_admin(interaction):
+    #     await interaction.followup.send("Only administrators can unbind channels from rooms.", ephemeral=True)
+    #     return
     
     # Check for existing binding
     if not (binding:= store.bindings.get_one(interaction.channel_id)):

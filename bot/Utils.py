@@ -213,6 +213,9 @@ class Notification(Jsonable):
     hints: int = 0
     types: int = 0
     terms: List[str] = field(default_factory=list)
+    counts: List["NotificationCount"] = field(default_factory=list)
+    
+    # "Private"
     class_: str = field(default="Notification", metadata={"json": "class"})
     id: Optional[int] = field(default=None)
 
@@ -223,17 +226,52 @@ class Notification(Jsonable):
         # TODO: Also include last_modified for notifs?
         #       Why does excluding ID from the constructor break it?
 
-        notif = cls(
+        return cls(
             id=row["id"],
             port=row["port"],
             user_id=row["user_id"],
             slot_id=row["slot_id"],
             hints=row["hints"],
             types=row["types"],
-            terms=row["terms"].split(",") if row["terms"] else []
+            terms=row["terms"].split(",") if row["terms"] else [],
+            # counts=[ NotificationCount.from_row(count) for count in row["counts"]]
         )
+    
+@dataclass
+class NotificationCount(Jsonable):
+    item_id: int
+    target: int
+    last_count: int = 0
 
-        return notif
+    # "Private"
+    class_: str = field(default="NotificationCount", metadata={"json": "class"})
+    id: Optional[int] = field(default=None)
+
+    # Overriding hash so that merging sets of these works 
+    def __hash__(self):
+        return hash((self.item_id, self.target))
+
+    @classmethod
+    def from_row(cls, row: sqlite3.Row) -> "NotificationCount":
+        """Create a notification count instance from a row."""
+        return cls(
+            id=row["id"],
+            item_id=row["item_id"],
+            target=row["target"],
+            last_count=row["last_count"]
+        )
+    
+    @staticmethod
+    def merge(set_one, set_two):
+        """Merge two lists together, keeping the last (set two)"""
+
+        out = {}
+        key = lambda x: (x.item_id)
+
+        for x in set_one + set_two:
+            out[key(x)] = x
+        
+        return list(out.values())
 
 #endregion
 
@@ -452,6 +490,14 @@ class GetDataPackagePacket(TrackerPacket):
 
 @TrackerPacket.register_packet
 @dataclass
+class GetReceivedCount(TrackerPacket):
+    """Packet sent to server to request item received count"""
+    cmd: ClassVar[str] = "GetReceivedCount"
+    slot_id: int = 0
+    item_ids: List[int] = field(default_factory=list)
+
+@TrackerPacket.register_packet
+@dataclass
 class GetStatsPacket(TrackerPacket):
     """Packet sent to server to request stats."""
     cmd: ClassVar[str] = "GetStats"
@@ -478,6 +524,14 @@ class PrintJSONPacket(TrackerPacket):
     slot: int = 0
     team: int = 0
     type: str = ""
+
+@TrackerPacket.register_packet
+@dataclass
+class ReceivedCountPacket(TrackerPacket):
+    """Packet received in response to 'GetReceivedCount' packet."""
+    cmd: ClassVar[str] = "ReceivedCount"
+    slot_id: int = 0
+    counts: Dict[int, int] = field(default_factory=dict)
 
 @TrackerPacket.register_packet
 @dataclass
@@ -559,6 +613,7 @@ class NotificationsRequestPacket(IdentifiablePacket):
     hints: Optional[int] = None
     types: Optional[int] = None
     terms: Optional[List[str]] = field(default_factory=list)
+    counts: Optional[Dict[str, int]] = field(default_factory=dict)
 
 @TrackerPacket.register_packet
 @dataclass

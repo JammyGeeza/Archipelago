@@ -183,6 +183,22 @@ class NotificationRepo(RepoBase):
                     )
                 """)
 
+                connection.execute(f"""
+                    CREATE TABLE IF NOT EXISTS {self.table_name}_counts (
+                        id              INTEGER PRIMARY KEY AUTOINCREMENT,
+                        notification_id INTEGER NOT NULL,
+                        item_id         INTEGER NOT NULL,
+                        target          INTEGER NOT NULL,
+                        last_count      INTEGER NOT NULL,
+
+                        FOREIGN KEY (notification_id)
+                            REFERENCES notifications(id)
+                            ON DELETE CASCADE,
+
+                        UNIQUE(notification_id, item_id)
+                    )
+                """)
+
                 connection.commit()
 
         except Exception as ex:
@@ -204,7 +220,7 @@ class NotificationRepo(RepoBase):
         except Exception as ex:
             logging.warning(f"Error in {self.table_name} get_or_create(): {ex}")
             return None
-        
+    
     def upsert(self, notif: utils.Notification) -> Optional[utils.Notification]:
         """Insert or update a notification."""
 
@@ -243,6 +259,14 @@ class NotificationRepo(RepoBase):
                     (notif.id,)
                 )
 
+                # Wipe all existing counts
+                connection.execute(f"""
+                    DELETE FROM {self.table_name}_counts
+                    WHERE notification_id = ?
+                    """,
+                    (notif.id,)
+                )
+
                 # Insert terms
                 connection.executemany(f"""
                     INSERT INTO {self.table_name}_terms (notification_id, term)
@@ -251,13 +275,21 @@ class NotificationRepo(RepoBase):
                     [(notif.id, term) for term in notif.terms]
                 )
 
+                # Insert counts
+                connection.executemany(f"""
+                    INSERT INTO {self.table_name}_counts (notification_id, item_id, target, last_count)
+                    VALUES(?, ?, ?, ?)
+                    """,
+                    [(notif.id, count.item_id, count.target, count.last_count) for count in notif.counts]
+                )
+
                 connection.commit()
 
             # Return newly created
             return self.get(notif.port, notif.user_id, notif.slot_id)
 
         except Exception as ex:
-            logging.warning(f"Error in {self.table_name} upsert: {ex}")
+            logging.warning(f"Error in {self.__class__.__name__}.upsert(): {ex}")
             return None
 
     def get(self, port: int, user_id: int, slot_id: int) -> Optional[utils.Notification]:
@@ -278,10 +310,22 @@ class NotificationRepo(RepoBase):
                     (port, user_id, slot_id)
                 ).fetchone()
 
-                return utils.Notification.from_row(row)
+                notif = utils.Notification.from_row(row)
+
+                children = connection.execute(f"""
+                    SELECT *
+                    FROM {self.table_name}_counts
+                    WHERE notification_id = ?
+                    """,
+                    (notif.id,)
+                ).fetchall()
+
+                notif.counts = [ utils.NotificationCount.from_row(child) for child in children ] if children else []
+                
+                return notif
             
         except Exception as ex:
-            logging.warning(f"Error in {self.table_name} get: {ex}")
+            logging.warning(f"Error in {self.__class__.__name__}.get(): {ex}")
             return None
     
     def get_for_hint_flags(self, port: int, slot_id: int, notify_flags: utils.NotifyFlags) -> List[int]:
@@ -307,7 +351,7 @@ class NotificationRepo(RepoBase):
                 return [ row["user_id"] for row in rows ] if rows else []
 
         except Exception as ex:
-            logging.warning(f"Error in {self.table_name} get_for_hint_flags(): {ex}")
+            logging.warning(f"Error in {self.__class__.__name__}.get_for_hint_flags(): {ex}")
             return []
         
     def get_for_item_flags(self, port: int, slot_id: int, notify_flags: utils.NotifyFlags) -> List[int]:
@@ -328,7 +372,7 @@ class NotificationRepo(RepoBase):
                 return [ row["user_id"] for row in rows ] if rows else []
 
         except Exception as ex:
-            logging.warning(f"Error in {self.table_name} get_for_item_flags(): {ex}")
+            logging.warning(f"Error in {self.__class__.__name__}.get_for_item_flags(): {ex}")
             return []
         
     def get_for_terms(self, port: int, slot_id: int, item_names: List[str]) -> List[int]:
@@ -367,7 +411,7 @@ class NotificationRepo(RepoBase):
             return [ row["user_id"] for row in rows ] if rows else []
 
         except Exception as ex:
-            logging.warning(f"Error in {self.table_name} get_for_terms(): {ex}")
+            logging.warning(f"Error in {self.__class__.__name__}.get_for_terms(): {ex}")
             return []
 
     def delete(self, notif: utils.Notification) -> bool:
@@ -387,5 +431,5 @@ class NotificationRepo(RepoBase):
                 return True
             
         except Exception as ex:
-            logging.warning(f"Error in {self.table_name} delete: {ex}")
+            logging.warning(f"Error in {self.__class__.__name__}.delete(): {ex}")
             return False

@@ -232,6 +232,7 @@ class TrackerClient:
 
         # Lookups
         self.__goal_lookup: Dict[int, bool] = {}
+        self.__item_counts: Dict[int, Dict[int, int]] = {}              # Keep track of received item counts for notifications
         self.__item_lookup: Dict[str, Dict[int, str]] = {}
         self.__location_lookup: Dict[str, Dict[int, str]] = {}
         self.__player_lookup: Dict[int, utils.NetworkSlot] = {}
@@ -468,6 +469,11 @@ class TrackerClient:
     def get_goal_count(self) -> int:
         """Get the current amount of goals reached."""
         return sum(1 for stat in self.__stats_lookup.values() if stat.goal)
+
+    def get_item_id(self, slot_id: int, item_name: str) -> int | None:
+        """Get the ID of an item."""
+        game: str = self.get_game_name(slot_id)
+        return next((id for id, name in self.__item_lookup.get(game, {}).items() if name.casefold() == item_name.casefold()), None)
 
     def get_item_name(self, slot_id: int, item_id: int) -> str | None:
         """Get the name of an item."""
@@ -828,19 +834,59 @@ async def __on_notifications_request(client: StdClient, packet: utils.Notificati
     
     match packet.action:
         case utils.Action.ADD:
-            notif.hints = ((notif.hints or utils.NotifyFlags.NONE) | (packet.hints or utils.NotifyFlags.NONE))
-            notif.types = ((notif.types or utils.NotifyFlags.NONE) | (packet.types or utils.NotifyFlags.NONE))
-            notif.terms = list(set(notif.terms or []) | set(packet.terms or []))
+            notif.hints = ((notif.hints or utils.NotifyFlags.NONE) | packet.hints) if packet.hints else notif.hints
+            notif.types = ((notif.types or utils.NotifyFlags.NONE) | packet.types) if packet.types else notif.types
+            notif.terms = list(set(notif.terms or []) | set(packet.terms)) if packet.terms else notif.terms
+
+            logging.info(f"Counts before hash: {notif.counts}")
+
+            # Parse new counts for hashing and check validity
+            new_counts = [ utils.NotificationCount(item_id=get_item_id(slot_id, item_name), target=count) for item_name, count in packet.counts.items() ] if packet.counts else []
+            
+            logging.info(f"Parsed new counts: {new_counts}")
+
+            # Bail if any item names not recognised
+            if any(True for count in new_counts if not count.item_id):
+                await send(utils.InvalidPacket(
+                    id=packet.id,
+                    original_cmd=packet.cmd,
+                    message=f"Item name not recognised." # TODO: Tighten this up so it spits back which item name.
+                ))
+                return
+
+            notif.counts = utils.NotificationCount.merge(notif.counts, new_counts)
+            
+            logging.info(f"Counts after hash: {notif.counts}")
 
         case utils.Action.REMOVE:
-            notif.hints = ((notif.hints or utils.NotifyFlags.NONE) & ~(packet.hints or utils.NotifyFlags.NONE))
-            notif.types = ((notif.types or utils.NotifyFlags.NONE) & ~(packet.types or utils.NotifyFlags.NONE))
-            notif.terms = list(set(notif.terms or []) - set(packet.terms or []))
+            notif.hints = ((notif.hints or utils.NotifyFlags.NONE) & ~packet.hints) if packet.hints else notif.hints
+            notif.types = ((notif.types or utils.NotifyFlags.NONE) & ~packet.types) if packet.types else notif.types
+            notif.terms = list(set(notif.terms or []) - set(packet.terms)) if packet.terms else notif.terms
+
+            logging.info(f"Counts before hash: {notif.counts}")
+
+            # Parse new counts for hashing and check validity
+            new_counts = [ utils.NotificationCount(item_id=get_item_id(slot_id, item_name), target=count) for item_name, count in packet.counts.items() ] if packet.counts else []
+            
+            logging.info(f"Parsed new counts: {new_counts}")
+            
+            if any(True for count in new_counts if not count.id):
+                await send(utils.InvalidPacket(
+                    id=packet.id,
+                    original_cmd=packet.cmd,
+                    message=f"Item name not recognised." # TODO: Tighten this up so it spits back which item name.
+                ))
+                return
+
+            notif.counts = list(set(notif.counts or []) | set(new_counts)) if new_counts else notif.counts
+            
+            logging.info(f"Counts after hash: {notif.counts}")
         
         case utils.Action.CLEAR:
             notif.hints = utils.NotifyFlags.NONE
             notif.types = utils.NotifyFlags.NONE
             notif.terms = []
+            notif.counts = []
 
         case utils.Action.VIEW:
             await send(utils.NotificationsResponsePacket(
@@ -962,6 +1008,11 @@ def get_item(slot_id: int, item_id: int) -> str | None:
     """Get the name of an item."""
     global __tracker_client
     return __tracker_client.get_item_name(slot_id, item_id)
+
+def get_item_id(slot_id: int, item_name: str) -> int | None:
+    """Get the ID of an item by its name."""
+    global __tracker_client
+    return __tracker_client.get_item_id(slot_id, item_name)
 
 def get_location(slot_id: int, location_id: int) -> str | None:
     """Get the name of an item."""
