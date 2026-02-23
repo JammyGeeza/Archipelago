@@ -351,6 +351,7 @@ def generate_player_stats_description(agent: AgentProcess, stats: utils.PlayerSt
     loc_perc: int = math.floor((stats.checked / total) * 100)
     
     return (
+        f"**Deaths**: {stats.deaths}\n"
         f"**Items**: {stats.received}/{total} _({itm_perc}%)_\n"
         f"**Locations**: {stats.checked}/{total} _({loc_perc}%)_\n"
         f"**Goaled**: {"Yes" if stats.goal else "No"}"
@@ -410,6 +411,7 @@ def generate_session_stats_description(agent: AgentProcess, stats: utils.Session
     loc_perc: int = math.floor((stats.checked / total) * 100)
     
     return (
+        f"**Deaths**: {stats.deaths}\n"
         f"**Locations**: {stats.checked}/{total} _({loc_perc}%)_\n"
         f"**Goals**: {stats.goals}/{players} _({goal_perc}%)_"
     )
@@ -553,36 +555,6 @@ async def disconnect(interaction: discord.Interaction):
 
     # Respond
     await interaction.followup.send(f"Stopping the client at `:{agent.config.port}` - this may take a moment.", ephemeral=True)
-
-@bot.tree.command(name="goal", description="Mark a player as goal complete")
-@app_commands.describe(slot_name="Slot player name to goal")
-@commands.has_permissions(manage_guild=True, administrator=True)
-async def release(interaction: discord.Interaction, slot_name: app_commands.Range[str, 1, 16]):
-    """Command to mark a player as goal complete"""
-
-    logging.info(f"Goal requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id}")
-
-    # Defer response
-    await interaction.response.defer(thinking=True, ephemeral=True)
-
-    # Attempt to get process
-    if not (agent:= get_agent(interaction.channel_id)):
-        await interaction.followup.send(f"No client is running for this channel - use `/connect` to start or `/bind` to bind it to a session.", ephemeral=True)
-        return
-    
-    # Request release
-    response = await agent.request(utils.GoalRequestPacket(
-        id=uuid.uuid4().hex,
-        slot_name=slot_name
-    ))
-
-    # Validate response
-    if response.is_error():
-        await interaction.followup.send(f"Error releasing slot: **_{response.text}_**", ephemeral=True)
-        return
-    
-    # Respond
-    await interaction.followup.send(f"Slot `{slot_name}` has been released.", ephemeral=True)
 
 @bot.tree.command(name="list", description="List all bound channels")
 async def _list(interaction: discord.Interaction):

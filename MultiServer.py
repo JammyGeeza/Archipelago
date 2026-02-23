@@ -2146,6 +2146,24 @@ async def process_client_cmd(ctx: Context, client: Client, args: dict):
             tags = set(args.get("tags", []))
             slots = set(args.get("slots", []))
             args["cmd"] = "Bounced"
+            # msg = ctx.dumper([args])
+
+            #region BOT ADDITION
+
+            if "DeathLink" in tags and "source" in args.get("data", {}):
+                logging.info(f"Storing deathlink for Team: {client.team} | Slot: {client.slot}")
+                dl_key: str = f"deaths_{client.team}_{client.slot}"
+                ctx.stored_data[dl_key] = ctx.stored_data.get(dl_key, 0) + 1
+                ctx.read_data.pop(dl_key, None)
+                ctx.save()
+
+                # Add slot id to args
+                data = args.get("data", {})
+                data["slot_id"] = client.slot
+                args["data"] = data
+
+            #endregion
+
             msg = ctx.dumper([args])
 
             for bounceclient in ctx.endpoints:
@@ -2260,7 +2278,7 @@ async def handle_getstats_request(ctx: Context, client: Client, args: dict):
     
     elif "slots" not in args or type(args["slots"]) != list:
         await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "type": "arguments",
-                                        "text": "Invalid 'slots' argument.", "original_cmd": cmd}])
+                                        "text": "Invalid 'slots' argument.", "original_cmd": args["cmd"]}])
         return
     
     stats = {}
@@ -2268,6 +2286,7 @@ async def handle_getstats_request(ctx: Context, client: Client, args: dict):
         stats.update({
             slot.slot: {
                 "class": "PlayerStats",
+                "deaths": _get_death_count(ctx, slot.team, slot.slot),
                 "checked": len(ctx.locations.get_checked(ctx.location_checks, slot.team, slot.slot)),
                 "received": _get_received_item_count(ctx, slot.team, slot.slot),
                 "goal": ctx.read_data.get(f"client_status_{slot.team}_{slot.slot}", lambda: None)() == ClientStatus.CLIENT_GOAL.value,
@@ -2360,6 +2379,12 @@ def _get_received_item_count(ctx: Context, team: int, slot: int, item_id: int | 
             and data[1] == slot
             and (item_id is None or data[0] == item_id) # <- Counts all if no 'item_id' provided
     )
+
+def _get_death_count(ctx: Context, team: int, slot: int | None = None) -> int:
+    """Get total death count for a team or player."""
+    logging.info(f"Getting deathlink count for Team: {team} | Slot: {slot}")
+    if slot is None: return sum(ctx.stored_data.get(f"deaths_{team}_{s.slot}", 0) for s in ctx.get_players_package() if s.team == team)
+    else: return ctx.stored_data.get(f"deaths_{team}_{slot}", 0)
 
 def _goal_player(ctx: Context, team: int, slot: int):
     """Set a player as goal complete"""

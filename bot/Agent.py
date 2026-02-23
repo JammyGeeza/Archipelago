@@ -224,7 +224,8 @@ class TrackerClient:
     # Hookable methods
     on_collect = utils.Hookable()
     on_connection_state_changed = utils.Hookable()
-    on_error = utils.Hookable() # TODO: Actually trigger this when things go wrong.
+    on_deathlink = utils.Hookable()
+    on_error = utils.Hookable()
     on_goal = utils.Hookable()
     on_hint = utils.Hookable()
     on_item = utils.Hookable()
@@ -275,6 +276,9 @@ class TrackerClient:
 
             match packet.cmd:
 
+                case utils.BouncedPacket.cmd:
+                    await self.__handle_bounced_packet(packet)
+
                 case utils.ConnectedPacket.cmd:
                     await self.__handle_connected_packet(packet)
 
@@ -310,6 +314,20 @@ class TrackerClient:
         except Exception as ex:
             logging.error(f"Unexpected error handling {packet or "unknown"} packet: {ex}")
             await self.on_error.run(ex)
+
+    async def __handle_bounced_packet(self, packet: utils.BouncedPacket):
+        """Handle an incoming Bounce packet."""
+
+        # Handle deathlink
+        if "DeathLink" in packet.tags:
+
+            # Increment death count
+            if (slot_id:= packet.data.get("slot_id", None)) is not None:
+                if (player_stats:= self.__stats_lookup.get(slot_id, None)) is not None:
+                    player_stats.deaths += 1
+
+            # Trigger deathlink event
+            await self.on_deathlink.run(packet.data.get("source", ""), packet.data.get("cause", ""))
 
     async def __handle_connected_packet(self, packet: utils.ConnectedPacket):
         """Handle an incoming Connected packet."""
@@ -369,12 +387,13 @@ class TrackerClient:
 
             case "ItemSend":
                 # Update SENDING player's location checks in stats
-                if (stats:= self.get_player_stats(packet.item.player)):
-                    stats.checked += 1
-                    stats.remaining -= 1
-                else:
-                    # Request stats if they don't exist
-                    await self.__send_packet(utils.GetStatsPacket(slots=[packet.item.player]))
+                if (send_stats:= self.get_player_stats(packet.item.player)):
+                    send_stats.checked += 1
+                    send_stats.remaining -= 1
+                
+                # Update RECEIVING player's received items in stats
+                if (rcv_stats:= self.get_player_stats(packet.receiving)):
+                    rcv_stats.received += 1
 
                 # Trigger item event
                 await self.on_item.run(packet.receiving, packet.item)
@@ -421,7 +440,7 @@ class TrackerClient:
             name=self.slot_name,
             password=self.password,
             slot_data=False,
-            tags=["Bot", "Deathlink", "Tracker"],
+            tags=["Bot", "DeathLink", "Tracker"],
             uuid=f"bot_spectator_{self.slot_name}",
             version=utils.NetworkVersion(
                 major=0,
@@ -548,8 +567,8 @@ class TrackerClient:
         """Get the stats for the session."""
         return utils.SessionStats(
             checked=sum(stats.checked for stats in self.__stats_lookup.values()),
+            deaths=sum(stats.deaths for stats in self.__stats_lookup.values()),
             goals=sum(1 for stats in self.__stats_lookup.values() if stats.goal),
-            # players=self.get_player_count(),
             remaining=sum(stats.remaining for stats in self.__stats_lookup.values()),
         )
 
@@ -766,6 +785,7 @@ def generate_items_text(recipient: int, items: Dict[int, utils.QueuedItemData]) 
 
 #region Tracker Event Handlers
 
+
 @TrackerClient.on_collect
 async def __on_collect(client, slot_id: int):
     """Handler for a slot collecting their remaining items."""
@@ -820,6 +840,12 @@ async def __on_connection_state_changed(client, state: str, errors: List[str] = 
     
     # Send status update
     await send(utils.DiscordMessagePacket(message=msg))
+
+@TrackerClient.on_deathlink
+async def __on_deathlink(client, source: str, cause: str):
+    """Handler for the tracker receiving a deathlink"""
+
+    # TODO: Optional whether or not deaths are posted as messages?
 
 @TrackerClient.on_error
 async def __on_error(client, msg: str):
@@ -1076,7 +1102,7 @@ async def __on_statistics_request(client: StdClient, packet: utils.StatisticsReq
             text=f"No player(s) found with name(s) {", ".join([f"`{invalid}`" for invalid in invalid_names ])}"
         ))
         return
-
+    
     # Add stats for each valid slot requested
     player_stats: Dict[int, utils.PlayerStats] = {}
     for slot in slot_ids.values():

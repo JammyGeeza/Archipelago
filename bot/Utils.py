@@ -331,6 +331,7 @@ class PlayerStats(Jsonable):
     """Object containing stats for a player"""
     class_: str = field(default="PlayerStats", metadata={"json": "class"})
     checked: int = 0
+    deaths: int = 0
     goal: bool = False
     received: int = 0
     remaining: int = 0
@@ -382,6 +383,7 @@ class SessionStats(Jsonable):
     """Object containing stats for a session."""
     class_: str = field(default="SessionStats", metadata={"json": "class"})
     checked: int = 0
+    deaths: int = 0
     goals: int = 0
     remaining: int = 0
 
@@ -450,6 +452,16 @@ class IdentifiablePacket(TrackerPacket):
 #endregion
 
 #region Archipelago Packets
+
+@TrackerPacket.register_packet
+@dataclass
+class BouncedPacket(TrackerPacket):
+    """Packet received for deathlinks and other cross-world events"""
+    cmd: ClassVar[str] = "Bounced"
+    games: List[str] = field(default_factory=list),
+    tags: List[str] = field(default_factory=list),
+    slots: List[int] = field(default_factory=list)
+    data: dict[str, any] = field(default_factory=dict)
 
 @TrackerPacket.register_packet
 @dataclass
