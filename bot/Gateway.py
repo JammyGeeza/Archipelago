@@ -339,11 +339,32 @@ def generate_player_stats_description(agent: AgentProcess, stats: utils.PlayerSt
 def generate_notifications_text(agent: AgentProcess, notif: utils.Notification) -> str:
     """Generate a notifications view command response"""
     return (
-        f"## Notifications for `{agent.get_player_name(notif.slot_id)}`\n" +
-        "- " + (f"When a hint reveals **{utils.NotifyFlags(notif.hints).to_text()}** items are in their world\n" if notif.hints != utils.NotifyFlags.NONE else f"No hint notifications\n") +
-        "- " + (f"When **{utils.NotifyFlags(notif.types).to_text()}** items are received\n" if notif.types != utils.NotifyFlags.NONE else f"No item type notifications\n") +
-        "- " + (f"When items containing the term(s) {", ".join(f"`{term}`" for term in notif.terms)} are received\n" if notif.terms else f"No item term notifications\n")
+        f"## Notifications for `{agent.get_player_name(notif.slot_id)}`\n"
+        f"- {generate_notifications_hint_text(agent, notif)}\n"
+        f"- {generate_notifications_type_text(agent, notif)}\n"
+        f"- {generate_notifications_term_text(agent, notif)}\n"
+        f"- {generate_notifications_count_text(agent, notif)}"
     )
+
+def generate_notifications_count_text(agent: AgentProcess, notif: utils.Notification):
+    """Generate an item count notifications command response"""
+    player_name: str = agent.get_player_name(notif.slot_id)
+    return f"You will receive a mention when `{player_name}` receives {", ".join([f"**{nc.count}** of the **{nc.item_name}** item" for nc in notif.counts])}" if notif.counts else f"You will not receive item count notifications for `{player_name}`"
+
+def generate_notifications_hint_text(agent: AgentProcess, notif: utils.Notification):
+    """Generate a hint notifications command response"""
+    player_name: str = agent.get_player_name(notif.slot_id)
+    return f"You will receive a mention when a hint reveals **{utils.NotifyFlags(notif.hints).to_text()}** items are in `{player_name}`'s world" if notif.hints != utils.NotifyFlags.NONE else f"You will not receive hint notifications for `{player_name}`"
+
+def generate_notifications_term_text(agent: AgentProcess, notif: utils.Notification):
+    """Generate an item term notifications command response"""
+    player_name: str = agent.get_player_name(notif.slot_id)
+    return f"You will receive a mention when `{player_name}` receives items containing the term(s) {", ".join(f"`{term}`" for term in notif.terms)}" if notif.terms else f"You will not receive item term notifications for `{player_name}`"
+
+def generate_notifications_type_text(agent: AgentProcess, notif: utils.Notification):
+    """Generate a item type notifications command response"""
+    player_name: str = agent.get_player_name(notif.slot_id)
+    return f"You will receive a mention when `{player_name}` receives **{utils.NotifyFlags(notif.types).to_text()}** items" if notif.types != utils.NotifyFlags.NONE else f"You will not receive item type notifications for `{player_name}`"
 
 def generate_session_stats_embed(agent: AgentProcess, stats: utils.SessionStats) -> discord.Embed:
     """Generate an embed for a session stats command response"""
@@ -566,7 +587,7 @@ async def notify_clear(interaction: discord.Interaction, slot: app_commands.Rang
     if response.is_error():
         await interaction.followup.send(f"Error setting hint preferences: '**_{response.message}_**'.", ephemeral=True)
     else:    
-        await interaction.followup.send(f"You have cleared all notifications for `{slot}`.", ephemeral=True)
+        await interaction.followup.send(f"You have cleared all notification types for `{slot}`.", ephemeral=True)
 
 @bot.tree.command(name="notify_count", description="Notify on X of an item received")
 @app_commands.describe(recipient="Player receiving the item", action="Action to perform", item="Full item name", count="Times received to notify")
@@ -602,12 +623,9 @@ async def notify_count(interaction: discord.Interaction, recipient: app_commands
     if response.is_error():
         await interaction.followup.send(f"Error setting hint preferences: '**_{response.message}_**'.", ephemeral=True)
         return
-    
-    # Respond with appropriate message
-    if not response.notification.counts:
-        await interaction.followup.send(f"You now have no item count notifications for `{recipient}`.", ephemeral=True)
-    else:
-        await interaction.followup.send(f"Success! _(Need to figure out what to write here, as I can't translate item IDs...)_.", ephemeral=True)
+
+    # Respond
+    await interaction.followup.send(generate_notifications_count_text(agent, response.notification), ephemeral=True)    
 
 @bot.tree.command(name="notify_hints", description="Notify on hints received")
 @app_commands.describe(finder="The finding player name", action="Action to perform", item_type="Notify for item type")
@@ -650,12 +668,9 @@ async def notify_hints(interaction: discord.Interaction, finder: app_commands.Ra
     if response.is_error():
         await interaction.followup.send(f"Error setting hint preferences: '**_{response.message}_**'.", ephemeral=True)
         return
-    
-    # Respond with appropriate message
-    if response.notification.hints == utils.NotifyFlags.NONE.value:
-        await interaction.followup.send(f"You now have no hint notifications for `{finder}`.", ephemeral=True)
-    else:
-        await interaction.followup.send(f"You will now receive a {interaction.user.mention} when `{finder}` is the target of **{utils.NotifyFlags(response.notification.hints).to_text()}** item hints.", ephemeral=True)
+        
+    # Respond
+    await interaction.followup.send(generate_notifications_hint_text(agent, response.notification), ephemeral=True)
 
 @bot.tree.command(name="notify_terms", description="Notify on item terms received")
 @app_commands.describe(recipient="Player receiving the item(s)", action="Action to perform", terms="E.g. Orb,Frame,Scraps etc.")
@@ -697,11 +712,8 @@ async def notify_terms(interaction: discord.Interaction, recipient: app_commands
         await interaction.followup.send(f"Error setting hint preferences: '**_{response.message}_**'.", ephemeral=True)
         return
     
-    # Respond with appropriate message
-    if not response.notification.terms:
-        await interaction.followup.send(f"You now have no item term notifications for `{recipient}`.", ephemeral=True)
-    else:
-        await interaction.followup.send(f"You will now receive a {interaction.user.mention} when `{recipient}` receives items containing term(s): {", ".join([f"`{term}`" for term in response.notification.terms])}.", ephemeral=True)
+    # Respond 
+    await interaction.followup.send(generate_notifications_term_text(agent, response.notification), ephemeral=True)
 
 @bot.tree.command(name="notify_types", description="Notify on item types received")
 @app_commands.describe(recipient="Player receiving the item(s)", action="Action to perform", item_type="Type of item to notify")
@@ -746,10 +758,7 @@ async def notify_types(interaction: discord.Interaction, recipient: app_commands
         return
     
     # Respond with appropriate message
-    if response.notification.types == utils.NotifyFlags.NONE.value:
-        await interaction.followup.send(f"You now have no item type notifications for `{recipient}`.", ephemeral=True)
-    else:
-        await interaction.followup.send(f"You will now receive a {interaction.user.mention} when `{recipient}` receives **{utils.NotifyFlags(response.notification.types).to_text()}** items.", ephemeral=True)
+    await interaction.followup.send(generate_notifications_type_text(agent, response.notification), ephemeral=True)
 
 @bot.tree.command(name="notify_view", description="View all notifications for a slot")
 @app_commands.describe(slot="Slot to view notifications for")
@@ -775,6 +784,8 @@ async def notify_view(interaction: discord.Interaction, slot: app_commands.Range
         user_id=interaction.user.id,
         player=slot
     ))
+
+    logging.info(f"Notifs: {response.notification}")
 
     # Respond appropriately
     if response.is_error() or not response.notification:

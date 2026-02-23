@@ -892,9 +892,15 @@ async def __on_notifications_request(client: StdClient, packet: utils.Notificati
     global __store
     global __tracker_client
 
-    # Validate the player name
-    logging.info(f"Validating player name...")
-    if not (slot_id:= __tracker_client.get_slot(packet.player)):
+    # Validate packet data
+    if packet.action < utils.Action.ADD or packet.action > utils.Action.VIEW:
+        await send(utils.InvalidPacket(
+            id=packet.id,
+            original_cmd=packet.cmd,
+            message=f"Unknown action `{packet.action}`."
+        ))
+        return
+    elif not (slot_id:= __tracker_client.get_slot(packet.player)):
         await send(utils.InvalidPacket(
             id=packet.id,
             original_cmd=packet.cmd,
@@ -903,10 +909,9 @@ async def __on_notifications_request(client: StdClient, packet: utils.Notificati
         return
     
     # TODO: Validate the flags??
-    #       I could probably do this in __post_init__()...
+    #       I could probably do this in the Notification.__post_init__()...
     
     # Check if notification exists, create if it doesn't
-    logging.info(f"Getting / creating notification...")
     if not (notif:= __store.notifications.get_or_create(__tracker_client.port, packet.user_id, slot_id)):
         await send(utils.ErrorPacket(
             id=packet.id,
@@ -914,13 +919,11 @@ async def __on_notifications_request(client: StdClient, packet: utils.Notificati
             message="An error occurred while attempting to get or create notification preferences."
         ))
         return
-    
-    # If 'counts' provided, validate and retrieve data for them first
-    new_counts = []
-    if packet.counts:
+
+    # If only viewing, everything else can be skipped over
+    if packet.action != utils.Action.VIEW:
 
         # Validate item names
-        logging.info(f"Validating item names {packet.counts.keys()}...")
         item_map: Dict[str, int] = { item_name: get_item_id(slot_id, item_name) for item_name in packet.counts.keys() }
         if item_map and (invalid_names:= [item_name for item_name, item_id in item_map.items() if not item_id ]):
             await send(utils.InvalidPacket(
@@ -930,15 +933,16 @@ async def __on_notifications_request(client: StdClient, packet: utils.Notificati
             ))
             return
 
-        # Get counts for items we don't yet have counts for
-        logging.info(f"Checking for unknown counts....")
-        if (unknown_counts:= [ item_id for item_id in item_map.values() if (slot_id, item_id) not in __item_counts ]):
+        # If adding, check if there are any new item counts we don't currently have
+        if packet.action == utils.Action.ADD and (unknown_counts:= [ item_id for item_id in item_map.values() if (slot_id, item_id) not in __item_counts ]):
 
             # Request item counts from server
             response = await __tracker_client.request(utils.ReceivedCountRequestPacket(
                 id=uuid.uuid4().hex,
                 slot_items={ slot_id: unknown_counts }
             ))
+
+            # NOTE: Update to __item_counts is handled before the response is passed back to here
 
             # Validate response
             if response.is_error():
@@ -949,65 +953,58 @@ async def __on_notifications_request(client: StdClient, packet: utils.Notificati
                 ))
                 return
             
-        # Item counts are updated by this point
-
-        # Parse new counts to store object
+        # Parse received counts to store-able object
+        parsed_counts: List[utils.NotificationCount] = []
         for item_name, item_id in item_map.items():
             count = packet.counts.get(item_name)
             end_count: int = __item_counts.get((slot_id, item_id)) + count
-            new_counts.append(utils.NotificationCount(
+            parsed_counts.append(utils.NotificationCount(
                 item_id=item_id,
                 count=count,
                 end_at=end_count
             ))
 
-    logging.info(f"Pre-merge: {notif.counts}")
+        match packet.action:
+            case utils.Action.ADD:
+                notif.hints = ((notif.hints or utils.NotifyFlags.NONE) | packet.hints) if packet.hints else notif.hints
+                notif.types = ((notif.types or utils.NotifyFlags.NONE) | packet.types) if packet.types else notif.types
+                notif.terms = list(set(notif.terms or []) | set(packet.terms)) if packet.terms else notif.terms
+                notif.counts = utils.NotificationCount.merge(notif.counts, parsed_counts) if parsed_counts else notif.counts
 
-    match packet.action:
-        case utils.Action.ADD:
-            notif.hints = ((notif.hints or utils.NotifyFlags.NONE) | packet.hints) if packet.hints else notif.hints
-            notif.types = ((notif.types or utils.NotifyFlags.NONE) | packet.types) if packet.types else notif.types
-            notif.terms = list(set(notif.terms or []) | set(packet.terms)) if packet.terms else notif.terms
-            notif.counts = utils.NotificationCount.merge(notif.counts, new_counts) if new_counts else notif.counts
+            case utils.Action.REMOVE:
+                notif.hints = ((notif.hints or utils.NotifyFlags.NONE) & ~packet.hints) if packet.hints else notif.hints
+                notif.types = ((notif.types or utils.NotifyFlags.NONE) & ~packet.types) if packet.types else notif.types
+                notif.terms = list(set(notif.terms or []) - set(packet.terms)) if packet.terms else notif.terms
+                notif.counts = utils.NotificationCount.unmerge(notif.counts, parsed_counts) if parsed_counts else notif.counts
+            
+            case utils.Action.CLEAR:
+                notif.hints = utils.NotifyFlags.NONE
+                notif.types = utils.NotifyFlags.NONE
+                notif.terms = []
+                notif.counts = []
 
-        case utils.Action.REMOVE:
-            notif.hints = ((notif.hints or utils.NotifyFlags.NONE) & ~packet.hints) if packet.hints else notif.hints
-            notif.types = ((notif.types or utils.NotifyFlags.NONE) & ~packet.types) if packet.types else notif.types
-            notif.terms = list(set(notif.terms or []) - set(packet.terms)) if packet.terms else notif.terms
-            notif.counts = utils.NotificationCount.unmerge(notif.counts, new_counts) if new_counts else notif.counts
+            case _:
+                # This should already be handled at start of method, but just in case...
+                return
         
-        case utils.Action.CLEAR:
-            notif.hints = utils.NotifyFlags.NONE
-            notif.types = utils.NotifyFlags.NONE
-            notif.terms = []
-            notif.counts = []
-
-        case utils.Action.VIEW:
-            await send(utils.NotificationsResponsePacket(
+        # Save changes
+        if not (notif:= __store.notifications.upsert(notif)):
+            await send(utils.ErrorPacket(
                 id=packet.id,
-                notification=notif
-            ))
-            return
-
-        case _:
-            await send(utils.InvalidPacket(
-                id=packet.id,
-                original_cmd=packet.cmd,
-                message=f"Invalid action type '{packet.action}'"
+                message="An error occurred while attempting to update the notification preferences."
             ))
             return
         
-    logging.info(f"Post-merge: {notif.counts}")
+        # If remove operation successful, stop tracking counts from removed list
+        if packet.action == utils.Action.REMOVE:
+            for item_id in item_map.keys():
+                __item_counts.pop((slot_id, item_id), None)
+        
+    # Insert item names to notification counts
+    for notif_count in notif.counts:
+        notif_count.item_name = __tracker_client.get_item_name(slot_id, notif_count.item_id)
 
-    # Save changes
-    if not (notif:= __store.notifications.upsert(notif)):
-        await send(utils.ErrorPacket(
-            id=packet.id,
-            message="An error occurred while attempting to update the notification preferences."
-        ))
-        return
-    
-    # Respond
+    # Respond with notification
     await send(utils.NotificationsResponsePacket(
         id=packet.id,
         notification=notif

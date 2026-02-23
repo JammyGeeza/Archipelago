@@ -59,6 +59,7 @@ class BindingRepo(RepoBase):
 
         except Exception as ex:
             logging.error(f"Error in {self.__class__.__name__}._create(): {ex}")
+            raise
 
     def delete(self, binding: utils.Binding) -> bool:
         """Delete a room binding."""
@@ -73,7 +74,7 @@ class BindingRepo(RepoBase):
                 )
                 conn.commit()
 
-                return True
+            return True
 
         except Exception as ex:
             logging.error(f"ERROR in {self.__class__.__name__}.delete(): {ex}")
@@ -89,7 +90,7 @@ class BindingRepo(RepoBase):
                     FROM {self.table_name}
                 """).fetchall()
 
-                return [ utils.Binding.from_row(row) for row in rows] if rows else []
+            return [ utils.Binding.from_row(row) for row in rows] if rows else []
             
         except Exception as ex:
             logging.error(f"ERROR in {self.__class__.__name__}.get_all_for_guild(): {ex}")
@@ -108,7 +109,7 @@ class BindingRepo(RepoBase):
                     (guild_id,)
                 ).fetchall()
 
-                return [ utils.Binding.from_row(row) for row in rows] if rows else []
+            return [ utils.Binding.from_row(row) for row in rows] if rows else []
             
         except Exception as ex:
             logging.error(f"ERROR in {self.__class__.__name__}.get_all_for_guild(): {ex}")
@@ -127,7 +128,7 @@ class BindingRepo(RepoBase):
                     (channel_id,)
                 ).fetchone()
 
-                return utils.Binding.from_row(row) if row else None
+            return utils.Binding.from_row(row) if row else None
             
         except Exception as ex:
             logging.error(f"ERROR in {self.__class__.__name__}.get_one(): {ex}")
@@ -193,26 +194,11 @@ class NotificationRepo(RepoBase):
                     )
                 """)
 
-                # conn.execute(f"""
-                #     CREATE TABLE IF NOT EXISTS {self.table_name}_counts (
-                #         id              INTEGER PRIMARY KEY AUTOINCREMENT,
-                #         notification_id INTEGER NOT NULL,
-                #         item_id         INTEGER NOT NULL,
-                #         count           INTEGER NOT NULL,
-                #         end_at          INTEGER NOT NULL,
-
-                #         FOREIGN KEY (notification_id)
-                #             REFERENCES notifications(id)
-                #             ON DELETE CASCADE,
-
-                #         UNIQUE(notification_id, item_id, count)
-                #     )
-                # """)
-
                 conn.commit()
 
         except Exception as ex:
             logging.error(f"ERROR in {self.__class__.__name__}._create(): {ex}")
+            raise
 
     def _inject(self, notif_counts_repo: "NotificationCountRepo"):
         """Inject the notification counts repo."""
@@ -230,6 +216,7 @@ class NotificationRepo(RepoBase):
                     """,
                     (notif.id,)
                 )
+
                 conn.commit()
                 
                 return True
@@ -280,11 +267,11 @@ class NotificationRepo(RepoBase):
                     (port,)
                 ).fetchall()
 
-                result = {}
-                for slot_id, item_id in rows:
-                    result.setdefault(slot_id, []).append(item_id)
+            result = {}
+            for slot_id, item_id in rows:
+                result.setdefault(slot_id, []).append(item_id)
 
-                return result
+            return result
             
         except Exception as ex:
             logging.warning(f"Error in {self.__class__.__name__}.get_count_items_for_port(): {ex}")
@@ -311,58 +298,6 @@ class NotificationRepo(RepoBase):
         except Exception as ex:
             logging.warning(f"Error in {self.__class__.__name__}.get_for_hint_flags(): {ex}")
             return []
-    
-    # def get_for_item_counts(self, port: int, slot_id: int, item_counts: Dict[int, int]) -> List[int]:
-    #     """Get user IDs subscribed to notifications for a slot with matching item counts"""
-
-    #     try:
-    #         with self._conn() as conn:
-    #             temp_table_name = "tmp_item_counts"
-    #             conn.execute(f"CREATE TEMP TABLE IF NOT EXISTS {temp_table_name} (item_id INTEGER NOT NULL, target INTEGER NOT NULL)")
-    #             conn.execute(f"DELETE FROM {temp_table_name}")
-    #             conn.executemany(f"""
-    #                 INSERT INTO {temp_table_name}
-    #                 VALUES (?,?)
-    #                 """,
-    #                 ([(item_id, count) for item_id, count in item_counts.items()])
-    #             )
-
-    #             # Query matches against temporary table
-    #             rows = conn.execute(f"""
-    #                 SELECT DISTINCT n.user_id
-    #                 FROM {self.table_name} n
-    #                 JOIN {self.table_name}_counts c
-    #                     ON c.notification_id = n.id
-    #                 JOIN {temp_table_name} i
-    #                     ON i.item_id = c.item_id
-    #                 WHERE n.port = ?
-    #                     AND n.slot_id = ?
-    #                     AND i.target >= c.end_at
-    #                 """,
-    #                 (port, slot_id)
-    #             ).fetchall()
-
-    #             # Auto-remove found entries
-    #             conn.execute(f"""
-    #                 DELETE FROM {self.table_name}_counts
-    #                 WHERE rowid IN (
-    #                     SELECT c.rowid
-    #                     FROM {self.table_name}_counts c
-    #                     JOIN {self.table_name} n
-    #                         ON c.notification_id = n.id
-    #                     JOIN {temp_table_name} i
-    #                         ON i.item_id = c.item_id
-    #                     WHERE n.port = ?
-    #                         AND n.slot_id = ?
-    #                         AND i.target >= c.end_at
-    #                 )
-    #             """, (port, slot_id))
-
-    #             return [ row["user_id"] for row in rows ] if rows else []
-
-    #     except Exception as ex:
-    #         logging.warning(f"Error in {self.__class__.__name__}.get_for_item_counts(): {ex}")
-    #         return []
 
     def get_for_item_flags(self, port: int, slot_id: int, notify_flags: utils.NotifyFlags) -> List[int]:
         """Get user IDs subscribed to notifications for a slot with matching item flags."""
@@ -379,7 +314,7 @@ class NotificationRepo(RepoBase):
                     (port, slot_id, notify_flags)
                 ).fetchall()
 
-                return [ row["user_id"] for row in rows ] if rows else []
+            return [ row["user_id"] for row in rows ] if rows else []
 
         except Exception as ex:
             logging.warning(f"Error in {self.__class__.__name__}.get_for_item_flags(): {ex}")
@@ -414,9 +349,9 @@ class NotificationRepo(RepoBase):
                     WHERE n.port = ?
                         AND n.slot_id = ?
                         AND LOWER(i.name) LIKE '%' || lower(t.term) || '%'
-                """,
-                (port, slot_id)
-            ).fetchall()
+                    """,
+                    (port, slot_id)
+                ).fetchall()
                 
             return [ row["user_id"] for row in rows ] if rows else []
 
@@ -487,22 +422,6 @@ class NotificationRepo(RepoBase):
                     [(notif.id, term) for term in notif.terms]
                 )
 
-                # # Wipe all existing counts
-                # conn.execute(f"""
-                #     DELETE FROM {self.table_name}_counts
-                #     WHERE notification_id = ?
-                #     """,
-                #     (notif.id,)
-                # )
-
-                # # Insert counts
-                # conn.executemany(f"""
-                #     INSERT INTO {self.table_name}_counts (notification_id, item_id, count, end_at)
-                #     VALUES(?, ?, ?, ?)
-                #     """,
-                #     [(notif.id, count.item_id, count.count, count.end_at) for count in notif.counts]
-                # )
-
                 conn.commit()
 
             # Sync counts
@@ -522,26 +441,27 @@ class NotificationCountRepo(RepoBase):
     def _create(self):
         try:
             with self._conn() as conn:
-                    conn.execute(f"""
-                        CREATE TABLE IF NOT EXISTS {self.table_name} (
-                            id              INTEGER PRIMARY KEY AUTOINCREMENT,
-                            notification_id INTEGER NOT NULL,
-                            item_id         INTEGER NOT NULL,
-                            count           INTEGER NOT NULL,
-                            end_at          INTEGER NOT NULL,
+                conn.execute(f"""
+                    CREATE TABLE IF NOT EXISTS {self.table_name} (
+                        id              INTEGER PRIMARY KEY AUTOINCREMENT,
+                        notification_id INTEGER NOT NULL,
+                        item_id         INTEGER NOT NULL,
+                        count           INTEGER NOT NULL,
+                        end_at          INTEGER NOT NULL,
 
-                            FOREIGN KEY (notification_id)
-                                REFERENCES notifications(id)
-                                ON DELETE CASCADE,
+                        FOREIGN KEY (notification_id)
+                            REFERENCES notifications(id)
+                            ON DELETE CASCADE,
 
-                            UNIQUE(notification_id, item_id, count)
-                        )
-                    """)
+                        UNIQUE(notification_id, item_id, count)
+                    )
+                """)
 
-                    conn.commit()
+                conn.commit()
                     
         except Exception as ex:
             logging.error(f"ERROR in {self.__class__.__name__}._create(): {ex}")
+            raise
 
     def pop_for_item_counts(self, port: int, slot_id: int, item_counts: Dict[int, int]) -> List[int]:
         """Get user IDs subscribed to notifications for a slot with matching item counts and pop (auto-delete) the notification counts."""
@@ -589,7 +509,9 @@ class NotificationCountRepo(RepoBase):
                     )
                 """, (port, slot_id))
 
-                return [ row["user_id"] for row in rows ] if rows else []
+                conn.commit()
+
+            return [ row["user_id"] for row in rows ] if rows else []
 
         except Exception as ex:
             logging.warning(f"Error in {self.__class__.__name__}.get_for_item_counts(): {ex}")
@@ -608,7 +530,7 @@ class NotificationCountRepo(RepoBase):
                     (notif.id,)
                 ).fetchall()
 
-                return [ utils.NotificationCount.from_row(row) for row in rows ] if rows else []
+            return [ utils.NotificationCount.from_row(row) for row in rows ] if rows else []
 
         except Exception as ex:
             logging.error(f"ERROR in {self.__class__.__name__}.get_for_notification(): {ex}")
@@ -673,21 +595,3 @@ class NotificationCountRepo(RepoBase):
         except Exception as ex:
             logging.error(f"ERROR in {self.__class__.__name__}.sync(): {ex}")
             raise
-        
-    # def upsert(self, notification_id: int, notif_counts: List[utils.NotificationCount]):
-    #     """"""
-    #     try:
-    #         with self._conn() as conn:
-    #             conn.executemany(f"""
-    #                 INSERT INTO notification_counts (notification_id, item_id, count, end_at)
-    #                 VALUES (?, ?, ?, ?)
-    #                 ON CONFLICT(notification_id, item_id, count) DO UPDATE SET
-    #                     end_at = excluded.end_at
-    #                 """,
-    #                 [(notification_id, nc.item_id, nc.count, nc.end_at) for nc in notif_counts ]
-    #             )
-
-    #             conn.commit()
-
-    #     except Exception as ex:
-    #         logging.error(f"ERROR in {self.__class__.__name__}.sync(): {ex}")

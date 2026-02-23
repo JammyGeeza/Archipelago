@@ -205,37 +205,7 @@ class Binding:
         binding.last_modified = row["last_modified"]
         return binding
 
-@dataclass
-class Notification(Jsonable):
-    port: int
-    user_id: int
-    slot_id: int
-    hints: int = 0
-    types: int = 0
-    terms: List[str] = field(default_factory=list)
-    counts: List["NotificationCount"] = field(default_factory=list)
-    
-    # "Private"
-    class_: str = field(default="Notification", metadata={"json": "class"})
-    id: Optional[int] = field(default=None)
 
-    @classmethod
-    def from_row(cls, row: sqlite3.Row) -> "Notification":
-        """Create a notification instance from a row."""
-
-        # TODO: Also include last_modified for notifs?
-        #       Why does excluding ID from the constructor break it?
-
-        return cls(
-            id=row["id"],
-            port=row["port"],
-            user_id=row["user_id"],
-            slot_id=row["slot_id"],
-            hints=row["hints"],
-            types=row["types"],
-            terms=row["terms"].split(",") if row["terms"] else [],
-            # counts=[ NotificationCount.from_row(count) for count in row["counts"]]
-        )
     
 @dataclass
 class NotificationCount(Jsonable):
@@ -246,6 +216,7 @@ class NotificationCount(Jsonable):
     # "Private"
     class_: str = field(default="NotificationCount", metadata={"json": "class"})
     id: Optional[int] = field(default=None)
+    item_name: Optional[str] = ""
 
     @classmethod
     def from_row(cls, row: sqlite3.Row) -> "NotificationCount":
@@ -282,6 +253,37 @@ class NotificationCount(Jsonable):
         """Unmerge two lists together, removing with matching id/count"""
         to_remove = [(x.item_id, x.count) for x in set_two]
         return [x for x in set_one if (x.item_id, x.count) not in to_remove]
+
+@dataclass
+class Notification(Jsonable):
+    port: int
+    user_id: int
+    slot_id: int
+    hints: int = 0
+    types: int = 0
+    terms: List[str] = field(default_factory=list)
+    counts: List[NotificationCount] = field(default_factory=list)
+    
+    # "Private"
+    class_: str = field(default="Notification", metadata={"json": "class"})
+    id: Optional[int] = field(default=None)
+
+    @classmethod
+    def from_row(cls, row: sqlite3.Row) -> "Notification":
+        """Create a notification instance from a row."""
+
+        # TODO: Also include last_modified for notifs?
+        #       Why does excluding ID from the constructor break it?
+
+        return cls(
+            id=row["id"],
+            port=row["port"],
+            user_id=row["user_id"],
+            slot_id=row["slot_id"],
+            hints=row["hints"],
+            types=row["types"],
+            terms=row["terms"].split(",") if row["terms"] else [],
+        )
 
 #endregion
 
