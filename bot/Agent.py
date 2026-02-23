@@ -21,6 +21,7 @@ class StdClient:
     # Events
     on_error = utils.Hookable()
     on_notifications_request = utils.Hookable()
+    on_player_state_request = utils.Hookable()
     on_statistics_request = utils.Hookable()
     on_status_request = utils.Hookable()
 
@@ -41,13 +42,22 @@ class StdClient:
 
     async def __handle_packet(self, packet: utils.TrackerPacket):
         """Handle an incoming packet"""
-
-        logging.info(f"Received {packet.cmd} from gateway.")
-
+        
         try:
+            # Bail if blank / unknown packet
+            if not packet or not hasattr(packet, "cmd"):
+                logging.error(f"Unknown packet received, handling has been abandoned.")
+                return
+            
+            logging.info(f"Received {packet.cmd} from gateway.")
+
             match packet.cmd:
+
                 case utils.NotificationsRequestPacket.cmd:
                     await self.on_notifications_request.run(packet)
+
+                case utils.PlayerStateRequestPacket.cmd:
+                    await self.on_player_state_request.run(packet)
 
                 case utils.StatisticsRequestPacket.cmd:
                     await self.on_statistics_request.run(packet)
@@ -64,7 +74,7 @@ class StdClient:
             await self.send(utils.ErrorPacket(
                 id=packet.id or "",
                 original_cmd=packet.cmd or "",
-                message=f"{ex}"
+                text=f"{ex}"
             ))
 
     async def __read_loop(self):
@@ -255,9 +265,14 @@ class TrackerClient:
     async def __handle_packet(self, packet: utils.TrackerPacket):
         """Handle an incoming packet."""
 
-        logging.info(f"Handling {packet.cmd} packet...")
-
         try:
+            # Bail if blank / unknown packet
+            if not packet or not hasattr(packet, "cmd"):
+                logging.warning(f"Unknown packet received, unable to handle.")
+                return
+
+            logging.info(f"Handling {packet.cmd} packet...")
+
             match packet.cmd:
 
                 case utils.ConnectedPacket.cmd:
@@ -293,8 +308,7 @@ class TrackerClient:
                 await self.__handle_response_packet(packet)
 
         except Exception as ex:
-            logging.error(f"Unexpected error handling {packet.cmd} packet: {ex}")
-            # TODO: Respond with InvalidPacket instead
+            logging.error(f"Unexpected error handling {packet or "unknown"} packet: {ex}")
             await self.on_error.run(ex)
 
     async def __handle_connected_packet(self, packet: utils.ConnectedPacket):
@@ -897,14 +911,14 @@ async def __on_notifications_request(client: StdClient, packet: utils.Notificati
         await send(utils.InvalidPacket(
             id=packet.id,
             original_cmd=packet.cmd,
-            message=f"Unknown action `{packet.action}`."
+            text=f"Unknown action `{packet.action}`."
         ))
         return
     elif not (slot_id:= __tracker_client.get_slot(packet.player)):
         await send(utils.InvalidPacket(
             id=packet.id,
             original_cmd=packet.cmd,
-            message=f"Player with name `{packet.player}` could not be found."
+            text=f"Player with name `{packet.player}` could not be found."
         ))
         return
     
@@ -916,7 +930,7 @@ async def __on_notifications_request(client: StdClient, packet: utils.Notificati
         await send(utils.ErrorPacket(
             id=packet.id,
             original_cmd=packet.cmd,
-            message="An error occurred while attempting to get or create notification preferences."
+            text="An error occurred while attempting to get or create notification preferences."
         ))
         return
 
@@ -929,7 +943,7 @@ async def __on_notifications_request(client: StdClient, packet: utils.Notificati
             await send(utils.InvalidPacket(
                 id=packet.id,
                 original_cmd=packet.cmd,
-                message=f"Could not find matching item(s) for {", ".join([f"`{inv}`" for inv in invalid_names])}"
+                text=f"Could not find matching item(s) for {", ".join([f"`{inv}`" for inv in invalid_names])}"
             ))
             return
 
@@ -949,7 +963,7 @@ async def __on_notifications_request(client: StdClient, packet: utils.Notificati
                 await send(utils.ErrorPacket(
                     id=packet.id,
                     original_cmd=packet.cmd,
-                    message="Unable to retrieve item data from server."
+                    text="Unable to retrieve item data from server."
                 ))
                 return
             
@@ -991,7 +1005,7 @@ async def __on_notifications_request(client: StdClient, packet: utils.Notificati
         if not (notif:= __store.notifications.upsert(notif)):
             await send(utils.ErrorPacket(
                 id=packet.id,
-                message="An error occurred while attempting to update the notification preferences."
+                text="An error occurred while attempting to update the notification preferences."
             ))
             return
         
@@ -1010,6 +1024,44 @@ async def __on_notifications_request(client: StdClient, packet: utils.Notificati
         notification=notif
     ))
 
+@StdClient.on_player_state_request
+async def __on_playerstate_request(client: StdClient, packet: utils.PlayerStateRequestPacket):
+    """Handle an incoming release request"""
+    
+    global __tracker_client
+
+    # Validate player name
+    slot_id = __tracker_client.get_slot(packet.slot_name)
+    if not slot_id:
+        await send(utils.InvalidPacket(
+            id=packet.id,
+            text=f"No player found with name `{packet.slot_name}`"
+        ))
+        return
+    
+    # Request release and await response
+    response = await __tracker_client.request(utils.SlotActionRequestPacket(
+        id=packet.id,
+        action=packet.action,
+        slot_id=slot_id
+    ))
+
+    # Validate response
+    if response.is_error():
+        await send(utils.ErrorPacket(
+            id=packet.id,
+            original_cmd=packet.cmd,
+            text=response.text
+        ))
+        return
+
+    # Respond
+    await send(utils.PlayerStateResponsePacket(
+        id=packet.id,
+        action=packet.action,
+        success=response.success
+    ))
+
 @StdClient.on_statistics_request
 async def __on_statistics_request(client: StdClient, packet: utils.StatisticsRequestPacket):
     """Handle an incoming statistics request."""
@@ -1021,7 +1073,7 @@ async def __on_statistics_request(client: StdClient, packet: utils.StatisticsReq
     if (invalid_names:= [ name for name, slot_id in slot_ids.items() if not slot_id ]):
         await send(utils.InvalidPacket(
             id=packet.id,
-            message=f"No player(s) found with name(s) {", ".join([f"`{invalid}`" for invalid in invalid_names ])}"
+            text=f"No player(s) found with name(s) {", ".join([f"`{invalid}`" for invalid in invalid_names ])}"
         ))
         return
 

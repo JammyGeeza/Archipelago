@@ -47,7 +47,6 @@ from NetUtils import Endpoint, ClientStatus, NetworkItem, decode, encode, Networ
     SlotType, LocationStore, MultiData, Hint, HintStatus
 from BaseClasses import ItemClassification
 
-
 min_client_version = Version(0, 5, 0)
 colorama.just_fix_windows_console()
 
@@ -843,39 +842,8 @@ class Context:
                 for client in clients:
                     async_start(self.send_msgs(client, client_hints))
 
-        if not new_bot_hints:
-            return
-
-        # Forward hints to bot clients
-        bot_clients = [
-            client
-            for slot, client_list in self.clients[team].items()
-            if self.slot_is_bot(slot)
-            for client in client_list
-            if client.auth and any(t.lower() == "bot" for t in (client.tags or []))
-        ]
-
-        self.logger.info(f"Bot spectators: {len(bot_clients)}")
-
-        if bot_clients:
-            # Gather new, un-found hints
-            bot_hints = [
-                hint.as_network_message()
-                for hint in sorted(new_bot_hints, key=operator.attrgetter('found'), reverse=True)
-            ]
-
-            # Forward to bot clients
-            for bot in bot_clients:
-                async_start(self.send_msgs(bot, bot_hints))
-
-    def slot_is_bot(self, slot):
-        slot_info = self.slot_info.get(slot)
-        return slot_info and getattr(slot_info, "type", None) == SlotType.spectator
-
-    # def client_is_bot(self, client):
-    #     slot_info = self.slot_info[client.team].get(client.slot)
-    #     self.logger.info(f"Slot info: {slot_info}")
-    #     return slot_info and getattr(slot_info, "type", "").tolower() == "bot"
+        # Forward relevant hints to bot(s)
+        forward_hints_to_bots(self, team, new_bot_hints)
 
     def get_hint(self, team: int, finding_player: int, seeked_location: int) -> typing.Optional[Hint]:
         for hint in self.hints[team, finding_player]:
@@ -2230,68 +2198,13 @@ async def process_client_cmd(ctx: Context, client: Client, args: dict):
                 ctx.stored_data_notification_clients[key].add(client)
 
         elif cmd == "GetStats":
-
-            if not ctx.slot_is_bot(client.slot):
-                await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "type": "auth",
-                                              "text": "Players cannot request Stats.", "original_cmd": None}])
-                return
-            
-            elif "slots" not in args or type(args["slots"]) != list:
-                await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "type": "arguments",
-                                              "text": "Invalid 'slots' argument.", "original_cmd": cmd}])
-                return
-            
-            stats = {}
-            for slot in [slot for slot in ctx.get_players_package() if slot.slot in args["slots"]]:
-                stats.update({
-                    slot.slot: {
-                        "class": "PlayerStats",
-                        "checked": len(ctx.locations.get_checked(ctx.location_checks, slot.team, slot.slot)),
-                        "received": get_received_item_count(ctx, slot.team, slot.slot),
-                        "goal": ctx.read_data.get(f"client_status_{slot.team}_{slot.slot}", lambda: None)() == ClientStatus.CLIENT_GOAL.value,
-                        "remaining": len(ctx.locations.get_remaining(ctx.location_checks, slot.team, slot.slot)),
-                    }
-                })
-
-            await ctx.send_msgs(client, [{ 'cmd': "Stats", "stats": stats }])
+            await handle_getstats_request(ctx, client, args)
 
         elif cmd == "ReceivedCountRequest":
+            await handle_receivedcount_request(ctx, client, args)
 
-            if not ctx.slot_is_bot(client.slot):
-                await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "type": "auth",
-                                              "text": "Players cannot request Stats.", "original_cmd": None}])
-                return
-            
-            elif "slot_items" not in args or type(args["slot_items"]) != dict:
-                await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "type": "arguments",
-                                              "text": "Invalid 'slot_items' argument.", "original_cmd": cmd}])
-                return
-
-            # Parse from json default keys-as-strings
-            slot_items: dict[int, list[int]] = {
-                int(slot): items
-                for slot, items in args["slot_items"].items()
-            }
-            
-            counts = {}
-            for player, item_ids in {slot: slot_items.get(slot.slot, []) for slot in ctx.get_players_package()}.items():
-                for item_id in item_ids:
-                    player_counts = counts.get(player.slot, {})
-                    player_counts.update({ item_id: get_received_item_count(ctx, player.team, player.slot, item_id) })
-                    counts.update({ player.slot: player_counts })
-
-            # Respond
-            await ctx.send_msgs(client, [{ 'cmd': "ReceivedCountResponse", "id": args["id"], "counts": counts }])
-
-def get_received_item_count(ctx: Context, team: int, slot: int, item_id: int | None = None):
-    return sum(
-        1
-        for finder, locations in ctx.locations.items()
-        for loc in ctx.location_checks.get((team, finder), ())
-        if (data:= locations.get(loc, None))
-            and data[1] == slot
-            and (item_id is None or data[0] == item_id) # <- Counts all if no 'item_id' provided
-    )
+        elif cmd == "SlotActionRequest":
+            await handle_slotaction_request(ctx, client, args)
 
 def update_client_status(ctx: Context, client: Client, new_status: ClientStatus):
     current = ctx.client_game_state[client.team, client.slot]
@@ -2308,6 +2221,166 @@ def update_client_status(ctx: Context, client: Client, new_status: ClientStatus)
         ctx.on_client_status_change(client.team, client.slot)
         ctx.save()
 
+#region My Bot Extensions
+
+async def forward_hints_to_bots(ctx: Context, team: int, hints: list[Hint]):
+    """Forward a list of hints to connected bot clients."""
+
+    # Bail if no hints
+    if not hints: return
+    
+    # Get connected bot clients
+    bot_clients = [
+        client
+        for slot, client_list in ctx.clients[team].items()
+        for client in client_list
+        if _client_is_bot(ctx, client)
+    ]
+
+    # Bail if no bot clients
+    if not bot_clients: return
+
+    # Gather hints as messages
+    bot_hints = [
+        hint.as_network_message()
+        for hint in sorted(hints, key=operator.attrgetter('found'), reverse=True)
+    ]
+
+    # Forward to bot clients
+    for bot in bot_clients:
+        async_start(ctx.send_msgs(bot, bot_hints))
+
+async def handle_getstats_request(ctx: Context, client: Client, args: dict):
+    """Handle an incoming GetStatsPacket."""
+
+    if not _client_is_bot(ctx, client):
+        await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "type": "auth",
+                                        "text": "Players cannot request Stats.", "original_cmd": None}])
+        return
+    
+    elif "slots" not in args or type(args["slots"]) != list:
+        await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "type": "arguments",
+                                        "text": "Invalid 'slots' argument.", "original_cmd": cmd}])
+        return
+    
+    stats = {}
+    for slot in [slot for slot in ctx.get_players_package() if slot.slot in args["slots"]]:
+        stats.update({
+            slot.slot: {
+                "class": "PlayerStats",
+                "checked": len(ctx.locations.get_checked(ctx.location_checks, slot.team, slot.slot)),
+                "received": _get_received_item_count(ctx, slot.team, slot.slot),
+                "goal": ctx.read_data.get(f"client_status_{slot.team}_{slot.slot}", lambda: None)() == ClientStatus.CLIENT_GOAL.value,
+                "remaining": len(ctx.locations.get_remaining(ctx.location_checks, slot.team, slot.slot)),
+            }
+        })
+
+    await ctx.send_msgs(client, [{ 'cmd': "Stats", "stats": stats }])
+
+async def handle_receivedcount_request(ctx: Context, client: Client, args: dict):
+    """Handle an incoming ReceivedCountRequestPacket."""
+
+    if not _client_is_bot(ctx, client):
+        await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "id": args["id"], "type": "auth",
+                                        "text": "Players cannot request received counts.", "original_cmd": None}])
+        return
+    
+    elif "slot_items" not in args or type(args["slot_items"]) != dict:
+        await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "id": args["id"], "type": "arguments",
+                                        "text": "Invalid 'slot_items' argument.", "original_cmd": args["cmd"]}])
+        return
+
+    # Parse from json default keys-as-strings
+    slot_items: dict[int, list[int]] = {
+        int(slot): items
+        for slot, items in args["slot_items"].items()
+    }
+    
+    counts = {}
+    for player, item_ids in {slot: slot_items.get(slot.slot, []) for slot in ctx.get_players_package()}.items():
+        for item_id in item_ids:
+            player_counts = counts.get(player.slot, {})
+            player_counts.update({ item_id: _get_received_item_count(ctx, player.team, player.slot, item_id) })
+            counts.update({ player.slot: player_counts })
+
+    # Respond
+    await ctx.send_msgs(client, [{ 'cmd': "ReceivedCountResponse", "id": args["id"], "counts": counts }])
+
+async def handle_slotaction_request(ctx: Context, client: Client, args: dict):
+    """Handle an incoming SlotActionRequestPacket"""
+
+    if not _client_is_bot(ctx, client):
+        await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "id": args["id"], "type": "auth",
+                                        "text": "Players cannot request slot actions.", "original_cmd": None}])
+        return
+    
+    elif "slot_id" not in args or type(args["slot_id"]) != int:
+        await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "id": args["id"], "type": "arguments",
+                                        "text": "Invalid 'slot_id' argument.", "original_cmd": args["cmd"]}])
+        return
+    
+    elif not (slot:= next(slot for slot in ctx.get_players_package() if slot.slot == args["slot_id"])):
+        await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "id": args["id"], "type": "arguments",
+                                        "text": "Invalid 'slot_id' argument.", "original_cmd": args["cmd"]}])
+        return
+    elif not args["action"] & (1 | 2 | 4):
+        await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "id": args["id"], "type": "arguments",
+                                        "text": "Invalid 'action' argument.", "original_cmd": args["cmd"]}])
+        return
+
+    try:
+        # Perform actions
+        if args["action"] & 1: collect_player(ctx, slot.team, slot.slot)
+        if args["action"] & 2: release_player(ctx, slot.team, slot.slot)
+        if args["action"] & 4: _goal_player(ctx, slot.team, slot.slot)
+        
+        await ctx.send_msgs(client, [{'cmd': "SlotActionResponse", "id": args["id"],
+                                        "action": args["action"], "success": True }])
+
+    except Exception as ex:
+        await ctx.send_msgs(client, [{'cmd': "SlotActionResponse", "id": args["id"],
+                                        "action": args["action"], "success": False}])
+
+def _client_is_bot(ctx: Context, client: Client) -> bool:
+    """Check if a client is connected as a bot client."""
+    slot_info = ctx.slot_info.get(client.slot)
+    return (
+        client.auth
+        and getattr(slot_info, "type", None) == SlotType.spectator
+        and any(tag.lower() == "bot" for tag in (client.tags or []))
+    )
+
+def _get_received_item_count(ctx: Context, team: int, slot: int, item_id: int | None = None):
+    """Get total number of an item (or all items) received by a slot."""
+    return sum(
+        1
+        for finder, locations in ctx.locations.items()
+        for loc in ctx.location_checks.get((team, finder), ())
+        if (data:= locations.get(loc, None))
+            and data[1] == slot
+            and (item_id is None or data[0] == item_id) # <- Counts all if no 'item_id' provided
+    )
+
+def _goal_player(ctx: Context, team: int, slot: int):
+    """Set a player as goal complete"""
+
+    # If not already goaled...
+    if ctx.client_game_state[(team, slot)] != ClientStatus.CLIENT_GOAL:
+
+        # Broadcast goal message
+        finished_msg = f'{ctx.get_aliased_name(team, slot)} (Team #{team + 1}) has completed their goal.'
+        ctx.broadcast_text_all(finished_msg, {"type": "Goal", "team": team, "slot": slot})
+
+        # Collect and/or release if enabled
+        if "auto" in ctx.collect_mode: collect_player(ctx, team, slot)
+        if "auto" in ctx.release_mode: release_player(ctx, team, slot)
+
+        # Update server state
+        ctx.client_game_state[(team, slot)] = ClientStatus.CLIENT_GOAL
+        ctx.on_client_status_change(team, slot)
+        ctx.save()
+
+#endregion
 
 class ServerCommandProcessor(CommonCommandProcessor):
     def __init__(self, ctx: Context):
@@ -2825,12 +2898,6 @@ async def main(args: argparse.Namespace):
     logging.info('Hosting game at %s:%d (%s)' % (ip, ctx.port,
                                                  'No password' if not ctx.password else 'Password: %s' % ctx.password))
 
-    # # Create / update room data in the store
-    # from bot.Utils import Room
-    # from bot.Store import Store
-    # store = Store()
-    # store.rooms.upsert(Room(ctx.port, ctx.seed_name))
-
     await ctx.server
     console_task = asyncio.create_task(console(ctx))
     if ctx.auto_shutdown:
@@ -2847,3 +2914,4 @@ if __name__ == '__main__':
         asyncio.run(main(parse_args()))
     except asyncio.exceptions.CancelledError:
         pass
+

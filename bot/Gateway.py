@@ -22,6 +22,7 @@ store = Store()
 
 class AgentProcess:
 
+    on_error = utils.Hookable()
     on_discord_message_received = utils.Hookable()
     on_hint_received = utils.Hookable()
     on_item_received = utils.Hookable()
@@ -106,26 +107,31 @@ class AgentProcess:
     async def __handle_packet(self, packet: utils.TrackerPacket):
         """Handle a received packet from the agent process"""
 
-        logging.info(f"Handling {packet.cmd} packet...")
+        try:
+            if not packet or not hasattr(packet, "cmd"):
+                logging.error(f"Unknown packet received, handling has been abandoned.")
+                return
 
-        match packet.cmd:
+            logging.info(f"Handling {packet.cmd} packet...")
 
-            case utils.DiscordMessagePacket.cmd:
-                await self.__handle_discordmessage_packet(packet)
+            match packet.cmd:
 
-            case utils.ErrorPacket.cmd | utils.InvalidPacket.cmd:
-                logging.warning(f"Received {packet.cmd} packet with message: '{packet.message}'")
-                if packet.id:
-                    await self.__handle_response_packet(packet)
+                case utils.DiscordMessagePacket.cmd:
+                    await self.__handle_discordmessage_packet(packet)
 
-            case utils.NotificationsResponsePacket.cmd | utils.StatisticsResponsePacket.cmd | utils.StatusResponsePacket.cmd:
+                case utils.TrackerInfoPacket.cmd:
+                    await self.__handle_trackerinfo_packet(packet)
+
+                case _:
+                    logging.warning(f"{packet.cmd} is an unhandled packet type.")
+
+            # If it's a response packet, pass it through
+            if hasattr(packet, "id"):
                 await self.__handle_response_packet(packet)
 
-            case utils.TrackerInfoPacket.cmd:
-                await self.__handle_trackerinfo_packet(packet)
-
-            case _:
-                logging.warning(f"{packet.cmd} is an unhandled packet type.")
+        except Exception as ex:
+            logging.error(f"Unexpected error handling {packet.cmd} packet: {ex}")
+            await self.on_error.run(ex)
 
     async def __send(self, json: str):
         """Send data to the agent process."""
@@ -143,7 +149,7 @@ class AgentProcess:
     async def __handle_response_packet(self, packet: utils.IdentifiablePacket):
         """Handler for receiving a response packet"""
 
-        logging.info(f"Received {packet.cmd} from :{self.config.port}")
+        logging.info(f"Received {packet.cmd} response from :{self.config.port} | ID: {packet.id}")
 
         # If waiting for this response, set packet as result
         if (future:= self.__request_queue.get(packet.id)):
@@ -158,15 +164,24 @@ class AgentProcess:
     async def __read_stdout(self):
         """Listen for data received from the agent process."""
 
-        if self.process.stdout is not None:
-            async for line in self.process.stdout:
-                payload = line.decode("utf-8", errors="replace").rstrip()
+        try:
 
-                # Convert from json and handle
-                for data in json.loads(payload):
-                    await self.__handle_packet(
-                        utils.TrackerPacket.parse(data)
-                    )
+            if self.process.stdout is not None:
+                async for line in self.process.stdout:
+                    payload = line.decode("utf-8", errors="replace").rstrip()
+
+                    # Convert from json and handle
+                    for data in json.loads(payload):
+                        await self.__handle_packet(
+                            utils.TrackerPacket.parse(data)
+                        )
+
+        except asyncio.CancelledError:
+            logging.warning("The std client __read_loop() task has been cancelled.")
+            raise
+
+        except Exception as ex:
+            logging.error(f"Unexpected error in std client __read_loop() task: '{ex}'")
 
     async def __watch(self):
         """Watch the agent process and clean-up when terminated."""
@@ -256,6 +271,11 @@ async def interaction_is_admin(interaction: discord.Interaction) -> bool:
 async def _on_agent_discord_message_received(agent: AgentProcess, message: str):
     """Handler for when a discord message is received from an agent."""
     await post_message(agent.config.channel_id, message)
+
+@AgentProcess.on_error
+async def _on_agent_error(agent: AgentProcess, message: str):
+    """Handler for when the agent suffers an error"""
+    await post_message(agent.config.channel_id, f"The client at `:{agent.config.port}` suffered an unexpected error: **_{message}_**")
 
 @AgentProcess.on_hint_received
 async def _on_agent_hint_received(agent: AgentProcess, recipient: int, item: utils.NetworkItem):
@@ -490,7 +510,7 @@ async def connect(interaction: discord.Interaction):
         
         # Validate response
         if response.is_error():
-            await interaction.followup.send(f"An unexpected error occurred: {response.message}", ephemeral=True)
+            await interaction.followup.send(f"An unexpected error occurred: {response.text}", ephemeral=True)
         else:        
             await interaction.followup.send(f"The client for this channel is already running with status: `{response.status}`.", ephemeral=True)
         return
@@ -533,6 +553,36 @@ async def disconnect(interaction: discord.Interaction):
 
     # Respond
     await interaction.followup.send(f"Stopping the client at `:{agent.config.port}` - this may take a moment.", ephemeral=True)
+
+@bot.tree.command(name="goal", description="Mark a player as goal complete")
+@app_commands.describe(slot_name="Slot player name to goal")
+@commands.has_permissions(manage_guild=True, administrator=True)
+async def release(interaction: discord.Interaction, slot_name: app_commands.Range[str, 1, 16]):
+    """Command to mark a player as goal complete"""
+
+    logging.info(f"Goal requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id}")
+
+    # Defer response
+    await interaction.response.defer(thinking=True, ephemeral=True)
+
+    # Attempt to get process
+    if not (agent:= get_agent(interaction.channel_id)):
+        await interaction.followup.send(f"No client is running for this channel - use `/connect` to start or `/bind` to bind it to a session.", ephemeral=True)
+        return
+    
+    # Request release
+    response = await agent.request(utils.GoalRequestPacket(
+        id=uuid.uuid4().hex,
+        slot_name=slot_name
+    ))
+
+    # Validate response
+    if response.is_error():
+        await interaction.followup.send(f"Error releasing slot: **_{response.text}_**", ephemeral=True)
+        return
+    
+    # Respond
+    await interaction.followup.send(f"Slot `{slot_name}` has been released.", ephemeral=True)
 
 @bot.tree.command(name="list", description="List all bound channels")
 async def _list(interaction: discord.Interaction):
@@ -585,7 +635,7 @@ async def notify_clear(interaction: discord.Interaction, slot: app_commands.Rang
 
     # Respond appropriately
     if response.is_error():
-        await interaction.followup.send(f"Error setting hint preferences: '**_{response.message}_**'.", ephemeral=True)
+        await interaction.followup.send(f"Error setting hint preferences: '**_{response.text}_**'.", ephemeral=True)
     else:    
         await interaction.followup.send(f"You have cleared all notification types for `{slot}`.", ephemeral=True)
 
@@ -621,7 +671,7 @@ async def notify_count(interaction: discord.Interaction, recipient: app_commands
 
     # Validate response
     if response.is_error():
-        await interaction.followup.send(f"Error setting hint preferences: '**_{response.message}_**'.", ephemeral=True)
+        await interaction.followup.send(f"Error setting hint preferences: '**_{response.text}_**'.", ephemeral=True)
         return
 
     # Respond
@@ -666,7 +716,7 @@ async def notify_hints(interaction: discord.Interaction, finder: app_commands.Ra
 
     # Validate response
     if response.is_error():
-        await interaction.followup.send(f"Error setting hint preferences: '**_{response.message}_**'.", ephemeral=True)
+        await interaction.followup.send(f"Error setting hint preferences: '**_{response.text}_**'.", ephemeral=True)
         return
         
     # Respond
@@ -709,7 +759,7 @@ async def notify_terms(interaction: discord.Interaction, recipient: app_commands
 
     # Validate response
     if response.is_error():
-        await interaction.followup.send(f"Error setting hint preferences: '**_{response.message}_**'.", ephemeral=True)
+        await interaction.followup.send(f"Error setting hint preferences: '**_{response.text}_**'.", ephemeral=True)
         return
     
     # Respond 
@@ -754,7 +804,7 @@ async def notify_types(interaction: discord.Interaction, recipient: app_commands
 
     # Validate response
     if response.is_error():
-        await interaction.followup.send(f"Error setting hint preferences: '**_{response.message}_**'.", ephemeral=True)
+        await interaction.followup.send(f"Error setting hint preferences: '**_{response.text}_**'.", ephemeral=True)
         return
     
     # Respond with appropriate message
@@ -789,11 +839,50 @@ async def notify_view(interaction: discord.Interaction, slot: app_commands.Range
 
     # Respond appropriately
     if response.is_error() or not response.notification:
-        await interaction.followup.send(f"Error getting hint preferences: '**_{response.message}_**'.", ephemeral=True)
+        await interaction.followup.send(f"Error getting hint preferences: '**_{response.text}_**'.", ephemeral=True)
         return
     
     # Respond
     await interaction.followup.send(generate_notifications_text(agent, response.notification), ephemeral=True)
+
+@bot.tree.command(name="player_state", description="Update a player's state")
+@app_commands.describe(slot_name="Slot name to apply state to")
+@app_commands.choices(
+    action=[
+        app_commands.Choice(name="Collect", value=utils.PlayerStateAction.COLLECT),
+        app_commands.Choice(name="Release", value=utils.PlayerStateAction.RELEASE),
+        app_commands.Choice(name="Collect & Release", value=(utils.PlayerStateAction.COLLECT | utils.PlayerStateAction.RELEASE)),
+        app_commands.Choice(name="Goal Complete", value=utils.PlayerStateAction.GOAL),
+    ],
+)
+@commands.has_permissions(manage_guild=True, administrator=True)
+async def player_state(interaction: discord.Interaction, slot_name: app_commands.Range[str, 1, 16], action: int):
+    """Command to update a player's state"""
+
+    logging.info(f"Player State requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id}")
+
+    # Defer response
+    await interaction.response.defer(thinking=True, ephemeral=True)
+
+    # Attempt to get process
+    if not (agent:= get_agent(interaction.channel_id)):
+        await interaction.followup.send(f"No client is running for this channel - use `/connect` to start or `/bind` to bind it to a session.", ephemeral=True)
+        return
+    
+    # Request release
+    response = await agent.request(utils.PlayerStateRequestPacket(
+        id=uuid.uuid4().hex,
+        action=action,
+        slot_name=slot_name
+    ))
+
+    # Validate response
+    if response.is_error():
+        await interaction.followup.send(f"Error releasing slot: **_{response.text}_**", ephemeral=True)
+        return
+    
+    # Respond
+    await interaction.followup.send(f"State for slot `{slot_name}` {"has been successfully" if response.success else "could not be"} updated.", ephemeral=True)
 
 @bot.tree.command(name="stats_session", description="List of players - E.g. Player1,Player2 etc.")
 async def stats_session(interaction: discord.Interaction):
@@ -860,7 +949,7 @@ async def stats_players(interaction: discord.Interaction, players: str):
 
     # Validate response
     if response.is_error():
-        await interaction.followup.send(f"Error retrieving player stats: '**_{response.message}_**'.", ephemeral=True)
+        await interaction.followup.send(f"Error retrieving player stats: '**_{response.text}_**'.", ephemeral=True)
         return
     elif not response.slots:
         await interaction.followup.send(f"Unable to retrieve player stats - please wait a moment and try again.", ephemeral=True)
@@ -895,7 +984,7 @@ async def status(interaction: discord.Interaction):
 
     # Validate response
     if response.is_error():
-        await interaction.followup.send(f"Error retrieving current status: **_{response.message}_**", ephemeral=True)
+        await interaction.followup.send(f"Error retrieving current status: **_{response.text}_**", ephemeral=True)
         return
 
     # Respond with status

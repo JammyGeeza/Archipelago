@@ -66,6 +66,13 @@ class NotifyFlags(enum.IntFlag):
             flag.name.title() for flag in type(self) if flag != 0 and flag in self
         )
     
+class PlayerStateAction(enum.IntEnum):
+    """Slot action enum values"""
+    NONE        = 0
+    COLLECT     = 1 << 0
+    RELEASE     = 1 << 1
+    GOAL        = 1 << 2
+    
 #endregion
 
 class Jsonable:
@@ -204,8 +211,6 @@ class Binding:
         )
         binding.last_modified = row["last_modified"]
         return binding
-
-
     
 @dataclass
 class NotificationCount(Jsonable):
@@ -400,10 +405,7 @@ class TrackerPacket(Jsonable):
     
     def is_error(self) -> bool:
         """Is this packet related to an error?"""
-        return self.cmd in [
-            InvalidPacket.cmd,
-            ErrorPacket.cmd
-        ]
+        return self.cmd in [ InvalidPacket.cmd, ErrorPacket.cmd ]
 
     def to_dict(self) -> Dict[Any, Any]:
         dct = super().to_dict()
@@ -418,7 +420,7 @@ class TrackerPacket(Jsonable):
 
         pkt_type = data.get("cmd")
         if pkt_type not in cls._types:
-            logging.warning(f"Unregistered packet type '{pkt_type}'.")
+            logging.warning(f"Cannot parse un-registered packet type '{pkt_type}'.")
             return None
         
         pkt_cls = cls._types[pkt_type]
@@ -514,7 +516,23 @@ class InvalidPacket(TrackerPacket):
     cmd: ClassVar[str] = "InvalidPacket"
     id: Optional[str] = ""
     original_cmd: Optional[str] = ""
-    message: str = ""
+    text: str = ""
+
+@TrackerPacket.register_packet
+@dataclass
+class SlotActionRequestPacket(IdentifiablePacket):
+    """Packet sent to server to request a slot action"""
+    cmd: ClassVar[str] = "SlotActionRequest"
+    action: int
+    slot_id: int
+
+@TrackerPacket.register_packet
+@dataclass
+class SlotActionResponsePacket(IdentifiablePacket):
+    """Packet received in response to SlotActionRequest packet"""
+    cmd: ClassVar[str] = "SlotActionResponse"
+    action: int
+    success: bool
 
 @TrackerPacket.register_packet
 @dataclass
@@ -601,7 +619,7 @@ class ErrorPacket(TrackerPacket):
     cmd: ClassVar[str] = "Error"
     id: Optional[str] = ""
     original_cmd: Optional[str] = ""
-    message: str = ""
+    text: str = ""
 
 @TrackerPacket.register_packet
 @dataclass
@@ -631,6 +649,22 @@ class NotificationsResponsePacket(IdentifiablePacket):
     """Packet sent to gateway in response to a NotificationRequest packet."""
     cmd: ClassVar[str] = "NotificationsResponse"
     notification: Notification
+
+@TrackerPacket.register_packet
+@dataclass
+class PlayerStateRequestPacket(IdentifiablePacket):
+    """Packet sent to agent to request player state update."""
+    cmd: ClassVar[str] = "PlayerStateRequest"
+    action: PlayerStateAction
+    slot_name: str
+
+@TrackerPacket.register_packet
+@dataclass
+class PlayerStateResponsePacket(IdentifiablePacket):
+    "Packet send to gateway in response to a PlayerStateRequest packet"
+    cmd: ClassVar[str] = "PlayerStateResponse"
+    action: PlayerStateAction
+    success: bool
 
 @TrackerPacket.register_packet
 @dataclass
