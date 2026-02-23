@@ -7,7 +7,7 @@ import typing
 import ModuleUpdate
 
 ModuleUpdate.requirements_files.add(os.path.join("WebHostLib", "requirements.txt"))
-ModuleUpdate.update()
+ModuleUpdate.update(yes=True)
 
 # in case app gets imported by something like gunicorn
 import Utils
