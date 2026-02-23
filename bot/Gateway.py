@@ -236,10 +236,10 @@ agents: Dict[int, AgentProcess] = {}
 
 def parse_args() -> argparse.Namespace:
     """Parse command-line arguments, providing defaults from host.yaml file if argument not provided."""
-    from settings import get_settings
+    from settings import get_bot_settings
 
     parser = argparse.ArgumentParser()
-    defaults = get_settings().discord_gateway_options.as_dict()
+    defaults = get_bot_settings().gateway.as_dict()
 
     parser.add_argument("--token", default=defaults["token"], type=str,
                         help="The discord bot auth token, generated from the discord developer portal.")

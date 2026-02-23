@@ -376,8 +376,6 @@ class NetworkVersion(Jsonable):
     minor: int = 0
     build: int = 0
 
-
-
 @dataclass
 class SessionStats(Jsonable):
     """Object containing stats for a session."""

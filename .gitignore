@@ -26,6 +26,7 @@
 *.wixobj
 *.lck
 *.db3
+*.db
 *multidata
 *multisave
 *.archipelago
@@ -48,6 +49,7 @@ EnemizerCLI/
 /host.yaml
 /options.yaml
 /config.yaml
+*/bot.yaml
 /logs/
 _persistent_storage.yaml
 mystery_result_*.yaml
@@ -198,4 +200,3 @@ _speedups.html
 .LSOverride
 Thumbs.db
 [Dd]esktop.ini
-discord_gateway.db

@@ -9,7 +9,6 @@ import threading
 import uuid
 import websockets
 
-from settings import get_settings
 from bot.Store import Store
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple
@@ -251,6 +250,7 @@ class TrackerClient:
         self.__player_lookup: Dict[int, utils.NetworkSlot] = {}
         self.__stats_lookup: Dict[int, utils.PlayerStats] = {}
 
+        self.host: str = args.host
         self.port: int = args.port
         self.slot_name: str = args.slot_name
         self.password: Optional[str] = args.password
@@ -614,7 +614,7 @@ class TrackerClient:
             while self.__running:
                 # Attempt to connect
                 try:
-                    async with connect(f"ws://localhost:{self.port}") as self.__websocket:
+                    async with connect(f"ws://{self.host}:{self.port}") as self.__websocket:
                         logging.info(f"Connection to websocket established.")
 
                         # Trigger connected event if first attempt
@@ -1287,11 +1287,13 @@ async def main() -> None:
 
 def parse_args() -> argparse.Namespace:
     """Parse command-line arguments"""
+    from settings import get_bot_settings
 
-    defaults = get_settings().discord_agent_options.as_dict()
+    defaults = get_bot_settings().agent.as_dict()
 
     parser = argparse.ArgumentParser(prog="Agent.py", description="Archipelago Discord Tracker Client")
-    parser.add_argument("--port", type=int, help="The port of the local archipelago session.")
+    parser.add_argument("--host", type=str, default=defaults["host"], help="The hostname of the archipelago server")
+    parser.add_argument("--port", type=int, help="The port of the archipelago session.")
     parser.add_argument("--slot_name", type=str, help="The slot name to connect to.")
     parser.add_argument("--password", type=str, help="The password for the server or slot.")
     parser.add_argument("--loglevel", default=defaults["loglevel"], type=str)

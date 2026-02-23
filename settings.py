@@ -642,7 +642,7 @@ class DiscordGatewayOptions(Group):
 
 class DiscordAgentOptions(Group):
     """Options for the Discord Agents"""
-
+    host: str = "localhost"
     loglevel: str = "info"
     logtime: bool = False 
     
@@ -902,7 +902,7 @@ def get_settings() -> Settings:
         res = getattr(get_settings, "_cache", None)
         if not res:
             from Utils import user_path, local_path
-            filenames = ("options.yaml", "host.yaml")
+            filenames = ("options.yaml", "host.yaml", "bot/bot.yaml")
             locations: list[str] = []
             if os.path.join(os.getcwd()) != local_path():
                 locations += filenames  # use files from cwd only if it's not the local_path
@@ -919,3 +919,70 @@ def get_settings() -> Settings:
                 res.save(user_path(filenames[1]))
             setattr(get_settings, "_cache", res)
         return res
+
+#region BOT ADDITIONS
+
+class GatewaySettings(Group):
+    """Settings for bot/Gateway.py"""
+
+    token: str = ""
+    admin_only: bool = True
+    loglevel: str = "info"
+    logtime: bool = False
+
+class AgentSettings(Group):
+    """Settings for bot/Agent.py"""
+
+    host: str = "localhost"
+    loglevel: str = "info"
+    logtime: bool = False
+
+class BotSettings(Group):
+    """Settings for bot/Gateway.py and bot/Agent.py"""
+
+    gateway: GatewaySettings = GatewaySettings()
+    agent: AgentSettings = AgentSettings()
+
+    _filename: str | None = None
+
+    def __init__(self, location: str | None):
+        super().__init__()
+        if location:
+            from Utils import parse_yaml
+            with open(location, encoding="utf-8-sig") as f:
+                self.update(parse_yaml(f.read()) or {})
+            self._filename = location
+
+    @property
+    def filename(self) -> str | None:
+        return self._filename
+
+def get_bot_settings() -> BotSettings:
+    """Returns bot settings from the default bot/bot.yaml."""
+    with _lock:
+        res = getattr(get_bot_settings, "_cache", None)
+        if res:
+            return res
+
+        from Utils import user_path, local_path
+
+        filename = "bot/bot.yaml"
+        locations: list[str] = []
+        if os.path.join(os.getcwd()) != local_path():
+            locations.append(filename)
+        locations.append(user_path(filename))
+
+        for location in locations:
+            try:
+                res = BotSettings(location)
+                break
+            except FileNotFoundError:
+                continue
+        else:
+            # no file found: return defaults (don’t auto-create unless you want that behavior)
+            res = BotSettings(None)
+
+        setattr(get_bot_settings, "_cache", res)
+        return res
+    
+#endregion
