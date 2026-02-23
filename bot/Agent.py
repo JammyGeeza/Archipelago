@@ -6,12 +6,13 @@ import logging
 import math
 import sys
 import threading
+import uuid
 import websockets
 
 from settings import get_settings
 from bot.Store import Store
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 from websockets.asyncio.client import connect
 from websockets.exceptions import ConnectionClosed
 
@@ -217,6 +218,7 @@ class TrackerClient:
     on_goal = utils.Hookable()
     on_hint = utils.Hookable()
     on_item = utils.Hookable()
+    on_received_counts = utils.Hookable()
     on_release = utils.Hookable()
 
     #region Private Methods
@@ -225,6 +227,7 @@ class TrackerClient:
 
         self.__attempt: int = 0                                         # Current connection attempt
         self.__attempt_timeouts: List[int] = [ 5, 15, 30, 60, 300 ]     # Duration(s) to wait between connection attempts
+        self.__request_queue: dict[str, asyncio.Future] = {}            # Queue for requests awaiting a response
         self.__running: bool = False                                    # Is currently running
         self.__state: str = "Disconnected"                              # Current state
         self.__tasks: List[asyncio.Task] = []                           # Asynchronous tasks
@@ -232,7 +235,6 @@ class TrackerClient:
 
         # Lookups
         self.__goal_lookup: Dict[int, bool] = {}
-        self.__item_counts: Dict[int, Dict[int, int]] = {}              # Keep track of received item counts for notifications
         self.__item_lookup: Dict[str, Dict[int, str]] = {}
         self.__location_lookup: Dict[str, Dict[int, str]] = {}
         self.__player_lookup: Dict[int, utils.NetworkSlot] = {}
@@ -270,6 +272,10 @@ class TrackerClient:
                 case utils.PrintJSONPacket.cmd:
                     await self.__handle_printjson_packet(packet)
 
+                case utils.ReceivedCountResponsePacket.cmd:
+                    if not packet.is_error():
+                        await self.__handle_receivedcount_packet(packet)
+
                 case utils.RetrievedPacket.cmd:
                     await self.__handle_retrieved_packet(packet)
 
@@ -281,6 +287,10 @@ class TrackerClient:
 
                 case _:
                     logging.warning(f"{packet.cmd} is an unhandled packet type.")
+
+            # If this packet is a response, pass it through
+            if hasattr(packet, "id"):
+                await self.__handle_response_packet(packet)
 
         except Exception as ex:
             logging.error(f"Unexpected error handling {packet.cmd} packet: {ex}")
@@ -361,6 +371,21 @@ class TrackerClient:
             
             case _:
                 logging.info(f"PrintJSON ({packet.type}) are not currently handled.")
+
+    async def __handle_receivedcount_packet(self, packet: utils.IdentifiablePacket):
+        """Handle a received count packet"""
+
+        # Trigger event
+        await self.on_received_counts.run(packet.counts)
+
+    async def __handle_response_packet(self, packet: utils.IdentifiablePacket):
+        """Handle an incoming response packet"""
+
+        logging.info(f"Received {packet.cmd} response | ID: {packet.id}")
+
+        # If waiting for this response, set packet as result
+        if (future:= self.__request_queue.get(packet.id)):
+            future.set_result(packet)
 
     async def __handle_retrieved_packet(self, packet: utils.RetrievedPacket):
         """Handle an incoming Retrieved packet."""
@@ -518,6 +543,23 @@ class TrackerClient:
         """Get the current status."""
         return self.__state
 
+    async def request(self, request: utils.IdentifiablePacket) -> utils.IdentifiablePacket:
+
+        logging.info(f"Sending request... | Type: {request.cmd} | ID: {request.id}")
+
+        response: asyncio.Future = asyncio.get_running_loop().create_future()
+        self.__request_queue[request.id] = response
+
+        # Send packet
+        await self.__send_packet(request)
+
+        # Wait for response and return
+        return await response
+    
+    async def send(self, packet: utils.TrackerPacket):
+        """Send a packet to the archipelago server"""
+        await self.__send_packet(packet)
+
     async def start(self):
         """Start the tracker client connection"""
 
@@ -617,6 +659,7 @@ __args: argparse.Namespace
 __store: Store
 
 # Variables
+__item_counts: Dict[Tuple[int, int], int] = {}
 __item_queue: Dict[int, utils.ItemQueue] = {}
 __tasks: List[asyncio.Task] = []
 
@@ -700,7 +743,11 @@ def generate_items_text(recipient: int, items: Dict[int, utils.QueuedItemData]) 
     # Generate item text with mentions, if applicable
     return append_mentions(
         f"`{get_player(recipient)}` received their " + ", ".join([f"**{item_name}**" + (f" **_(x{count})_**" if count > 1 else "") for item_name, count in item_counts.items()]),
-        list(set(get_item_flag_notifications(recipient, combined_flags)) | set(get_item_term_notifications(recipient, [ name for name in item_counts.keys() ])))
+        list(
+            set(get_item_flag_notifications(recipient, combined_flags)) | 
+            set(get_item_term_notifications(recipient, [ name for name in item_counts.keys() ])) |
+            set(get_item_count_notifications(recipient, { tup[1]: rcv_count for tup, rcv_count in __item_counts.items() if tup[0] == recipient and tup[1] in items.keys() }))
+        )
     )
 
 #region Tracker Event Handlers
@@ -715,6 +762,9 @@ async def __on_collect(client, slot_id: int):
 async def __on_connection_state_changed(client, state: str, errors: List[str] = []):
     """Handler for the tracker's connection state changing."""
     
+    global __store
+    global __tracker_client
+
     msg: str = ""
     match state:
 
@@ -736,6 +786,15 @@ async def __on_connection_state_changed(client, state: str, errors: List[str] = 
 
         case "Tracking":
             msg = f"Client is now tracking the session at `:{client.port}`"
+
+            # Get notification slot items to check
+            count_items = __store.notifications.get_count_items_for_port(client.port)
+
+            # Request item counts from server
+            await __tracker_client.send(utils.ReceivedCountRequestPacket(
+                id="",
+                slot_items=count_items
+            ))
 
             # Send tracker info
             await send(utils.TrackerInfoPacket(
@@ -782,8 +841,29 @@ async def __on_hint(client, recipient: int, item: utils.NetworkItem, found: bool
 async def __on_item(client, receiver: int, item: utils.NetworkItem):
     """Handler for an item being received."""
 
+    global __item_counts
+
+    # Increment item count, if tracked
+    if (receiver, item.item) in __item_counts:
+       __item_counts[(receiver, item.item)] = __item_counts.get((receiver, item.item), 0) + 1
+
     # Add to item queue
     queue_item(receiver, item)
+
+@TrackerClient.on_received_counts
+async def __on_received_counts(client, counts: Dict[int, Dict[int, int]]):
+    """Handler for item counts being received"""
+
+    global __item_counts
+
+    # Update item counts
+    __item_counts.update({
+        (slot_id, item_id) : item_count
+        for slot_id, item_counts in counts.items()
+        for item_id, item_count in item_counts.items()
+    })
+
+    logging.info(f"Item counts: {__item_counts}")
 
 @TrackerClient.on_release
 async def __on_release(client, slot_id: int):
@@ -808,10 +888,12 @@ async def __on_std_error(client: StdClient, msg: str):
 async def __on_notifications_request(client: StdClient, packet: utils.NotificationsRequestPacket):
     """Handle an incoming notifications request."""
 
+    global __item_counts
     global __store
     global __tracker_client
 
     # Validate the player name
+    logging.info(f"Validating player name...")
     if not (slot_id:= __tracker_client.get_slot(packet.player)):
         await send(utils.InvalidPacket(
             id=packet.id,
@@ -824,6 +906,7 @@ async def __on_notifications_request(client: StdClient, packet: utils.Notificati
     #       I could probably do this in __post_init__()...
     
     # Check if notification exists, create if it doesn't
+    logging.info(f"Getting / creating notification...")
     if not (notif:= __store.notifications.get_or_create(__tracker_client.port, packet.user_id, slot_id)):
         await send(utils.ErrorPacket(
             id=packet.id,
@@ -832,55 +915,66 @@ async def __on_notifications_request(client: StdClient, packet: utils.Notificati
         ))
         return
     
+    # If 'counts' provided, validate and retrieve data for them first
+    new_counts = []
+    if packet.counts:
+
+        # Validate item names
+        logging.info(f"Validating item names {packet.counts.keys()}...")
+        item_map: Dict[str, int] = { item_name: get_item_id(slot_id, item_name) for item_name in packet.counts.keys() }
+        if item_map and (invalid_names:= [item_name for item_name, item_id in item_map.items() if not item_id ]):
+            await send(utils.InvalidPacket(
+                id=packet.id,
+                original_cmd=packet.cmd,
+                message=f"Could not find matching item(s) for {", ".join([f"`{inv}`" for inv in invalid_names])}"
+            ))
+            return
+
+        # Get counts for items we don't yet have counts for
+        logging.info(f"Checking for unknown counts....")
+        if (unknown_counts:= [ item_id for item_id in item_map.values() if (slot_id, item_id) not in __item_counts ]):
+
+            # Request item counts from server
+            response = await __tracker_client.request(utils.ReceivedCountRequestPacket(
+                id=uuid.uuid4().hex,
+                slot_items={ slot_id: unknown_counts }
+            ))
+
+            # Validate response
+            if response.is_error():
+                await send(utils.ErrorPacket(
+                    id=packet.id,
+                    original_cmd=packet.cmd,
+                    message="Unable to retrieve item data from server."
+                ))
+                return
+            
+        # Item counts are updated by this point
+
+        # Parse new counts to store object
+        for item_name, item_id in item_map.items():
+            count = packet.counts.get(item_name)
+            end_count: int = __item_counts.get((slot_id, item_id)) + count
+            new_counts.append(utils.NotificationCount(
+                item_id=item_id,
+                count=count,
+                end_at=end_count
+            ))
+
+    logging.info(f"Pre-merge: {notif.counts}")
+
     match packet.action:
         case utils.Action.ADD:
             notif.hints = ((notif.hints or utils.NotifyFlags.NONE) | packet.hints) if packet.hints else notif.hints
             notif.types = ((notif.types or utils.NotifyFlags.NONE) | packet.types) if packet.types else notif.types
             notif.terms = list(set(notif.terms or []) | set(packet.terms)) if packet.terms else notif.terms
-
-            logging.info(f"Counts before hash: {notif.counts}")
-
-            # Parse new counts for hashing and check validity
-            new_counts = [ utils.NotificationCount(item_id=get_item_id(slot_id, item_name), target=count) for item_name, count in packet.counts.items() ] if packet.counts else []
-            
-            logging.info(f"Parsed new counts: {new_counts}")
-
-            # Bail if any item names not recognised
-            if any(True for count in new_counts if not count.item_id):
-                await send(utils.InvalidPacket(
-                    id=packet.id,
-                    original_cmd=packet.cmd,
-                    message=f"Item name not recognised." # TODO: Tighten this up so it spits back which item name.
-                ))
-                return
-
-            notif.counts = utils.NotificationCount.merge(notif.counts, new_counts)
-            
-            logging.info(f"Counts after hash: {notif.counts}")
+            notif.counts = utils.NotificationCount.merge(notif.counts, new_counts) if new_counts else notif.counts
 
         case utils.Action.REMOVE:
             notif.hints = ((notif.hints or utils.NotifyFlags.NONE) & ~packet.hints) if packet.hints else notif.hints
             notif.types = ((notif.types or utils.NotifyFlags.NONE) & ~packet.types) if packet.types else notif.types
             notif.terms = list(set(notif.terms or []) - set(packet.terms)) if packet.terms else notif.terms
-
-            logging.info(f"Counts before hash: {notif.counts}")
-
-            # Parse new counts for hashing and check validity
-            new_counts = [ utils.NotificationCount(item_id=get_item_id(slot_id, item_name), target=count) for item_name, count in packet.counts.items() ] if packet.counts else []
-            
-            logging.info(f"Parsed new counts: {new_counts}")
-            
-            if any(True for count in new_counts if not count.id):
-                await send(utils.InvalidPacket(
-                    id=packet.id,
-                    original_cmd=packet.cmd,
-                    message=f"Item name not recognised." # TODO: Tighten this up so it spits back which item name.
-                ))
-                return
-
-            notif.counts = list(set(notif.counts or []) | set(new_counts)) if new_counts else notif.counts
-            
-            logging.info(f"Counts after hash: {notif.counts}")
+            notif.counts = utils.NotificationCount.unmerge(notif.counts, new_counts) if new_counts else notif.counts
         
         case utils.Action.CLEAR:
             notif.hints = utils.NotifyFlags.NONE
@@ -902,6 +996,8 @@ async def __on_notifications_request(client: StdClient, packet: utils.Notificati
                 message=f"Invalid action type '{packet.action}'"
             ))
             return
+        
+    logging.info(f"Post-merge: {notif.counts}")
 
     # Save changes
     if not (notif:= __store.notifications.upsert(notif)):
@@ -1030,6 +1126,18 @@ def get_hint_flag_notifications(slot_id: int, item_flags: int) -> List[int]:
         __tracker_client.port,
         slot_id,
         utils.NotifyFlags.item_to_notify_flags(item_flags)
+    )
+
+def get_item_count_notifications(slot_id: int, item_counts: Dict[int, int]) -> List[int]:
+    """Get user IDs subscribed to 'item count' notifications for these item counts."""
+
+    global __store
+
+    # Get notifications from store
+    return __store.notification_counts.pop_for_item_counts(
+        __tracker_client.port,
+        slot_id,
+        item_counts
     )
 
 def get_item_flag_notifications(slot_id: int, item_flags: int) -> List[int]:

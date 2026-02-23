@@ -870,7 +870,6 @@ class Context:
 
     def slot_is_bot(self, slot):
         slot_info = self.slot_info.get(slot)
-        self.logger.info(f"Slot info: {slot_info}")
         return slot_info and getattr(slot_info, "type", None) == SlotType.spectator
 
     # def client_is_bot(self, client):
@@ -2248,13 +2247,51 @@ async def process_client_cmd(ctx: Context, client: Client, args: dict):
                     slot.slot: {
                         "class": "PlayerStats",
                         "checked": len(ctx.locations.get_checked(ctx.location_checks, slot.team, slot.slot)),
-                        "received": len(get_received_items(ctx, slot.team, slot.slot, True)),
+                        "received": get_received_item_count(ctx, slot.team, slot.slot),
                         "goal": ctx.read_data.get(f"client_status_{slot.team}_{slot.slot}", lambda: None)() == ClientStatus.CLIENT_GOAL.value,
                         "remaining": len(ctx.locations.get_remaining(ctx.location_checks, slot.team, slot.slot)),
                     }
                 })
 
             await ctx.send_msgs(client, [{ 'cmd': "Stats", "stats": stats }])
+
+        elif cmd == "ReceivedCountRequest":
+
+            if not ctx.slot_is_bot(client.slot):
+                await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "type": "auth",
+                                              "text": "Players cannot request Stats.", "original_cmd": None}])
+                return
+            
+            elif "slot_items" not in args or type(args["slot_items"]) != dict:
+                await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "type": "arguments",
+                                              "text": "Invalid 'slot_items' argument.", "original_cmd": cmd}])
+                return
+
+            # Parse from json default keys-as-strings
+            slot_items: dict[int, list[int]] = {
+                int(slot): items
+                for slot, items in args["slot_items"].items()
+            }
+            
+            counts = {}
+            for player, item_ids in {slot: slot_items.get(slot.slot, []) for slot in ctx.get_players_package()}.items():
+                for item_id in item_ids:
+                    player_counts = counts.get(player.slot, {})
+                    player_counts.update({ item_id: get_received_item_count(ctx, player.team, player.slot, item_id) })
+                    counts.update({ player.slot: player_counts })
+
+            # Respond
+            await ctx.send_msgs(client, [{ 'cmd': "ReceivedCountResponse", "id": args["id"], "counts": counts }])
+
+def get_received_item_count(ctx: Context, team: int, slot: int, item_id: int | None = None):
+    return sum(
+        1
+        for finder, locations in ctx.locations.items()
+        for loc in ctx.location_checks.get((team, finder), ())
+        if (data:= locations.get(loc, None))
+            and data[1] == slot
+            and (item_id is None or data[0] == item_id) # <- Counts all if no 'item_id' provided
+    )
 
 def update_client_status(ctx: Context, client: Client, new_status: ClientStatus):
     current = ctx.client_game_state[client.team, client.slot]

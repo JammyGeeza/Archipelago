@@ -240,16 +240,12 @@ class Notification(Jsonable):
 @dataclass
 class NotificationCount(Jsonable):
     item_id: int
-    target: int
-    last_count: int = 0
+    count: int
+    end_at: int
 
     # "Private"
     class_: str = field(default="NotificationCount", metadata={"json": "class"})
     id: Optional[int] = field(default=None)
-
-    # Overriding hash so that merging sets of these works 
-    def __hash__(self):
-        return hash((self.item_id, self.target))
 
     @classmethod
     def from_row(cls, row: sqlite3.Row) -> "NotificationCount":
@@ -257,21 +253,35 @@ class NotificationCount(Jsonable):
         return cls(
             id=row["id"],
             item_id=row["item_id"],
-            target=row["target"],
-            last_count=row["last_count"]
+            count=row["count"],
+            end_at=row["end_at"]
         )
     
     @staticmethod
     def merge(set_one, set_two):
         """Merge two lists together, keeping the last (set two)"""
 
-        out = {}
-        key = lambda x: (x.item_id)
+        index = { (x.item_id, x.count): x for x in set_one }
 
-        for x in set_one + set_two:
-            out[key(x)] = x
+        for x in set_two:
+            key = (x.item_id, x.count)
+
+            if key in index:
+                # If key matches, update set one's values
+                existing = index[key]
+                existing.end_at = x.end_at
+            else:
+                # Otherwise, append to set_one from set_two
+                set_one.append(x)
+                index[key] = x
         
-        return list(out.values())
+        return set_one
+    
+    @staticmethod
+    def unmerge(set_one, set_two):
+        """Unmerge two lists together, removing with matching id/count"""
+        to_remove = [(x.item_id, x.count) for x in set_two]
+        return [x for x in set_one if (x.item_id, x.count) not in to_remove]
 
 #endregion
 
@@ -490,14 +500,6 @@ class GetDataPackagePacket(TrackerPacket):
 
 @TrackerPacket.register_packet
 @dataclass
-class GetReceivedCount(TrackerPacket):
-    """Packet sent to server to request item received count"""
-    cmd: ClassVar[str] = "GetReceivedCount"
-    slot_id: int = 0
-    item_ids: List[int] = field(default_factory=list)
-
-@TrackerPacket.register_packet
-@dataclass
 class GetStatsPacket(TrackerPacket):
     """Packet sent to server to request stats."""
     cmd: ClassVar[str] = "GetStats"
@@ -527,11 +529,17 @@ class PrintJSONPacket(TrackerPacket):
 
 @TrackerPacket.register_packet
 @dataclass
-class ReceivedCountPacket(TrackerPacket):
-    """Packet received in response to 'GetReceivedCount' packet."""
-    cmd: ClassVar[str] = "ReceivedCount"
-    slot_id: int = 0
-    counts: Dict[int, int] = field(default_factory=dict)
+class ReceivedCountRequestPacket(IdentifiablePacket):
+    """Packet sent to server to request item received count"""
+    cmd: ClassVar[str] = "ReceivedCountRequest"
+    slot_items: Dict[int, List[int]] = field(default_factory=Dict) # <- { slot_id: List[item_ids] }
+
+@TrackerPacket.register_packet
+@dataclass
+class ReceivedCountResponsePacket(IdentifiablePacket):
+    """Packet received in response to 'ReceivedCountRequest' packet."""
+    cmd: ClassVar[str] = "ReceivedCountResponse"
+    counts: Dict[int, Dict[int, int]] = field(default_factory=dict)
 
 @TrackerPacket.register_packet
 @dataclass
