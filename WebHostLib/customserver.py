@@ -63,7 +63,7 @@ class DBCommandProcessor(ServerCommandProcessor):
 class WebHostContext(Context):
     room_id: int
 
-    def __init__(self, static_server_data: dict, logger: logging.Logger):
+    def __init__(self, static_server_data: dict, logger: logging.Logger, allowed_ports: str = ""):
         # static server data is used during _load_game_data to load required data,
         # without needing to import worlds system, which takes quite a bit of memory
         self.static_server_data = static_server_data
@@ -74,6 +74,7 @@ class WebHostContext(Context):
         self.main_loop = asyncio.get_running_loop()
         self.video = {}
         self.tags = ["AP", "WebHost"]
+        self.allowed_ports = allowed_ports
 
     def __del__(self):
         try:
@@ -109,6 +110,8 @@ class WebHostContext(Context):
         room = Room.get(id=room_id)
         if room.last_port:
             self.port = room.last_port
+        elif self.allowed_ports:
+            self.port = get_allowed_port(self.allowed_ports)
         else:
             self.port = get_random_port()
 
@@ -175,9 +178,28 @@ class WebHostContext(Context):
         d["video"] = [(tuple(playerslot), videodata) for playerslot, videodata in self.video.items()]
         return d
 
+def parse_ports(spec: str) -> list[int]:
+    ports: list[int] = []
+    for part in spec.split(","):
+        part = part.strip()
+        if not part:
+            continue
+        if "-" in part:
+            a, b = part.split("-", 1)
+            ports.extend(range(int(a), int(b) + 1))
+        else:
+            ports.append(int(part))
+    return ports
+
+def get_allowed_port(spec: str) -> int:
+    pool = parse_ports(spec)
+    if not pool:
+        raise RuntimeError("ALLOWED_PORTS has been set but the value is empty or invalid")
+    random.shuffle(pool)
+    return pool[0]
 
 def get_random_port():
-    return random.randint(49152, 65535)
+    return random.randint(38281, 38289)
 
 
 @cache_argsless
@@ -231,7 +253,7 @@ def set_up_logging(room_id) -> logging.Logger:
 
 def run_server_process(name: str, ponyconfig: dict, static_server_data: dict,
                        cert_file: typing.Optional[str], cert_key_file: typing.Optional[str],
-                       host: str, rooms_to_run: multiprocessing.Queue, rooms_shutting_down: multiprocessing.Queue):
+                       host: str, allowed_ports: str, rooms_to_run: multiprocessing.Queue, rooms_shutting_down: multiprocessing.Queue):
     from setproctitle import setproctitle
 
     setproctitle(name)
@@ -280,23 +302,44 @@ def run_server_process(name: str, ponyconfig: dict, static_server_data: dict,
         with Locker(f"RoomLocker {room_id}"):
             try:
                 logger = set_up_logging(room_id)
-                ctx = WebHostContext(static_server_data, logger)
+                ctx = WebHostContext(static_server_data, logger, allowed_ports)
                 ctx.load(room_id)
                 ctx.init_save()
                 assert ctx.server is None
-                try:
+                
+                ports_to_try = parse_ports(allowed_ports) if allowed_ports else []
+                random.shuffle(ports_to_try)
+                last_err = None
+
+                # If restricted, try each allowed port once
+                if ports_to_try:
+                    for p in ports_to_try:
+                        try:
+                            ctx.port = p
+                            ctx.server = websockets.serve(
+                                functools.partial(server, ctx=ctx),
+                                ctx.host,
+                                ctx.port,
+                                ssl=get_ssl_context(),
+                                extensions=[server_per_message_deflate_factory],
+                            )
+                            await ctx.server
+                            last_err = None
+                            break
+                        except OSError as e:
+                            last_err = e
+
+                    if last_err is not None:
+                        raise last_err  # exhausted allowed ports
+                else:
+                    # Old behavior: let OS choose
                     ctx.server = websockets.serve(
                         functools.partial(server, ctx=ctx),
                         ctx.host,
-                        ctx.port,
+                        0,
                         ssl=get_ssl_context(),
                         extensions=[server_per_message_deflate_factory],
                     )
-                    await ctx.server
-                except OSError:  # likely port in use
-                    ctx.server = websockets.serve(
-                        functools.partial(server, ctx=ctx), ctx.host, 0, ssl=get_ssl_context())
-
                     await ctx.server
                 port = 0
                 for wssocket in ctx.server.ws_server.sockets:

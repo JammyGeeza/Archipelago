@@ -46,6 +46,10 @@ def get_app() -> "Flask":
         logging.info("Getting public IP, as HOST_ADDRESS is empty.")
         app.config["HOST_ADDRESS"] = Utils.get_public_ipv4()
         logging.info(f"HOST_ADDRESS was set to {app.config['HOST_ADDRESS']}")
+    if not app.config["ALLOWED_PORTS"]:
+        logging.info(f"Setting default port range.")
+        app.config["ALLOWED_PORTS"] = "49152-65535"
+        logging.info(f"ALLOWED_PORTS was set to {app.config['ALLOWED_PORTS']}")
 
     register()
     cache.init_app(app)
