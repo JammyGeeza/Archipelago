@@ -2861,7 +2861,6 @@ async def auto_shutdown(ctx, to_cancel=None):
                 with contextlib.suppress(asyncio.TimeoutError):
                     await asyncio.wait_for(ctx.exit_event.wait(), seconds)
 
-
 def load_server_cert(path: str, cert_key: typing.Optional[str]) -> "ssl.SSLContext":
     import ssl
     ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)

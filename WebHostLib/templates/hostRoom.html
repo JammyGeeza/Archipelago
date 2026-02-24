@@ -29,9 +29,11 @@
                 and a <a href="{{ url_for("get_multiworld_sphere_tracker", tracker=room.tracker) }}">Sphere Tracker</a> enabled.
                 <br />
             {% endif %}
-            The server for this room will be paused after {{ room.timeout//60//60 }} hours of inactivity.
-            Should you wish to continue later,
-            anyone can simply refresh this page and the server will resume.<br>
+            {% if room.timeout > 0 %}
+                The server for this room will be paused after {{ room.timeout//60//60 }} hours of inactivity.
+                Should you wish to continue later,
+                anyone can simply refresh this page and the server will resume.<br>
+            {% endif %}
             {% if room.last_port == -1 %}
                 There was an error hosting this Room. Another attempt will be made on refreshing this page.
                 The most likely failure reason is that the multiworld is too old to be loaded now.

@@ -363,8 +363,10 @@ def run_server_process(name: str, ponyconfig: dict, static_server_data: dict,
                 if ctx.saving:
                     setattr(asyncio.current_task(), "save", lambda: ctx._save(True))
                 assert ctx.shutdown_task is None
-                if ctx.auto_shutdown:
+                if ctx.auto_shutdown > 0:
                     ctx.shutdown_task = asyncio.create_task(auto_shutdown(ctx, []))
+                else:
+                    ctx.shutdown_task = asyncio.create_task(shutdown_on_delete(ctx, room_id))
                 await ctx.shutdown_task
 
             except (KeyboardInterrupt, SystemExit):
@@ -430,3 +432,11 @@ def run_server_process(name: str, ponyconfig: dict, static_server_data: dict,
             save: typing.Optional[typing.Callable[[], typing.Any]] = getattr(task, "save", None)
             if save:
                 save()
+
+async def shutdown_on_delete(ctx, room_id: int, interval: int = 15):
+    while True:
+        await asyncio.sleep(interval * 60)
+        with db_session:
+            if not Room.get(id=room_id):
+                ctx.server.ws_server.close()
+                return
