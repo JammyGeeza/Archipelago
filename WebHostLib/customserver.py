@@ -330,7 +330,7 @@ def run_server_process(name: str, ponyconfig: dict, static_server_data: dict,
                             last_err = e
 
                     if last_err is not None:
-                        raise last_err  # exhausted allowed ports
+                        raise Exception("No free ports available for hosting - please try again later.")
                 else:
                     # Old behavior: let OS choose
                     ctx.server = websockets.serve(
@@ -363,7 +363,8 @@ def run_server_process(name: str, ponyconfig: dict, static_server_data: dict,
                 if ctx.saving:
                     setattr(asyncio.current_task(), "save", lambda: ctx._save(True))
                 assert ctx.shutdown_task is None
-                ctx.shutdown_task = asyncio.create_task(auto_shutdown(ctx, []))
+                if ctx.auto_shutdown:
+                    ctx.shutdown_task = asyncio.create_task(auto_shutdown(ctx, []))
                 await ctx.shutdown_task
 
             except (KeyboardInterrupt, SystemExit):

@@ -5,7 +5,7 @@ from enum import StrEnum
 from typing import Any, IO, Dict, Iterator, List, Tuple, Union
 
 import jinja2.exceptions
-from flask import request, redirect, url_for, render_template, Response, session, abort, send_from_directory
+from flask import current_app, request, redirect, url_for, render_template, Response, session, abort, send_from_directory
 from pony.orm import count, commit, db_session
 from werkzeug.utils import secure_filename
 
@@ -173,9 +173,12 @@ def new_room(seed: UUID):
     seed = Seed.get(id=seed)
     if not seed:
         abort(404)
-    room = Room(seed=seed, owner=session["_id"], tracker=uuid4())
+
+    # Get and calculate timeout from config
+    timeout = current_app.config.get("ROOM_TIMEOUT", 2) * 60 * 60
+    room = Room(seed=seed, owner=session["_id"], timeout=timeout, tracker=uuid4())
     commit()
-    return redirect(url_for("host_room", room=room.id))
+    return redirect(url_for("host_room", room=room.id, ))
 
 
 def _read_log(log: IO[Any], offset: int = 0) -> Iterator[bytes]:

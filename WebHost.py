@@ -50,6 +50,10 @@ def get_app() -> "Flask":
         logging.info(f"Setting default port range.")
         app.config["ALLOWED_PORTS"] = "49152-65535"
         logging.info(f"ALLOWED_PORTS was set to {app.config['ALLOWED_PORTS']}")
+    if not app.config["ROOM_TIMEOUT"] or app.config["ROOM_TIMEOUT"] < 0:
+        logging.info(f"Setting default room timeout")
+        app.config["ROOM_TIMEOUT"] = 2
+        logging.info(f"ROOM_TIMEOUT was set to {app.config['ROOM_TIMEOUT']}")
 
     register()
     cache.init_app(app)
