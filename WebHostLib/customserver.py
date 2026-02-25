@@ -315,9 +315,13 @@ def run_server_process(name: str, ponyconfig: dict, static_server_data: dict,
                 if ctx.port is not None and ctx.port > 0:
                     ports_to_try.insert(0, ctx.port)
 
+                ctx.logger(f"Alleged last port: {ctx.port}")
+                ctx.logger(f"Ports to try: {ports_to_try}")
+
                 # If restricted, try each allowed port once
                 if ports_to_try:
                     for p in ports_to_try:
+                        ctx.logger(f"Trying port: {p}")
                         try:
                             ctx.port = p
                             ctx.server = websockets.serve(
@@ -331,6 +335,7 @@ def run_server_process(name: str, ponyconfig: dict, static_server_data: dict,
                             last_err = None
                             break
                         except OSError as e:
+                            ctx.logger.warning(f"Failed to bind to port {p}: {e!r}")
                             last_err = e
 
                     if last_err is not None:
