@@ -108,12 +108,11 @@ class WebHostContext(Context):
     def load(self, room_id: int):
         self.room_id = room_id
         room = Room.get(id=room_id)
-        if room.last_port:
-            self.port = room.last_port
-        elif self.allowed_ports:
-            self.port = get_allowed_port(self.allowed_ports)
-        else:
-            self.port = get_random_port()
+
+        # Select port to use
+        if room.last_port: self.port = room.last_port
+        elif self.allowed_ports: self.port = get_allowed_port(self.allowed_ports)
+        else: self.port = get_allowed_port("0")
 
         multidata = self.decompress(room.seed.multidata)
         game_data_packages = {}
@@ -307,9 +306,14 @@ def run_server_process(name: str, ponyconfig: dict, static_server_data: dict,
                 ctx.init_save()
                 assert ctx.server is None
                 
-                ports_to_try = parse_ports(allowed_ports) if allowed_ports else []
+                # Get available room ports
+                ports_to_try = parse_ports(allowed_ports) if allowed_ports else [ 0 ]
                 random.shuffle(ports_to_try)
                 last_err = None
+
+                # If the room already had an assigned port, try this port first
+                if ctx.port:
+                    ports_to_try.insert(0, ctx.port)
 
                 # If restricted, try each allowed port once
                 if ports_to_try:

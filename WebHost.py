@@ -48,7 +48,7 @@ def get_app() -> "Flask":
         logging.info(f"HOST_ADDRESS was set to {app.config['HOST_ADDRESS']}")
     if not app.config.get("ALLOWED_PORTS", None):
         logging.info(f"Setting default port range.")
-        app.config["ALLOWED_PORTS"] = "49152-65535"
+        app.config["ALLOWED_PORTS"] = "0"
         logging.info(f"ALLOWED_PORTS was set to {app.config['ALLOWED_PORTS']}")
     if not app.config.get("ROOM_TIMEOUT", 2) >= 0:
         logging.info(f"Setting default room timeout")
