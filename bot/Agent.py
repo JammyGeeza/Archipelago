@@ -1,6 +1,6 @@
 import argparse
 import asyncio
-import bot.Utils as utils
+from . import BotUtils as utils
 import json
 import logging
 import math
@@ -9,7 +9,7 @@ import threading
 import uuid
 import websockets
 
-from bot.Store import Store
+from .Store import Store
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple
 from websockets.asyncio.client import connect

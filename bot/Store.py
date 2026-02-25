@@ -1,6 +1,7 @@
 import logging
 import sqlite3
-import bot.Utils as utils
+
+from . import BotUtils as utils
 from typing import ClassVar, Dict, Optional, List
 
 class Store:

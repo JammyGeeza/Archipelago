@@ -1,0 +1,2 @@
+discord.py==2.6.4
+websockets>=13.0.1,<14

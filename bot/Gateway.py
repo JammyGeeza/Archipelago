@@ -2,7 +2,6 @@
 
 import argparse
 import asyncio
-import bot.Utils as utils
 import discord
 import json
 import logging
@@ -10,9 +9,10 @@ import math
 import sys
 import uuid
 
+from . import BotUtils as utils
 from discord import app_commands
 from discord.ext import commands
-from bot.Store import Store
+from .Store import Store
 from typing import Dict, Optional
 
 # Global variables
