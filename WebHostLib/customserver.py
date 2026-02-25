@@ -109,8 +109,8 @@ class WebHostContext(Context):
         self.room_id = room_id
         room = Room.get(id=room_id)
 
-        # Select port to use
-        if room.last_port: self.port = room.last_port
+        # Select port to use, preferring last known port first
+        if room.last_port is not None and room.last_port > 0: self.port = room.last_port
         elif self.allowed_ports: self.port = get_allowed_port(self.allowed_ports)
         else: self.port = get_allowed_port("0")
 
@@ -345,6 +345,7 @@ def run_server_process(name: str, ponyconfig: dict, static_server_data: dict,
                         extensions=[server_per_message_deflate_factory],
                     )
                     await ctx.server
+                
                 port = 0
                 for wssocket in ctx.server.ws_server.sockets:
                     socketname = wssocket.getsockname()
