@@ -49,7 +49,7 @@ EnemizerCLI/
 /host.yaml
 /options.yaml
 /config.yaml
-*/bot.yaml
+/bot.yaml
 /logs/
 _persistent_storage.yaml
 mystery_result_*.yaml

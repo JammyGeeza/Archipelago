@@ -966,7 +966,7 @@ def get_bot_settings() -> BotSettings:
 
         from Utils import user_path, local_path
 
-        filename = "bot/bot.yaml"
+        filename = "bot.yaml"
         locations: list[str] = []
         if os.path.join(os.getcwd()) != local_path():
             locations.append(filename)

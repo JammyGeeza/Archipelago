@@ -386,7 +386,7 @@ def run_server_process(name: str, ponyconfig: dict, static_server_data: dict,
             except Exception as e:
                 with db_session:
                     room = Room.get(id=room_id)
-                    # room.last_port = -1 <- Docker compose down/up seems to cause this exception to overwrite the last port
+                    room.last_port = -1
                 del room
                 logger.exception(e)
                 raise
