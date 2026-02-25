@@ -176,7 +176,8 @@ def autogen(config: dict):
         except AlreadyRunningException:
             logging.info("Autogen reports as already running, not starting another.")
 
-    Thread(target=keep_running, name="AP_Autogen").start()
+    if config["GENERATORS"] > 0:
+        Thread(target=keep_running, name="AP_Autogen").start()
 
 
 class MultiworldInstance():

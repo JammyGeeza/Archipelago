@@ -2151,7 +2151,6 @@ async def process_client_cmd(ctx: Context, client: Client, args: dict):
             #region BOT ADDITION
 
             if "DeathLink" in tags and "source" in args.get("data", {}):
-                logging.info(f"Storing deathlink for Team: {client.team} | Slot: {client.slot}")
                 dl_key: str = f"deaths_{client.team}_{client.slot}"
                 ctx.stored_data[dl_key] = ctx.stored_data.get(dl_key, 0) + 1
                 ctx.read_data.pop(dl_key, None)
@@ -2382,7 +2381,6 @@ def _get_received_item_count(ctx: Context, team: int, slot: int, item_id: int | 
 
 def _get_death_count(ctx: Context, team: int, slot: int | None = None) -> int:
     """Get total death count for a team or player."""
-    logging.info(f"Getting deathlink count for Team: {team} | Slot: {slot}")
     if slot is None: return sum(ctx.stored_data.get(f"deaths_{team}_{s.slot}", 0) for s in ctx.get_players_package() if s.team == team)
     else: return ctx.stored_data.get(f"deaths_{team}_{slot}", 0)
 

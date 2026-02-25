@@ -8,7 +8,7 @@ from collections import Counter
 from pickle import PicklingError
 from typing import Any
 
-from flask import flash, redirect, render_template, request, session, url_for
+from flask import abort, current_app, flash, redirect, render_template, request, session, url_for
 from pony.orm import commit, db_session
 
 from BaseClasses import get_seed, seeddigits
@@ -57,6 +57,12 @@ def get_meta(options_source: dict, race: bool = False) -> dict[str, list[str] | 
 @app.route('/generate', methods=['GET', 'POST'])
 @app.route('/generate/<race>', methods=['GET', 'POST'])
 def generate(race=False):
+
+    # Prevent generation if no generators set
+    if current_app.config["GENERATORS"] == 0:
+        abort(404)
+        return
+
     if request.method == 'POST':
         # check if the post request has the file part
         if 'file' not in request.files:

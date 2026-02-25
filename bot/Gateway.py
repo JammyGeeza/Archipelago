@@ -476,14 +476,14 @@ async def notify_clear(interaction: discord.Interaction, slot_name: app_commands
         await interaction.followup.send(f"You have cleared all of your notifications for `{slot_name}`.", ephemeral=True)
 
 @notify_group.command(name="count", description="Notify on X of an item received")
-@app_commands.describe(slot_name="Slot name receiving the item", action="Action to perform", item="Full item name", count="Notify when received [count] times")
+@app_commands.describe(action="Action to perform", slot_name="Slot name receiving the item", item_name="Full item name", times="Notify when received X times from now")
 @app_commands.choices(
     action=[
         app_commands.Choice(name="Add", value=utils.Action.ADD),
         app_commands.Choice(name="Remove", value=utils.Action.REMOVE),
     ]
 )
-async def notify_count(interaction: discord.Interaction, slot_name: app_commands.Range[str, 1, 16], action: int, item: app_commands.Range[str, 1, 100], count: app_commands.Range[int, 1, 2000]):
+async def notify_count(interaction: discord.Interaction, action: int, slot_name: app_commands.Range[str, 1, 16], item_name: app_commands.Range[str, 1, 100], times: app_commands.Range[int, 1, 2000]):
     """Command to modify notifications for received item counts."""
 
     logging.info(f"Notify Count requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id}")
@@ -502,7 +502,7 @@ async def notify_count(interaction: discord.Interaction, slot_name: app_commands
         action=action,
         user_id=interaction.user.id,
         player=slot_name,
-        counts={ item: count }
+        counts={ item_name: times }
     ))
 
     # Validate response
@@ -514,7 +514,7 @@ async def notify_count(interaction: discord.Interaction, slot_name: app_commands
     await interaction.followup.send(generate_notifications_count_text(agent, response.notification), ephemeral=True)    
 
 @notify_group.command(name="hints", description="Notify you for hinted items")
-@app_commands.describe(slot_name="Slot name finding the item(s)", action="Action to perform", item_type="Notify when [type] item hinted")
+@app_commands.describe(action="Action to perform", slot_name="Slot name finding the item(s)", item_type="Notify when item type is hinted")
 @app_commands.choices(
     action=[
         app_commands.Choice(name="Add", value=utils.Action.ADD),
@@ -526,7 +526,7 @@ async def notify_count(interaction: discord.Interaction, slot_name: app_commands
         app_commands.Choice(name="Both", value=utils.NotifyFlags.PROGRESSION | utils.NotifyFlags.USEFUL)
     ]
 )
-async def notify_hints(interaction: discord.Interaction, slot_name: app_commands.Range[str, 1, 16], action: int, item_type: int):
+async def notify_hints(interaction: discord.Interaction, action: int, slot_name: app_commands.Range[str, 1, 16], item_type: int):
     """Command to modify notifications for targeted hints."""
 
     global store
@@ -559,14 +559,14 @@ async def notify_hints(interaction: discord.Interaction, slot_name: app_commands
     await interaction.followup.send(generate_notifications_hint_text(agent, response.notification), ephemeral=True)
 
 @notify_group.command(name="terms", description="Notify you for items containing words")
-@app_commands.describe(slot_name="Slot name receiving the item(s)", action="Action to perform", terms="Notify when item name contains [term(s)] E.g. Orb,Frame,Scraps")
+@app_commands.describe(action="Action to perform", slot_name="Slot name receiving the item(s)", terms="Notify when item name contains term(s) E.g. Orb,Frame,Scraps")
 @app_commands.choices(
     action=[
         app_commands.Choice(name="Add", value=utils.Action.ADD),
         app_commands.Choice(name="Remove", value=utils.Action.REMOVE),
     ]
 )
-async def notify_terms(interaction: discord.Interaction, slot_name: app_commands.Range[str, 1, 16], action: int, terms: str):
+async def notify_terms(interaction: discord.Interaction, action: int, slot_name: app_commands.Range[str, 1, 16], terms: str):
     """Command to modify notifications for received item terms."""
 
     logging.info(f"Notify Terms requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id}")
@@ -602,7 +602,7 @@ async def notify_terms(interaction: discord.Interaction, slot_name: app_commands
     await interaction.followup.send(generate_notifications_term_text(agent, response.notification), ephemeral=True)
 
 @notify_group.command(name="types", description="Notify you for item types")
-@app_commands.describe(slot_name="Slot name receiving the item(s)", action="Action to perform", item_type="Notify when [type] item received")
+@app_commands.describe(action="Action to perform", slot_name="Slot name receiving the item(s)", item_type="Notify when item type is received")
 @app_commands.choices(
     action=[
         app_commands.Choice(name="Add", value=utils.Action.ADD),
@@ -616,7 +616,7 @@ async def notify_terms(interaction: discord.Interaction, slot_name: app_commands
         app_commands.Choice(name="All", value=utils.NotifyFlags.PROGRESSION | utils.NotifyFlags.USEFUL | utils.NotifyFlags.TRAP | utils.NotifyFlags.FILLER)
     ]
 )
-async def notify_types(interaction: discord.Interaction, slot_name: app_commands.Range[str, 1, 16], action: int, item_type: int):
+async def notify_types(interaction: discord.Interaction, action: int, slot_name: app_commands.Range[str, 1, 16], item_type: int):
     """Command to modify notifications for received item types."""
 
     logging.info(f"Notify Types requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id}")
@@ -688,18 +688,18 @@ async def notify_list(interaction: discord.Interaction, slot_name: app_commands.
 player_group = app_commands.Group(name="player", description="Perform player actions")
 
 @player_group.command(name="state", description="Set a player's state")
-@app_commands.describe(slot_name="Slot name to apply the state to")
+@app_commands.describe(state="The state(s) to set", slot_name="Slot name to apply the state to")
 @app_commands.choices(
-    action=[
-        app_commands.Choice(name="Collect", value=utils.PlayerStateAction.COLLECT),
-        app_commands.Choice(name="Release", value=utils.PlayerStateAction.RELEASE),
-        app_commands.Choice(name="Collect & Release", value=(utils.PlayerStateAction.COLLECT | utils.PlayerStateAction.RELEASE)),
-        app_commands.Choice(name="Goal Complete", value=utils.PlayerStateAction.GOAL),
+    state=[
+        app_commands.Choice(name="Collect", value=utils.PlayerState.COLLECT),
+        app_commands.Choice(name="Release", value=utils.PlayerState.RELEASE),
+        app_commands.Choice(name="Collect & Release", value=(utils.PlayerState.COLLECT | utils.PlayerState.RELEASE)),
+        app_commands.Choice(name="Goal Complete", value=utils.PlayerState.GOAL),
     ],
 )
 @app_commands.default_permissions(manage_guild=True, administrator=True)
 @app_commands.checks.has_permissions(manage_guild=True, administrator=True)
-async def set_state(interaction: discord.Interaction, slot_name: app_commands.Range[str, 1, 16], action: int):
+async def set_state(interaction: discord.Interaction, state: int, slot_name: app_commands.Range[str, 1, 16]):
     """Command to update a player's state"""
 
     logging.info(f"Player State requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id}")
@@ -715,7 +715,7 @@ async def set_state(interaction: discord.Interaction, slot_name: app_commands.Ra
     # Request release
     response = await agent.request(utils.PlayerStateRequestPacket(
         id=uuid.uuid4().hex,
-        action=action,
+        state=state,
         slot_name=slot_name
     ))
 

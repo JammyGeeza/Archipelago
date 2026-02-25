@@ -66,7 +66,7 @@ class NotifyFlags(enum.IntFlag):
             flag.name.title() for flag in type(self) if flag != 0 and flag in self
         )
     
-class PlayerStateAction(enum.IntEnum):
+class PlayerState(enum.IntEnum):
     """Slot action enum values"""
     NONE        = 0
     COLLECT     = 1 << 0
@@ -665,7 +665,7 @@ class NotificationsResponsePacket(IdentifiablePacket):
 class PlayerStateRequestPacket(IdentifiablePacket):
     """Packet sent to agent to request player state update."""
     cmd: ClassVar[str] = "PlayerStateRequest"
-    action: PlayerStateAction
+    state: PlayerState
     slot_name: str
 
 @TrackerPacket.register_packet
@@ -673,7 +673,7 @@ class PlayerStateRequestPacket(IdentifiablePacket):
 class PlayerStateResponsePacket(IdentifiablePacket):
     "Packet send to gateway in response to a PlayerStateRequest packet"
     cmd: ClassVar[str] = "PlayerStateResponse"
-    action: PlayerStateAction
+    state: PlayerState
     success: bool
 
 @TrackerPacket.register_packet

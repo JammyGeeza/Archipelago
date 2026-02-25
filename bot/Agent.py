@@ -910,8 +910,6 @@ async def __on_received_counts(client, counts: Dict[int, Dict[int, int]]):
         for item_id, item_count in item_counts.items()
     })
 
-    logging.info(f"Item counts: {__item_counts}")
-
 @TrackerClient.on_release
 async def __on_release(client, slot_id: int):
     """Handler for items being released from a slot."""
@@ -1075,7 +1073,7 @@ async def __on_playerstate_request(client: StdClient, packet: utils.PlayerStateR
     # Request release and await response
     response = await __tracker_client.request(utils.SlotActionRequestPacket(
         id=packet.id,
-        action=packet.action,
+        action=packet.state,
         slot_id=slot_id
     ))
 
@@ -1091,7 +1089,7 @@ async def __on_playerstate_request(client: StdClient, packet: utils.PlayerStateR
     # Respond
     await send(utils.PlayerStateResponsePacket(
         id=packet.id,
-        action=packet.action,
+        state=packet.state,
         success=response.success
     ))
 
