@@ -312,7 +312,7 @@ def run_server_process(name: str, ponyconfig: dict, static_server_data: dict,
                 last_err = None
 
                 # If the room already had an assigned port, try this port first
-                if ctx.port:
+                if ctx.port is not None and ctx.port > 0:
                     ports_to_try.insert(0, ctx.port)
 
                 # If restricted, try each allowed port once
@@ -381,7 +381,7 @@ def run_server_process(name: str, ponyconfig: dict, static_server_data: dict,
             except Exception as e:
                 with db_session:
                     room = Room.get(id=room_id)
-                    room.last_port = -1
+                    # room.last_port = -1 <- Docker compose down/up seems to cause this exception to overwrite the last port
                 del room
                 logger.exception(e)
                 raise
@@ -438,10 +438,11 @@ def run_server_process(name: str, ponyconfig: dict, static_server_data: dict,
             if save:
                 save()
 
-async def shutdown_on_delete(ctx, room_id: int, interval: int = 15):
+async def shutdown_on_delete(ctx, room_id: int, interval_mins: int = 15):
     while True:
-        await asyncio.sleep(interval * 60)
+        await asyncio.sleep(interval_mins * 60)
         with db_session:
             if not Room.get(id=room_id):
                 ctx.server.ws_server.close()
+                await ctx.server.ws_server.closed()
                 return
