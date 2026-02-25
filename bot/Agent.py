@@ -612,33 +612,40 @@ class TrackerClient:
 
         try:
             while self.__running:
-                # Attempt to connect
-                try:
-                    async with connect(f"ws://{self.host}:{self.port}") as self.__websocket:
-                        logging.info(f"Connection to websocket established.")
+                # Try both schemas
+                for scheme in [ "wss", "ws" ]:
+                    try:
+                        async with connect(f"{scheme}://{self.host}:{self.port}") as self.__websocket:
+                            logging.info(f"Connection to websocket established via {scheme}://.")
 
-                        # Trigger connected event if first attempt
-                        if self.__attempt == 0:
-                            await self.__set_connection_state("Connected")
+                            # Trigger connected event if first attempt
+                            if self.__attempt == 0:
+                                await self.__set_connection_state("Connected")
 
-                        # Create and run all asynchronous task(s), stopping when any of them complete
-                        self.__tasks = [
-                            asyncio.create_task(self.__listen_loop()),
-                        ]
-                        completed, pending = await asyncio.wait(self.__tasks, return_when=asyncio.FIRST_COMPLETED)
+                            # Create and run all asynchronous task(s), stopping when any of them complete
+                            self.__tasks = [
+                                asyncio.create_task(self.__listen_loop()),
+                            ]
+                            completed, pending = await asyncio.wait(self.__tasks, return_when=asyncio.FIRST_COMPLETED)
 
-                        # Cancel pending tasks
-                        for task in pending:
-                            task.cancel()
+                            # Cancel pending tasks
+                            for task in pending:
+                                task.cancel()
 
-                        # Await cancel completion
-                        await asyncio.gather(*pending, return_exceptions=True)
+                            # Await cancel completion
+                            await asyncio.gather(*pending, return_exceptions=True)
 
-                except ConnectionRefusedError as crex:
-                    logging.warning(f"Connection to the tracker client websocket was refused.")
+                            # Break to prevent second schema retry
+                            break
 
-                except Exception as ex:
-                    logging.error(f"Unexpected error occurred in tracker client start() task: {ex}")
+                    except ConnectionRefusedError as crex:
+                        logging.warning(f"Connection to the tracker client websocket was refused via {scheme}://.")
+
+                    except Exception as ex:
+                        logging.error(f"Unexpected error occurred in tracker client start() task: {ex}")
+
+                    # Wait before trying again
+                    await asyncio.sleep(1)
 
                 logging.warning("Tracker client task(s) have ended.")
 
@@ -803,23 +810,23 @@ async def __on_connection_state_changed(client, state: str, errors: List[str] = 
     match state:
 
         case "Connected":   # TODO: Is this misleading? Maybe re-word?
-            # msg = f"Client has successfully connected to `:{client.port}`"
+            # msg = f"Client has successfully connected to `{client.host}:{client.port}`"
             return
 
         case "Connecting":
-            msg = f"Client is attempting to connect to `:{client.port}`..."
+            msg = f"Client is attempting to connect to `{client.host}:{client.port}`..."
 
         case "Disconnected":
-            msg = f"Client has disconnected from `:{client.port}` - please use the `/connect` command to retry."
+            msg = f"Client has disconnected from `{client.host}:{client.port}` - please use the `/connect` command to retry."
 
         case "Failed": 
-            msg = f"Client has failed to connect to `:{client.port}`. Error(s): {", ".join(errors)}"
+            msg = f"Client has failed to connect to `{client.host}:{client.port}`. Error(s): {", ".join(errors)}"
 
         case "Reconnecting":
-            msg = f"Client connection has failed, attempting to retry connection to `:{client.port}` - this may take a few minutes."
+            msg = f"Client connection has failed, attempting to retry connection to `{client.host}:{client.port}` - this may take a few minutes."
 
         case "Tracking":
-            msg = f"Client is now tracking the session at `:{client.port}`"
+            msg = f"Client is now tracking the session at `{client.host}:{client.port}`"
 
             # Get notification slot items to check
             count_items = __store.notifications.get_count_items_for_port(client.port)
