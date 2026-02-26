@@ -816,14 +816,14 @@ async def bind(interaction: discord.Interaction, port: app_commands.Range[int, 1
     # Success response
     await interaction.followup.send(f"Successfully bound {interaction.channel.jump_url} to port `:{new_binding.port}` - please use `/connect` to connect a client.", ephemeral=True)
 
-@app_commands.describe(command="Full server command. E.g. /option hint_cost 10")
-@bot.tree.command(name="cmd", description="Run a server command")
+@app_commands.describe(command="Full command. E.g. /option hint_cost 10")
+@bot.tree.command(name="cmd", description="Perform an admin server command")
 async def cmd(interaction: discord.Interaction, command: str):
     """Command to perform a server command"""
 
     global agents
 
-    logging.info(f"Cmd requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id}")
+    logging.info(f"Command requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id}")
     
     # Defer response
     await interaction.response.defer(thinking=True, ephemeral=True)

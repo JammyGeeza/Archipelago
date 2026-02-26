@@ -835,7 +835,6 @@ def generate_items_text(recipient: int, items: Dict[int, utils.QueuedItemData]) 
 
 #region Tracker Event Handlers
 
-
 @TrackerClient.on_collect
 async def __on_collect(client, slot_id: int):
     """Handler for a slot collecting their remaining items."""

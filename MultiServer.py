@@ -2274,6 +2274,11 @@ async def forward_hints_to_bots(ctx: Context, team: int, hints: list[Hint]):
 async def handle_cmd_request(ctx: Context, client: Client, args: dict):
     """Handle an incoming ReceivedCountRequestPacket."""
 
+    if not _client_is_bot(ctx, client):
+        await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "type": "auth",
+                                        "text": "Players cannot request commands.", "original_cmd": None}])
+        return
+
     if "command" not in args or type(args["command"]) != str:
         await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "id": args["id"], "type": "arguments",
                                         "text": "Invalid 'cmd' argument.", "original_cmd": args["cmd"]}])
@@ -2281,7 +2286,7 @@ async def handle_cmd_request(ctx: Context, client: Client, args: dict):
     
     # Ensure slash prefix and perform command
     command: str = f"/{args["command"].strip("/")}"
-    success: bool = ctx.commandprocessor(args.get("command", ""))
+    success: bool = ctx.commandprocessor(command)
 
     # Respond with result
     await ctx.send_msgs(client, [{'cmd': "CommandResponse", "id": args["id"], "success": success }])
