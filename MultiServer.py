@@ -2214,14 +2214,25 @@ async def process_client_cmd(ctx: Context, client: Client, args: dict):
             for key in args["keys"]:
                 ctx.stored_data_notification_clients[key].add(client)
 
+        #region BOT ADDITIONS
+
+        elif cmd == "CommandRequest":
+            await handle_cmd_request(ctx, client, args)
+
         elif cmd == "GetStats":
             await handle_getstats_request(ctx, client, args)
 
         elif cmd == "ReceivedCountRequest":
             await handle_receivedcount_request(ctx, client, args)
 
-        elif cmd == "SlotActionRequest":
-            await handle_slotaction_request(ctx, client, args)
+        #endregion
+
+        # elif cmd == "SendPlayerRequest":
+        #     await handle_sendplayer_request(ctx, client, args)
+
+        
+            # success = ctx.commandprocessor(args["cmd"])
+            # await handle_slotaction_request(ctx, client, args)
 
 def update_client_status(ctx: Context, client: Client, new_status: ClientStatus):
     current = ctx.client_game_state[client.team, client.slot]
@@ -2266,6 +2277,21 @@ async def forward_hints_to_bots(ctx: Context, team: int, hints: list[Hint]):
     # Forward to bot clients
     for bot in bot_clients:
         async_start(ctx.send_msgs(bot, bot_hints))
+
+async def handle_cmd_request(ctx: Context, client: Client, args: dict):
+    """Handle an incoming ReceivedCountRequestPacket."""
+
+    if "command" not in args or type(args["command"]) != str:
+        await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "id": args["id"], "type": "arguments",
+                                        "text": "Invalid 'cmd' argument.", "original_cmd": args["cmd"]}])
+        return
+    
+    # Ensure slash prefix and perform command
+    command: str = f"/{args["command"].strip("/")}"
+    success: bool = ctx.commandprocessor(args.get("command", ""))
+
+    # Respond with result
+    await ctx.send_msgs(client, [{'cmd': "CommandResponse", "id": args["id"], "success": success }])
 
 async def handle_getstats_request(ctx: Context, client: Client, args: dict):
     """Handle an incoming GetStatsPacket."""
@@ -2741,6 +2767,25 @@ class ServerCommandProcessor(CommonCommandProcessor):
         texts.insert(0, f"Found {len(self.ctx.stored_data)} keys, "
                         f"approximately totaling {Utils.format_SI_prefix(total, power=1024)}B")
         self.output("\n".join(texts))
+
+    #region BOT ADDITIONS
+
+    def _cmd_goal(self, player_name: str) -> bool:
+        """Mark a player as goal complete"""
+        seeked_player, usable, response = get_intended_text(player_name, self.ctx.player_names.values())
+        
+        # If player not found, bail
+        if not usable:
+            self.output(response)
+            return False
+        
+        # Find and mark player as goal complete
+        team, slot = self.ctx.player_name_lookup.get(seeked_player)
+        _goal_player(self.ctx, team, slot)
+
+        return True
+    
+    #endregion
 
 
 async def console(ctx: Context):

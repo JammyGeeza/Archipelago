@@ -18,9 +18,9 @@ from websockets.exceptions import ConnectionClosed
 class StdClient:
 
     # Events
+    on_cmd_request = utils.Hookable()
     on_error = utils.Hookable()
     on_notifications_request = utils.Hookable()
-    on_player_state_request = utils.Hookable()
     on_statistics_request = utils.Hookable()
     on_status_request = utils.Hookable()
 
@@ -52,11 +52,11 @@ class StdClient:
 
             match packet.cmd:
 
+                case utils.CommandRequestPacket.cmd:
+                    await self.on_cmd_request.run(packet)
+
                 case utils.NotificationsRequestPacket.cmd:
                     await self.on_notifications_request.run(packet)
-
-                case utils.PlayerStateRequestPacket.cmd:
-                    await self.on_player_state_request.run(packet)
 
                 case utils.StatisticsRequestPacket.cmd:
                     await self.on_statistics_request.run(packet)
@@ -75,6 +75,8 @@ class StdClient:
                 original_cmd=packet.cmd or "",
                 text=f"{ex}"
             ))
+
+        logging.info(f"Packet handling loop ended.")
 
     async def __read_loop(self):
         """Read data from the stdin pipe."""
@@ -538,6 +540,11 @@ class TrackerClient:
         game: str = self.get_game_name(slot_id)
         return self.__item_lookup.get(game, {}).get(item_id, None)
 
+    def get_location_id(self, slot_id: int, location_name: str) -> int | None:
+        """Get the ID of a location."""
+        game: str = self.get_game_name(slot_id)
+        return next((id for id, name in self.__location_lookup.get(game, {}).items() if name.casefold() == location_name.casefold()), None)
+
     def get_location_name(self, slot_id: int, location_id: int) -> str | None:
         """Get the name of a location."""
         game: str = self.get_game_name(slot_id)
@@ -580,14 +587,35 @@ class TrackerClient:
 
         logging.info(f"Sending request... | Type: {request.cmd} | ID: {request.id}")
 
-        response: asyncio.Future = asyncio.get_running_loop().create_future()
-        self.__request_queue[request.id] = response
+        future: asyncio.Future = asyncio.get_running_loop().create_future()
+        self.__request_queue[request.id] = future
 
         # Send packet
         await self.__send_packet(request)
 
-        # Wait for response and return
-        return await response
+        # Wait for response, bail after 5 seconds
+        result: utils.IdentifiablePacket = None
+        try:
+            async with asyncio.timeout(5):
+                result = await future
+        except TimeoutError:
+            logging.warning(f"Request {request.id} timed out.")
+            result = utils.ErrorPacket(
+                id=request.id,
+                original_cmd=request.cmd,
+                text=f"Request to the archipelago server timed out."
+            )
+        except Exception as ex:
+            logging.error(f"Request '{request.id}' suffered an unexpected error: {ex}")
+            result = utils.ErrorPacket(
+                id=request.id,
+                original_cmd=request.cmd,
+                text=f"Request suffered an unexpected error: {ex}"
+            )
+
+        # Pop request from queue and return
+        self.__request_queue.pop(request.id)
+        return result
     
     async def send(self, packet: utils.TrackerPacket):
         """Send a packet to the archipelago server"""
@@ -627,6 +655,21 @@ class TrackerClient:
                                 asyncio.create_task(self.__listen_loop()),
                             ]
                             completed, pending = await asyncio.wait(self.__tasks, return_when=asyncio.FIRST_COMPLETED)
+
+                            logging.info(f"Resolving pending requests...")
+
+                            # Resolve request queue
+                            for id, req in self.__request_queue.items():
+                                logging.info(f"Resolving request: {id}")
+                                req.set_result(utils.ErrorPacket(
+                                    id=id,
+                                    text="Client disconnected from the archipelago server before receiving a response."
+                                ))
+                                # if not req.done():
+                                #     await self.__handle_packet(utils.ErrorPacket(
+                                #         id=id,
+                                #         text="Client disconnected from the archipelago server before receiving a response."
+                                #     ))
 
                             # Cancel pending tasks
                             for task in pending:
@@ -922,6 +965,18 @@ async def __on_release(client, slot_id: int):
 
 #region StdClient Event Handlers
 
+@StdClient.on_cmd_request
+async def __on_cmd_request(client: StdClient, packet: utils.CommandRequestPacket):
+    """Handle an incoming cmd request packet"""
+
+    global __tracker_client
+
+    # Send it (this is just forwarding, really.)
+    response = await __tracker_client.request(packet)
+
+    # Return the response
+    await send(response)
+
 @StdClient.on_error
 async def __on_std_error(client: StdClient, msg: str):
     """Handle an error from the std client."""
@@ -1053,44 +1108,6 @@ async def __on_notifications_request(client: StdClient, packet: utils.Notificati
     await send(utils.NotificationsResponsePacket(
         id=packet.id,
         notification=notif
-    ))
-
-@StdClient.on_player_state_request
-async def __on_playerstate_request(client: StdClient, packet: utils.PlayerStateRequestPacket):
-    """Handle an incoming release request"""
-    
-    global __tracker_client
-
-    # Validate player name
-    slot_id = __tracker_client.get_slot(packet.slot_name)
-    if not slot_id:
-        await send(utils.InvalidPacket(
-            id=packet.id,
-            text=f"No player found with name `{packet.slot_name}`"
-        ))
-        return
-    
-    # Request release and await response
-    response = await __tracker_client.request(utils.SlotActionRequestPacket(
-        id=packet.id,
-        action=packet.state,
-        slot_id=slot_id
-    ))
-
-    # Validate response
-    if response.is_error():
-        await send(utils.ErrorPacket(
-            id=packet.id,
-            original_cmd=packet.cmd,
-            text=response.text
-        ))
-        return
-
-    # Respond
-    await send(utils.PlayerStateResponsePacket(
-        id=packet.id,
-        state=packet.state,
-        success=response.success
     ))
 
 @StdClient.on_statistics_request

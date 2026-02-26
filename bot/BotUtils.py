@@ -66,8 +66,14 @@ class NotifyFlags(enum.IntFlag):
             flag.name.title() for flag in type(self) if flag != 0 and flag in self
         )
     
-class PlayerState(enum.IntEnum):
-    """Slot action enum values"""
+class PlayerSend(enum.IntEnum):
+    """Player send enum values"""
+    NONE        = 0
+    ITEM        = 1
+    LOCATION    = 2
+
+class PlayerState(enum.IntFlag):
+    """Player state enum values"""
     NONE        = 0
     COLLECT     = 1 << 0
     RELEASE     = 1 << 1
@@ -530,22 +536,6 @@ class InvalidPacket(TrackerPacket):
 
 @TrackerPacket.register_packet
 @dataclass
-class SlotActionRequestPacket(IdentifiablePacket):
-    """Packet sent to server to request a slot action"""
-    cmd: ClassVar[str] = "SlotActionRequest"
-    action: int
-    slot_id: int
-
-@TrackerPacket.register_packet
-@dataclass
-class SlotActionResponsePacket(IdentifiablePacket):
-    """Packet received in response to SlotActionRequest packet"""
-    cmd: ClassVar[str] = "SlotActionResponse"
-    action: int
-    success: bool
-
-@TrackerPacket.register_packet
-@dataclass
 class PrintJSONPacket(TrackerPacket):
     """Packet received when messages are received."""
     cmd: ClassVar[str] = "PrintJSON"
@@ -589,6 +579,26 @@ class RoomInfoPacket(TrackerPacket):
 
 @TrackerPacket.register_packet
 @dataclass
+class SendPlayerRequestPacket(TrackerPacket):
+    """Packet sent to request player sending"""
+    cmd: ClassVar[str] = "SendPlayerRequest"
+    slot_id: int
+    location_id: Optional[int] = None
+    item_id: Optional[int] = None
+    amount: Optional[int] = 1
+
+@TrackerPacket.register_packet
+@dataclass
+class SendPlayerResponsePacket(TrackerPacket):
+    """Packet received in response to a SendPlayerRequest"""
+    cmd: ClassVar[str] = "SendPlayerResponse"
+    slot_id: int
+    location_id: Optional[int] = None
+    item_id: Optional[int] = None
+    amount: Optional[int] = 1
+
+@TrackerPacket.register_packet
+@dataclass
 class SetNotifyPacket(TrackerPacket):
     """Packet sent to be notified when stored keys change."""
     cmd: ClassVar[str] = "SetNotify"
@@ -614,6 +624,20 @@ class StatsPacket(TrackerPacket):
 #endregion
 
 #region Tracker Packets
+
+@TrackerPacket.register_packet
+@dataclass
+class CommandRequestPacket(IdentifiablePacket):
+    """Packet sent when requesting a command be performed"""
+    cmd: ClassVar[str] = "CommandRequest"
+    command: str
+
+@TrackerPacket.register_packet
+@dataclass
+class CommandResponsePacket(IdentifiablePacket):
+    """Packet received in response to a CommandRequest packet."""
+    cmd: ClassVar[str] = "CommandResponse"
+    success: bool
 
 @TrackerPacket.register_packet
 @dataclass
@@ -659,22 +683,6 @@ class NotificationsResponsePacket(IdentifiablePacket):
     """Packet sent to gateway in response to a NotificationRequest packet."""
     cmd: ClassVar[str] = "NotificationsResponse"
     notification: Notification
-
-@TrackerPacket.register_packet
-@dataclass
-class PlayerStateRequestPacket(IdentifiablePacket):
-    """Packet sent to agent to request player state update."""
-    cmd: ClassVar[str] = "PlayerStateRequest"
-    state: PlayerState
-    slot_name: str
-
-@TrackerPacket.register_packet
-@dataclass
-class PlayerStateResponsePacket(IdentifiablePacket):
-    "Packet send to gateway in response to a PlayerStateRequest packet"
-    cmd: ClassVar[str] = "PlayerStateResponse"
-    state: PlayerState
-    success: bool
 
 @TrackerPacket.register_packet
 @dataclass
