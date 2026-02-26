@@ -2353,37 +2353,15 @@ async def handle_hint_request(ctx: Context, client: Client, args: dict):
                                       "text": response }])
         return
     
-    # Get player and validate password
+    # Get player and request item hints
     team, slot = ctx.player_name_lookup[seeked_player]
-    game = ctx.games[slot]
-    seeked_item, usable, response = get_intended_text(args["item_name"], ctx.item_names[game].values())
-    if not usable:
-        await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "id": args["id"], "type": "arguments",
-                                      "text": response }])
-        return
-    
-    # Check hint points
-    slot_points = get_slot_points(ctx, team, slot)
-    hint_cost = ctx.get_hint_cost(slot)
-    if slot_points < hint_cost:
-        await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "id": args["id"], "type": "arguments",
-                                      "text": f"A hint costs {hint_cost} points. You have {slot_points} points." }])
-        return
-    
-    # "Pretend" to be a client for the correct slot
-    shadow_client = copy.copy(client)
-    shadow_client.slot = slot
-    shadow_client.team = team
-    shadow_client.messageprocessor = ClientMessageProcessor(ctx, shadow_client)
-    
-    # Attempt to request hint
-    success = shadow_client.messageprocessor.get_hints(seeked_item)
+    success, hints, comment = _request_slot_item_hints(ctx, team, slot, args["item_name"])
 
-    # Delete shadow client
-    del shadow_client
+    # Filter out found hints
+    unfound_hints = [hint for hint in hints if not hint.found]
 
-    # Respond
-    await ctx.send_msgs(client, [{'cmd': "HintResponse", "id": args["id"], "success": True if success else False }])
+    await ctx.send_msgs(client, [{'cmd': "HintResponse", "id": args["id"], "hints": unfound_hints, 
+                                  "comment": comment, "success": success }])
 
 async def handle_receivedcount_request(ctx: Context, client: Client, args: dict):
     """Handle an incoming ReceivedCountRequestPacket."""
@@ -2457,6 +2435,116 @@ def _goal_player(ctx: Context, team: int, slot: int):
         ctx.client_game_state[(team, slot)] = ClientStatus.CLIENT_GOAL
         ctx.on_client_status_change(team, slot)
         ctx.save()
+
+def _request_slot_item_hints(ctx: Context, team: int, slot: int, input_text: str) -> tuple[bool, list[Hint], str]:
+    """"""
+
+    game = ctx.games[slot]
+    if game not in ctx.all_item_and_group_names:
+        return False, [], "Can't look up item/location for unknown game. Hint for ID instead."
+    
+    names = ctx.all_item_and_group_names[game]
+    hint_name, usable, response = get_intended_text(input_text, names)
+
+    hints: list[Hint] = []
+
+    if usable:
+        if hint_name in ctx.non_hintable_names[game]:
+            return False, [], f"Sorry, \"{hint_name}\" is marked as non-hintable."
+        
+        elif hint_name in ctx.item_name_groups[game]:  # item group name
+            hints = []
+            for item_name in ctx.item_name_groups[game][hint_name]:
+                if item_name in ctx.item_names_for_game(game):  # ensure item has an ID
+                    hints.extend(collect_hints(ctx, team, slot, item_name))
+
+        elif hint_name in ctx.item_names_for_game(game):  # item name
+            hints = collect_hints(ctx, team, slot, hint_name)
+
+        else:
+            return False, [], f"No item can be hinted for {input_text}"
+
+    else:
+        return False, [], response
+
+    # Calculate points
+    points_available = get_slot_points(ctx, team, slot)
+    cost = ctx.get_hint_cost(slot)
+    comment: str = ""
+
+    if hints:
+
+        new_hints = set(hints) - ctx.hints[team, slot]
+        old_hints = list(set(hints) - new_hints)
+        
+        if old_hints and not new_hints:
+            ctx.notify_hints(team, old_hints)
+            comment = "Hint was previously used, no points deducted."
+        
+        if new_hints:
+
+            found_hints = [hint for hint in new_hints if hint.found]
+            not_found_hints = [hint for hint in new_hints if not hint.found]
+
+            if not not_found_hints:  # everything's been found, no need to pay
+                can_pay = 1000
+
+            elif cost:
+                can_pay = int((points_available // cost) > 0)  # limit to 1 new hint per call
+            else:
+                can_pay = 1000
+
+            ctx.random.shuffle(not_found_hints)
+            # By popular vote, make hints prefer non-local placements
+            not_found_hints.sort(key=lambda hint: int(hint.receiving_player != hint.finding_player))
+            # By another popular vote, prefer early sphere
+            not_found_hints.sort(key=lambda hint: ctx.get_sphere(hint.finding_player, hint.location),
+                                    reverse=True)
+
+            hints = found_hints + old_hints
+
+            while can_pay > 0:
+
+                if not not_found_hints:
+                    break
+
+                hint = not_found_hints.pop()
+                hints.append(hint)
+                can_pay -= 1
+                ctx.hints_used[team, slot] += 1
+
+            ctx.notify_hints(team, hints)
+
+            if not_found_hints:
+
+                points_available = get_slot_points(ctx, team, slot)
+
+                if hints and cost and int((points_available // cost) == 0):
+                    comment = f"There may be more hintables, however, you cannot afford to pay for any more. " \
+                        f" You have {points_available} and need at least " \
+                        f"{cost}."
+                    
+                elif hints:
+                    comment = "There may be more hintables, you can rerun the command to find more."
+
+                else:
+                    comment = f"You can't afford the hint. " \
+                        f"You have {points_available} points and need at least " \
+                        f"{cost}."
+            
+            ctx.save()
+
+        return True, hints or [], comment
+
+    else:
+        if points_available >= cost:
+            return False, [], f"Nothing found for recognized item name \"{hint_name}\". " \
+                f"Item appears to not exist in this multiworld."
+        
+        else:
+            return False, [], f"You can't afford the hint. " \
+                f"You have {points_available} points and need at least " \
+                f"{cost}."
 
 #endregion
 

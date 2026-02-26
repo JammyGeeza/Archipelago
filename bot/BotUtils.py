@@ -26,6 +26,13 @@ class ClientStatus(enum.IntEnum):
     PLAYING     = 20
     GOAL        = 30
 
+class HintStatus(enum.IntEnum):
+    HINT_UNSPECIFIED = 0
+    HINT_NO_PRIORITY = 10
+    HINT_AVOID = 20
+    HINT_PRIORITY = 30
+    HINT_FOUND = 40
+
 class ItemFlags(enum.IntEnum):
     """Archipelago's item type flags"""
     FILLER      = 0
@@ -312,6 +319,18 @@ class DataPackageObject(Jsonable):
     """Object containing data package data"""
     games: Dict[str, GameData] = field(default_factory=dict)
 
+@dataclass
+class Hint(Jsonable):
+    receiving_player: int
+    finding_player: int
+    location: int
+    item: int
+    found: bool
+    entrance: str = ""
+    item_flags: int = 0
+    status: HintStatus = HintStatus.HINT_UNSPECIFIED
+    class_: str = field(default="Hint", metadata={"json": "class"})
+
 # TODO: Make this match other data classes??
 class ItemQueue:
     def __init__(self):
@@ -539,7 +558,9 @@ class HintRequestPacket(IdentifiablePacket):
 class HintResponsePacket(IdentifiablePacket):
     """Packet received in response to a HintRequest packet."""
     cmd: ClassVar[str] = "HintResponse"
+    comment: str
     success: bool
+    hints: List[Hint] = field(default_factory=list)
 
 @TrackerPacket.register_packet
 @dataclass

@@ -1045,12 +1045,14 @@ async def hint(interaction: discord.Interaction, slot_name: app_commands.Range[s
     if response.is_error():
         await interaction.followup.send(f"Error requesting hint: **_{response.text}_**", ephemeral=True)
         return
-    elif not response.success:
-        await interaction.followup.send(f"Hint request was not performed successfully.", ephemeral=True)
+    elif not response.success or not response.hints:
+        await interaction.followup.send(f"Hint request responded with: **_{response.comment}_**.", ephemeral=True)
         return
+    
+    logging.info(f"Hints: {response.hints}")
 
     # Respond with status
-    await interaction.followup.send(f"Hint for `{slot_name}`'s item **{item_name}** was performed successfully!", ephemeral=True)
+    await interaction.followup.send(response.comment, ephemeral=True)
 
 #endregion
 

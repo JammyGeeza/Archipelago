@@ -812,9 +812,17 @@ def generate_hint_text(recipient: int, item: utils.NetworkItem) -> str:
 
     # Generate hint text with mentions, if applicable
     return append_mentions(
-        f"**[HINT]**: `{get_player(recipient)}`'s item **{get_item(recipient, item.item)} _({utils.NotifyFlags.item_to_notify_flags(item.flags).to_text()})_** is at `{get_player(item.player)}`'s location **{get_location(item.player, item.location)}** check.",
+        f"**[HINT]**: `{get_player(recipient)}`'s item **{get_item(recipient, item.item)} _({utils.NotifyFlags.item_to_notify_flags(item.flags).to_text()})_**" \
+             f" is at `{get_player(item.player)}`'s location **{get_location(item.player, item.location)}**",
         get_hint_flag_notifications(item.player, item.flags),
     )
+
+def generate_networkhint_text(hint: utils.Hint):
+    """Generate the text for a hint message"""
+
+    # Generate hint text
+    return f"**[HINT]**: `{get_player(hint.receiving_player)}`'s item **{get_item(hint.receiving_player, hint.item)} _({utils.NotifyFlags.item_to_notify_flags(hint.item_flags).to_text()})_**" \
+        f" is at `{get_player(hint.finding_player)}`'s location **{get_location(hint.finding_player, hint.location)}**"
 
 def generate_items_text(recipient: int, items: Dict[int, utils.QueuedItemData]) -> str:
     """Generate the text for an item received message."""
@@ -995,6 +1003,12 @@ async def __on_hint_request(client: StdClient, packet: utils.HintRequestPacket):
 
     # Forward to archipelago server
     response = await __tracker_client.request(packet)
+
+    logging.info(f"Response: {response}")
+
+    # Format hints if success
+    if not response.is_error() and response.success and response.hints:
+        response.comment += ("\n\n" if response.comment else "") + "\n".join([f"- {generate_networkhint_text(hint)}" for hint in response.hints])
 
     # Return response
     await send(response)
