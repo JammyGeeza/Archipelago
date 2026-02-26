@@ -154,6 +154,16 @@ def faq(lang: str):
         html_from_markdown=document,
     )
 
+@app.route('/tools/poptracker/')
+@cache.cached()
+def poptracker():
+    document = render_markdown(os.path.join(app.static_folder, "assets", "faq", "poptracker.md"))
+    return render_template(
+        "markdown_document.html",
+        title="Poptracker",
+        html_from_markdown=document,
+    )
+
 
 @app.route('/glossary/<string:lang>/')
 @cache.cached()
