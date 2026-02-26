@@ -84,6 +84,12 @@ def games():
     """List of supported games"""
     return render_template("supportedGames.html", worlds=get_visible_worlds())
 
+@app.route('/dev-games')
+@cache.cached()
+def devgames():
+    """List of in-development games"""
+    return render_template("playableWorlds.html", worlds=get_visible_worlds())
+
 
 @app.route('/tutorial/<string:game>/<string:file>')
 @cache.cached()
