@@ -841,14 +841,14 @@ async def cmd(interaction: discord.Interaction, command: str):
     
     # Validate response
     if response.is_error():
-        await interaction.followup.send(f"Error retrieving current status: **_{response.text}_**", ephemeral=True)
+        await interaction.followup.send(f"Error performing command: **_{response.text}_**", ephemeral=True)
         return
     elif not response.success:
         await interaction.followup.send(f"Command `{command}` was not performed - please see the server log for more information.", ephemeral=True)
         return
 
     # Success response
-    await interaction.followup.send(f"Command `{command}` performed successfully.", ephemeral=True)
+    await interaction.followup.send(f"Command `{command}` was performed successfully.", ephemeral=True)
 
 @app_commands.describe(port="The port number of the local archipelago room", slot_name="The name of the slot to connect to")
 @bot.tree.command(name="rebind", description="Update this channel's current room binding")
@@ -973,8 +973,6 @@ async def status(interaction: discord.Interaction):
 
     logging.info(f"Status requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id}")
 
-    global store
-
     # Defer response
     await interaction.response.defer(thinking=True, ephemeral=True)
 
@@ -1019,6 +1017,40 @@ async def list_all(interaction: discord.Interaction):
 
     # Respond
     await interaction.followup.send(response, ephemeral=True)
+
+@app_commands.describe(slot_name="Slot name to hint for", item_name="Item to hint for", password="Password for slot")
+@bot.tree.command(name="hint", description="Request a hint for an item")
+async def hint(interaction: discord.Interaction, slot_name: app_commands.Range[str, 1, 16], item_name: str, password: Optional[str] = None):
+    """Command to request a hint for a player."""
+
+    logging.info(f"Hint requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id}")
+
+    # Defer response
+    await interaction.response.defer(thinking=True, ephemeral=True)
+
+    # Attempt to get process
+    if not (agent:= get_agent(interaction.channel_id)):
+        await interaction.followup.send(f"No client is running for this channel - use `/connect` to start or `/bind` to bind it to a session.", ephemeral=True)
+        return
+    
+    # Request status from agent
+    response = await agent.request(utils.HintRequestPacket(
+        id=uuid.uuid4().hex,
+        slot_name=slot_name,
+        item_name=item_name,
+        password=password
+    ))
+
+    # Validate response
+    if response.is_error():
+        await interaction.followup.send(f"Error requesting hint: **_{response.text}_**", ephemeral=True)
+        return
+    elif not response.success:
+        await interaction.followup.send(f"Hint request was not performed successfully.", ephemeral=True)
+        return
+
+    # Respond with status
+    await interaction.followup.send(f"Hint for `{slot_name}`'s item **{item_name}** was performed successfully!", ephemeral=True)
 
 #endregion
 

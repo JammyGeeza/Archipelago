@@ -527,6 +527,22 @@ class GetStatsPacket(TrackerPacket):
 
 @TrackerPacket.register_packet
 @dataclass
+class HintRequestPacket(IdentifiablePacket):
+    """Packet sent to request a hint."""
+    cmd: ClassVar[str] = "HintRequest"
+    slot_name: str
+    item_name: str
+    password: Optional[str] = None
+
+@TrackerPacket.register_packet
+@dataclass
+class HintResponsePacket(IdentifiablePacket):
+    """Packet received in response to a HintRequest packet."""
+    cmd: ClassVar[str] = "HintResponse"
+    success: bool
+
+@TrackerPacket.register_packet
+@dataclass
 class InvalidPacket(TrackerPacket):
     """Packet received when a packet is invalid."""
     cmd: ClassVar[str] = "InvalidPacket"

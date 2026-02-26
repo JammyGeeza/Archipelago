@@ -20,6 +20,7 @@ class StdClient:
     # Events
     on_cmd_request = utils.Hookable()
     on_error = utils.Hookable()
+    on_hint_request = utils.Hookable()
     on_notifications_request = utils.Hookable()
     on_statistics_request = utils.Hookable()
     on_status_request = utils.Hookable()
@@ -54,6 +55,9 @@ class StdClient:
 
                 case utils.CommandRequestPacket.cmd:
                     await self.on_cmd_request.run(packet)
+
+                case utils.HintRequestPacket.cmd:
+                    await self.on_hint_request.run(packet)
 
                 case utils.NotificationsRequestPacket.cmd:
                     await self.on_notifications_request.run(packet)
@@ -982,6 +986,18 @@ async def __on_std_error(client: StdClient, msg: str):
 
     # TODO: Figure out if this is the right thing to do...
     await send(utils.DiscordMessagePacket(message=f"Client encountered an unexpected error: '{msg}'."))
+
+@StdClient.on_hint_request
+async def __on_hint_request(client: StdClient, packet: utils.HintRequestPacket):
+    """Handle an incoming hint request."""
+
+    global __tracker_client
+
+    # Forward to archipelago server
+    response = await __tracker_client.request(packet)
+
+    # Return response
+    await send(response)
 
 @StdClient.on_notifications_request
 async def __on_notifications_request(client: StdClient, packet: utils.NotificationsRequestPacket):

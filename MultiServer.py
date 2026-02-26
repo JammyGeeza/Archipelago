@@ -2222,6 +2222,10 @@ async def process_client_cmd(ctx: Context, client: Client, args: dict):
         elif cmd == "GetStats":
             await handle_getstats_request(ctx, client, args)
 
+        elif cmd == "HintRequest":
+            # await handle_hint_request_v2(ctx, client, args)
+            await handle_hint_request(ctx, client, args)
+
         elif cmd == "ReceivedCountRequest":
             await handle_receivedcount_request(ctx, client, args)
 
@@ -2244,7 +2248,7 @@ def update_client_status(ctx: Context, client: Client, new_status: ClientStatus)
 
 #region My Bot Extensions
 
-async def forward_hints_to_bots(ctx: Context, team: int, hints: list[Hint]):
+def forward_hints_to_bots(ctx: Context, team: int, hints: list[Hint]):
     """Forward a list of hints to connected bot clients."""
 
     # Bail if no hints
@@ -2318,6 +2322,68 @@ async def handle_getstats_request(ctx: Context, client: Client, args: dict):
         })
 
     await ctx.send_msgs(client, [{ 'cmd': "Stats", "stats": stats }])
+
+async def handle_hint_request(ctx: Context, client: Client, args: dict):
+    """Handle an incoming hint request"""
+
+    if not _client_is_bot(ctx, client):
+        await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "id": args["id"], "type": "auth",
+                                        "text": "Players cannot request hints.", "original_cmd": None}])
+        return
+    
+    elif "password" not in args and ctx.password or args["password"] != ctx.password:
+        await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "id": args["id"], "type": "InvalidPassword",
+                                        "text": "Invalid password provided", "original_cmd": args["cmd"]}])
+        return
+    
+    elif "slot_name" not in args or type(args["slot_name"]) != str:
+        await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "id": args["id"], "type": "arguments",
+                                        "text": "Invalid 'slot_name' argument.", "original_cmd": args["cmd"]}])
+        return
+    
+    elif "item_name" not in args or type(args["item_name"]) != str:
+        await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "id": args["id"], "type": "arguments",
+                                        "text": "Invalid 'item_name' argument.", "original_cmd": args["cmd"]}])
+        return
+        
+    # Validate player
+    seeked_player, usable, response = get_intended_text(args["slot_name"], ctx.player_names.values())
+    if not usable:
+        await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "id": args["id"], "type": "arguments",
+                                      "text": response }])
+        return
+    
+    # Get player and validate password
+    team, slot = ctx.player_name_lookup[seeked_player]
+    game = ctx.games[slot]
+    seeked_item, usable, response = get_intended_text(args["item_name"], ctx.item_names[game].values())
+    if not usable:
+        await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "id": args["id"], "type": "arguments",
+                                      "text": response }])
+        return
+    
+    # Check hint points
+    slot_points = get_slot_points(ctx, team, slot)
+    hint_cost = ctx.get_hint_cost(slot)
+    if slot_points < hint_cost:
+        await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "id": args["id"], "type": "arguments",
+                                      "text": f"A hint costs {hint_cost} points. You have {slot_points} points." }])
+        return
+    
+    # "Pretend" to be a client for the correct slot
+    shadow_client = copy.copy(client)
+    shadow_client.slot = slot
+    shadow_client.team = team
+    shadow_client.messageprocessor = ClientMessageProcessor(ctx, shadow_client)
+    
+    # Attempt to request hint
+    success = shadow_client.messageprocessor.get_hints(seeked_item)
+
+    # Delete shadow client
+    del shadow_client
+
+    # Respond
+    await ctx.send_msgs(client, [{'cmd': "HintResponse", "id": args["id"], "success": True if success else False }])
 
 async def handle_receivedcount_request(ctx: Context, client: Client, args: dict):
     """Handle an incoming ReceivedCountRequestPacket."""
