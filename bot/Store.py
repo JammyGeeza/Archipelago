@@ -5,7 +5,7 @@ from . import BotUtils as utils
 from typing import ClassVar, Dict, Optional, List
 
 class Store:
-    def __init__(self, path: str = "/data/bot.db"):
+    def __init__(self, path: str = "bot.db"):
         self.path = path
 
         # Create repos

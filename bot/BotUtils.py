@@ -758,3 +758,36 @@ class TrackerInfoPacket(TrackerPacket):
     players: Dict[int, str] = field(default_factory=dict)
 
 #endregion
+
+#region Shared Methods
+
+def split_at_separator(text: str, limit: int = 2000, separator: str = ", ") -> List[str]:
+    """Split a string into chunks no longer than <limit> by <separator>"""
+
+    # If not longer than the limit, return it
+    if len(text) <= limit:
+        return [ text ]
+
+    parts = text.split(separator)
+    chunks = []
+    current_chunk = ""
+
+    # Cycle through split parts
+    for part in parts:
+        # Include separator if current chunk is not empty
+        test_chunk = current_chunk + separator + part if current_chunk else part
+
+        if len(test_chunk) > limit:
+            # Next chunk is too long, append what we have
+            chunks.append(current_chunk)
+            current_chunk = part
+        else:
+            current_chunk = test_chunk
+
+    # Add any remaining chunks
+    if current_chunk:
+        chunks.append(current_chunk)
+
+    return chunks
+
+#endregion

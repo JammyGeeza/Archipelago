@@ -2,6 +2,7 @@
 
 import argparse
 import asyncio
+from . import BotUtils as utils
 import discord
 import json
 import logging
@@ -9,7 +10,7 @@ import math
 import sys
 import uuid
 
-from . import BotUtils as utils
+from .BotUtils import split_at_separator
 from discord import app_commands
 from discord.ext import commands
 from .Store import Store
@@ -186,23 +187,28 @@ class AgentProcess:
         """Listen for data received from the agent process."""
 
         try:
+            # If none, bail out
+            if self.process.stdout is None:
+                raise Exception(f"stdout is 'None'")
 
-            if self.process.stdout is not None:
-                async for line in self.process.stdout:
-                    payload = line.decode("utf-8", errors="replace").rstrip()
+            async for line in self.process.stdout:
+                payload = line.decode("utf-8", errors="replace").rstrip()
+                if not payload:
+                    logging.warning("Payload was empty")
+                    continue
 
-                    # Convert from json and handle
-                    for data in json.loads(payload):
-                        await self.__handle_packet(
-                            utils.TrackerPacket.parse(data)
-                        )
+                # Convert from json and handle
+                for data in json.loads(payload):
+                    await self.__handle_packet(
+                        utils.TrackerPacket.parse(data)
+                    )
 
         except asyncio.CancelledError:
-            logging.warning("The std client __read_loop() task has been cancelled.")
+            logging.warning("The std client __read_stdout() task has been cancelled.")
             raise
 
         except Exception as ex:
-            logging.error(f"Unexpected error in std client __read_loop() task: '{ex}'")
+            logging.error(f"Unexpected error in std client __read_stdout() task: '{ex}'")
 
     async def __watch(self):
         """Watch the agent process and clean-up when terminated."""
@@ -1016,7 +1022,8 @@ async def list_all(interaction: discord.Interaction):
         response += f"\n- <#{config.channel_id}> is bound to `:{config.port}`\n"
 
     # Respond
-    await interaction.followup.send(response, ephemeral=True)
+    for chunk in split_at_separator(response, separator="\n"):
+        await interaction.followup.send(chunk, ephemeral=True)
 
 @app_commands.describe(slot_name="Slot name to hint for", item_name="Item to hint for", password="Password for slot")
 @bot.tree.command(name="hint", description="Request a hint for an item")
@@ -1049,10 +1056,29 @@ async def hint(interaction: discord.Interaction, slot_name: app_commands.Range[s
         await interaction.followup.send(f"Hint request responded with: **_{response.comment}_**.", ephemeral=True)
         return
     
-    logging.info(f"Hints: {response.hints}")
+    # Respond
+    for chunk in split_at_separator(response.comment, separator="\n"):
+        await interaction.followup.send(chunk, ephemeral=True)
 
-    # Respond with status
-    await interaction.followup.send(response.comment, ephemeral=True)
+async def on_command_error(interaction: discord.Interaction, error: app_commands.AppCommandError):
+    """Handle command errors."""
+
+    logging.error(f"Unexpected command error: {error}")
+
+    try:
+        # Try normal response first
+        await interaction.response.send_message(f"An unexpected error occurred - please wait a moment and try again.", ephemeral=True)
+    except discord.InteractionResponded:
+        
+        try:
+            # Then try follow-up
+            await interaction.followup.send(f"An unexpected error occurred - please wait a moment and try again.", ephemeral=True)
+        
+        except Exception:
+            raise
+    
+    except Exception:
+        pass
 
 #endregion
 
@@ -1064,6 +1090,9 @@ async def on_ready():
     
     logging.info(f"Connected to discord as {bot.user.name} ({bot.user.id})")
     logging.info(f"Syncing command tree...")
+
+    # Add command error event handler
+    bot.tree.on_error = on_command_error
 
     # Add groups to tree and sync
     bot.tree.add_command(notify_group)
