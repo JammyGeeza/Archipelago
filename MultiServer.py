@@ -2227,13 +2227,6 @@ async def process_client_cmd(ctx: Context, client: Client, args: dict):
 
         #endregion
 
-        # elif cmd == "SendPlayerRequest":
-        #     await handle_sendplayer_request(ctx, client, args)
-
-        
-            # success = ctx.commandprocessor(args["cmd"])
-            # await handle_slotaction_request(ctx, client, args)
-
 def update_client_status(ctx: Context, client: Client, new_status: ClientStatus):
     current = ctx.client_game_state[client.team, client.slot]
     if current != ClientStatus.CLIENT_GOAL:  # can't undo goal completion
@@ -2349,41 +2342,6 @@ async def handle_receivedcount_request(ctx: Context, client: Client, args: dict)
 
     # Respond
     await ctx.send_msgs(client, [{ 'cmd': "ReceivedCountResponse", "id": args["id"], "counts": counts }])
-
-async def handle_slotaction_request(ctx: Context, client: Client, args: dict):
-    """Handle an incoming SlotActionRequestPacket"""
-
-    if not _client_is_bot(ctx, client):
-        await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "id": args["id"], "type": "auth",
-                                        "text": "Players cannot request slot actions.", "original_cmd": None}])
-        return
-    
-    elif "slot_id" not in args or type(args["slot_id"]) != int:
-        await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "id": args["id"], "type": "arguments",
-                                        "text": "Invalid 'slot_id' argument.", "original_cmd": args["cmd"]}])
-        return
-    
-    elif not (slot:= next(slot for slot in ctx.get_players_package() if slot.slot == args["slot_id"])):
-        await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "id": args["id"], "type": "arguments",
-                                        "text": "Invalid 'slot_id' argument.", "original_cmd": args["cmd"]}])
-        return
-    elif not args["action"] & (1 | 2 | 4):
-        await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "id": args["id"], "type": "arguments",
-                                        "text": "Invalid 'action' argument.", "original_cmd": args["cmd"]}])
-        return
-
-    try:
-        # Perform actions
-        if args["action"] & 1: collect_player(ctx, slot.team, slot.slot)
-        if args["action"] & 2: release_player(ctx, slot.team, slot.slot)
-        if args["action"] & 4: _goal_player(ctx, slot.team, slot.slot)
-        
-        await ctx.send_msgs(client, [{'cmd': "SlotActionResponse", "id": args["id"],
-                                        "action": args["action"], "success": True }])
-
-    except Exception as ex:
-        await ctx.send_msgs(client, [{'cmd': "SlotActionResponse", "id": args["id"],
-                                        "action": args["action"], "success": False}])
 
 def _client_is_bot(ctx: Context, client: Client) -> bool:
     """Check if a client is connected as a bot client."""
