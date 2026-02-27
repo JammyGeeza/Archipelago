@@ -9,6 +9,11 @@ import threading
 import uuid
 import websockets
 
+from .BotStore import (
+    Binding, NotificationSettings, NotificationCount, NotificationTerm,
+    init_db,
+    store
+)
 from .BotUtils import split_at_separator
 from .Store import Store
 from datetime import datetime
@@ -257,6 +262,7 @@ class TrackerClient:
         self.__player_lookup: Dict[int, utils.NetworkSlot] = {}
         self.__stats_lookup: Dict[int, utils.PlayerStats] = {}
 
+        self.channel_id: str = args.channel_id
         self.host: str = args.host
         self.port: int = args.port
         self.slot_name: str = args.slot_name
@@ -772,6 +778,63 @@ async def send(packet: utils.TrackerPacket):
     global __std_client
     await __std_client.send(packet)
 
+async def send_invalid(packet, text: str):
+    """Send an invalid packet to the gateway"""
+    await send(utils.InvalidPacket(
+        id=packet.id,
+        original_cmd=packet.cmd,
+        text=text
+    ))
+
+async def validate_item_counts(packet, action: int, slot_id: int, counts: dict[str, int]) -> Tuple[int, int, int] | None:
+    """Validate that item counts exist"""
+
+    # Map item ID/Name/Count
+    item_count_lookup = { (get_item_id(slot_id, name), name, count) for name, count in counts.items() }
+    
+    # Check if any of these names don't exist
+    if item_count_lookup and (invalid_names:= [ nm for id, nm, ct in item_count_lookup if id is None ]):
+        await send(utils.InvalidPacket(id=packet.id, original_cmd=packet.cmd, text=f"Could not find matching item(s) for {", ".join([f"`{inv}`" for inv in invalid_names])}"))
+        return None
+    
+    # Check if we are missing counts for any of these
+    if action == utils.Action.ADD and (unknown_counts:= [ id for id, nm, ct in item_count_lookup if (slot_id, id) not in __item_counts ]):
+
+        # Request item counts from server
+        response = await __tracker_client.request(utils.ReceivedCountRequestPacket(
+            id=uuid.uuid4().hex,
+            slot_items={ slot_id: unknown_counts }
+        ))
+
+        # NOTE: Update to __item_counts is handled BEFORE the response is passed back to here
+
+        # Validate response
+        if response.is_error():
+            await send(utils.ErrorPacket(id=packet.id, original_cmd=packet.cmd, text="Failed to retrieve item data from server."))
+            return
+    
+    # Map counts by ID / Amount / End Amount
+    return { (id, amt, __item_counts.get((slot_id, id), 0) + amt ) for id, nm, amt in item_count_lookup } 
+
+async def validate_notification(packet, user_id: int, slot_id: int) -> NotificationSettings | None:
+    """Validate that"""
+
+    global __tracker_client
+    try:
+        notif = NotificationSettings.get_or_create(__tracker_client.channel_id, user_id, slot_id)
+    except Exception as ex:
+        await send_invalid(packet, f"{ex}")
+
+    return notif
+
+async def validate_slot_name(packet, slot_name: str) -> int | None:
+    global __tracker_client
+
+    if not (slot_id:= __tracker_client.get_slot(slot_name)):
+        await send_invalid(packet, f"Could not find player with name `{packet.player}`")
+
+    return slot_id
+
 def append_mentions(text: str, user_ids: List[int]) -> str:
     """Append notification mentions to a string."""
 
@@ -986,6 +1049,67 @@ async def __on_hint_request(client: StdClient, packet: utils.HintRequestPacket):
     await send(response)
 
 @StdClient.on_notifications_request
+async def __on_notifications_request_v2(client: StdClient, packet: utils.NotificationsRequestPacket):
+    """Handle an incoming notifications request"""
+
+    # Validate packet data
+    if not (slot_id:= await validate_slot_name(packet, packet.player)) or not (notif:= await validate_notification(packet, packet.user_id, slot_id)):
+        return
+    elif packet.action < utils.Action.ADD or packet.action > utils.Action.VIEW:
+        await send_invalid(packet, f"Unknown notifications action requested")
+        return
+
+    try:
+
+        # Bail early if just viewing
+        if packet.action == utils.Action.VIEW:
+            await send(utils.ErrorPacket(id=packet.id, original_cmd=packet.cmd, text="Viewing!"))
+            return
+
+        # Validate and map item counts
+        if packet.action != utils.Action.CLEAR and packet.counts:
+            if (item_counts:= await validate_item_counts(packet, packet.action, slot_id, packet.counts)) is None:
+                return
+            
+        # Adjust values depending on action
+        match packet.action:
+
+            case utils.Action.ADD:
+                hint_flags = (notif.hint_flags or utils.NotifyFlags.NONE) | (packet.hints or utils.NotifyFlags.NONE)
+                item_flags = (notif.item_flags or utils.NotifyFlags.NONE) | (packet.types or utils.NotifyFlags.NONE)
+                terms = set([t.term for t in notif.terms or []]) | { t.casefold() for t in (packet.terms or []) }
+
+                # Merge existing with inbound counts, taking the "end_count" from the inbound list
+                merged_counts = { (c.item_id, c.amount): (c.item_id, c.amount, c.end_amount) for c in notif.counts }
+                for id, amt, end in item_counts:
+                    merged_counts[(id, amt)] = (id, amt, end)
+                counts = list(merged_counts.values())
+
+                notif = notif.update(notif.id, hint_flags, item_flags, terms, counts)
+
+            case utils.Action.REMOVE:
+                hint_flags = (notif.hint_flags or utils.NotifyFlags.NONE) & ~(packet.hints or utils.NotifyFlags.NONE)
+                item_flags = (notif.item_flags or utils.NotifyFlags.NONE) & ~(packet.types or utils.NotifyFlags.NONE)
+                terms = { t.term for t in (notif.terms or []) } - { t.casefold() for t in (packet.terms or []) }
+
+                # Remove inbound counts that match exsting
+                merged_counts = { (id, amt) for id, amt, _ in item_counts }
+                counts = [ (c.item_id, c.amount, c.end_amount) for c in notif.counts if (c.item_id, c.amount) not in merged_counts ]
+                
+                notif = notif.update(notif.id, hint_flags, item_flags, terms, counts)
+
+            case utils.Action.CLEAR:
+                notif = notif.update(notif.id, utils.NotifyFlags.NONE, utils.NotifyFlags.NONE, [], {})
+
+        logging.info(f"Post-update: {notif.hint_flags} | {notif.item_flags} | { notif.terms } | {notif.counts}")
+
+    except Exception as ex:
+        await send_invalid(packet, f"{ex}")
+        return
+
+    await send(utils.ErrorPacket(id=packet.id, original_cmd=packet.cmd, text="Actually this was a roaring success."))
+
+# @StdClient.on_notifications_request
 async def __on_notifications_request(client: StdClient, packet: utils.NotificationsRequestPacket):
     """Handle an incoming notifications request."""
 
@@ -1289,6 +1413,9 @@ async def main() -> None:
     __std_client = StdClient()
     __tracker_client = TrackerClient(__args)
 
+    # Initialise store
+    init_db()
+
     # Gather and start all asynchronous tasks, exiting when any task completes
     __tasks = [
         asyncio.create_task(__std_client.start()),
@@ -1315,6 +1442,7 @@ def parse_args() -> argparse.Namespace:
     defaults = get_bot_settings().agent.as_dict()
 
     parser = argparse.ArgumentParser(prog="Agent.py", description="Archipelago Discord Tracker Client")
+    parser.add_argument("--channel_id", type=str, help="The hostname of the archipelago server")
     parser.add_argument("--host", type=str, default=defaults["host"], help="The hostname of the archipelago server")
     parser.add_argument("--port", type=int, help="The port of the archipelago session.")
     parser.add_argument("--slot_name", type=str, help="The slot name to connect to.")

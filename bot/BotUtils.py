@@ -761,6 +761,18 @@ class TrackerInfoPacket(TrackerPacket):
 
 #region Shared Methods
 
+def format_error(action: str, ex: Exception) -> str:
+    return f"Error {action}: *'{ex}'*"
+
+def format_port(port: int) -> str:
+    return f"`:{port}`"
+
+def format_slot(slot_name: str) -> str:
+    return f"`{slot_name}`"
+
+def format_port_slot(port: int, slot_name: str) -> str:
+    return f"{format_port(port)} / {format_slot(slot_name)}"
+
 def split_at_separator(text: str, limit: int = 2000, separator: str = ", ") -> List[str]:
     """Split a string into chunks no longer than <limit> by <separator>"""
 
