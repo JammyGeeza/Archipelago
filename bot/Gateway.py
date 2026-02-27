@@ -18,7 +18,7 @@ from typing import Dict, Optional
 
 # Global variables
 admin_only: bool = True
-bot = commands.Bot(command_prefix='/', intents=discord.Intents.none())
+bot = commands.Bot(command_prefix='/', intents=discord.Intents.default())
 store = Store()
 
 class AgentProcess:
@@ -1081,6 +1081,52 @@ async def on_command_error(interaction: discord.Interaction, error: app_commands
         pass
 
 #endregion
+
+@bot.event
+async def on_guild_channel_update(before: discord.abc.GuildChannel, after: discord.abc.GuildChannel):
+
+    # Ignore for any non-text channels
+    if not isinstance(after, discord.TextChannel):
+        return
+    
+    # Get permission changes
+    before_perms = before.permissions_for(before.guild.default_role).send_messages
+    after_perms = after.permissions_for(after.guild.default_role).send_messages
+
+    # If permissions for @everyone send_messages changes to False, wipe binding
+    if before_perms and not after_perms:
+
+        global agents
+        global store
+
+        # Get agent if running and stop it
+        if (agent:= agents.get(before.id, None)):
+            agent.stop()
+
+        # Delete binding if exists
+        if (binding:= store.bindings.get_one(before.id)):
+            store.bindings.delete(binding)
+
+@bot.event
+async def on_thread_update(before: discord.Thread, after: discord.Thread):
+    """Handle thread configuration updates"""
+
+    logging.info(f"Thread {before.id} has changed.")
+
+    # If thread becomes locked, wipe binding
+    if not before.locked and after.locked:
+        logging.info(f"Thread {before.id} has been locked.")
+
+        global agents
+        global store
+
+        # Get agent if running and stop it
+        if (agent:= agents.get(before.id, None)):
+            agent.stop()
+
+        # Delete binding if exists
+        if (binding:= store.bindings.get_one(before.id)):
+            store.bindings.delete(binding)
 
 @bot.event
 async def on_ready():
