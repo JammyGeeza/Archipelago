@@ -6,8 +6,11 @@ import sqlite3
 import uuid
 
 from dataclasses import MISSING, dataclass, field, fields, is_dataclass
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta
+from decimal import Decimal
+from enum import Enum
 from typing import Any, Callable, ClassVar, Dict, List, Optional, Type, Union, get_args, get_origin
+from uuid import UUID
 
 #region Enums / Flags
 
@@ -90,26 +93,21 @@ class PlayerState(enum.IntFlag):
 
 class Jsonable:
     """Base class for converting to json."""
-    
     def to_dict(self) -> dict:
-        """Convert to generic dict object."""
         out = {}
         for f in fields(self):
             key = f.metadata.get("json", f.name)
             out[key] = self.__encode(getattr(self, f.name))
         return out
-    
+
     def to_json(self) -> str:
-        """Convert to a json string."""
         return json.dumps(self.to_dict())
-    
+
     @classmethod
     def from_dict(cls, data: dict) -> "Jsonable":
-        """Create an instance of the class from a generic dict object."""
         by_json_name = {f.metadata.get("json", f.name): f for f in fields(cls)}
         kwargs = {}
 
-        # Decode only known fields (ignore unknown JSON keys)
         for k, v in (data or {}).items():
             f = by_json_name.get(k)
             if f:
@@ -119,39 +117,42 @@ class Jsonable:
 
     @staticmethod
     def __encode(value: Any) -> Any:
-        """Encode values for JSON serialization."""
         if isinstance(value, Jsonable):
             return value.to_dict()
-        if isinstance(value, dict):
+        elif isinstance(value, (datetime, date)):
+            return value.isoformat()
+        elif isinstance(value, (Decimal, UUID)):
+            return str(value)
+        elif isinstance(value, Enum):
+            return value.value
+        elif isinstance(value, dict):
             return {str(k): Jsonable.__encode(v) for k, v in value.items()}
-        if isinstance(value, list):
+        elif isinstance(value, list):
             return [Jsonable.__encode(v) for v in value]
+        elif isinstance(value, tuple):
+            return [Jsonable.__encode(v) for v in value]
+
         return value
 
     @staticmethod
     def __decode(tp, value: Any) -> Any:
-        """Decode JSON values into typed Python objects."""
         if value is None:
             return None
 
         origin = get_origin(tp)
 
-        # Handle Optional[T] / Union[T, None]
         if origin is Union:
             args = [a for a in get_args(tp) if a is not type(None)]
             return Jsonable.__decode(args[0], value) if args else value
 
-        # Handle List[T]
-        if origin is list:
+        elif origin is list:
             (elem_t,) = get_args(tp)
             return [Jsonable.__decode(elem_t, v) for v in (value or [])]
 
-        # Handle Dict[K, V]
-        if origin is dict:
+        elif origin is dict:
             key_t, val_t = get_args(tp)
             out = {}
             for k, v in (value or {}).items():
-                # JSON object keys are always strings
                 if key_t is int:
                     k2 = int(k)
                 elif key_t is float:
@@ -160,15 +161,32 @@ class Jsonable:
                     k2 = k
                 out[k2] = Jsonable.__decode(val_t, v)
             return out
+        
+        if origin in (tuple,):
+            args = get_args(tp)
 
-        # Handle nested Jsonable subclasses
+            # Tuple[T, ...]
+            if len(args) == 2 and args[1] is Ellipsis:
+                elem_t = args[0]
+                return tuple(Jsonable.__decode(elem_t, v) for v in (value or []))
+
+            # Tuple[T1, T2, ...]
+            if args:
+                seq = value or []
+                return tuple(
+                    Jsonable.__decode(args[i], seq[i]) if i < len(seq) else None
+                    for i in range(len(args))
+                )
+
+            # plain tuple with no args
+            return tuple(value or [])
+
         try:
             if isinstance(tp, type) and issubclass(tp, Jsonable):
                 return tp.from_dict(value)
         except TypeError:
             pass
 
-        # Primitive / fallback
         return value
 
 class Hookable:
@@ -400,6 +418,25 @@ class NetworkVersion(Jsonable):
     major: int = 0
     minor: int = 0
     build: int = 0
+
+@dataclass
+class NotificationSettingsDTO(Jsonable):
+    slot_name: str
+    hint_flags: NotifyFlags
+    item_flags: NotifyFlags
+    terms: list[str]
+    counts: list[tuple[str, int]]
+
+    @classmethod
+    def from_entity(cls, client, binding: Binding):
+        """Convert a binding entity object to a DTO for json encode/decoding"""
+        return cls(
+            slot_name=client.get_player_name(binding.slot_id),
+            hint_flags=NotifyFlags(binding.hint_flags),
+            item_flags=NotifyFlags(binding.item_flags),
+            terms=[ t.term for t in binding.terms ],
+            counts=[ (client.get_item_name(binding.slot_id, c.item_id), c.amount) for c in binding.counts ]
+        )
 
 @dataclass
 class SessionStats(Jsonable):
@@ -719,7 +756,7 @@ class NotificationsRequestPacket(IdentifiablePacket):
 class NotificationsResponsePacket(IdentifiablePacket):
     """Packet sent to gateway in response to a NotificationRequest packet."""
     cmd: ClassVar[str] = "NotificationsResponse"
-    notification: Notification
+    notification: NotificationSettingsDTO
 
 @TrackerPacket.register_packet
 @dataclass

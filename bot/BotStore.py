@@ -1,6 +1,7 @@
 import logging
 import os
-from .BotUtils import Jsonable
+from .BotUtils import Jsonable, NotifyFlags
+from dataclasses import dataclass
 from datetime import datetime
 from pony.orm import(
     Database, Required, Optional, PrimaryKey, Set,
@@ -13,8 +14,6 @@ store = Database()
 
 def init_db():
     db_path = os.path.abspath('bot.db3')
-    logging.info(f"DB path: {db_path}")
-    logging.info(f"CWD: {os.getcwd()}")
 
     store.bind(provider="sqlite", filename=db_path, create_db=True)
     store.generate_mapping(create_tables=True)
@@ -240,18 +239,5 @@ class NotificationTerm(store.Entity):
             if nt.notification.channel_id == channel_id
             and any(nt.term in m for m in casefold_to_match)
         )
-
-
-#endregion
-
-#region DTOs
-
-# @dataclass
-# class BindingDto(Jsonable):
-
-#     def __init__(self, binding: Binding):
-#         self.id = binding.id
-#         self.guild_id = binding.guild_id
-#         self.channel_id = binding.channel_id
 
 #endregion

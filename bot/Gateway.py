@@ -389,33 +389,59 @@ def generate_player_stats_description(agent: AgentProcess, stats: utils.PlayerSt
 
 def generate_notifications_text(agent: AgentProcess, notif: utils.Notification) -> str:
     """Generate a notifications view command response"""
-    return (
-        f"## Notifications for `{agent.get_player_name(notif.slot_id)}`\n"
-        f"- {generate_notifications_hint_text(agent, notif)}\n"
-        f"- {generate_notifications_type_text(agent, notif)}\n"
-        f"- {generate_notifications_term_text(agent, notif)}\n"
-        f"- {generate_notifications_count_text(agent, notif)}"
-    )
 
-def generate_notifications_count_text(agent: AgentProcess, notif: utils.Notification):
+    lines = [
+        f"## Notifications for {format_slot(notif.slot_name)}",
+        f"{generate_notifications_hint_text(agent, notif)}",
+        f"{generate_notifications_type_text(agent, notif)}",
+        f"{generate_notifications_term_text(agent, notif)}",
+        f"{generate_notifications_count_text(agent, notif)}",
+    ]
+
+    return "\n\n".join(lines)
+
+def generate_notifications_count_text(agent: AgentProcess, notif: utils.NotificationSettingsDTO):
     """Generate an item count notifications command response"""
-    player_name: str = agent.get_player_name(notif.slot_id)
-    return f"You will receive a mention when `{player_name}` receives {", ".join([f"**{nc.count}** of the **{nc.item_name}** item" for nc in notif.counts])}" if notif.counts else f"You will not receive item count notifications for `{player_name}`"
+    
+    if not notif.counts:
+        return f"You will not receive item count notifications for {format_slot(notif.slot_name)}"
+    
+    # Sort the list
+    notif.counts.sort()
+    
+    lines = [ f"You will receive a mention when {format_slot(notif.slot_name)} receives:" ]
+    lines += [ f"- **{amt}** more of **{name}**" for name, amt in notif.counts ]
+    return "\n".join(lines)
 
-def generate_notifications_hint_text(agent: AgentProcess, notif: utils.Notification):
+def generate_notifications_hint_text(agent: AgentProcess, notif: utils.NotificationSettingsDTO):
     """Generate a hint notifications command response"""
-    player_name: str = agent.get_player_name(notif.slot_id)
-    return f"You will receive a mention when a hint reveals **{utils.NotifyFlags(notif.hints).to_text()}** items are in `{player_name}`'s world" if notif.hints != utils.NotifyFlags.NONE else f"You will not receive hint notifications for `{player_name}`"
 
-def generate_notifications_term_text(agent: AgentProcess, notif: utils.Notification):
+    if not notif.hint_flags:
+        return f"You will not receive hint notifications for {format_slot(notif.slot_name)}"
+    
+    return f"You will receive a mention when a hint reveals **{utils.NotifyFlags(notif.hint_flags).to_text()}** items are in {format_slot(notif.slot_name)}'s world" \
+
+def generate_notifications_term_text(agent: AgentProcess, notif: utils.NotificationSettingsDTO):
     """Generate an item term notifications command response"""
-    player_name: str = agent.get_player_name(notif.slot_id)
-    return f"You will receive a mention when `{player_name}` receives items containing the term(s) {", ".join(f"`{term}`" for term in notif.terms)}" if notif.terms else f"You will not receive item term notifications for `{player_name}`"
+    
+    if not notif.terms:
+        return f"You will not receive item term notifications for {format_slot(notif.slot_name)}"
 
-def generate_notifications_type_text(agent: AgentProcess, notif: utils.Notification):
+    # Sort the list
+    notif.terms.sort()
+
+    lines = [ f"You will receive a mention when {format_slot(notif.slot_name)} receives an item containing any of the terms:" ]
+    lines += [f"- `{term}`" for term in notif.terms]
+    return "\n".join(lines)
+        
+
+def generate_notifications_type_text(agent: AgentProcess, notif: utils.NotificationSettingsDTO):
     """Generate a item type notifications command response"""
-    player_name: str = agent.get_player_name(notif.slot_id)
-    return f"You will receive a mention when `{player_name}` receives **{utils.NotifyFlags(notif.types).to_text()}** items" if notif.types != utils.NotifyFlags.NONE else f"You will not receive item type notifications for `{player_name}`"
+
+    if not notif.item_flags:
+        return f"You will not receive item type notifications for {format_slot(notif.slot_name)}"
+
+    return f"You will receive a mention when {format_slot(notif.slot_name)} receives **{utils.NotifyFlags(notif.item_flags).to_text()}** items" \
 
 def generate_session_stats_embed(agent: AgentProcess, stats: utils.SessionStats) -> discord.Embed:
     """Generate an embed for a session stats command response"""
@@ -516,7 +542,7 @@ async def notify_clear(interaction: discord.Interaction, slot_name: app_commands
     if response.is_error():
         await interaction.followup.send(format_error("clearing notifications", response.text), ephemeral=True)
     else:    
-        await interaction.followup.send(f"You have cleared all of your notifications for {format_slot(slot_name)}.", ephemeral=True)
+        await interaction.followup.send(f"You have cleared all of your notifications for {format_slot(slot_name)}", ephemeral=True)
 
 @app_commands.describe(action="Action to perform", slot_name="Slot name receiving the item", item_name="Full item name", times="Notify when received X times from now")
 @app_commands.choices(
@@ -551,7 +577,8 @@ async def notify_count(interaction: discord.Interaction, action: int, slot_name:
     if response.is_error():
         await interaction.followup.send(format_error("setting count notification", response.text), ephemeral=True)
     else:
-        await interaction.followup.send(generate_notifications_count_text(agent, response.notification), ephemeral=True)
+        for chunk in split_at_separator(generate_notifications_count_text(agent, response.notification), separator="\n"):
+            await interaction.followup.send(chunk, ephemeral=True)
 
 @app_commands.describe(action="Action to perform", slot_name="Slot name finding the item(s)", item_type="Notify when item type is hinted")
 @app_commands.choices(
@@ -633,7 +660,8 @@ async def notify_terms(interaction: discord.Interaction, action: int, slot_name:
     if response.is_error():
         await interaction.followup.send(format_error("setting term notifications", response.text), ephemeral=True)
     else:
-        await interaction.followup.send(generate_notifications_term_text(agent, response.notification), ephemeral=True)
+        for chunk in split_at_separator(generate_notifications_term_text(agent, response.notification), separator="\n"):
+            await interaction.followup.send(chunk, ephemeral=True)
 
 @app_commands.describe(action="Action to perform", slot_name="Slot name receiving the item(s)", item_type="Notify when item type is received")
 @app_commands.choices(
@@ -699,13 +727,12 @@ async def notify_list(interaction: discord.Interaction, slot_name: app_commands.
         player=slot_name
     ))
 
-    logging.info(f"Notifs: {response.notification}")
-
     # Respond appropriately
     if response.is_error() or not response.notification:
         await interaction.followup.send(format_error("retrieving notifications", response.text), ephemeral=True)
     else:
-        await interaction.followup.send(generate_notifications_text(agent, response.notification), ephemeral=True)
+        for chunk in split_at_separator(generate_notifications_text(agent, response.notification), separator="\n"):
+            await interaction.followup.send(chunk, ephemeral=True)
 
 #endregion
 

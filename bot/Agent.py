@@ -10,7 +10,7 @@ import uuid
 import websockets
 
 from .BotStore import (
-    Binding, NotificationSettings, NotificationCount, NotificationTerm,
+    NotificationSettings,
     init_db,
     store
 )
@@ -1060,13 +1060,18 @@ async def __on_notifications_request_v2(client: StdClient, packet: utils.Notific
         return
 
     try:
+        global __tracker_client
 
         # Bail early if just viewing
         if packet.action == utils.Action.VIEW:
-            await send(utils.ErrorPacket(id=packet.id, original_cmd=packet.cmd, text="Viewing!"))
+            await send(utils.NotificationsResponsePacket(
+                id=packet.id,
+                notification=utils.NotificationSettingsDTO.from_entity(__tracker_client, notif)
+            ))
             return
 
         # Validate and map item counts
+        item_counts = []
         if packet.action != utils.Action.CLEAR and packet.counts:
             if (item_counts:= await validate_item_counts(packet, packet.action, slot_id, packet.counts)) is None:
                 return
@@ -1101,13 +1106,14 @@ async def __on_notifications_request_v2(client: StdClient, packet: utils.Notific
             case utils.Action.CLEAR:
                 notif = notif.update(notif.id, utils.NotifyFlags.NONE, utils.NotifyFlags.NONE, [], {})
 
-        logging.info(f"Post-update: {notif.hint_flags} | {notif.item_flags} | { notif.terms } | {notif.counts}")
+        # Return the notif settings
+        await send(utils.NotificationsResponsePacket(
+            id=packet.id,
+            notification=utils.NotificationSettingsDTO.from_entity(__tracker_client, notif)
+        ))
 
     except Exception as ex:
         await send_invalid(packet, f"{ex}")
-        return
-
-    await send(utils.ErrorPacket(id=packet.id, original_cmd=packet.cmd, text="Actually this was a roaring success."))
 
 # @StdClient.on_notifications_request
 async def __on_notifications_request(client: StdClient, packet: utils.NotificationsRequestPacket):
