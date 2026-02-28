@@ -410,7 +410,7 @@ def generate_notifications_count_text(agent: AgentProcess, notif: utils.Notifica
     notif.counts.sort()
     
     lines = [ f"You will receive a mention when {format_slot(notif.slot_name)} receives:" ]
-    lines += [ f"- **{amt}** more of **{name}**" for name, amt in notif.counts ]
+    lines += [ f"- **{amt}** of the **{name}** item" for name, amt in notif.counts ]
     return "\n".join(lines)
 
 def generate_notifications_hint_text(agent: AgentProcess, notif: utils.NotificationSettingsDTO):

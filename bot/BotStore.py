@@ -1,6 +1,7 @@
 import logging
 import os
 from .BotUtils import Jsonable, NotifyFlags
+from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime
 from pony.orm import(
@@ -268,6 +269,28 @@ class NotificationCount(store.Entity):
 
     @classmethod
     @db_session
+    def get_for_channel(cls, channel_id: int) -> dict[int, list[int]]:
+        "Get slots and their respective items to track counts for"
+
+        if not channel_id:
+            return {}
+        
+        # Get for matching channel
+        matching_slots = cls.select(
+            lambda nc:
+            nc.notification.binding.channel_id == channel_id
+        )
+
+        # Extract slot IDs and all item IDs (unique)
+        slot_items = defaultdict(set)
+        for nc in matching_slots:
+            slot_items[nc.notification.slot_id].add(nc.item_id)
+
+        # Convert to dict with list and return
+        return { k: list(v) for k, v in slot_items.items() }
+
+    @classmethod
+    @db_session
     def pop_users_for_counts(cls, channel_id: int, slot_id: int, to_match: dict[int, int]) -> list[int]:
 
         # If no terms, return nothing
@@ -290,8 +313,6 @@ class NotificationCount(store.Entity):
             nc for nc in matching_items
             if to_match[nc.item_id] >= nc.end_amount
         ]
-
-        logging.info(f"Matching counts: {matching_counts}")
 
         # Compile unique user IDs
         user_ids = list({ nc.notification.user_id for nc in matching_counts })

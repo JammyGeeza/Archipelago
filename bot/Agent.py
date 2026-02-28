@@ -352,6 +352,11 @@ class TrackerClient:
         for game in set([player.game for slot, player in self.__player_lookup.items() if player.game != "Archipelago" ]):
             await self.__send_packet(utils.GetDataPackagePacket(games=[game]))
 
+        # Request item counts (for notifications)
+        if (items_to_count:= NotificationCount.get_for_channel(self.channel_id)):
+            logging.info(f"Requesting item counts for: {items_to_count}")
+            await self.__send_packet(utils.ReceivedCountRequestPacket(id="",slot_items=items_to_count))
+
         # Request stats
         await self.__send_packet(utils.GetStatsPacket(slots=[slot for slot in self.__player_lookup.keys()]))
 
