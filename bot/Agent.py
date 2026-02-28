@@ -12,10 +12,8 @@ import websockets
 from .BotStore import (
     NotificationSettings, NotificationCount, NotificationTerm,
     init_db,
-    store
 )
 from .BotUtils import split_at_separator
-from .Store import Store
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple
 from websockets.asyncio.client import connect
@@ -749,9 +747,6 @@ class TrackerClient:
 # Arguments
 __args: argparse.Namespace
 
-# Store
-__store: Store
-
 # Variables
 __item_counts: Dict[Tuple[int, int], int] = {}
 __item_queue: Dict[int, utils.ItemQueue] = {}
@@ -892,7 +887,6 @@ async def __on_collect(client, slot_id: int):
 async def __on_connection_state_changed(client, state: str, errors: List[str] = []):
     """Handler for the tracker's connection state changing."""
     
-    global __store
     global __tracker_client
 
     msg: str = ""
@@ -916,15 +910,6 @@ async def __on_connection_state_changed(client, state: str, errors: List[str] = 
 
         case "Tracking":
             msg = f"Client is now tracking the session at `{client.host}:{client.port}`"
-
-            # Get notification slot items to check
-            count_items = __store.notifications.get_count_items_for_port(client.port)
-
-            # Request item counts from server
-            await __tracker_client.send(utils.ReceivedCountRequestPacket(
-                id="",
-                slot_items=count_items
-            ))
 
             # Send tracker info
             await send(utils.TrackerInfoPacket(
@@ -1115,132 +1100,6 @@ async def __on_notifications_request_v2(client: StdClient, packet: utils.Notific
     except Exception as ex:
         await send_invalid(packet, f"{ex}")
 
-# @StdClient.on_notifications_request
-async def __on_notifications_request(client: StdClient, packet: utils.NotificationsRequestPacket):
-    """Handle an incoming notifications request."""
-
-    global __item_counts
-    global __store
-    global __tracker_client
-
-    # Validate packet data
-    if packet.action < utils.Action.ADD or packet.action > utils.Action.VIEW:
-        await send(utils.InvalidPacket(
-            id=packet.id,
-            original_cmd=packet.cmd,
-            text=f"Unknown action `{packet.action}`."
-        ))
-        return
-    elif not (slot_id:= __tracker_client.get_slot(packet.player)):
-        await send(utils.InvalidPacket(
-            id=packet.id,
-            original_cmd=packet.cmd,
-            text=f"Player with name `{packet.player}` could not be found."
-        ))
-        return
-    
-    # TODO: Validate the flags??
-    #       I could probably do this in the Notification.__post_init__()...
-    
-    # Check if notification exists, create if it doesn't
-    if not (notif:= __store.notifications.get_or_create(__tracker_client.port, packet.user_id, slot_id)):
-        await send(utils.ErrorPacket(
-            id=packet.id,
-            original_cmd=packet.cmd,
-            text="An error occurred while attempting to get or create notification preferences."
-        ))
-        return
-
-    # If only viewing, everything else can be skipped over
-    if packet.action != utils.Action.VIEW:
-
-        # Validate item names
-        item_map: Dict[str, int] = { item_name: get_item_id(slot_id, item_name) for item_name in packet.counts.keys() }
-        if item_map and (invalid_names:= [item_name for item_name, item_id in item_map.items() if not item_id ]):
-            await send(utils.InvalidPacket(
-                id=packet.id,
-                original_cmd=packet.cmd,
-                text=f"Could not find matching item(s) for {", ".join([f"`{inv}`" for inv in invalid_names])}"
-            ))
-            return
-
-        # If adding, check if there are any new item counts we don't currently have
-        if packet.action == utils.Action.ADD and (unknown_counts:= [ item_id for item_id in item_map.values() if (slot_id, item_id) not in __item_counts ]):
-
-            # Request item counts from server
-            response = await __tracker_client.request(utils.ReceivedCountRequestPacket(
-                id=uuid.uuid4().hex,
-                slot_items={ slot_id: unknown_counts }
-            ))
-
-            # NOTE: Update to __item_counts is handled before the response is passed back to here
-
-            # Validate response
-            if response.is_error():
-                await send(utils.ErrorPacket(
-                    id=packet.id,
-                    original_cmd=packet.cmd,
-                    text="Unable to retrieve item data from server."
-                ))
-                return
-            
-        # Parse received counts to store-able object
-        parsed_counts: List[utils.NotificationCount] = []
-        for item_name, item_id in item_map.items():
-            count = packet.counts.get(item_name)
-            end_count: int = __item_counts.get((slot_id, item_id)) + count
-            parsed_counts.append(utils.NotificationCount(
-                item_id=item_id,
-                count=count,
-                end_at=end_count
-            ))
-
-        match packet.action:
-            case utils.Action.ADD:
-                notif.hints = ((notif.hints or utils.NotifyFlags.NONE) | packet.hints) if packet.hints else notif.hints
-                notif.types = ((notif.types or utils.NotifyFlags.NONE) | packet.types) if packet.types else notif.types
-                notif.terms = list(set(notif.terms or []) | set(packet.terms)) if packet.terms else notif.terms
-                notif.counts = utils.NotificationCount.merge(notif.counts, parsed_counts) if parsed_counts else notif.counts
-
-            case utils.Action.REMOVE:
-                notif.hints = ((notif.hints or utils.NotifyFlags.NONE) & ~packet.hints) if packet.hints else notif.hints
-                notif.types = ((notif.types or utils.NotifyFlags.NONE) & ~packet.types) if packet.types else notif.types
-                notif.terms = list(set(notif.terms or []) - set(packet.terms)) if packet.terms else notif.terms
-                notif.counts = utils.NotificationCount.unmerge(notif.counts, parsed_counts) if parsed_counts else notif.counts
-            
-            case utils.Action.CLEAR:
-                notif.hints = utils.NotifyFlags.NONE
-                notif.types = utils.NotifyFlags.NONE
-                notif.terms = []
-                notif.counts = []
-
-            case _:
-                # This should already be handled at start of method, but just in case...
-                return
-        
-        # Save changes
-        if not (notif:= __store.notifications.upsert(notif)):
-            await send(utils.ErrorPacket(
-                id=packet.id,
-                text="An error occurred while attempting to update the notification preferences."
-            ))
-            return
-        
-        # If remove operation successful, stop tracking counts from removed list
-        if packet.action == utils.Action.REMOVE:
-            for item_id in item_map.keys():
-                __item_counts.pop((slot_id, item_id), None)
-        
-    # Insert item names to notification counts
-    for notif_count in notif.counts:
-        notif_count.item_name = __tracker_client.get_item_name(slot_id, notif_count.item_id)
-
-    # Respond with notification
-    await send(utils.NotificationsResponsePacket(
-        id=packet.id,
-        notification=notif
-    ))
-
 @StdClient.on_statistics_request
 async def __on_statistics_request(client: StdClient, packet: utils.StatisticsRequestPacket):
     """Handle an incoming statistics request."""
@@ -1398,7 +1257,6 @@ def get_users_for_item_term_notifications(slot_id: int, item_names: List[str]) -
 async def main() -> None:
 
     global __args
-    global __store
     global __std_client
     global __tasks
     global __tracker_client
@@ -1412,9 +1270,6 @@ async def main() -> None:
         format=f"[AGENT]    {'%(asctime)s\t' if __args.logtime else ''}%(levelname)s:\t%(message)s | Port: {__args.port}",
         handlers=[logging.StreamHandler(sys.stderr)]
     )
-
-    # Instantiate store
-    __store = Store()
 
     # Instantiate clients
     __std_client = StdClient()

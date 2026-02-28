@@ -11,17 +11,15 @@ import sys
 import uuid
 
 from .BotUtils import format_error, format_port, format_port_slot, format_slot, split_at_separator
-from .BotStore import init_db, store, Binding
+from .BotStore import init_db, Binding
 from discord import app_commands
 from discord.ext import commands
 from pony.orm import IntegrityError, ObjectNotFound, TransactionIntegrityError
-from .Store import Store
 from typing import Dict, Optional
 
 # Global variables
 admin_only: bool = True
 bot = commands.Bot(command_prefix='/', intents=discord.Intents.default())
-store = Store()
 
 class AgentProcess:
 
@@ -596,8 +594,6 @@ async def notify_count(interaction: discord.Interaction, action: int, slot_name:
 async def notify_hints(interaction: discord.Interaction, action: int, slot_name: app_commands.Range[str, 1, 16], item_type: int):
     """Command to modify notifications for targeted hints."""
 
-    global store
-
     logging.info(f"Notify Hints requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id}")
 
     # Defer response
@@ -1055,19 +1051,17 @@ async def on_command_error(interaction: discord.Interaction, error: app_commands
     logging.error(f"Unexpected command error: {error}")
 
     try:
-        # Try normal response first
-        await interaction.response.send_message(f"An unexpected error occurred - please wait a moment and try again.", ephemeral=True)
-    except discord.InteractionResponded:
-        
         try:
-            # Then try follow-up
-            await interaction.followup.send(f"An unexpected error occurred - please wait a moment and try again.", ephemeral=True)
+            # Try normal response first
+            await interaction.response.send_message(f"An unexpected error occurred - please wait a moment and try again.", ephemeral=True)
+
+        except discord.InteractionResponded:
         
-        except Exception:
-            raise
+            # Then try as follow-up
+            await interaction.followup.send(f"An unexpected error occurred - please wait a moment and try again.", ephemeral=True)
     
-    except Exception:
-        pass
+    except Exception as ex:
+        logging.error(format_error("handling command error", ex))
 
 #endregion
 
@@ -1085,16 +1079,12 @@ async def on_guild_channel_update(before: discord.abc.GuildChannel, after: disco
     # If permissions for @everyone send_messages changes to False, wipe binding
     if before_perms and not after_perms:
 
-        global agents
-        global store
-
         # Get agent if running and stop it
-        if (agent:= agents.get(before.id, None)):
+        if (agent:= get_agent(before.id)):
             agent.stop()
 
-        # Delete binding if exists
-        if (binding:= store.bindings.get_one(before.id)):
-            store.bindings.delete(binding)
+        # Delete binding
+        Binding.delete_for_channel(before.id)
 
 @bot.event
 async def on_thread_update(before: discord.Thread, after: discord.Thread):
@@ -1106,16 +1096,12 @@ async def on_thread_update(before: discord.Thread, after: discord.Thread):
     if not before.locked and after.locked:
         logging.info(f"Thread {before.id} has been locked.")
 
-        global agents
-        global store
-
         # Get agent if running and stop it
-        if (agent:= agents.get(before.id, None)):
+        if (agent:= get_agent(before.id)):
             agent.stop()
 
-        # Delete binding if exists
-        if (binding:= store.bindings.get_one(before.id)):
-            store.bindings.delete(binding)
+        # Delete binding
+        Binding.delete_for_channel(before.id)
 
 @bot.event
 async def on_ready():
@@ -1140,12 +1126,6 @@ async def on_ready():
     # Start existing agents from enabled bindings
     for binding in Binding.get_all_enabled():
         await create_agent(binding)
-
-    # # Create and start any existing, actively-bound agents
-    # if (active_bindings:= store.bindings.get_all()):
-    #     logging.info(f"Starting {len(active_bindings)} bound agent(s)...")
-    #     for binding in active_bindings:
-    #         await create_agent(binding)
 
     logging.info(f"Ready!")
 
