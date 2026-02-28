@@ -22,8 +22,16 @@
             <p>In addition to the zip file created by the generator, you may upload a multidata file here as well.</p>
             <div id="host-game-form-wrapper">
                 <form id="host-game-form" method="post" enctype="multipart/form-data">
+                    {% if config.HOST_PASSWORD %}
+                        <input id="host-password" type="password" name="host-password">
+                    {% endif %}
                     <input id="file-input" type="file" name="file">
                 </form>
+                {% if config.HOST_PASSWORD %}
+                    <label for="host_password">Hosting password: </label>
+                    <input id="host-password-input" type="password" name="host-password-input">
+                    <br><br>
+                {% endif %}
                 <button id="host-game-button">Upload File</button>
             </div>
         </div>

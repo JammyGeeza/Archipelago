@@ -171,8 +171,14 @@ def upload_zip_to_db(zfile: zipfile.ZipFile, owner=None, meta={"race": False}, s
 @app.route("/uploads", methods=["GET", "POST"])
 def uploads():
     if request.method == "POST":
+
+        # Validate the password, if required
+        host_password = app.config.get("HOST_PASSWORD", None)
+        if host_password and (request.form.get("host-password") != host_password):
+            flash("Invalid hosting password")
+
         # check if the POST request has a file part.
-        if "file" not in request.files:
+        elif "file" not in request.files:
             flash("No file part in POST request.")
         else:
             uploaded_file = request.files["file"]
