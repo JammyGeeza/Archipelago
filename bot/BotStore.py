@@ -178,6 +178,58 @@ class NotificationSettings(store.Entity):
     
     @classmethod
     @db_session
+    def get_users_for_hint_flags(cls, channel_id: int, slot_id: int, hint_flags: int) -> list[int]:
+        """Get all notification settings for a channel where the slot's hint flags match."""
+        
+        # Bail if no hint flags
+        if hint_flags == 0:
+            return []
+        
+        # Get matching items
+        matching_items = cls.select(
+            lambda n:
+            n.binding.channel_id == channel_id
+            and n.slot_id == slot_id
+        )[:]
+
+        # Get with matching flags (as BITAND not supported)
+        matching_flags = [
+            n.user_id
+            for n in matching_items
+            if (n.hint_flags & hint_flags) != 0
+        ]
+        
+        # Return unique user IDs
+        return list({ id for id in matching_flags })
+
+    @classmethod
+    @db_session
+    def get_users_for_item_flags(cls, channel_id: int, slot_id: int, item_flags: int) -> list[int]:
+        """Get all notification settings for a channel where the slot's hint flags match."""
+        
+        # Bail if no item flags
+        if item_flags == 0:
+            return []
+        
+        # Get matching items
+        matching_items = cls.select(
+            lambda n:
+            n.binding.channel_id == channel_id
+            and n.slot_id == slot_id
+        )[:]
+
+        # Get with matching flags (as BITAND not supported)
+        matching_flags = [
+            n.user_id
+            for n in matching_items
+            if (n.item_flags & item_flags) != 0
+        ]
+        
+        # Return unique user IDs
+        return list({ id for id in matching_flags })
+
+    @classmethod
+    @db_session
     def get_for_user_slot(cls, channel_id: int, user_id: int, slot_id: int) -> "NotificationSettings":
         return cls.select(
             n for n in NotificationSettings
@@ -214,6 +266,43 @@ class NotificationCount(store.Entity):
 
     composite_key(notification, item_id, amount)
 
+    @classmethod
+    @db_session
+    def pop_users_for_counts(cls, channel_id: int, slot_id: int, to_match: dict[int, int]) -> list[int]:
+
+        # If no terms, return nothing
+        if not to_match:
+            return []
+
+        # Get item IDs
+        item_ids = list(to_match.keys())
+
+        # Get with matching items
+        matching_items = cls.select(
+            lambda nc:
+            nc.notification.binding.channel_id == channel_id
+            and nc.notification.slot_id == slot_id
+            and nc.item_id in item_ids
+        )
+
+        # Get with matching thresholds
+        matching_counts = [
+            nc for nc in matching_items
+            if to_match[nc.item_id] >= nc.end_amount
+        ]
+
+        logging.info(f"Matching counts: {matching_counts}")
+
+        # Compile unique user IDs
+        user_ids = list({ nc.notification.user_id for nc in matching_counts })
+
+        # Remove matches
+        for nc in matching_counts:
+            nc.delete()
+
+        # return IDs
+        return user_ids
+
 class NotificationTerm(store.Entity):
     id = PrimaryKey(int, auto=True)
     notification = Required(NotificationSettings)
@@ -225,7 +314,7 @@ class NotificationTerm(store.Entity):
 
     @classmethod
     @db_session
-    def get_terms_match(cls, channel_id: int, to_match: list[str]) -> list["NotificationTerm"]:
+    def get_users_for_terms(cls, channel_id: int, slot_id: int, to_match: list[str]) -> list[int]:
 
         # If no terms, return nothing
         if not to_match:
@@ -234,10 +323,21 @@ class NotificationTerm(store.Entity):
         # Casefold all matches
         casefold_to_match: list[str] = [m.casefold() for m in to_match]
 
-        return cls.select(
-            nt for nt in NotificationTerm
-            if nt.notification.channel_id == channel_id
-            and any(nt.term in m for m in casefold_to_match)
+        # Match by slot
+        matching_slot = cls.select(
+            lambda nt:
+            nt.notification.binding.channel_id == channel_id
+            and nt.notification.slot_id == slot_id
         )
+
+        # Match by term 'LIKE' (wasn't supported as SQL)
+        matching_terms = [
+            nt.notification.user_id
+            for nt in matching_slot
+            if any(nt.term in term for term in casefold_to_match)
+        ]
+
+        # Compile unique IDs
+        return list({ id for id in matching_terms })
 
 #endregion

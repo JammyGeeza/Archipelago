@@ -10,7 +10,7 @@ import uuid
 import websockets
 
 from .BotStore import (
-    NotificationSettings,
+    NotificationSettings, NotificationCount, NotificationTerm,
     init_db,
     store
 )
@@ -676,11 +676,6 @@ class TrackerClient:
                                     id=id,
                                     text="Client disconnected from the archipelago server before receiving a response."
                                 ))
-                                # if not req.done():
-                                #     await self.__handle_packet(utils.ErrorPacket(
-                                #         id=id,
-                                #         text="Client disconnected from the archipelago server before receiving a response."
-                                #     ))
 
                             # Cancel pending tasks
                             for task in pending:
@@ -848,8 +843,8 @@ def generate_hint_text(recipient: int, item: utils.NetworkItem) -> str:
     # Generate hint text with mentions, if applicable
     return append_mentions(
         f"**[HINT]**: `{get_player(recipient)}`'s item **{get_item(recipient, item.item)} _({utils.NotifyFlags.item_to_notify_flags(item.flags).to_text()})_**" \
-             f" is at `{get_player(item.player)}`'s location **{get_location(item.player, item.location)}**",
-        get_hint_flag_notifications(item.player, item.flags),
+            f" is at `{get_player(item.player)}`'s location **{get_location(item.player, item.location)}**",
+        get_users_for_hint_flag_notifications(item.player, item.flags),
     )
 
 def generate_networkhint_text(hint: utils.Hint):
@@ -874,9 +869,9 @@ def generate_items_text(recipient: int, items: Dict[int, utils.QueuedItemData]) 
     return append_mentions(
         f"`{get_player(recipient)}` received their " + ", ".join([f"**{item_name}**" + (f" **_(x{count})_**" if count > 1 else "") for item_name, count in item_counts.items()]),
         list(
-            set(get_item_flag_notifications(recipient, combined_flags)) | 
-            set(get_item_term_notifications(recipient, [ name for name in item_counts.keys() ])) |
-            set(get_item_count_notifications(recipient, { tup[1]: rcv_count for tup, rcv_count in __item_counts.items() if tup[0] == recipient and tup[1] in items.keys() }))
+            set(get_users_for_item_flag_notifications(recipient, combined_flags)) | 
+            set(get_users_for_item_term_notifications(recipient, [ name for name in item_counts.keys() ])) |
+            set(get_users_for_item_count_notifications(recipient, { tup[1]: rcv_count for tup, rcv_count in __item_counts.items() if tup[0] == recipient and tup[1] in items.keys() }))
         )
     )
 
@@ -1343,55 +1338,56 @@ def get_location(slot_id: int, location_id: int) -> str | None:
     global __tracker_client
     return __tracker_client.get_location_name(slot_id, location_id)
 
-def get_hint_flag_notifications(slot_id: int, item_flags: int) -> List[int]:
+def get_users_for_hint_flag_notifications(slot_id: int, hint_flags: int) -> List[int]:
     """Get user IDs subscribed to 'hinted item' notifications with these flags."""
-
-    global __store
     global __tracker_client
 
-    # Get notifications from store
-    return __store.notifications.get_for_hint_flags(
-        __tracker_client.port,
+    if not (converted_flags:= utils.NotifyFlags.item_to_notify_flags(hint_flags).value):
+        return []  
+
+    return NotificationSettings.get_users_for_hint_flags(
+        __tracker_client.channel_id,
         slot_id,
-        utils.NotifyFlags.item_to_notify_flags(item_flags)
+        hint_flags
     )
 
-def get_item_count_notifications(slot_id: int, item_counts: Dict[int, int]) -> List[int]:
+def get_users_for_item_count_notifications(slot_id: int, item_counts: Dict[int, int]) -> List[int]:
     """Get user IDs subscribed to 'item count' notifications for these item counts."""
+    global __tracker_client
 
-    global __store
+    if not item_counts:
+        return []
 
-    # Get notifications from store
-    return __store.notification_counts.pop_for_item_counts(
-        __tracker_client.port,
+    return NotificationCount.pop_users_for_counts(
+        __tracker_client.channel_id,
         slot_id,
         item_counts
     )
 
-def get_item_flag_notifications(slot_id: int, item_flags: int) -> List[int]:
+def get_users_for_item_flag_notifications(slot_id: int, item_flags: int) -> List[int]:
     """Get user IDs subscribed to 'item received' notifications with these flags."""
-
-    global __store
     global __tracker_client
 
-    # Get notifications from store
-    return __store.notifications.get_for_item_flags(
-        __tracker_client.port,
+    if not (converted_flags:= utils.NotifyFlags.item_to_notify_flags(item_flags).value):
+        return []  
+    
+    return NotificationSettings.get_users_for_item_flags(
+        __tracker_client.channel_id,
         slot_id,
-        utils.NotifyFlags.item_to_notify_flags(item_flags)
+        converted_flags
     )
 
-def get_item_term_notifications(slot_id: int, item_names: List[str]) -> List[int]:
+def get_users_for_item_term_notifications(slot_id: int, item_names: List[str]) -> List[int]:
     """Get user IDs subscribed to 'item received' notifications with terms within these item names."""
-
-    global __store
     global __tracker_client
 
-    # Get notifications from store
-    return __store.notifications.get_for_terms(
-       __tracker_client.port,
-       slot_id,
-       item_names
+    if not item_names:
+        return []
+    
+    return NotificationTerm.get_users_for_terms(
+        __tracker_client.channel_id,
+        slot_id,
+        item_names
     )
 
 async def main() -> None:
