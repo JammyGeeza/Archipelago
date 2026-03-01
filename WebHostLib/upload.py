@@ -1,3 +1,4 @@
+import hmac
 import json
 import pickle
 import typing
@@ -171,8 +172,13 @@ def upload_zip_to_db(zfile: zipfile.ZipFile, owner=None, meta={"race": False}, s
 @app.route("/uploads", methods=["GET", "POST"])
 def uploads():
     if request.method == "POST":
+
+        # Validate password, if required
+        if app.config.get("HOST_PASSWORD", None) and not hmac.compare_digest(request.form.get("host-password", ""), app.config["HOST_PASSWORD"]):
+            flash("Invalid hosting password")
+
         # check if the POST request has a file part.
-        if "file" not in request.files:
+        elif "file" not in request.files:
             flash("No file part in POST request.")
         else:
             uploaded_file = request.files["file"]

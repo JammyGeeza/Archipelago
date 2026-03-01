@@ -926,22 +926,29 @@ class GatewaySettings(Group):
     """Settings for bot/Gateway.py"""
 
     token: str = ""
-    admin_only: bool = True
     loglevel: str = "info"
-    logtime: bool = False
+    logtime: bool = True
 
 class AgentSettings(Group):
     """Settings for bot/Agent.py"""
 
     host: str = "localhost"
     loglevel: str = "info"
-    logtime: bool = False
+    logtime: bool = True
+
+class PonySettings(Group):
+    """Settings for pony.orm (bot/BotStore.py)"""
+
+    provider: str = "sqlite"
+    filename: str = "bot.db3"
+    create_db: bool = True
 
 class BotSettings(Group):
     """Settings for bot/Gateway.py and bot/Agent.py"""
 
     gateway: GatewaySettings = GatewaySettings()
     agent: AgentSettings = AgentSettings()
+    pony: PonySettings = PonySettings()
 
     _filename: str | None = None
 
