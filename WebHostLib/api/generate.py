@@ -12,10 +12,13 @@ from WebHostLib.generate import get_meta
 from WebHostLib.models import Generation, STATE_QUEUED, Seed, STATE_ERROR
 from . import api_endpoints
 
-
 @api_endpoints.route('/generate', methods=['POST'])
 def generate_api():
-    try:
+    try:    
+        # Bail if generation disabled
+        if app.config["GENERATORS"] <= 0:
+            return { "text": "Multiworld generation is currently disabled." }
+
         options = {}
         race = False
         meta_options_source = {}

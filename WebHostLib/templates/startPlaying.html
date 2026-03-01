@@ -17,13 +17,21 @@
                 <a href="/tutorial">tutorials</a> page. It has all the resources you need to create a config file
                 and get started. If you already have a config file, or a zip file containing them, read on.
                 <br /><br />
+                
+                {% if config.GENERATORS > 0 %}
+                    To start playing a game, you'll first need to <a href="/generate">generate a randomized game</a>.
+                    You'll need to upload one or more config files (YAMLs) or a zip file containing one or more config files.
+                    <br /><br />
 
-                To start playing a game, you'll first need to <a href="/generate">generate a randomized game</a>.
-                You'll need to upload one or more config files (YAMLs) or a zip file containing one or more config files.
-                <br /><br />
+                    If you have already generated a game and just need to host it, this site can<br />
+                    <a href="uploads">host a pre-generated game</a> for you.
+                {% else %}
+                To start playing a game, you'll first need to generate a randomized game<br> with the
+                    <a href="/tutorial/Archipelago/setup_en"> Archipelago Launcher</a>.
+                    <br /><br />
 
-                If you have already generated a game and just need to host it, this site can<br />
-                <a href="uploads">host a pre-generated game</a> for you.
+                    Once generated, you can <a href="uploads">host your pre-generated game</a> here.
+                {% endif %}
             </p>
         </div>
     </div>

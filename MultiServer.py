@@ -2214,14 +2214,22 @@ async def process_client_cmd(ctx: Context, client: Client, args: dict):
             for key in args["keys"]:
                 ctx.stored_data_notification_clients[key].add(client)
 
+        #region BOT ADDITIONS
+
+        elif cmd == "CommandRequest":
+            await handle_cmd_request(ctx, client, args)
+
         elif cmd == "GetStats":
             await handle_getstats_request(ctx, client, args)
+
+        elif cmd == "HintRequest":
+            # await handle_hint_request_v2(ctx, client, args)
+            await handle_hint_request(ctx, client, args)
 
         elif cmd == "ReceivedCountRequest":
             await handle_receivedcount_request(ctx, client, args)
 
-        elif cmd == "SlotActionRequest":
-            await handle_slotaction_request(ctx, client, args)
+        #endregion
 
 def update_client_status(ctx: Context, client: Client, new_status: ClientStatus):
     current = ctx.client_game_state[client.team, client.slot]
@@ -2240,7 +2248,7 @@ def update_client_status(ctx: Context, client: Client, new_status: ClientStatus)
 
 #region My Bot Extensions
 
-async def forward_hints_to_bots(ctx: Context, team: int, hints: list[Hint]):
+def forward_hints_to_bots(ctx: Context, team: int, hints: list[Hint]):
     """Forward a list of hints to connected bot clients."""
 
     # Bail if no hints
@@ -2266,6 +2274,26 @@ async def forward_hints_to_bots(ctx: Context, team: int, hints: list[Hint]):
     # Forward to bot clients
     for bot in bot_clients:
         async_start(ctx.send_msgs(bot, bot_hints))
+
+async def handle_cmd_request(ctx: Context, client: Client, args: dict):
+    """Handle an incoming ReceivedCountRequestPacket."""
+
+    if not _client_is_bot(ctx, client):
+        await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "type": "auth",
+                                        "text": "Players cannot request commands.", "original_cmd": None}])
+        return
+
+    if "command" not in args or type(args["command"]) != str:
+        await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "id": args["id"], "type": "arguments",
+                                        "text": "Invalid 'cmd' argument.", "original_cmd": args["cmd"]}])
+        return
+    
+    # Ensure slash prefix and perform command
+    command: str = f"/{args['command'].strip('/')}"
+    success: bool = ctx.commandprocessor(command)
+
+    # Respond with result
+    await ctx.send_msgs(client, [{'cmd': "CommandResponse", "id": args["id"], "success": success }])
 
 async def handle_getstats_request(ctx: Context, client: Client, args: dict):
     """Handle an incoming GetStatsPacket."""
@@ -2295,6 +2323,46 @@ async def handle_getstats_request(ctx: Context, client: Client, args: dict):
 
     await ctx.send_msgs(client, [{ 'cmd': "Stats", "stats": stats }])
 
+async def handle_hint_request(ctx: Context, client: Client, args: dict):
+    """Handle an incoming hint request"""
+
+    if not _client_is_bot(ctx, client):
+        await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "id": args["id"], "type": "auth",
+                                        "text": "Players cannot request hints.", "original_cmd": None}])
+        return
+    
+    elif "password" not in args and ctx.password or args["password"] != ctx.password:
+        await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "id": args["id"], "type": "InvalidPassword",
+                                        "text": "Invalid password provided", "original_cmd": args["cmd"]}])
+        return
+    
+    elif "slot_name" not in args or type(args["slot_name"]) != str:
+        await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "id": args["id"], "type": "arguments",
+                                        "text": "Invalid 'slot_name' argument.", "original_cmd": args["cmd"]}])
+        return
+    
+    elif "item_name" not in args or type(args["item_name"]) != str:
+        await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "id": args["id"], "type": "arguments",
+                                        "text": "Invalid 'item_name' argument.", "original_cmd": args["cmd"]}])
+        return
+        
+    # Validate player
+    seeked_player, usable, response = get_intended_text(args["slot_name"], ctx.player_names.values())
+    if not usable:
+        await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "id": args["id"], "type": "arguments",
+                                      "text": response }])
+        return
+    
+    # Get player and request item hints
+    team, slot = ctx.player_name_lookup[seeked_player]
+    success, hints, comment = _request_slot_item_hints(ctx, team, slot, args["item_name"])
+
+    # Filter out found hints
+    unfound_hints = [hint for hint in hints if not hint.found]
+
+    await ctx.send_msgs(client, [{'cmd': "HintResponse", "id": args["id"], "hints": unfound_hints, 
+                                  "comment": comment, "success": success }])
+
 async def handle_receivedcount_request(ctx: Context, client: Client, args: dict):
     """Handle an incoming ReceivedCountRequestPacket."""
 
@@ -2323,41 +2391,6 @@ async def handle_receivedcount_request(ctx: Context, client: Client, args: dict)
 
     # Respond
     await ctx.send_msgs(client, [{ 'cmd': "ReceivedCountResponse", "id": args["id"], "counts": counts }])
-
-async def handle_slotaction_request(ctx: Context, client: Client, args: dict):
-    """Handle an incoming SlotActionRequestPacket"""
-
-    if not _client_is_bot(ctx, client):
-        await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "id": args["id"], "type": "auth",
-                                        "text": "Players cannot request slot actions.", "original_cmd": None}])
-        return
-    
-    elif "slot_id" not in args or type(args["slot_id"]) != int:
-        await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "id": args["id"], "type": "arguments",
-                                        "text": "Invalid 'slot_id' argument.", "original_cmd": args["cmd"]}])
-        return
-    
-    elif not (slot:= next(slot for slot in ctx.get_players_package() if slot.slot == args["slot_id"])):
-        await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "id": args["id"], "type": "arguments",
-                                        "text": "Invalid 'slot_id' argument.", "original_cmd": args["cmd"]}])
-        return
-    elif not args["action"] & (1 | 2 | 4):
-        await ctx.send_msgs(client, [{'cmd': "InvalidPacket", "id": args["id"], "type": "arguments",
-                                        "text": "Invalid 'action' argument.", "original_cmd": args["cmd"]}])
-        return
-
-    try:
-        # Perform actions
-        if args["action"] & 1: collect_player(ctx, slot.team, slot.slot)
-        if args["action"] & 2: release_player(ctx, slot.team, slot.slot)
-        if args["action"] & 4: _goal_player(ctx, slot.team, slot.slot)
-        
-        await ctx.send_msgs(client, [{'cmd': "SlotActionResponse", "id": args["id"],
-                                        "action": args["action"], "success": True }])
-
-    except Exception as ex:
-        await ctx.send_msgs(client, [{'cmd': "SlotActionResponse", "id": args["id"],
-                                        "action": args["action"], "success": False}])
 
 def _client_is_bot(ctx: Context, client: Client) -> bool:
     """Check if a client is connected as a bot client."""
@@ -2402,6 +2435,116 @@ def _goal_player(ctx: Context, team: int, slot: int):
         ctx.client_game_state[(team, slot)] = ClientStatus.CLIENT_GOAL
         ctx.on_client_status_change(team, slot)
         ctx.save()
+
+def _request_slot_item_hints(ctx: Context, team: int, slot: int, input_text: str) -> tuple[bool, list[Hint], str]:
+    """"""
+
+    game = ctx.games[slot]
+    if game not in ctx.all_item_and_group_names:
+        return False, [], "Can't look up item/location for unknown game. Hint for ID instead."
+    
+    names = ctx.all_item_and_group_names[game]
+    hint_name, usable, response = get_intended_text(input_text, names)
+
+    hints: list[Hint] = []
+
+    if usable:
+        if hint_name in ctx.non_hintable_names[game]:
+            return False, [], f"Sorry, \"{hint_name}\" is marked as non-hintable."
+        
+        elif hint_name in ctx.item_name_groups[game]:  # item group name
+            hints = []
+            for item_name in ctx.item_name_groups[game][hint_name]:
+                if item_name in ctx.item_names_for_game(game):  # ensure item has an ID
+                    hints.extend(collect_hints(ctx, team, slot, item_name))
+
+        elif hint_name in ctx.item_names_for_game(game):  # item name
+            hints = collect_hints(ctx, team, slot, hint_name)
+
+        else:
+            return False, [], f"No item can be hinted for {input_text}"
+
+    else:
+        return False, [], response
+
+    # Calculate points
+    points_available = get_slot_points(ctx, team, slot)
+    cost = ctx.get_hint_cost(slot)
+    comment: str = ""
+
+    if hints:
+
+        new_hints = set(hints) - ctx.hints[team, slot]
+        old_hints = list(set(hints) - new_hints)
+        
+        if old_hints and not new_hints:
+            ctx.notify_hints(team, old_hints)
+            comment = "Hint was previously used, no points deducted."
+        
+        if new_hints:
+
+            found_hints = [hint for hint in new_hints if hint.found]
+            not_found_hints = [hint for hint in new_hints if not hint.found]
+
+            if not not_found_hints:  # everything's been found, no need to pay
+                can_pay = 1000
+
+            elif cost:
+                can_pay = int((points_available // cost) > 0)  # limit to 1 new hint per call
+            else:
+                can_pay = 1000
+
+            ctx.random.shuffle(not_found_hints)
+            # By popular vote, make hints prefer non-local placements
+            not_found_hints.sort(key=lambda hint: int(hint.receiving_player != hint.finding_player))
+            # By another popular vote, prefer early sphere
+            not_found_hints.sort(key=lambda hint: ctx.get_sphere(hint.finding_player, hint.location),
+                                    reverse=True)
+
+            hints = found_hints + old_hints
+
+            while can_pay > 0:
+
+                if not not_found_hints:
+                    break
+
+                hint = not_found_hints.pop()
+                hints.append(hint)
+                can_pay -= 1
+                ctx.hints_used[team, slot] += 1
+
+            ctx.notify_hints(team, hints)
+
+            if not_found_hints:
+
+                points_available = get_slot_points(ctx, team, slot)
+
+                if hints and cost and int((points_available // cost) == 0):
+                    comment = f"There may be more hintables, however, you cannot afford to pay for any more. " \
+                        f" You have {points_available} and need at least " \
+                        f"{cost}."
+                    
+                elif hints:
+                    comment = "There may be more hintables, you can rerun the command to find more."
+
+                else:
+                    comment = f"You can't afford the hint. " \
+                        f"You have {points_available} points and need at least " \
+                        f"{cost}."
+            
+            ctx.save()
+
+        return True, hints or [], comment
+
+    else:
+        if points_available >= cost:
+            return False, [], f"Nothing found for recognized item name \"{hint_name}\". " \
+                f"Item appears to not exist in this multiworld."
+        
+        else:
+            return False, [], f"You can't afford the hint. " \
+                f"You have {points_available} points and need at least " \
+                f"{cost}."
 
 #endregion
 
@@ -2741,6 +2884,25 @@ class ServerCommandProcessor(CommonCommandProcessor):
         texts.insert(0, f"Found {len(self.ctx.stored_data)} keys, "
                         f"approximately totaling {Utils.format_SI_prefix(total, power=1024)}B")
         self.output("\n".join(texts))
+
+    #region BOT ADDITIONS
+
+    def _cmd_goal(self, player_name: str) -> bool:
+        """Mark a player as goal complete"""
+        seeked_player, usable, response = get_intended_text(player_name, self.ctx.player_names.values())
+        
+        # If player not found, bail
+        if not usable:
+            self.output(response)
+            return False
+        
+        # Find and mark player as goal complete
+        team, slot = self.ctx.player_name_lookup.get(seeked_player)
+        _goal_player(self.ctx, team, slot)
+
+        return True
+    
+    #endregion
 
 
 async def console(ctx: Context):

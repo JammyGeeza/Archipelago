@@ -50,6 +50,7 @@ EnemizerCLI/
 /options.yaml
 /config.yaml
 bot.yaml
+/db/
 /logs/
 _persistent_storage.yaml
 mystery_result_*.yaml

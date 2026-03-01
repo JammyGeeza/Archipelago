@@ -315,13 +315,9 @@ def run_server_process(name: str, ponyconfig: dict, static_server_data: dict,
                 if ctx.port is not None and ctx.port > 0:
                     ports_to_try.insert(0, ctx.port)
 
-                logging.info(f"Alleged last port: {ctx.port}")
-                logging.info(f"Ports to try: {ports_to_try}")
-
                 # If restricted, try each allowed port once
                 if ports_to_try:
                     for p in ports_to_try:
-                        logging.info(f"Trying port: {p}")
                         try:
                             ctx.port = p
                             ctx.server = websockets.serve(
