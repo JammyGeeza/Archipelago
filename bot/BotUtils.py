@@ -816,7 +816,7 @@ def setup_logging(service: str, log_dir="logs", logtime: bool = True, level=logg
     logfile = Path(log_dir) / f"{service}_{ts}.log"
 
     fmt = logging.Formatter(
-        f"{"[%(asctime)s]\t" if logtime else ""}[{service.upper()}.%(name)s]\t%(levelname)s: %(message)s",
+        f"{'[%(asctime)s]\t' if logtime else ''}[{service.upper()}.%(name)s]\t%(levelname)s: %(message)s",
         "%Y-%m-%d %H:%M:%S",
     )
 

@@ -316,7 +316,7 @@ async def _on_agent_item_received(agent: AgentProcess, recipient: int, items: Di
     """Handler for when item(s) are received from an agent."""
 
     # Combine items and their counts
-    item_string: str = ", ".join([ f"**{item} {f"_(x{count})_" if count > 1 else ""}**" for item, count in items.items() ])
+    item_string: str = ", ".join([ f"**{item} {f'_(x{count})_' if count > 1 else ''}**" for item, count in items.items() ])
     await post_message(agent.config.channel_id, f"`{recipient}` has just received their {item_string}")
 
 @AgentProcess.on_status_received

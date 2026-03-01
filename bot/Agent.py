@@ -323,7 +323,7 @@ class TrackerClient:
                 await self.__handle_response_packet(packet)
 
         except Exception as ex:
-            logging.error(f"Unexpected error handling {packet or "unknown"} packet: {ex}")
+            logging.error(f"Unexpected error handling {packet or 'unknown'} packet: {ex}")
             await self.on_error.run(ex)
 
     async def __handle_bounced_packet(self, packet: utils.BouncedPacket):

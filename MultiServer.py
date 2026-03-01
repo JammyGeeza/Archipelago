@@ -2289,7 +2289,7 @@ async def handle_cmd_request(ctx: Context, client: Client, args: dict):
         return
     
     # Ensure slash prefix and perform command
-    command: str = f"/{args["command"].strip("/")}"
+    command: str = f"/{args['command'].strip('/')}"
     success: bool = ctx.commandprocessor(command)
 
     # Respond with result
