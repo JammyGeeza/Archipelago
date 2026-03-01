@@ -3,12 +3,14 @@ import inspect
 import logging
 import json
 import sqlite3
+import sys
 import uuid
 
 from dataclasses import MISSING, dataclass, field, fields, is_dataclass
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from enum import Enum
+from pathlib import Path
 from typing import Any, Callable, ClassVar, Dict, List, Optional, Type, Union, get_args, get_origin
 from uuid import UUID
 
@@ -797,6 +799,39 @@ class TrackerInfoPacket(TrackerPacket):
 #endregion
 
 #region Shared Methods
+
+def setup_logging(service: str, log_dir="logs", logtime: bool = True, level=logging.INFO):
+
+    root = logging.getLogger()
+    root.setLevel(level)
+
+    # If we already configured logging in THIS process, don't do it again
+    if getattr(root, "_bot_logging_configured", False):
+        return
+
+    # Make directory if it doesn't exist already
+    Path(log_dir).mkdir(parents=True, exist_ok=True)
+
+    ts = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    logfile = Path(log_dir) / f"{service}_{ts}.log"
+
+    fmt = logging.Formatter(
+        f"{"[%(asctime)s]\t" if logtime else ""}[{service.upper()}.%(name)s]\t%(levelname)s: %(message)s",
+        "%Y-%m-%d %H:%M:%S",
+    )
+
+    # Add stderr handler ONLY if none exists
+    if not any(isinstance(h, logging.StreamHandler) for h in root.handlers):
+        sh = logging.StreamHandler(sys.stderr)
+        sh.setFormatter(fmt)
+        root.addHandler(sh)
+
+    # Add file handler (don’t clear others)
+    fh = logging.FileHandler(str(logfile), encoding="utf-8")
+    fh.setFormatter(fmt)
+    root.addHandler(fh)
+
+    root._bot_logging_configured = True
 
 def format_error(action: str, ex: Exception) -> str:
     return f"Error {action}: *'{ex}'*"

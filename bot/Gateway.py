@@ -12,13 +12,13 @@ import uuid
 
 from .BotUtils import format_error, format_port, format_port_slot, format_slot, split_at_separator
 from .BotStore import init_db, Binding
+from datetime import datetime
 from discord import app_commands
 from discord.ext import commands
 from pony.orm import IntegrityError, ObjectNotFound, TransactionIntegrityError
 from typing import Dict, Optional
 
 # Global variables
-admin_only: bool = True
 bot = commands.Bot(command_prefix='/', intents=discord.Intents.default())
 
 class AgentProcess:
@@ -271,11 +271,12 @@ def parse_args() -> argparse.Namespace:
 
     parser.add_argument("--token", default=defaults["token"], type=str,
                         help="The discord bot auth token, generated from the discord developer portal.")
-    parser.add_argument("--admin-only", default=defaults["admin_only"], type=bool)
     parser.add_argument("--loglevel", default=defaults["loglevel"], type=str, choices=["debug", "info", "warning", "error", "critical"])
     parser.add_argument("--logtime", default=defaults["logtime"], type=bool)
     
     args = parser.parse_args()
+    args.pony = get_bot_settings().pony.as_dict()
+
     return args
 
 def get_agent(channel_id: int) -> Optional[AgentProcess]:
@@ -473,21 +474,18 @@ def generate_session_stats_description(agent: AgentProcess, stats: utils.Session
 async def main() -> None:
     args = parse_args()
 
-    # Configure logging
-    logging.basicConfig(
-        level=getattr(logging, args.loglevel.upper(), logging.INFO),
-        format=f"[GATEWAY]  {'%(asctime)s\t' if args.logtime else ''}%(levelname)s:\t%(message)s",
-        handlers=[logging.StreamHandler(sys.stderr)]
+    utils.setup_logging(
+        service=f"Gateway",
+        logtime=args.logtime,
+        level=args.loglevel.upper()
     )
 
     # If no token provided
     if not args.token:
         raise SystemExit("No discord bot token provided. Set discord_gateway_options.token in host.yaml or pass --token command-line argument.")
     
-    global admin_only
-    
-    # Set variables
-    admin_only = args.admin_only
+    # Initialize db
+    init_db(args.pony)
 
     # Connect to discord with token
     await bot.start(args.token)
@@ -1119,9 +1117,6 @@ async def on_ready():
     bot.tree.add_command(notify_group)
     bot.tree.add_command(stats_group)
     await bot.tree.sync()
-
-    # Initialize db
-    init_db()
 
     # Start existing agents from enabled bindings
     for binding in Binding.get_all_enabled():

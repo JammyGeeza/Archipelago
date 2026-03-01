@@ -1256,27 +1256,25 @@ def get_users_for_item_term_notifications(slot_id: int, item_names: List[str]) -
 
 async def main() -> None:
 
-    global __args
     global __std_client
     global __tasks
     global __tracker_client
 
     # Parse commandline args
-    __args = parse_args()
+    args = parse_args()
 
-    # Configure logging
-    logging.basicConfig(
-        level=getattr(logging, __args.loglevel.upper(), logging.INFO),
-        format=f"[AGENT]    {'%(asctime)s\t' if __args.logtime else ''}%(levelname)s:\t%(message)s | Port: {__args.port}",
-        handlers=[logging.StreamHandler(sys.stderr)]
+    utils.setup_logging(
+        service=f"Agent_{args.port}",
+        logtime=args.logtime,
+        level=args.loglevel.upper()
     )
 
     # Instantiate clients
     __std_client = StdClient()
-    __tracker_client = TrackerClient(__args)
+    __tracker_client = TrackerClient(args)
 
     # Initialise store
-    init_db()
+    init_db(args.pony)
 
     # Gather and start all asynchronous tasks, exiting when any task completes
     __tasks = [
@@ -1313,6 +1311,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--logtime", default=defaults["logtime"], type=bool)
 
     args = parser.parse_args()
+    args.pony = get_bot_settings().pony.as_dict()
+
     return args
 
 if __name__ == "__main__":

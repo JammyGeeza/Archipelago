@@ -4,6 +4,7 @@ from .BotUtils import Jsonable, NotifyFlags
 from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime
+from pathlib import Path
 from pony.orm import(
     Database, Required, Optional, PrimaryKey, Set,
     ObjectNotFound,
@@ -13,10 +14,14 @@ from pony.orm import(
 
 store = Database()
 
-def init_db():
-    db_path = os.path.abspath('bot.db3')
+def init_db(args):
 
-    store.bind(provider="sqlite", filename=db_path, create_db=True)
+    # Make directory if it doesn't exist
+    path = Path(args["filename"]).expanduser().resolve()
+    path.parent.mkdir(parents=True, exist_ok=True)
+
+    # Bind database
+    store.bind(provider=args["provider"], filename=str(path), create_db=args["create_db"])
     store.generate_mapping(create_tables=True)
 
 #region Entities
