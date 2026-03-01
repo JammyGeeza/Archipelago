@@ -30,6 +30,15 @@ def get_app() -> "Flask":
     from WebHostLib.models import db
 
     app = raw_app
+
+    from datetime import datetime
+
+    @app.context_processor
+    def inject_today():
+        return {
+            "today": datetime.utcnow().strftime("%Y-%m-%d")
+        }
+    
     if os.path.exists(configpath) and not app.config["TESTING"]:
         import yaml
         app.config.from_file(configpath, yaml.safe_load)

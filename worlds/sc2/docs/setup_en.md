@@ -184,8 +184,7 @@ Check the [Archipelago Releases Page](https://github.com/ArchipelagoMW/Archipela
 look up what the latest version is (RC releases are not necessary; that stands for "Release Candidate").
 
 If these things are in order, check the log file for issues (stored at `[Archipelago Directory]/logs/Starcraft2Client.txt`).
-If you can't figure out the log file, visit our [Discord's](https://discord.com/invite/8Z65BR2) tech-support channel 
-for help. 
+If you can't figure out the log file, visit our [Discord's tech-support channel](https://discord.com/invite/8Z65BR2) for help. 
 Please include a specific description of what's going wrong and attach your log file to your message.
 
 ## My keyboard shortcuts profile is not available when I play *StarCraft 2 Archipelago*.
