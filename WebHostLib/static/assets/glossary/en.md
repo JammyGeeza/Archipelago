@@ -66,8 +66,18 @@ A term used for "filler" items that have no bearing on the generation and are ei
 or useless. These items can be very useful depending on the player but are never very important and as such are usually
 termed trash.
 
+## Starbucks'd
+A term coined by our server for a state where logically you can still progress, but is very difficult to do so without certain item(s).
+
+> "It's expensive and not worth the effort." - Kiesco
+
+## Applebee'd
+A term coined by our server for a state where logically you can still progress, but your remaining checks require a lot of effort to reach. E.g. Needing to grind lots of currency or resources.
+
+>"Somewhere you technically could go, but you really don't want to." - Gregorovich
+
 ## Burger King / BK Mode
-A term used in multiworlds when a player is unable to continue to progress and is awaiting an item. The term came to be 
+A term used in multiworlds when a player is unable to continue to progress and is awaiting an item. The term came to be
 after a player, allegedly, was unable to progress during a multiworld and went to Burger King while waiting to receive
 items from other players.
 
@@ -76,6 +86,247 @@ things that would be "out of logic" by the generation.
 
 * "Hard / full BK" is when the player is completely unable to progress even with tricks they may know and are unable to
 continue to play, aside from doing something like killing enemies for experience or money.
+
+Right. Lovely. Clear. Concise. Sensible.
+
+Now, apparently, none of you can read.
+
+Because somewhere along the line, "BK mode" has come to mean _"I have encountered mild inconvenience and therefore I shall dramatically declare myself done."_
+
+That is not BK mode. That is __you being impatient__.
+
+Let’s go through this, slowly, calmly, like adults who have voluntarily chosen to randomise several video games at once.
+
+### Logical BK
+
+Logical BK is when the generator, the actual rules of the seed, say: _"No, my friend. You shall not pass."_
+
+It’s not that you _haven’t looked_.
+It’s not that you _don’t fancy checking that dungeon because it’s a bit long_.
+It’s not that you’ve decided that spike jumps are "a bit fiddly today".
+
+Logical BK means:
+You have done the checks.
+You have examined your options.
+You have stared at your tracker like it’s going to blink first.
+And the logic says: __No progression remains__.
+
+That is Logical BK.
+
+Logical BK is not:
+
+> "I don’t really want to hunt down all of these pokemon on all of the different routes with only a handful of pokeballs and a dream."
+
+That’s not BK. That’s vibes.
+
+If you can do something out of logic, a sequence break, a trick, a cheeky little wall clip you pretend you "only use if necessary" but secretly love, then you are not BK. You are _strategically flexible_.
+
+And that’s fine! That’s fun! That’s why we play this ridiculous format.
+
+But don’t sit there announcing, "I’m BK," while actively ignoring three overworld locations and an entire cave because it’s "probably nothing."
+
+Probably nothing?!
+
+It’s a randomiser. It is entirely something.
+
+### Hard / Full BK
+
+Now. Hard BK. Full BK.
+
+This is sacred ground.
+
+Hard BK is when you have:
+
+Checked everything in logic.
+
+Checked everything out of logic that you personally can perform.
+
+Tried the weird jump.
+
+Tried the slightly worse weird jump.
+
+Tried it again because maybe you were off by a pixel and you have a skill issue.
+
+Killed enemies for twenty minutes hoping the universe will take pity on you.
+
+Considered your life choices.
+
+And then, and only then, do you sigh, the deep sigh of a defeated but dignified gamer, and say:
+
+> "I’m hard BK."
+
+That is a solemn declaration. That is a flag planted in the soil of misfortune. That is not something you toss around because you ran out of bombs.
+
+If you can still access an unchecked region, you are not hard BK.
+If you haven’t done the overworld loop again, you are not hard BK.
+If you are simply "bored of looking," you are not hard BK.
+
+You are… peckish, perhaps.
+
+Which brings us back to the origin.
+
+### The Burger King Incident
+
+A player, allegedly, once got stuck. Properly stuck. Could not progress. Was waiting on items. So what did they do?
+
+They went to Burger King.
+
+That is the level of commitment we are discussing.
+
+They did not say:
+
+>"I’m BK because I don’t fancy Water Temple today."
+
+They physically left their house.
+
+You cannot declare BK while still actively sitting at your desk, half-heartedly hovering over menu options, muttering, "Guess I’m BK," like it’s a personality trait.
+
+If you haven’t even put your shoes on, you are not BK.
+
+### The Misuse Epidemic
+
+What concerns me, and I say this with love, is how casually the term is flung about.
+
+"Oh, I’m BK."
+
+Are you?
+Are you truly?
+Or have you simply encountered resistance?
+
+Because resistance is the point. We signed up for resistance. We randomised our games and invited chaos in. You don’t get to be surprised when chaos arrives.
+
+The amount of times someone has declared BK while:
+
+Having three unchecked entrances.
+
+Ignoring an entire sphere of progression because it’s "annoying".
+
+Forgetting they have a key item.
+
+Not realising they have the item because it was buried in their inventory like a shy little goblin.
+
+And then, magically, magically, the moment someone says, "Have you checked Dodongo's Cavern Map Chest?" suddenly they’re off again.
+
+That wasn’t BK.
+
+That was amnesia.
+
+### The Emotional Inflation of BK
+
+We’ve turned BK into a feeling.
+
+It’s not a feeling.
+
+It’s a state.
+
+"I feel BK."
+
+No. You feel mildly inconvenienced. You feel slightly overwhelmed. You feel like the seed has personally targeted you. That is not the same thing.
+
+If BK becomes "I’m not immediately progressing every thirty seconds," then what are we even doing?
+
+By that logic, every dungeon is BK.
+
+Every puzzle is BK.
+
+Every locked door is BK.
+
+"Oh no, the key is somewhere else. I’m BK."
+No, you’re playing the game.
+
+### The Slippery Slope
+
+If we continue like this, and I genuinely worry that we might, we will end up with subcategories.
+
+"Soft BK"  
+"Emotional BK"  
+"Pre-BK"  
+"BK-adjacent"  
+"Spiritually BK"
+
+Someone will say, "I’m metaphorically BK."
+
+No. Stop.
+
+We had a perfectly good term. It had meaning. It had gravitas. It involved fast food.
+
+And now it’s been diluted into background noise.
+
+### The Tracker Stare
+
+Let me describe true BK for you.
+
+You are staring at your tracker.
+
+You are zooming in and out.
+You are toggling settings you have already checked.
+You are hovering over regions as if they might apologise.
+
+You have mentally replayed every location.
+You have asked yourself whether you miscounted keys.
+You have opened your inventory three times to confirm that yes, you do in fact not own the item you desperately need.
+
+You are in limbo.
+
+That is BK.
+
+Not, "I can’t be bothered to route Death Mountain."
+
+### A Plea
+
+All I’m asking, and I don’t think this is unreasonable, is that we preserve the sanctity of BK mode.
+
+Use it when it’s real.
+
+Use it when it’s earned.
+
+Use it when you have exhausted your options and the seed has put you in the digital equivalent of a waiting room.
+
+Do not use it because you’re mildly grumpy.
+
+Do not use it because you want sympathy.
+
+And absolutely do not use it while actively progressing.
+
+Nothing — and I mean nothing — drains the soul faster than hearing:
+
+> "I’m BK."
+
+Followed immediately by:
+
+> "Oh wait, I can do this."
+
+No you’re not BK. You’re just dramatic.
+
+### In Conclusion
+
+BK mode is a noble tradition born from genuine stagnation and, frankly, a Whopper.
+
+It is not shorthand for "this is mildly tricky."
+
+It is not a cry for attention.
+
+It is not an aesthetic.
+
+It is a specific condition in which progress is impossible without external intervention.
+
+If you can still do something - do it.
+
+If you haven’t checked everything - check it.
+
+If you’re just tired - have a biscuit.
+
+But if you have truly, sincerely, unquestionably run out of options…
+
+Then, and only then, you may rise, stretch, and declare:
+
+> "I am BK."
+
+And I will nod.
+And I will respect it.
+And I will not correct you.
+
+Probably.
 
 ## Sphere
 Archipelago calculates the game playthrough by using a "sphere" system where it has a state for each player and checks
@@ -91,4 +342,3 @@ In some games there are locations that have visible items even if the item itsel
 Some games utilize a scouting feature where when the player "sees" the item it will give a free hint for the item in the
 client letting the players know what the exact item is, since if the item was for that game it would know but the item
 being foreign is a lot harder to represent visually.
-
