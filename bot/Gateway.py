@@ -340,10 +340,16 @@ async def post_message(channel_id: int, message: str):
     """Post a message to a discord channel."""
     global bot
 
-    if (channel:= await bot.fetch_channel(channel_id)):
-        await channel.send(message)
-    else:
-        logging.warning(f"Discord channel with ID {channel_id} could not be found.")
+    try:
+        if (channel:= await bot.fetch_channel(channel_id)):
+            await channel.send(message)
+
+    except Exception as ex:
+        logging.error(format_error(f"posting message to {channel_id}", ex))
+
+        # If channel not found, can't recover from this so delete binding
+        if isinstance(ex, discord.errors.NotFound) and ex.code == 10003:
+            remove_binding(channel_id)
 
 async def create_agent(binding: Binding) -> AgentProcess:
     """Create and start an agent process"""
@@ -470,6 +476,19 @@ def generate_session_stats_description(agent: AgentProcess, stats: utils.Session
         f"**Locations**: {stats.checked}/{total} _({loc_perc}%)_\n"
         f"**Goals**: {stats.goals}/{players} _({goal_perc}%)_"
     )
+
+def remove_binding(channel_id: int):
+    """Remove a binding and stop the agent, if running."""
+
+    # Get agent if running and stop it
+    if (agent:= get_agent(channel_id)):
+        agent.stop()
+
+    try:
+        # Delete binding
+        Binding.delete_for_channel(channel_id)
+    except Exception as ex:
+        logging.error(format_error("removing binding", ex))
 
 async def main() -> None:
     args = parse_args()
@@ -898,6 +917,10 @@ async def unbind(interaction: discord.Interaction):
         logging.error(format_error(f"unbinding channel {interaction.channel_id}", ex))
         await interaction.followup.send(format_error("unbinding channel", ex), ephemeral=True)
     else:
+        # Stop the agent process, if running
+        if (agent:= get_agent(interaction.channel_id)):
+            agent.stop()
+
         await interaction.followup.send(f"Successfully un-bound {interaction.channel.jump_url}", ephemeral=True)
 
 @bot.tree.command(name="connect", description="Connect to the bound room")
@@ -1057,6 +1080,13 @@ async def on_command_error(interaction: discord.Interaction, error: app_commands
         
             # Then try as follow-up
             await interaction.followup.send(f"An unexpected error occurred - please wait a moment and try again.", ephemeral=True)
+
+    except discord.errors.NotFound as ex:
+        logging.error(format_error("handling command error", ex))
+
+        # If somehow channel not found, delete binding and close
+        if ex.code == 10003:
+            remove_binding(interaction.channel_id)
     
     except Exception as ex:
         logging.error(format_error("handling command error", ex))
@@ -1076,13 +1106,10 @@ async def on_guild_channel_update(before: discord.abc.GuildChannel, after: disco
 
     # If permissions for @everyone send_messages changes to False, wipe binding
     if before_perms and not after_perms:
+        logging.info(f"Text channel permissions removed - removing binding...")
 
-        # Get agent if running and stop it
-        if (agent:= get_agent(before.id)):
-            agent.stop()
-
-        # Delete binding
-        Binding.delete_for_channel(before.id)
+        # Remove binding
+        remove_binding(before.id)
 
 @bot.event
 async def on_thread_update(before: discord.Thread, after: discord.Thread):
@@ -1092,14 +1119,10 @@ async def on_thread_update(before: discord.Thread, after: discord.Thread):
 
     # If thread becomes locked, wipe binding
     if not before.locked and after.locked:
-        logging.info(f"Thread {before.id} has been locked.")
+        logging.info(f"Thread {before.id} has been locked - removing binding...")
 
-        # Get agent if running and stop it
-        if (agent:= get_agent(before.id)):
-            agent.stop()
-
-        # Delete binding
-        Binding.delete_for_channel(before.id)
+        # Remove binding
+        remove_binding(before.id)
 
 @bot.event
 async def on_ready():
@@ -1120,6 +1143,14 @@ async def on_ready():
 
     # Start existing agents from enabled bindings
     for binding in Binding.get_all_enabled():
+        
+        # Delete binding if channel not found
+        if not (channel:= bot.get_channel(binding.channel_id)):
+            logging.warning(f"Channel {binding.channel_id} not found - removing binding...")
+            remove_binding(binding.channel_id)
+            return
+
+        # Create agent
         await create_agent(binding)
 
     logging.info(f"Ready!")
