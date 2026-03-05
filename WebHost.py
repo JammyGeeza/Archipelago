@@ -31,12 +31,12 @@ def get_app() -> "Flask":
 
     app = raw_app
 
-    from datetime import datetime
+    from datetime import datetime, UTC
 
     @app.context_processor
     def inject_today():
         return {
-            "today": datetime.utcnow().strftime("%Y-%m-%d")
+            "today": datetime.now(UTC).strftime("%Y-%m-%d")
         }
     
     if os.path.exists(configpath) and not app.config["TESTING"]:
