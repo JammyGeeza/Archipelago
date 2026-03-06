@@ -22,6 +22,7 @@ import time
 import typing
 import weakref
 import zlib
+from signal import SIGINT, SIGTERM, signal
 
 import ModuleUpdate
 
@@ -496,7 +497,8 @@ class Context:
 
         self.read_data = {}
         # there might be a better place to put this.
-        self.read_data["race_mode"] = lambda: decoded_obj.get("race_mode", 0)
+        race_mode = decoded_obj.get("race_mode", 0)
+        self.read_data["race_mode"] = lambda: race_mode
         mdata_ver = decoded_obj["minimum_versions"]["server"]
         if mdata_ver > version_tuple:
             raise RuntimeError(f"Supplied Multidata (.archipelago) requires a server of at least version {mdata_ver}, "
@@ -1305,6 +1307,13 @@ class CommandMeta(type):
             commands.update(base.commands)
         commands.update({command_name[5:]: method for command_name, method in attrs.items() if
                          command_name.startswith("_cmd_")})
+        for command_name, method in commands.items():
+            # wrap async def functions so they run on default asyncio loop
+            if inspect.iscoroutinefunction(method):
+                def _wrapper(self, *args, _method=method, **kwargs):
+                    return async_start(_method(self, *args, **kwargs))
+                functools.update_wrapper(_wrapper, method)
+                commands[command_name] = _wrapper
         return super(CommandMeta, cls).__new__(cls, name, bases, attrs)
 
 
@@ -1878,6 +1887,16 @@ async def process_client_cmd(ctx: Context, client: Client, args: dict):
             team, slot = ctx.connect_names[args['name']]
             game = ctx.games[slot]
 
+            #region BOT ADDITIONS
+
+            # Prevent bot connecting to non-spectator slot
+            if any(tag.lower() == "bot" for tag in args.get("tags", [])):
+                slot_info = ctx.slot_info.get(slot, {})
+                if getattr(slot_info, "type", None) != SlotType.spectator:
+                    errors.add('InvalidClientType')
+
+            #endregion
+
             ignore_game = not args.get("game") and any(tag in _non_game_messages for tag in args["tags"])
 
             if not ignore_game and args['game'] != game:
@@ -2146,7 +2165,6 @@ async def process_client_cmd(ctx: Context, client: Client, args: dict):
             tags = set(args.get("tags", []))
             slots = set(args.get("slots", []))
             args["cmd"] = "Bounced"
-            # msg = ctx.dumper([args])
 
             #region BOT ADDITION
 
@@ -2920,6 +2938,8 @@ async def console(ctx: Context):
             input_text = await queue.get()
             queue.task_done()
             ctx.commandprocessor(input_text)
+        except asyncio.exceptions.CancelledError:
+            ctx.logger.info("ConsoleTask cancelled")
         except:
             import traceback
             traceback.print_exc()
@@ -3086,6 +3106,26 @@ async def main(args: argparse.Namespace):
     console_task = asyncio.create_task(console(ctx))
     if ctx.auto_shutdown:
         ctx.shutdown_task = asyncio.create_task(auto_shutdown(ctx, [console_task]))
+
+    def stop():
+        try:
+            for remove_signal in [SIGINT, SIGTERM]:
+                asyncio.get_event_loop().remove_signal_handler(remove_signal)
+        except NotImplementedError:
+            pass
+        ctx.commandprocessor._cmd_exit()
+
+    def shutdown(signum, frame):
+        stop()
+
+    try:
+        for sig in [SIGINT, SIGTERM]:
+            asyncio.get_event_loop().add_signal_handler(sig, stop)
+    except NotImplementedError:
+        # add_signal_handler is only implemented for UNIX platforms
+        for sig in [SIGINT, SIGTERM]:
+            signal(sig, shutdown)
+
     await ctx.exit_event.wait()
     console_task.cancel()
     if ctx.shutdown_task:
