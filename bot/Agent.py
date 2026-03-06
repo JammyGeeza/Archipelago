@@ -13,7 +13,7 @@ from .BotStore import (
     NotificationSettings, NotificationCount, NotificationTerm,
     init_db,
 )
-from .BotUtils import split_at_separator
+from .BotUtils import format_host_port_slot, split_at_separator
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple
 from websockets.asyncio.client import connect
@@ -299,6 +299,9 @@ class TrackerClient:
                 case utils.DataPackagePacket.cmd:
                     await self.__handle_datapackage_packet(packet)
 
+                case utils.InvalidPacket.cmd:
+                    await self.__handle_invalid_packet(packet)
+
                 case utils.PrintJSONPacket.cmd:
                     await self.__handle_printjson_packet(packet)
 
@@ -376,6 +379,29 @@ class TrackerClient:
         # Store game lookups (and reverse to ID: Name)
         self.__item_lookup.update({ game: { id: name for name, id in data.item_name_to_id.items() } for game, data in packet.data.games.items() })
         self.__location_lookup.update({ game: { id: name for name, id in data.location_name_to_id.items() } for game, data in packet.data.games.items() })
+
+    async def __handle_invalid_packet(self, packet: utils.InvalidPacket):
+        """Handle an incoming Invalid packet."""
+
+        logging.error(f"Invalid packet received for '{packet.original_cmd}' with error(s): {packet.text or packet.errors}")
+
+        match packet.original_cmd:
+
+            case utils.ConnectPacket.cmd | utils.GetDataPackagePacket.cmd:
+                self.stop()
+
+            case utils.GetStatsPacket.cmd:
+                await self.on_error.run(f"Failed to get stats, `/stats` command(s) may not function correctly.")
+                return
+            
+            case utils.ReceivedCountRequestPacket.cmd:
+                await self.on_error.run(f"Failed to get received item counts, `/notify count` notifications may not function correctly.")
+                return
+        
+        # Pass on error if no ID
+        if not packet.id:
+            await self.on_error.run(packet.text)
+        
 
     async def __handle_printjson_packet(self, packet: utils.PrintJSONPacket):
         """Handle an incoming PrintJSON packet"""
@@ -897,19 +923,19 @@ async def __on_connection_state_changed(client, state: str, errors: List[str] = 
             return
 
         case "Connecting":
-            msg = f"Client is attempting to connect to `{client.host}:{client.port}`..."
+            msg = f"Client is attempting to connect to {format_host_port_slot(client.host, client.port, client.slot_name)} ..."
 
         case "Disconnected":
-            msg = f"Client has disconnected from `{client.host}:{client.port}` - please use the `/connect` command to retry."
+            msg = f"Client has disconnected from {format_host_port_slot(client.host, client.port, client.slot_name)} - please use the `/connect` command to retry."
 
         case "Failed": 
-            msg = f"Client has failed to connect to `{client.host}:{client.port}`. Error(s): {", ".join(errors)}"
+            msg = f"Client has failed to connect to {format_host_port_slot(client.host, client.port, client.slot_name)}. Error(s): {", ".join(errors)}"
 
         case "Reconnecting":
-            msg = f"Client connection has failed, attempting to retry connection to `{client.host}:{client.port}` - this may take a few minutes."
+            msg = f"Client connection has failed, attempting to retry connection to {format_host_port_slot(client.host, client.port, client.slot_name)} - this may take a few minutes."
 
         case "Tracking":
-            msg = f"Client is now tracking the session at `{client.host}:{client.port}`"
+            msg = f"Client is now tracking the session at {format_host_port_slot(client.host, client.port, client.slot_name)}"
 
             # Send tracker info
             await send(utils.TrackerInfoPacket(

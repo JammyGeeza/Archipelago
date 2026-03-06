@@ -1878,6 +1878,16 @@ async def process_client_cmd(ctx: Context, client: Client, args: dict):
             team, slot = ctx.connect_names[args['name']]
             game = ctx.games[slot]
 
+            #region BOT ADDITIONS
+
+            # Prevent bot connecting to non-spectator slot
+            if any(tag.lower() == "bot" for tag in args.get("tags", [])):
+                slot_info = ctx.slot_info.get(slot, {})
+                if getattr(slot_info, "type", None) != SlotType.spectator:
+                    errors.add('InvalidClientType')
+
+            #endregion
+
             ignore_game = not args.get("game") and any(tag in _non_game_messages for tag in args["tags"])
 
             if not ignore_game and args['game'] != game:
@@ -2146,7 +2156,6 @@ async def process_client_cmd(ctx: Context, client: Client, args: dict):
             tags = set(args.get("tags", []))
             slots = set(args.get("slots", []))
             args["cmd"] = "Bounced"
-            # msg = ctx.dumper([args])
 
             #region BOT ADDITION
 

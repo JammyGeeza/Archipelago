@@ -845,6 +845,9 @@ def format_slot(slot_name: str) -> str:
 def format_port_slot(port: int, slot_name: str) -> str:
     return f"{format_port(port)} / {format_slot(slot_name)}"
 
+def format_host_port_slot(host: str, port: int, slot_name: str) -> str:
+    return f"`{host}:{port}` / {format_slot(slot_name)}"
+
 def split_at_separator(text: str, limit: int = 2000, separator: str = ", ") -> List[str]:
     """Split a string into chunks no longer than <limit> by <separator>"""
 
