@@ -19,3 +19,9 @@ kivymd>=2.0.1.dev0
 
 # Legacy world dependencies that custom worlds rely on
 Pymem>=1.13.0
+
+# Bot additions
+discord.py==2.6.4
+
+# Databasing
+psycopg2-binary>=2.9
