@@ -436,8 +436,4 @@ class SchemaVersion(store.Entity):
     created_at = Required(datetime, default=lambda: datetime.utcnow())
     modified_at = Required(datetime, default=lambda: datetime.utcnow())
 
-    def increment_version(self):
-        self.version += 1
-        self.modified_at = datetime.utcnow()
-
 #endregion
