@@ -104,6 +104,9 @@ class AgentProcess:
         if self.config.password:
             args += ["--password", self.config.password]
 
+        if self.config.room_id:
+            args += ["--room_id", self.config.room_id]
+
         # Create agent process
         self.process = await asyncio.create_subprocess_exec(
             *args,
@@ -820,12 +823,12 @@ async def view_players(interaction: discord.Interaction, slot_names: str):
 
 #region 'Other' commands
 
-@app_commands.describe(port="The room's port number", slot_name="Slot name to connect as")
+@app_commands.describe(port="The room's port number", slot_name="Slot name to connect as", password="Password, if required", room_id="Room ID `/room/<room_id>` to auto-wake on connect attempt.")
 @bot.tree.command(name="bind", description="Bind this channel to a room")
-async def bind(interaction: discord.Interaction, port: app_commands.Range[int, 1, 65535], slot_name: app_commands.Range[str, 1, 16], password: str | None = None):
+async def bind(interaction: discord.Interaction, port: app_commands.Range[int, 1, 65535], slot_name: app_commands.Range[str, 1, 16], password: str | None = None, room_id: app_commands.Range[str, 1, 25] | None = None):
     """Command to bind a channel to a room."""
 
-    logging.info(f"Binding requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id} | Port: {port}")
+    logging.info(f"Binding requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id}")
     
     # Defer response
     await interaction.response.defer(thinking=True, ephemeral=True)
@@ -837,7 +840,7 @@ async def bind(interaction: discord.Interaction, port: app_commands.Range[int, 1
     
     # Attempt to create binding
     try:
-        binding = Binding.create(interaction.guild_id, interaction.channel_id, port, slot_name, password)
+        binding = Binding.create(interaction.guild_id, interaction.channel_id, port, slot_name, password, room_id)
     except (TransactionIntegrityError, IntegrityError):
         await interaction.followup.send(f"The {format_port_slot(port, slot_name)} combination is already bound to another channel - please `/rebind` or `/unbind` it first.", ephemeral=True)
     except Exception as ex:
@@ -873,22 +876,22 @@ async def cmd(interaction: discord.Interaction, command: str):
     else:
         await interaction.followup.send(f"Command `{command}` was performed successfully.", ephemeral=True)
 
-@app_commands.describe(port="The port number of the local archipelago room", slot_name="The name of the slot to connect to")
-@bot.tree.command(name="rebind", description="Update this channel's current room binding")
-async def rebind(interaction: discord.Interaction, port: app_commands.Range[int, 1, 65535], slot_name: app_commands.Range[str, 1, 16], password: str | None = None):
+@app_commands.describe(port="The new port for the multiworld.")
+@bot.tree.command(name="rebind", description="Update the port number for the multiworld.")
+async def rebind(interaction: discord.Interaction, port: app_commands.Range[int, 1, 65535]):
     """Command to re-bind a channel."""
 
-    logging.info(f"Rebinding requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id} | Port: {port}")
+    logging.info(f"Rebinding requested... | Guild ID: {interaction.guild_id} | Channel ID: {interaction.channel_id}")
     
     # Defer response
     await interaction.response.defer(thinking=True, ephemeral=True)
 
     try:
-        binding = Binding.update(interaction.channel_id, port, slot_name, password)
+        binding = Binding.update(interaction.channel_id, port)
     except ObjectNotFound:
         await interaction.followup.send(f"This channel is not bound - please `/bind` it first.", ephemeral=True)
     except (TransactionIntegrityError, IntegrityError):
-        await interaction.followup.send(f"The {format_port_slot(port, slot_name)} combination is already bound by another channel - please `/unbind` it first.", ephemeral=True)
+        await interaction.followup.send(f"The {format_port_slot(port, binding.slot_name)} combination is already bound by another channel - please `/unbind` it first.", ephemeral=True)
     except Exception as ex:
         await interaction.followup.send(format_error("rebinding channel", ex), ephemeral=True)
     else:
