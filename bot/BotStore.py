@@ -14,34 +14,80 @@ from pony.orm import(
 
 store = Database()
 
+_CURRENT_SCHEMA_VERSION = 1
+_LEGACY_SCHEMA_VERSION = 0
+
 def init_db(args):
 
     # Make directory if it doesn't exist
     path = Path(args["filename"]).expanduser().resolve()
     path.parent.mkdir(parents=True, exist_ok=True)
 
+    # Does db already exist?
+    new_db = not Path(path).exists()
+
     # Bind database
     store.bind(provider=args["provider"], filename=str(path), create_db=args["create_db"])
+
+    # Apply migrations, if required
+    _migrate(store, new_db)
+
+    # Creaate mapping / schema
     store.generate_mapping(create_tables=True)
 
-    # Perform migrations
-    _migrate(store)
+def column_exists(db: Database, table_name: str, column_name: str) -> bool:
+    columns = db.execute(f"PRAGMA table_info('{table_name}')").fetchall()
+    return any(col[1] == column_name for col in columns)
 
 @db_session
-def _migrate(db: Database):
+def _migrate(db: Database, new_db: bool):
 
-    # Update `version=1` to the latest version number for each migration added.
-    # This is because systems that don't already have the DB file will attempt to re-apply migration logic.
-    schema_version = SchemaVersion.get(id=1) or SchemaVersion(id=1, version=1)
+    # Create migration table, if it doesn't exist - manual SQL here to create table as SchemaVersion needs to exist
+    # BEFORE the mappings are created, if the DB file already exists but SchemaVersion table doesn't.
+    db.execute("""
+        CREATE TABLE IF NOT EXISTS SchemaVersion (
+            id          INTEGER PRIMARY KEY,
+            version     INTEGER NOT NULL,
+            created_at  TEXT NOT NULL,
+            modified_at TEXT
+        )
+    """)
 
-    if schema_version.version < 1:
-        db.execute("ALTER TABLE Binding ADD COLUMN room_id TEXT;")
-        schema_version.increment_version()
+    # Get version record, if exists
+    row = db.execute("SELECT version FROM SchemaVersion WHERE id = 1").fetchone()
+    if row is None:
+        version = _CURRENT_SCHEMA_VERSION if new_db else _LEGACY_SCHEMA_VERSION
+        created_at = datetime.utcnow().isoformat()
 
-    # If adding/removing/modifying columns, add additional migrations here to perform scheme changes, for example:
-    # if schema_version < 2:
-    #   db.execute("SQL SCRIPT HERE")
-    #   schema_version.increment_version()
+        db.execute("INSERT INTO SchemaVersion (id, version, created_at) VALUES (1, $version, $created_at)")
+    else:
+        version = row[0]
+    
+    # Apply migration(s) if lower than current schema version
+    if version < _CURRENT_SCHEMA_VERSION:
+        
+        # Apply migration 1, if required
+        if version < 1:
+            if not column_exists(db, "Binding", "room_id"):
+                db.execute("ALTER TABLE Binding ADD COLUMN room_id TEXT")
+
+        # If adding/removing/modifying further columns in existing tables, do the following:
+        # - Increment _CURRENT_SCHEMA_VERSION by 1
+        # - Add new schema logic as current schema version. Example:
+        #       if schema_version < 2:
+        #           if not column_exists(db, "TableName", "ColumnName"):
+        #               db.execute("ALTER TABLE TableName ADD COLUMN ColumnName INTEGER")
+
+        version = _CURRENT_SCHEMA_VERSION
+        modified_at = datetime.utcnow().isoformat()
+
+        # Set to current version
+        db.execute("""
+            UPDATE SchemaVersion 
+            SET version = $version, modified_at = $modified_at
+            WHERE id = 1
+            """
+        )
 
 #region Entities
 
