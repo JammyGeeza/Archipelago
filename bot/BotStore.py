@@ -8,7 +8,7 @@ from pathlib import Path
 from pony.orm import(
     Database, Required, Optional, PrimaryKey, Set,
     ObjectNotFound,
-    composite_key, delete,
+    composite_key, delete, desc,
     db_session
 )
 
@@ -24,6 +24,25 @@ def init_db(args):
     store.bind(provider=args["provider"], filename=str(path), create_db=args["create_db"])
     store.generate_mapping(create_tables=True)
 
+    # Perform migrations
+    _migrate(store)
+
+@db_session
+def _migrate(db: Database):
+
+    # Update `version=1` to the latest version number for each migration added.
+    # This is because systems that don't already have the DB file will attempt to re-apply migration logic.
+    schema_version = SchemaVersion.get(id=1) or SchemaVersion(id=1, version=1)
+
+    if schema_version.version < 1:
+        db.execute("ALTER TABLE Binding ADD COLUMN room_id TEXT;")
+        schema_version.increment_version()
+
+    # If adding/removing/modifying columns, add additional migrations here to perform scheme changes, for example:
+    # if schema_version < 2:
+    #   db.execute("SQL SCRIPT HERE")
+    #   schema_version.increment_version()
+
 #region Entities
 
 class Binding(store.Entity):
@@ -33,6 +52,7 @@ class Binding(store.Entity):
     port = Required(int)
     slot_name = Required(str)
     password = Optional(str, nullable=True)
+    room_id = Optional(str, nullable=True)
     enabled = Required(bool, default=True)
     created_at = Required(datetime, default=lambda: datetime.utcnow())
     modified_at = Optional(datetime, nullable=True)
@@ -51,8 +71,8 @@ class Binding(store.Entity):
 
     @classmethod
     @db_session
-    def create(cls, guild_id: int, channel_id: int, port: int, slot_name: str, password: str):
-        return cls(guild_id=guild_id, channel_id=channel_id, port=port, slot_name=slot_name, password=password)
+    def create(cls, guild_id: int, channel_id: int, port: int, slot_name: str, password: str | None = None, room_id: str | None = None):
+        return cls(guild_id=guild_id, channel_id=channel_id, port=port, slot_name=slot_name, password=password, room_id=room_id)
 
     @classmethod
     @db_session
@@ -87,7 +107,7 @@ class Binding(store.Entity):
     
     @classmethod
     @db_session
-    def update(cls, channel_id: int, port: int, slot_name: str, password: str) -> "Binding":
+    def update(cls, channel_id: int, port: int) -> "Binding":
 
         # Attempt to find binding
         if not (binding:= cls.get(channel_id=channel_id)):
@@ -95,8 +115,6 @@ class Binding(store.Entity):
         
         # Update values
         binding.port = port
-        binding.slot_name = slot_name
-        binding.password = password
 
         return binding
 
@@ -365,5 +383,15 @@ class NotificationTerm(store.Entity):
 
         # Compile unique IDs
         return list({ id for id in matching_terms })
+
+class SchemaVersion(store.Entity):
+    id = PrimaryKey(int, auto=True)
+    version = Required(int, default=1)
+    created_at = Required(datetime, default=lambda: datetime.utcnow())
+    modified_at = Required(datetime, default=lambda: datetime.utcnow())
+
+    def increment_version(self):
+        self.version += 1
+        self.modified_at = datetime.utcnow()
 
 #endregion
