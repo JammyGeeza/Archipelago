@@ -1,3 +1,4 @@
+import aiohttp
 import argparse
 import asyncio
 from . import BotUtils as utils
@@ -264,6 +265,7 @@ class TrackerClient:
         self.host: str = args.host
         self.port: int = args.port
         self.slot_name: str = args.slot_name
+        self.room_id: Optional[str] = args.room_id
         self.password: Optional[str] = args.password
 
     def __can_retry(self) -> bool:
@@ -554,6 +556,39 @@ class TrackerClient:
         for task in self.__tasks:
             task.cancel()
 
+    async def _wake_room(self):
+
+        # Ignore if no room ID provided
+        if self.room_id:
+
+            response_code = 0
+
+            logging.info(f"Attempting to wake room at {self.host}/room/{self.room_id}...")
+
+            try:
+                async with aiohttp.ClientSession() as session:
+                    try:
+                        # Try https:// first
+                        async with session.get(f"https://{self.host}/room/{self.room_id}") as response:
+                            response_code = response.status
+
+                    except Exception:
+                        
+                        # Fall back to http://
+                        async with session.get(f"http://{self.host}/room/{self.room_id}") as response:
+                            response_code = response.status
+
+            except Exception as ex:
+                await self.on_error.run(f"An error occurred while attempting to wake the room. {ex}")
+                return
+            
+            # Fire error if failure
+            if response_code != 200:
+                await self.on_error.run(f"Failed to wake room with response code `{response_code}`")
+            else:
+                # Give the room time to begin spinning up
+                await asyncio.sleep(3)
+
     #endregion
 
     #region Public Methods
@@ -680,6 +715,10 @@ class TrackerClient:
 
         try:
             while self.__running:
+
+                # Attempt to wake room, if room ID provided
+                await self._wake_room()
+
                 # Try both schemas
                 for scheme in [ "wss", "ws" ]:
                     try:
@@ -1332,6 +1371,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--host", type=str, default=defaults["host"], help="The hostname of the archipelago server")
     parser.add_argument("--port", type=int, help="The port of the archipelago session.")
     parser.add_argument("--slot_name", type=str, help="The slot name to connect to.")
+    parser.add_argument("--room_id", type=str, help="The ID of the hosted room.")
     parser.add_argument("--password", type=str, help="The password for the server or slot.")
     parser.add_argument("--loglevel", default=defaults["loglevel"], type=str)
     parser.add_argument("--logtime", default=defaults["logtime"], type=bool)
