@@ -2256,19 +2256,6 @@ async def process_client_cmd(ctx: Context, client: Client, args: dict):
                     
                 send_death(sender, cause, str(ctx.room_id))
 
-            ### For SQL upload
-            if "DeathLink" in tags and 'source' in args.get("data", {}):
-                sender = client.name
-                if 'cause' in args.get("data", {}):
-                    cause = args['data']['cause']
-                    if cause == '':
-                        cause = None
-                else:
-                    #cause = ''
-                    cause = None
-                    
-                send_death(sender, cause, str(ctx.room_id))
-
             #region BOT ADDITION
 
             if "DeathLink" in tags and "source" in args.get("data", {}):
