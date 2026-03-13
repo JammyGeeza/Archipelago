@@ -14,7 +14,9 @@
             <li><a href="{{ url_for('discord') }}">Discord Link</a></li>
             <li><a href="{{ url_for('faq', lang='en') }}">F.A.Q. Page</a></li>
             <li><a href="{{ url_for('favicon') }}">Favicon</a></li>
-            <li><a href="{{ url_for('generate') }}">Generate Game Page</a></li>
+            {% if config.GENERATORS > 0 %}
+                <li><a href="{{ url_for('generate') }}">Generate Game Page</a></li>
+            {% endif %}
             <li><a href="{{ url_for('landing') }}">Homepage</a></li>
             <li><a href="{{ url_for('uploads') }}">Host Game Page</a></li>
             <li><a href="{{ url_for('get_datapackage') }}">Raw Data Package</a></li>

@@ -42,6 +42,10 @@
                 <button id="collapse-all">Collapse All</button>
             </div>
         </div>
+        <!--<details data-game="Playable Worlds" open="">
+            <summary class="h2">Playable Worlds</summary>
+            <iframe src="https://docs.google.com/spreadsheets/d/1iuzDTOAvdoNe8Ne8i461qGNucg5OuEoF-Ikqs8aUQZw/preview?gid=58422002#gid=58422002" height="800px" width="100%"></iframe>
+        </details>-->
         {% for game_name in worlds | title_sorted %}
         {% set world = worlds[game_name] %}
         <details data-game="{{ game_name }}">

@@ -37,8 +37,7 @@ We have a [Getting Started](/tutorial/Archipelago/setup/en) guide that will help
 software set up. You can use that guide to learn how to generate multiworlds. There are also basic instructions for
 including multiple games, and hosting multiworlds on the website for ease and convenience.
 
-If you are ready to start randomizing games, or want to start playing your favorite randomizer with others, please join
-our discord server at the [Archipelago Discord](https://discord.gg/8Z65BR2). There are always people ready to answer
+If you are ready to start randomizing games, or want to start playing your favorite randomizer with others, please ask Jamie or Gregory in the [Archipelago Anarchy Discord Server](https://discord.com/channels/1338891181752455201). There are always people ready to answer
 any questions you might have.
 
 ## What are some common terms I should know?
@@ -78,4 +77,4 @@ You may also find developer documentation in the `docs` folder:
 [/docs Folder in Archipelago Code](https://github.com/ArchipelagoMW/Archipelago/tree/main/docs).
 
 If you have more questions regarding development of a game implementation, feel free to ask in the **#ap-world-dev** 
-channel on our Discord.
+channel on the official Discord.

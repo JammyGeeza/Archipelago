@@ -15,6 +15,22 @@ from .markdown import render_markdown
 from .models import Seed, Room, Command, UUID, uuid4
 from Utils import title_sorted
 
+### SQL LOGGING
+from pony.orm import Database, Required, db_session, PrimaryKey, Optional
+
+db = Database()
+
+db.bind(
+    provider='postgres',
+    host="host.docker.internal",
+    user="multiserver",
+    password="strongpassword",
+    database="hetzner",
+    connect_timeout=10,
+    sslmode="require",
+    options='-c search_path=gregipelago'
+)
+
 class WebWorldTheme(StrEnum):
     DIRT = "dirt"
     GRASS = "grass"
@@ -24,6 +40,20 @@ class WebWorldTheme(StrEnum):
     OCEAN = "ocean"
     PARTY_TIME = "partyTime"
     STONE = "stone"
+
+class NewroomSend(db.Entity):
+    _table_ = "roomdata"
+    _schema_ = "gregipelago"
+
+    id = PrimaryKey(int, auto=True)
+    roomid = Required(str)
+    timestamp = Required(datetime.datetime, default=lambda: datetime.datetime.now(datetime.UTC))
+
+db.generate_mapping(create_tables=False)
+
+@db_session
+def send_newroom(roomid):
+    NewroomSend(roomid=roomid)
 
 def get_world_theme(game_name: str) -> str:
     if game_name not in AutoWorldRegister.world_types:
@@ -83,6 +113,12 @@ def game_info(game, lang):
 def games():
     """List of supported games"""
     return render_template("supportedGames.html", worlds=get_visible_worlds())
+
+@app.route('/dev-games')
+@cache.cached()
+def devgames():
+    """List of in-development games"""
+    return render_template("playableWorlds.html", worlds=get_visible_worlds())
 
 
 @app.route('/tutorial/<string:game>/<string:file>')
@@ -148,6 +184,16 @@ def faq(lang: str):
         html_from_markdown=document,
     )
 
+@app.route('/tools/poptracker/')
+@cache.cached()
+def poptracker():
+    document = render_markdown(os.path.join(app.static_folder, "assets", "faq", "poptracker.md"))
+    return render_template(
+        "markdown_document.html",
+        title="Poptracker",
+        html_from_markdown=document,
+    )
+
 
 @app.route('/glossary/<string:lang>/')
 @cache.cached()
@@ -170,6 +216,7 @@ def view_seed(seed: UUID):
 
 @app.route('/new_room/<suuid:seed>')
 def new_room(seed: UUID):
+    originalseed = seed
     seed = Seed.get(id=seed)
     if not seed:
         abort(404)
@@ -178,6 +225,12 @@ def new_room(seed: UUID):
     timeout = current_app.config.get("ROOM_TIMEOUT", 2) * 60 * 60
     room = Room(seed=seed, owner=session["_id"], timeout=timeout, tracker=uuid4())
     commit()
+    #send_newroom(str(seed))
+    #send_newroom(str(originalseed))
+    print(originalseed)
+    #print(seed)
+    print(room.id)
+    send_newroom(str(room.id))
     return redirect(url_for("host_room", room=room.id, ))
 
 
@@ -279,7 +332,7 @@ def favicon():
 
 @app.route('/discord')
 def discord():
-    return redirect("https://discord.gg/8Z65BR2")
+    return redirect("https://discord.com/channels/1338891181752455201")
 
 
 @app.route('/datapackage')

@@ -38,6 +38,7 @@ from websockets.extensions.permessage_deflate import PerMessageDeflate, ServerPe
 try:
     # ponyorm is a requirement for webhost, not default server, so may not be importable
     from pony.orm.dbapiprovider import OperationalError
+    from pony.orm import Database, Required, db_session, PrimaryKey, Optional
 except ImportError:
     OperationalError = ConnectionError
 
@@ -60,6 +61,62 @@ server_per_message_deflate_factory = ServerPerMessageDeflateFactory(
     compress_settings={"memLevel": 4},
 )
 
+db = Database()
+
+db.bind(
+    provider='postgres',
+    host="host.docker.internal",
+    user="multiserver",
+    password="strongpassword",
+    database="hetzner",
+    connect_timeout=10,
+    sslmode="require",
+    options='-c search_path=gregipelago'
+)
+
+class ItemSend(db.Entity):
+    _table_ = "itemlog"
+    _schema_ = "gregipelago"
+
+    id = PrimaryKey(int, auto=True)
+    sender = Required(str)
+    item = Required(str)
+    receiver = Required(str)
+    roomid = Required(str)
+    timestamp = Required(datetime.datetime, default=lambda: datetime.datetime.now(datetime.UTC))
+
+class DeathSend(db.Entity):
+    _table_ = "deathlink"
+    _schema_ = "gregipelago"
+
+    id = PrimaryKey(int, auto=True)
+    sender = Required(str)
+    cause = Optional(str, nullable=True)
+    roomid = Required(str)
+    timestamp = Required(datetime.datetime, default=lambda: datetime.datetime.now(datetime.UTC))
+
+class CompleteSend(db.Entity):
+    _table_ = "completions"
+    _schema_ = "gregipelago"
+
+    id = PrimaryKey(int, auto=True)
+    sender = Required(str)
+    goal = Required(bool)
+    roomid = Required(str)
+    timestamp = Required(datetime.datetime, default=lambda: datetime.datetime.now(datetime.UTC))
+
+class PlaylogSend(db.Entity):
+    _table_ = "playlog"
+    _schema_ = "gregipelago"
+
+    id = PrimaryKey(int, auto=True)
+    sender = Required(str)
+    roomid = Required(str)
+    timestamp = Required(datetime.datetime, default=lambda: datetime.datetime.now(datetime.UTC))
+    status = Required(str)
+    tags = Required(str)
+
+db.generate_mapping(create_tables=False)
 
 def remove_from_list(container, value):
     try:
@@ -212,6 +269,22 @@ class Client(Endpoint):
 
 team_slot = typing.Tuple[int, int]
 
+@db_session
+def send_item(data):
+    for sender, item, receiver,room_id in data:
+        ItemSend(sender=sender, item=item, receiver=receiver,roomid=room_id)
+
+@db_session
+def send_death(sender, cause, roomid):
+    DeathSend(sender=sender, cause=cause, roomid=roomid)
+
+@db_session
+def send_complete(sender, goal, roomid):
+    CompleteSend(sender=sender, goal=goal, roomid=roomid)
+
+@db_session
+def send_playlog(sender, roomid, status, tags):
+    PlaylogSend(sender=sender, status=status, roomid=roomid, tags=tags)
 
 class Context:
     dumper = staticmethod(encode)
@@ -867,8 +940,11 @@ class Context:
         if "auto" in self.collect_mode:
             collect_player(self, client.team, client.slot)
         if "auto" in self.release_mode:
-            release_player(self, client.team, client.slot)
+            release_player(self, client.team, client.slot, False)
         self.save()  # save goal completion flag
+
+        ### For SQL upload
+        send_complete(client.name, True, str(self.room_id))
 
     def on_new_hint(self, team: int, slot: int):
         self.on_changed_hints(team, slot)
@@ -972,6 +1048,7 @@ async def on_client_joined(ctx: Context, client: Client):
             break
     else:
         final_verb = "playing"
+        send_playlog(ctx.player_names[(client.team, client.slot)],str(ctx.room_id),"Connected",str(client.tags))
 
     ctx.broadcast_text_all(
         f"{ctx.get_aliased_name(client.team, client.slot)} (Team #{client.team + 1}) "
@@ -1003,6 +1080,9 @@ async def on_client_left(ctx: Context, client: Client):
             break
     else:
         final_verb = "left"
+
+    if final_verb == "left":
+        send_playlog(ctx.player_names[(client.team, client.slot)],str(ctx.room_id),"Disconnected",str(client.tags))
 
     ctx.broadcast_text_all(
         f"{ctx.get_aliased_name(client.team, client.slot)} (Team #{client.team + 1}) has {final_verb} the game. "
@@ -1093,7 +1173,7 @@ def update_checked_locations(ctx: Context, team: int, slot: int):
                   [{"cmd": "RoomUpdate", "checked_locations": get_checked_checks(ctx, team, slot)}])
 
 
-def release_player(ctx: Context, team: int, slot: int):
+def release_player(ctx: Context, team: int, slot: int, log_release=True):
     """register any locations that are in the multidata"""
     all_locations = set(ctx.locations[slot])
     ctx.broadcast_text_all("%s (Team #%d) has released all remaining items from their world."
@@ -1101,6 +1181,10 @@ def release_player(ctx: Context, team: int, slot: int):
                            {"type": "Release", "team": team, "slot": slot})
     register_location_checks(ctx, team, slot, all_locations)
     update_checked_locations(ctx, team, slot)
+
+    ### For SQL upload
+    if log_release:
+        send_complete(ctx.player_names[(team, slot)], False, str(ctx.room_id))
 
 
 def collect_player(ctx: Context, team: int, slot: int, is_group: bool = False):
@@ -1152,6 +1236,10 @@ def register_location_checks(ctx: Context, team: int, slot: int, locations: typi
             sortable.append((target_player, item_id, location, flags))
 
         info_texts: list[dict[str, typing.Any]] = []
+        
+        ### For SQL upload
+        batch_data = []
+        
         for target_player, item_id, location, flags in sorted(sortable):
             new_item = NetworkItem(item_id, location, slot, flags)
             send_items_to(ctx, team, target_player, new_item)
@@ -1165,6 +1253,13 @@ def register_location_checks(ctx: Context, team: int, slot: int, locations: typi
                 ctx.broadcast_team(team, info_texts)
                 info_texts.clear()
             info_texts.append(json_format_send_event(new_item, target_player))
+
+            ### populate array of all item sends to package togehter for single SQL query
+            batch_data.append((ctx.player_names[(team, slot)], ctx.item_names[ctx.slot_info[target_player].game][item_id], ctx.player_names[(team, target_player)], str(ctx.room_id)))
+
+        ### Fire SQL query
+        send_item(batch_data)
+
         ctx.broadcast_team(team, info_texts)
         del info_texts
         del sortable
@@ -2166,6 +2261,19 @@ async def process_client_cmd(ctx: Context, client: Client, args: dict):
             slots = set(args.get("slots", []))
             args["cmd"] = "Bounced"
 
+            ### For SQL upload
+            if "DeathLink" in tags and 'source' in args.get("data", {}):
+                sender = client.name
+                if 'cause' in args.get("data", {}):
+                    cause = args['data']['cause']
+                    if cause == '':
+                        cause = None
+                else:
+                    #cause = ''
+                    cause = None
+                    
+                send_death(sender, cause, str(ctx.room_id))
+
             #region BOT ADDITION
 
             if "DeathLink" in tags and "source" in args.get("data", {}):
@@ -2447,12 +2555,15 @@ def _goal_player(ctx: Context, team: int, slot: int):
 
         # Collect and/or release if enabled
         if "auto" in ctx.collect_mode: collect_player(ctx, team, slot)
-        if "auto" in ctx.release_mode: release_player(ctx, team, slot)
+        if "auto" in ctx.release_mode: release_player(ctx, team, slot, False)
 
         # Update server state
         ctx.client_game_state[(team, slot)] = ClientStatus.CLIENT_GOAL
         ctx.on_client_status_change(team, slot)
         ctx.save()
+
+        ### For SQL upload
+        send_complete(ctx.player_names[(team, slot)], True, str(ctx.room_id))
 
 def _request_slot_item_hints(ctx: Context, team: int, slot: int, input_text: str) -> tuple[bool, list[Hint], str]:
     """"""
