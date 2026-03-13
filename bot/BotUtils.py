@@ -3,11 +3,16 @@ import inspect
 import logging
 import json
 import sqlite3
+import sys
 import uuid
 
 from dataclasses import MISSING, dataclass, field, fields, is_dataclass
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta
+from decimal import Decimal
+from enum import Enum
+from pathlib import Path
 from typing import Any, Callable, ClassVar, Dict, List, Optional, Type, Union, get_args, get_origin
+from uuid import UUID
 
 #region Enums / Flags
 
@@ -25,6 +30,13 @@ class ClientStatus(enum.IntEnum):
     READY       = 10
     PLAYING     = 20
     GOAL        = 30
+
+class HintStatus(enum.IntEnum):
+    HINT_UNSPECIFIED = 0
+    HINT_NO_PRIORITY = 10
+    HINT_AVOID = 20
+    HINT_PRIORITY = 30
+    HINT_FOUND = 40
 
 class ItemFlags(enum.IntEnum):
     """Archipelago's item type flags"""
@@ -66,8 +78,14 @@ class NotifyFlags(enum.IntFlag):
             flag.name.title() for flag in type(self) if flag != 0 and flag in self
         )
     
-class PlayerState(enum.IntEnum):
-    """Slot action enum values"""
+class PlayerSend(enum.IntEnum):
+    """Player send enum values"""
+    NONE        = 0
+    ITEM        = 1
+    LOCATION    = 2
+
+class PlayerState(enum.IntFlag):
+    """Player state enum values"""
     NONE        = 0
     COLLECT     = 1 << 0
     RELEASE     = 1 << 1
@@ -77,26 +95,21 @@ class PlayerState(enum.IntEnum):
 
 class Jsonable:
     """Base class for converting to json."""
-    
     def to_dict(self) -> dict:
-        """Convert to generic dict object."""
         out = {}
         for f in fields(self):
             key = f.metadata.get("json", f.name)
             out[key] = self.__encode(getattr(self, f.name))
         return out
-    
+
     def to_json(self) -> str:
-        """Convert to a json string."""
         return json.dumps(self.to_dict())
-    
+
     @classmethod
     def from_dict(cls, data: dict) -> "Jsonable":
-        """Create an instance of the class from a generic dict object."""
         by_json_name = {f.metadata.get("json", f.name): f for f in fields(cls)}
         kwargs = {}
 
-        # Decode only known fields (ignore unknown JSON keys)
         for k, v in (data or {}).items():
             f = by_json_name.get(k)
             if f:
@@ -106,39 +119,42 @@ class Jsonable:
 
     @staticmethod
     def __encode(value: Any) -> Any:
-        """Encode values for JSON serialization."""
         if isinstance(value, Jsonable):
             return value.to_dict()
-        if isinstance(value, dict):
+        elif isinstance(value, (datetime, date)):
+            return value.isoformat()
+        elif isinstance(value, (Decimal, UUID)):
+            return str(value)
+        elif isinstance(value, Enum):
+            return value.value
+        elif isinstance(value, dict):
             return {str(k): Jsonable.__encode(v) for k, v in value.items()}
-        if isinstance(value, list):
+        elif isinstance(value, list):
             return [Jsonable.__encode(v) for v in value]
+        elif isinstance(value, tuple):
+            return [Jsonable.__encode(v) for v in value]
+
         return value
 
     @staticmethod
     def __decode(tp, value: Any) -> Any:
-        """Decode JSON values into typed Python objects."""
         if value is None:
             return None
 
         origin = get_origin(tp)
 
-        # Handle Optional[T] / Union[T, None]
         if origin is Union:
             args = [a for a in get_args(tp) if a is not type(None)]
             return Jsonable.__decode(args[0], value) if args else value
 
-        # Handle List[T]
-        if origin is list:
+        elif origin is list:
             (elem_t,) = get_args(tp)
             return [Jsonable.__decode(elem_t, v) for v in (value or [])]
 
-        # Handle Dict[K, V]
-        if origin is dict:
+        elif origin is dict:
             key_t, val_t = get_args(tp)
             out = {}
             for k, v in (value or {}).items():
-                # JSON object keys are always strings
                 if key_t is int:
                     k2 = int(k)
                 elif key_t is float:
@@ -147,15 +163,32 @@ class Jsonable:
                     k2 = k
                 out[k2] = Jsonable.__decode(val_t, v)
             return out
+        
+        if origin in (tuple,):
+            args = get_args(tp)
 
-        # Handle nested Jsonable subclasses
+            # Tuple[T, ...]
+            if len(args) == 2 and args[1] is Ellipsis:
+                elem_t = args[0]
+                return tuple(Jsonable.__decode(elem_t, v) for v in (value or []))
+
+            # Tuple[T1, T2, ...]
+            if args:
+                seq = value or []
+                return tuple(
+                    Jsonable.__decode(args[i], seq[i]) if i < len(seq) else None
+                    for i in range(len(args))
+                )
+
+            # plain tuple with no args
+            return tuple(value or [])
+
         try:
             if isinstance(tp, type) and issubclass(tp, Jsonable):
                 return tp.from_dict(value)
         except TypeError:
             pass
 
-        # Primitive / fallback
         return value
 
 class Hookable:
@@ -306,6 +339,18 @@ class DataPackageObject(Jsonable):
     """Object containing data package data"""
     games: Dict[str, GameData] = field(default_factory=dict)
 
+@dataclass
+class Hint(Jsonable):
+    receiving_player: int
+    finding_player: int
+    location: int
+    item: int
+    found: bool
+    entrance: str = ""
+    item_flags: int = 0
+    status: HintStatus = HintStatus.HINT_UNSPECIFIED
+    class_: str = field(default="Hint", metadata={"json": "class"})
+
 # TODO: Make this match other data classes??
 class ItemQueue:
     def __init__(self):
@@ -375,6 +420,25 @@ class NetworkVersion(Jsonable):
     major: int = 0
     minor: int = 0
     build: int = 0
+
+@dataclass
+class NotificationSettingsDTO(Jsonable):
+    slot_name: str
+    hint_flags: NotifyFlags
+    item_flags: NotifyFlags
+    terms: list[str]
+    counts: list[tuple[str, int]]
+
+    @classmethod
+    def from_entity(cls, client, binding: Binding):
+        """Convert a binding entity object to a DTO for json encode/decoding"""
+        return cls(
+            slot_name=client.get_player_name(binding.slot_id),
+            hint_flags=NotifyFlags(binding.hint_flags),
+            item_flags=NotifyFlags(binding.item_flags),
+            terms=[ t.term for t in binding.terms ],
+            counts=[ (client.get_item_name(binding.slot_id, c.item_id), c.amount) for c in binding.counts ]
+        )
 
 @dataclass
 class SessionStats(Jsonable):
@@ -521,28 +585,30 @@ class GetStatsPacket(TrackerPacket):
 
 @TrackerPacket.register_packet
 @dataclass
+class HintRequestPacket(IdentifiablePacket):
+    """Packet sent to request a hint."""
+    cmd: ClassVar[str] = "HintRequest"
+    slot_name: str
+    item_name: str
+    password: Optional[str] = None
+
+@TrackerPacket.register_packet
+@dataclass
+class HintResponsePacket(IdentifiablePacket):
+    """Packet received in response to a HintRequest packet."""
+    cmd: ClassVar[str] = "HintResponse"
+    comment: str
+    success: bool
+    hints: List[Hint] = field(default_factory=list)
+
+@TrackerPacket.register_packet
+@dataclass
 class InvalidPacket(TrackerPacket):
     """Packet received when a packet is invalid."""
     cmd: ClassVar[str] = "InvalidPacket"
     id: Optional[str] = ""
     original_cmd: Optional[str] = ""
     text: str = ""
-
-@TrackerPacket.register_packet
-@dataclass
-class SlotActionRequestPacket(IdentifiablePacket):
-    """Packet sent to server to request a slot action"""
-    cmd: ClassVar[str] = "SlotActionRequest"
-    action: int
-    slot_id: int
-
-@TrackerPacket.register_packet
-@dataclass
-class SlotActionResponsePacket(IdentifiablePacket):
-    """Packet received in response to SlotActionRequest packet"""
-    cmd: ClassVar[str] = "SlotActionResponse"
-    action: int
-    success: bool
 
 @TrackerPacket.register_packet
 @dataclass
@@ -589,6 +655,26 @@ class RoomInfoPacket(TrackerPacket):
 
 @TrackerPacket.register_packet
 @dataclass
+class SendPlayerRequestPacket(TrackerPacket):
+    """Packet sent to request player sending"""
+    cmd: ClassVar[str] = "SendPlayerRequest"
+    slot_id: int
+    location_id: Optional[int] = None
+    item_id: Optional[int] = None
+    amount: Optional[int] = 1
+
+@TrackerPacket.register_packet
+@dataclass
+class SendPlayerResponsePacket(TrackerPacket):
+    """Packet received in response to a SendPlayerRequest"""
+    cmd: ClassVar[str] = "SendPlayerResponse"
+    slot_id: int
+    location_id: Optional[int] = None
+    item_id: Optional[int] = None
+    amount: Optional[int] = 1
+
+@TrackerPacket.register_packet
+@dataclass
 class SetNotifyPacket(TrackerPacket):
     """Packet sent to be notified when stored keys change."""
     cmd: ClassVar[str] = "SetNotify"
@@ -614,6 +700,20 @@ class StatsPacket(TrackerPacket):
 #endregion
 
 #region Tracker Packets
+
+@TrackerPacket.register_packet
+@dataclass
+class CommandRequestPacket(IdentifiablePacket):
+    """Packet sent when requesting a command be performed"""
+    cmd: ClassVar[str] = "CommandRequest"
+    command: str
+
+@TrackerPacket.register_packet
+@dataclass
+class CommandResponsePacket(IdentifiablePacket):
+    """Packet received in response to a CommandRequest packet."""
+    cmd: ClassVar[str] = "CommandResponse"
+    success: bool
 
 @TrackerPacket.register_packet
 @dataclass
@@ -658,23 +758,7 @@ class NotificationsRequestPacket(IdentifiablePacket):
 class NotificationsResponsePacket(IdentifiablePacket):
     """Packet sent to gateway in response to a NotificationRequest packet."""
     cmd: ClassVar[str] = "NotificationsResponse"
-    notification: Notification
-
-@TrackerPacket.register_packet
-@dataclass
-class PlayerStateRequestPacket(IdentifiablePacket):
-    """Packet sent to agent to request player state update."""
-    cmd: ClassVar[str] = "PlayerStateRequest"
-    state: PlayerState
-    slot_name: str
-
-@TrackerPacket.register_packet
-@dataclass
-class PlayerStateResponsePacket(IdentifiablePacket):
-    "Packet send to gateway in response to a PlayerStateRequest packet"
-    cmd: ClassVar[str] = "PlayerStateResponse"
-    state: PlayerState
-    success: bool
+    notification: NotificationSettingsDTO
 
 @TrackerPacket.register_packet
 @dataclass
@@ -711,5 +795,86 @@ class TrackerInfoPacket(TrackerPacket):
     """Packet sent to gateway containing basic tracker data."""
     cmd: ClassVar[str] = "TrackerInfo"
     players: Dict[int, str] = field(default_factory=dict)
+
+#endregion
+
+#region Shared Methods
+
+def setup_logging(service: str, log_dir="logs", logtime: bool = True, level=logging.INFO):
+
+    root = logging.getLogger()
+    root.setLevel(level)
+
+    # If we already configured logging in THIS process, don't do it again
+    if getattr(root, "_bot_logging_configured", False):
+        return
+
+    # Make directory if it doesn't exist already
+    Path(log_dir).mkdir(parents=True, exist_ok=True)
+
+    ts = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    logfile = Path(log_dir) / f"{service}_{ts}.log"
+
+    fmt = logging.Formatter(
+        f"{'[%(asctime)s]\t' if logtime else ''}[{service.upper()}.%(name)s]\t%(levelname)s: %(message)s",
+        "%Y-%m-%d %H:%M:%S",
+    )
+
+    # Add stderr handler ONLY if none exists
+    if not any(isinstance(h, logging.StreamHandler) for h in root.handlers):
+        sh = logging.StreamHandler(sys.stderr)
+        sh.setFormatter(fmt)
+        root.addHandler(sh)
+
+    # Add file handler (don’t clear others)
+    fh = logging.FileHandler(str(logfile), encoding="utf-8")
+    fh.setFormatter(fmt)
+    root.addHandler(fh)
+
+    root._bot_logging_configured = True
+
+def format_error(action: str, ex: Exception) -> str:
+    return f"Error {action}: *'{ex}'*"
+
+def format_port(port: int) -> str:
+    return f"`:{port}`"
+
+def format_slot(slot_name: str) -> str:
+    return f"`{slot_name}`"
+
+def format_port_slot(port: int, slot_name: str) -> str:
+    return f"{format_port(port)} / {format_slot(slot_name)}"
+
+def format_host_port_slot(host: str, port: int, slot_name: str) -> str:
+    return f"`{host}:{port}` / {format_slot(slot_name)}"
+
+def split_at_separator(text: str, limit: int = 2000, separator: str = ", ") -> List[str]:
+    """Split a string into chunks no longer than <limit> by <separator>"""
+
+    # If not longer than the limit, return it
+    if len(text) <= limit:
+        return [ text ]
+
+    parts = text.split(separator)
+    chunks = []
+    current_chunk = ""
+
+    # Cycle through split parts
+    for part in parts:
+        # Include separator if current chunk is not empty
+        test_chunk = current_chunk + separator + part if current_chunk else part
+
+        if len(test_chunk) > limit:
+            # Next chunk is too long, append what we have
+            chunks.append(current_chunk)
+            current_chunk = part
+        else:
+            current_chunk = test_chunk
+
+    # Add any remaining chunks
+    if current_chunk:
+        chunks.append(current_chunk)
+
+    return chunks
 
 #endregion

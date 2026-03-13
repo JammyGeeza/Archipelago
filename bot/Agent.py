@@ -1,3 +1,4 @@
+import aiohttp
 import argparse
 import asyncio
 from . import BotUtils as utils
@@ -9,7 +10,11 @@ import threading
 import uuid
 import websockets
 
-from .Store import Store
+from .BotStore import (
+    NotificationSettings, NotificationCount, NotificationTerm,
+    init_db,
+)
+from .BotUtils import format_host_port_slot, split_at_separator
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple
 from websockets.asyncio.client import connect
@@ -18,9 +23,10 @@ from websockets.exceptions import ConnectionClosed
 class StdClient:
 
     # Events
+    on_cmd_request = utils.Hookable()
     on_error = utils.Hookable()
+    on_hint_request = utils.Hookable()
     on_notifications_request = utils.Hookable()
-    on_player_state_request = utils.Hookable()
     on_statistics_request = utils.Hookable()
     on_status_request = utils.Hookable()
 
@@ -52,11 +58,14 @@ class StdClient:
 
             match packet.cmd:
 
+                case utils.CommandRequestPacket.cmd:
+                    await self.on_cmd_request.run(packet)
+
+                case utils.HintRequestPacket.cmd:
+                    await self.on_hint_request.run(packet)
+
                 case utils.NotificationsRequestPacket.cmd:
                     await self.on_notifications_request.run(packet)
-
-                case utils.PlayerStateRequestPacket.cmd:
-                    await self.on_player_state_request.run(packet)
 
                 case utils.StatisticsRequestPacket.cmd:
                     await self.on_statistics_request.run(packet)
@@ -75,6 +84,8 @@ class StdClient:
                 original_cmd=packet.cmd or "",
                 text=f"{ex}"
             ))
+
+        logging.info(f"Packet handling loop ended.")
 
     async def __read_loop(self):
         """Read data from the stdin pipe."""
@@ -250,9 +261,11 @@ class TrackerClient:
         self.__player_lookup: Dict[int, utils.NetworkSlot] = {}
         self.__stats_lookup: Dict[int, utils.PlayerStats] = {}
 
+        self.channel_id: str = args.channel_id
         self.host: str = args.host
         self.port: int = args.port
         self.slot_name: str = args.slot_name
+        self.room_id: Optional[str] = args.room_id
         self.password: Optional[str] = args.password
 
     def __can_retry(self) -> bool:
@@ -288,6 +301,9 @@ class TrackerClient:
                 case utils.DataPackagePacket.cmd:
                     await self.__handle_datapackage_packet(packet)
 
+                case utils.InvalidPacket.cmd:
+                    await self.__handle_invalid_packet(packet)
+
                 case utils.PrintJSONPacket.cmd:
                     await self.__handle_printjson_packet(packet)
 
@@ -312,7 +328,7 @@ class TrackerClient:
                 await self.__handle_response_packet(packet)
 
         except Exception as ex:
-            logging.error(f"Unexpected error handling {packet or "unknown"} packet: {ex}")
+            logging.error(f"Unexpected error handling {packet or 'unknown'} packet: {ex}")
             await self.on_error.run(ex)
 
     async def __handle_bounced_packet(self, packet: utils.BouncedPacket):
@@ -339,6 +355,11 @@ class TrackerClient:
         for game in set([player.game for slot, player in self.__player_lookup.items() if player.game != "Archipelago" ]):
             await self.__send_packet(utils.GetDataPackagePacket(games=[game]))
 
+        # Request item counts (for notifications)
+        if (items_to_count:= NotificationCount.get_for_channel(self.channel_id)):
+            logging.info(f"Requesting item counts for: {items_to_count}")
+            await self.__send_packet(utils.ReceivedCountRequestPacket(id="",slot_items=items_to_count))
+
         # Request stats
         await self.__send_packet(utils.GetStatsPacket(slots=[slot for slot in self.__player_lookup.keys()]))
 
@@ -360,6 +381,29 @@ class TrackerClient:
         # Store game lookups (and reverse to ID: Name)
         self.__item_lookup.update({ game: { id: name for name, id in data.item_name_to_id.items() } for game, data in packet.data.games.items() })
         self.__location_lookup.update({ game: { id: name for name, id in data.location_name_to_id.items() } for game, data in packet.data.games.items() })
+
+    async def __handle_invalid_packet(self, packet: utils.InvalidPacket):
+        """Handle an incoming Invalid packet."""
+
+        logging.error(f"Invalid packet received for '{packet.original_cmd}' with error(s): {packet.text or packet.errors}")
+
+        match packet.original_cmd:
+
+            case utils.ConnectPacket.cmd | utils.GetDataPackagePacket.cmd:
+                self.stop()
+
+            case utils.GetStatsPacket.cmd:
+                await self.on_error.run(f"Failed to get stats, `/stats` command(s) may not function correctly.")
+                return
+            
+            case utils.ReceivedCountRequestPacket.cmd:
+                await self.on_error.run(f"Failed to get received item counts, `/notify count` notifications may not function correctly.")
+                return
+        
+        # Pass on error if no ID
+        if not packet.id:
+            await self.on_error.run(packet.text)
+        
 
     async def __handle_printjson_packet(self, packet: utils.PrintJSONPacket):
         """Handle an incoming PrintJSON packet"""
@@ -512,6 +556,39 @@ class TrackerClient:
         for task in self.__tasks:
             task.cancel()
 
+    async def _wake_room(self):
+
+        # Ignore if no room ID provided
+        if self.room_id:
+
+            response_code = 0
+
+            logging.info(f"Attempting to wake room at {self.host}/room/{self.room_id}...")
+
+            try:
+                async with aiohttp.ClientSession() as session:
+                    try:
+                        # Try https:// first
+                        async with session.get(f"https://{self.host}/room/{self.room_id}") as response:
+                            response_code = response.status
+
+                    except Exception:
+                        
+                        # Fall back to http://
+                        async with session.get(f"http://{self.host}/room/{self.room_id}") as response:
+                            response_code = response.status
+
+            except Exception as ex:
+                await self.on_error.run(f"An error occurred while attempting to wake the room. {ex}")
+                return
+            
+            # Fire error if failure
+            if response_code != 200:
+                await self.on_error.run(f"Failed to wake room with response code `{response_code}`")
+            else:
+                # Give the room time to begin spinning up
+                await asyncio.sleep(3)
+
     #endregion
 
     #region Public Methods
@@ -537,6 +614,11 @@ class TrackerClient:
         """Get the name of an item."""
         game: str = self.get_game_name(slot_id)
         return self.__item_lookup.get(game, {}).get(item_id, None)
+
+    def get_location_id(self, slot_id: int, location_name: str) -> int | None:
+        """Get the ID of a location."""
+        game: str = self.get_game_name(slot_id)
+        return next((id for id, name in self.__location_lookup.get(game, {}).items() if name.casefold() == location_name.casefold()), None)
 
     def get_location_name(self, slot_id: int, location_id: int) -> str | None:
         """Get the name of a location."""
@@ -580,14 +662,35 @@ class TrackerClient:
 
         logging.info(f"Sending request... | Type: {request.cmd} | ID: {request.id}")
 
-        response: asyncio.Future = asyncio.get_running_loop().create_future()
-        self.__request_queue[request.id] = response
+        future: asyncio.Future = asyncio.get_running_loop().create_future()
+        self.__request_queue[request.id] = future
 
         # Send packet
         await self.__send_packet(request)
 
-        # Wait for response and return
-        return await response
+        # Wait for response, bail after 5 seconds
+        result: utils.IdentifiablePacket = None
+        try:
+            async with asyncio.timeout(5):
+                result = await future
+        except TimeoutError:
+            logging.warning(f"Request {request.id} timed out.")
+            result = utils.ErrorPacket(
+                id=request.id,
+                original_cmd=request.cmd,
+                text=f"Request to the archipelago server timed out."
+            )
+        except Exception as ex:
+            logging.error(f"Request '{request.id}' suffered an unexpected error: {ex}")
+            result = utils.ErrorPacket(
+                id=request.id,
+                original_cmd=request.cmd,
+                text=f"Request suffered an unexpected error: {ex}"
+            )
+
+        # Pop request from queue and return
+        self.__request_queue.pop(request.id)
+        return result
     
     async def send(self, packet: utils.TrackerPacket):
         """Send a packet to the archipelago server"""
@@ -612,6 +715,10 @@ class TrackerClient:
 
         try:
             while self.__running:
+
+                # Attempt to wake room, if room ID provided
+                await self._wake_room()
+
                 # Try both schemas
                 for scheme in [ "wss", "ws" ]:
                     try:
@@ -627,6 +734,16 @@ class TrackerClient:
                                 asyncio.create_task(self.__listen_loop()),
                             ]
                             completed, pending = await asyncio.wait(self.__tasks, return_when=asyncio.FIRST_COMPLETED)
+
+                            logging.info(f"Resolving pending requests...")
+
+                            # Resolve request queue
+                            for id, req in self.__request_queue.items():
+                                logging.info(f"Resolving request: {id}")
+                                req.set_result(utils.ErrorPacket(
+                                    id=id,
+                                    text="Client disconnected from the archipelago server before receiving a response."
+                                ))
 
                             # Cancel pending tasks
                             for task in pending:
@@ -695,9 +812,6 @@ class TrackerClient:
 # Arguments
 __args: argparse.Namespace
 
-# Store
-__store: Store
-
 # Variables
 __item_counts: Dict[Tuple[int, int], int] = {}
 __item_queue: Dict[int, utils.ItemQueue] = {}
@@ -719,39 +833,67 @@ def queue_item(slot_id: int, item: utils.NetworkItem):
     # Update recipient's queue
     __item_queue[slot_id] = queue
 
-def split_at_separator(text: str, limit: int = 2000, separator: str = ", ") -> List[str]:
-    """Split a string into chunks no longer than <limit> by <separator>"""
-
-    # If not longer than the limit, return it
-    if len(text) <= limit:
-        return [ text ]
-
-    parts = text.split(separator)
-    chunks = []
-    current_chunk = ""
-
-    # Cycle through split parts
-    for part in parts:
-        # Include separator if current chunk is not empty
-        test_chunk = current_chunk + separator + part if current_chunk else part
-
-        if len(test_chunk) > limit:
-            # Next chunk is too long, append what we have
-            chunks.append(current_chunk)
-            current_chunk = part
-        else:
-            current_chunk = test_chunk
-
-    # Add any remaining chunks
-    if current_chunk:
-        chunks.append(current_chunk)
-
-    return chunks
-
 async def send(packet: utils.TrackerPacket):
     """Send a packet to the gateway"""
     global __std_client
     await __std_client.send(packet)
+
+async def send_invalid(packet, text: str):
+    """Send an invalid packet to the gateway"""
+    await send(utils.InvalidPacket(
+        id=packet.id,
+        original_cmd=packet.cmd,
+        text=text
+    ))
+
+async def validate_item_counts(packet, action: int, slot_id: int, counts: dict[str, int]) -> Tuple[int, int, int] | None:
+    """Validate that item counts exist"""
+
+    # Map item ID/Name/Count
+    item_count_lookup = { (get_item_id(slot_id, name), name, count) for name, count in counts.items() }
+    
+    # Check if any of these names don't exist
+    if item_count_lookup and (invalid_names:= [ nm for id, nm, ct in item_count_lookup if id is None ]):
+        await send(utils.InvalidPacket(id=packet.id, original_cmd=packet.cmd, text=f"Could not find matching item(s) for {", ".join([f"`{inv}`" for inv in invalid_names])}"))
+        return None
+    
+    # Check if we are missing counts for any of these
+    if action == utils.Action.ADD and (unknown_counts:= [ id for id, nm, ct in item_count_lookup if (slot_id, id) not in __item_counts ]):
+
+        # Request item counts from server
+        response = await __tracker_client.request(utils.ReceivedCountRequestPacket(
+            id=uuid.uuid4().hex,
+            slot_items={ slot_id: unknown_counts }
+        ))
+
+        # NOTE: Update to __item_counts is handled BEFORE the response is passed back to here
+
+        # Validate response
+        if response.is_error():
+            await send(utils.ErrorPacket(id=packet.id, original_cmd=packet.cmd, text="Failed to retrieve item data from server."))
+            return
+    
+    # Map counts by ID / Amount / End Amount
+    return { (id, amt, __item_counts.get((slot_id, id), 0) + amt ) for id, nm, amt in item_count_lookup } 
+
+async def validate_notification(packet, user_id: int, slot_id: int) -> NotificationSettings | None:
+    """Validate that"""
+
+    global __tracker_client
+    try:
+        notif = NotificationSettings.get_or_create(__tracker_client.channel_id, user_id, slot_id)
+    except Exception as ex:
+        await send_invalid(packet, f"{ex}")
+
+    return notif
+
+async def validate_slot_name(packet, slot_name: str) -> int | None:
+    global __tracker_client
+
+    if not (slot_id:= __tracker_client.get_slot(slot_name)):
+        await send_invalid(packet, f"Could not find player with name `{packet.player}`")
+
+    return slot_id
 
 def append_mentions(text: str, user_ids: List[int]) -> str:
     """Append notification mentions to a string."""
@@ -765,9 +907,17 @@ def generate_hint_text(recipient: int, item: utils.NetworkItem) -> str:
 
     # Generate hint text with mentions, if applicable
     return append_mentions(
-        f"**[HINT]**: `{get_player(recipient)}`'s item **{get_item(recipient, item.item)} _({utils.NotifyFlags.item_to_notify_flags(item.flags).to_text()})_** is at `{get_player(item.player)}`'s location **{get_location(item.player, item.location)}** check.",
-        get_hint_flag_notifications(item.player, item.flags),
+        f"**[HINT]**: `{get_player(recipient)}`'s item **{get_item(recipient, item.item)} _({utils.NotifyFlags.item_to_notify_flags(item.flags).to_text()})_**" \
+            f" is at `{get_player(item.player)}`'s location **{get_location(item.player, item.location)}**",
+        get_users_for_hint_flag_notifications(item.player, item.flags),
     )
+
+def generate_networkhint_text(hint: utils.Hint):
+    """Generate the text for a hint message"""
+
+    # Generate hint text
+    return f"**[HINT]**: `{get_player(hint.receiving_player)}`'s item **{get_item(hint.receiving_player, hint.item)} _({utils.NotifyFlags.item_to_notify_flags(hint.item_flags).to_text()})_**" \
+        f" is at `{get_player(hint.finding_player)}`'s location **{get_location(hint.finding_player, hint.location)}**"
 
 def generate_items_text(recipient: int, items: Dict[int, utils.QueuedItemData]) -> str:
     """Generate the text for an item received message."""
@@ -784,14 +934,13 @@ def generate_items_text(recipient: int, items: Dict[int, utils.QueuedItemData]) 
     return append_mentions(
         f"`{get_player(recipient)}` received their " + ", ".join([f"**{item_name}**" + (f" **_(x{count})_**" if count > 1 else "") for item_name, count in item_counts.items()]),
         list(
-            set(get_item_flag_notifications(recipient, combined_flags)) | 
-            set(get_item_term_notifications(recipient, [ name for name in item_counts.keys() ])) |
-            set(get_item_count_notifications(recipient, { tup[1]: rcv_count for tup, rcv_count in __item_counts.items() if tup[0] == recipient and tup[1] in items.keys() }))
+            set(get_users_for_item_flag_notifications(recipient, combined_flags)) | 
+            set(get_users_for_item_term_notifications(recipient, [ name for name in item_counts.keys() ])) |
+            set(get_users_for_item_count_notifications(recipient, { tup[1]: rcv_count for tup, rcv_count in __item_counts.items() if tup[0] == recipient and tup[1] in items.keys() }))
         )
     )
 
 #region Tracker Event Handlers
-
 
 @TrackerClient.on_collect
 async def __on_collect(client, slot_id: int):
@@ -803,7 +952,6 @@ async def __on_collect(client, slot_id: int):
 async def __on_connection_state_changed(client, state: str, errors: List[str] = []):
     """Handler for the tracker's connection state changing."""
     
-    global __store
     global __tracker_client
 
     msg: str = ""
@@ -814,28 +962,19 @@ async def __on_connection_state_changed(client, state: str, errors: List[str] = 
             return
 
         case "Connecting":
-            msg = f"Client is attempting to connect to `{client.host}:{client.port}`..."
+            msg = f"Client is attempting to connect to {format_host_port_slot(client.host, client.port, client.slot_name)} ..."
 
         case "Disconnected":
-            msg = f"Client has disconnected from `{client.host}:{client.port}` - please use the `/connect` command to retry."
+            msg = f"Client has disconnected from {format_host_port_slot(client.host, client.port, client.slot_name)} - please use the `/connect` command to retry."
 
         case "Failed": 
-            msg = f"Client has failed to connect to `{client.host}:{client.port}`. Error(s): {", ".join(errors)}"
+            msg = f"Client has failed to connect to {format_host_port_slot(client.host, client.port, client.slot_name)}. Error(s): {", ".join(errors)}"
 
         case "Reconnecting":
-            msg = f"Client connection has failed, attempting to retry connection to `{client.host}:{client.port}` - this may take a few minutes."
+            msg = f"Client connection has failed, attempting to retry connection to {format_host_port_slot(client.host, client.port, client.slot_name)} - this may take a few minutes."
 
         case "Tracking":
-            msg = f"Client is now tracking the session at `{client.host}:{client.port}`"
-
-            # Get notification slot items to check
-            count_items = __store.notifications.get_count_items_for_port(client.port)
-
-            # Request item counts from server
-            await __tracker_client.send(utils.ReceivedCountRequestPacket(
-                id="",
-                slot_items=count_items
-            ))
+            msg = f"Client is now tracking the session at {format_host_port_slot(client.host, client.port, client.slot_name)}"
 
             # Send tracker info
             await send(utils.TrackerInfoPacket(
@@ -922,6 +1061,18 @@ async def __on_release(client, slot_id: int):
 
 #region StdClient Event Handlers
 
+@StdClient.on_cmd_request
+async def __on_cmd_request(client: StdClient, packet: utils.CommandRequestPacket):
+    """Handle an incoming cmd request packet"""
+
+    global __tracker_client
+
+    # Send it (this is just forwarding, really.)
+    response = await __tracker_client.request(packet)
+
+    # Return the response
+    await send(response)
+
 @StdClient.on_error
 async def __on_std_error(client: StdClient, msg: str):
     """Handle an error from the std client."""
@@ -929,169 +1080,90 @@ async def __on_std_error(client: StdClient, msg: str):
     # TODO: Figure out if this is the right thing to do...
     await send(utils.DiscordMessagePacket(message=f"Client encountered an unexpected error: '{msg}'."))
 
-@StdClient.on_notifications_request
-async def __on_notifications_request(client: StdClient, packet: utils.NotificationsRequestPacket):
-    """Handle an incoming notifications request."""
+@StdClient.on_hint_request
+async def __on_hint_request(client: StdClient, packet: utils.HintRequestPacket):
+    """Handle an incoming hint request."""
 
-    global __item_counts
-    global __store
     global __tracker_client
+
+    # Forward to archipelago server
+    response = await __tracker_client.request(packet)
+
+    logging.info(f"Response: {response}")
+
+    # Format hints if success
+    if not response.is_error() and response.success and response.hints:
+        response.comment += ("\n\n" if response.comment else "") + "\n".join([f"- {generate_networkhint_text(hint)}" for hint in response.hints])
+
+    # Return response
+    await send(response)
+
+@StdClient.on_notifications_request
+async def __on_notifications_request_v2(client: StdClient, packet: utils.NotificationsRequestPacket):
+    """Handle an incoming notifications request"""
 
     # Validate packet data
-    if packet.action < utils.Action.ADD or packet.action > utils.Action.VIEW:
-        await send(utils.InvalidPacket(
-            id=packet.id,
-            original_cmd=packet.cmd,
-            text=f"Unknown action `{packet.action}`."
-        ))
+    if not (slot_id:= await validate_slot_name(packet, packet.player)) or not (notif:= await validate_notification(packet, packet.user_id, slot_id)):
         return
-    elif not (slot_id:= __tracker_client.get_slot(packet.player)):
-        await send(utils.InvalidPacket(
-            id=packet.id,
-            original_cmd=packet.cmd,
-            text=f"Player with name `{packet.player}` could not be found."
-        ))
-        return
-    
-    # TODO: Validate the flags??
-    #       I could probably do this in the Notification.__post_init__()...
-    
-    # Check if notification exists, create if it doesn't
-    if not (notif:= __store.notifications.get_or_create(__tracker_client.port, packet.user_id, slot_id)):
-        await send(utils.ErrorPacket(
-            id=packet.id,
-            original_cmd=packet.cmd,
-            text="An error occurred while attempting to get or create notification preferences."
-        ))
+    elif packet.action < utils.Action.ADD or packet.action > utils.Action.VIEW:
+        await send_invalid(packet, f"Unknown notifications action requested")
         return
 
-    # If only viewing, everything else can be skipped over
-    if packet.action != utils.Action.VIEW:
+    try:
+        global __tracker_client
 
-        # Validate item names
-        item_map: Dict[str, int] = { item_name: get_item_id(slot_id, item_name) for item_name in packet.counts.keys() }
-        if item_map and (invalid_names:= [item_name for item_name, item_id in item_map.items() if not item_id ]):
-            await send(utils.InvalidPacket(
+        # Bail early if just viewing
+        if packet.action == utils.Action.VIEW:
+            await send(utils.NotificationsResponsePacket(
                 id=packet.id,
-                original_cmd=packet.cmd,
-                text=f"Could not find matching item(s) for {", ".join([f"`{inv}`" for inv in invalid_names])}"
+                notification=utils.NotificationSettingsDTO.from_entity(__tracker_client, notif)
             ))
             return
 
-        # If adding, check if there are any new item counts we don't currently have
-        if packet.action == utils.Action.ADD and (unknown_counts:= [ item_id for item_id in item_map.values() if (slot_id, item_id) not in __item_counts ]):
-
-            # Request item counts from server
-            response = await __tracker_client.request(utils.ReceivedCountRequestPacket(
-                id=uuid.uuid4().hex,
-                slot_items={ slot_id: unknown_counts }
-            ))
-
-            # NOTE: Update to __item_counts is handled before the response is passed back to here
-
-            # Validate response
-            if response.is_error():
-                await send(utils.ErrorPacket(
-                    id=packet.id,
-                    original_cmd=packet.cmd,
-                    text="Unable to retrieve item data from server."
-                ))
+        # Validate and map item counts
+        item_counts = []
+        if packet.action != utils.Action.CLEAR and packet.counts:
+            if (item_counts:= await validate_item_counts(packet, packet.action, slot_id, packet.counts)) is None:
                 return
             
-        # Parse received counts to store-able object
-        parsed_counts: List[utils.NotificationCount] = []
-        for item_name, item_id in item_map.items():
-            count = packet.counts.get(item_name)
-            end_count: int = __item_counts.get((slot_id, item_id)) + count
-            parsed_counts.append(utils.NotificationCount(
-                item_id=item_id,
-                count=count,
-                end_at=end_count
-            ))
-
+        # Adjust values depending on action
         match packet.action:
+
             case utils.Action.ADD:
-                notif.hints = ((notif.hints or utils.NotifyFlags.NONE) | packet.hints) if packet.hints else notif.hints
-                notif.types = ((notif.types or utils.NotifyFlags.NONE) | packet.types) if packet.types else notif.types
-                notif.terms = list(set(notif.terms or []) | set(packet.terms)) if packet.terms else notif.terms
-                notif.counts = utils.NotificationCount.merge(notif.counts, parsed_counts) if parsed_counts else notif.counts
+                hint_flags = (notif.hint_flags or utils.NotifyFlags.NONE) | (packet.hints or utils.NotifyFlags.NONE)
+                item_flags = (notif.item_flags or utils.NotifyFlags.NONE) | (packet.types or utils.NotifyFlags.NONE)
+                terms = set([t.term for t in notif.terms or []]) | { t.casefold() for t in (packet.terms or []) }
+
+                # Merge existing with inbound counts, taking the "end_count" from the inbound list
+                merged_counts = { (c.item_id, c.amount): (c.item_id, c.amount, c.end_amount) for c in notif.counts }
+                for id, amt, end in item_counts:
+                    merged_counts[(id, amt)] = (id, amt, end)
+                counts = list(merged_counts.values())
+
+                notif = notif.update(notif.id, hint_flags, item_flags, terms, counts)
 
             case utils.Action.REMOVE:
-                notif.hints = ((notif.hints or utils.NotifyFlags.NONE) & ~packet.hints) if packet.hints else notif.hints
-                notif.types = ((notif.types or utils.NotifyFlags.NONE) & ~packet.types) if packet.types else notif.types
-                notif.terms = list(set(notif.terms or []) - set(packet.terms)) if packet.terms else notif.terms
-                notif.counts = utils.NotificationCount.unmerge(notif.counts, parsed_counts) if parsed_counts else notif.counts
-            
+                hint_flags = (notif.hint_flags or utils.NotifyFlags.NONE) & ~(packet.hints or utils.NotifyFlags.NONE)
+                item_flags = (notif.item_flags or utils.NotifyFlags.NONE) & ~(packet.types or utils.NotifyFlags.NONE)
+                terms = { t.term for t in (notif.terms or []) } - { t.casefold() for t in (packet.terms or []) }
+
+                # Remove inbound counts that match exsting
+                merged_counts = { (id, amt) for id, amt, _ in item_counts }
+                counts = [ (c.item_id, c.amount, c.end_amount) for c in notif.counts if (c.item_id, c.amount) not in merged_counts ]
+                
+                notif = notif.update(notif.id, hint_flags, item_flags, terms, counts)
+
             case utils.Action.CLEAR:
-                notif.hints = utils.NotifyFlags.NONE
-                notif.types = utils.NotifyFlags.NONE
-                notif.terms = []
-                notif.counts = []
+                notif = notif.update(notif.id, utils.NotifyFlags.NONE, utils.NotifyFlags.NONE, [], {})
 
-            case _:
-                # This should already be handled at start of method, but just in case...
-                return
-        
-        # Save changes
-        if not (notif:= __store.notifications.upsert(notif)):
-            await send(utils.ErrorPacket(
-                id=packet.id,
-                text="An error occurred while attempting to update the notification preferences."
-            ))
-            return
-        
-        # If remove operation successful, stop tracking counts from removed list
-        if packet.action == utils.Action.REMOVE:
-            for item_id in item_map.keys():
-                __item_counts.pop((slot_id, item_id), None)
-        
-    # Insert item names to notification counts
-    for notif_count in notif.counts:
-        notif_count.item_name = __tracker_client.get_item_name(slot_id, notif_count.item_id)
-
-    # Respond with notification
-    await send(utils.NotificationsResponsePacket(
-        id=packet.id,
-        notification=notif
-    ))
-
-@StdClient.on_player_state_request
-async def __on_playerstate_request(client: StdClient, packet: utils.PlayerStateRequestPacket):
-    """Handle an incoming release request"""
-    
-    global __tracker_client
-
-    # Validate player name
-    slot_id = __tracker_client.get_slot(packet.slot_name)
-    if not slot_id:
-        await send(utils.InvalidPacket(
+        # Return the notif settings
+        await send(utils.NotificationsResponsePacket(
             id=packet.id,
-            text=f"No player found with name `{packet.slot_name}`"
+            notification=utils.NotificationSettingsDTO.from_entity(__tracker_client, notif)
         ))
-        return
-    
-    # Request release and await response
-    response = await __tracker_client.request(utils.SlotActionRequestPacket(
-        id=packet.id,
-        action=packet.state,
-        slot_id=slot_id
-    ))
 
-    # Validate response
-    if response.is_error():
-        await send(utils.ErrorPacket(
-            id=packet.id,
-            original_cmd=packet.cmd,
-            text=response.text
-        ))
-        return
-
-    # Respond
-    await send(utils.PlayerStateResponsePacket(
-        id=packet.id,
-        state=packet.state,
-        success=response.success
-    ))
+    except Exception as ex:
+        await send_invalid(packet, f"{ex}")
 
 @StdClient.on_statistics_request
 async def __on_statistics_request(client: StdClient, packet: utils.StatisticsRequestPacket):
@@ -1195,81 +1267,79 @@ def get_location(slot_id: int, location_id: int) -> str | None:
     global __tracker_client
     return __tracker_client.get_location_name(slot_id, location_id)
 
-def get_hint_flag_notifications(slot_id: int, item_flags: int) -> List[int]:
+def get_users_for_hint_flag_notifications(slot_id: int, hint_flags: int) -> List[int]:
     """Get user IDs subscribed to 'hinted item' notifications with these flags."""
-
-    global __store
     global __tracker_client
 
-    # Get notifications from store
-    return __store.notifications.get_for_hint_flags(
-        __tracker_client.port,
+    if not (converted_flags:= utils.NotifyFlags.item_to_notify_flags(hint_flags).value):
+        return []  
+
+    return NotificationSettings.get_users_for_hint_flags(
+        __tracker_client.channel_id,
         slot_id,
-        utils.NotifyFlags.item_to_notify_flags(item_flags)
+        hint_flags
     )
 
-def get_item_count_notifications(slot_id: int, item_counts: Dict[int, int]) -> List[int]:
+def get_users_for_item_count_notifications(slot_id: int, item_counts: Dict[int, int]) -> List[int]:
     """Get user IDs subscribed to 'item count' notifications for these item counts."""
+    global __tracker_client
 
-    global __store
+    if not item_counts:
+        return []
 
-    # Get notifications from store
-    return __store.notification_counts.pop_for_item_counts(
-        __tracker_client.port,
+    return NotificationCount.pop_users_for_counts(
+        __tracker_client.channel_id,
         slot_id,
         item_counts
     )
 
-def get_item_flag_notifications(slot_id: int, item_flags: int) -> List[int]:
+def get_users_for_item_flag_notifications(slot_id: int, item_flags: int) -> List[int]:
     """Get user IDs subscribed to 'item received' notifications with these flags."""
-
-    global __store
     global __tracker_client
 
-    # Get notifications from store
-    return __store.notifications.get_for_item_flags(
-        __tracker_client.port,
+    if not (converted_flags:= utils.NotifyFlags.item_to_notify_flags(item_flags).value):
+        return []  
+    
+    return NotificationSettings.get_users_for_item_flags(
+        __tracker_client.channel_id,
         slot_id,
-        utils.NotifyFlags.item_to_notify_flags(item_flags)
+        converted_flags
     )
 
-def get_item_term_notifications(slot_id: int, item_names: List[str]) -> List[int]:
+def get_users_for_item_term_notifications(slot_id: int, item_names: List[str]) -> List[int]:
     """Get user IDs subscribed to 'item received' notifications with terms within these item names."""
-
-    global __store
     global __tracker_client
 
-    # Get notifications from store
-    return __store.notifications.get_for_terms(
-       __tracker_client.port,
-       slot_id,
-       item_names
+    if not item_names:
+        return []
+    
+    return NotificationTerm.get_users_for_terms(
+        __tracker_client.channel_id,
+        slot_id,
+        item_names
     )
 
 async def main() -> None:
 
-    global __args
-    global __store
     global __std_client
     global __tasks
     global __tracker_client
 
     # Parse commandline args
-    __args = parse_args()
+    args = parse_args()
 
-    # Configure logging
-    logging.basicConfig(
-        level=getattr(logging, __args.loglevel.upper(), logging.INFO),
-        format=f"[AGENT]    {'%(asctime)s\t' if __args.logtime else ''}%(levelname)s:\t%(message)s | Port: {__args.port}",
-        handlers=[logging.StreamHandler(sys.stderr)]
+    utils.setup_logging(
+        service=f"Agent_{args.port}",
+        logtime=args.logtime,
+        level=args.loglevel.upper()
     )
-
-    # Instantiate store
-    __store = Store()
 
     # Instantiate clients
     __std_client = StdClient()
-    __tracker_client = TrackerClient(__args)
+    __tracker_client = TrackerClient(args)
+
+    # Initialise store
+    init_db(args.pony)
 
     # Gather and start all asynchronous tasks, exiting when any task completes
     __tasks = [
@@ -1297,14 +1367,18 @@ def parse_args() -> argparse.Namespace:
     defaults = get_bot_settings().agent.as_dict()
 
     parser = argparse.ArgumentParser(prog="Agent.py", description="Archipelago Discord Tracker Client")
+    parser.add_argument("--channel_id", type=str, help="The hostname of the archipelago server")
     parser.add_argument("--host", type=str, default=defaults["host"], help="The hostname of the archipelago server")
     parser.add_argument("--port", type=int, help="The port of the archipelago session.")
     parser.add_argument("--slot_name", type=str, help="The slot name to connect to.")
+    parser.add_argument("--room_id", type=str, help="The ID of the hosted room.")
     parser.add_argument("--password", type=str, help="The password for the server or slot.")
     parser.add_argument("--loglevel", default=defaults["loglevel"], type=str)
     parser.add_argument("--logtime", default=defaults["logtime"], type=bool)
 
     args = parser.parse_args()
+    args.pony = get_bot_settings().pony.as_dict()
+
     return args
 
 if __name__ == "__main__":

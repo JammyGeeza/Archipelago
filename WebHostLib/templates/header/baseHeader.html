@@ -47,7 +47,9 @@
             <a href="/dev-games">In-Development games</a>
             <a href="/tutorial">setup guides</a>
             <a href="/faq/en">f.a.q.</a>
-            <a href="/generate">generate game</a>
+            {% if config.GENERATORS > 0 %}
+                <a href="/generate">generate game</a>
+            {% endif %}
             <a href="/uploads">host game</a>
             <a href="/user-content">user content</a>
             <a href="https://discord.com/channels/1338891181752455201" target="_blank">discord</a>
