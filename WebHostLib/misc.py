@@ -22,7 +22,7 @@ db = Database()
 
 db.bind(
     provider='postgres',
-    host="95.217.11.255",
+    host="127.0.0.1",
     user="multiserver",
     password="strongpassword",
     database="hetzner",
