@@ -35,19 +35,13 @@ if typing.TYPE_CHECKING:
 import colorama
 import websockets
 from websockets.extensions.permessage_deflate import PerMessageDeflate, ServerPerMessageDeflateFactory
-try:
-    # ponyorm is a requirement for webhost, not default server, so may not be importable
-    from pony.orm.dbapiprovider import OperationalError
-    from pony.orm import Database, Required, db_session, PrimaryKey, Optional
-except ImportError:
-    OperationalError = ConnectionError
-
 import NetUtils
 import Utils
 from Utils import version_tuple, restricted_loads, Version, async_start, get_intended_text
 from NetUtils import Endpoint, ClientStatus, NetworkItem, decode, encode, NetworkPlayer, Permission, NetworkSlot, \
     SlotType, LocationStore, MultiData, Hint, HintStatus
 from BaseClasses import ItemClassification
+from greg.GregStore import CompleteSend, DeathSend, ItemSend, PlaylogSend, init_db
 
 min_client_version = Version(0, 5, 0)
 colorama.just_fix_windows_console()
@@ -60,63 +54,6 @@ server_per_message_deflate_factory = ServerPerMessageDeflateFactory(
     client_max_window_bits=11,
     compress_settings={"memLevel": 4},
 )
-
-db = Database()
-
-db.bind(
-    provider='postgres',
-    host="host.docker.internal",
-    user="multiserver",
-    password="strongpassword",
-    database="hetzner",
-    connect_timeout=10,
-    sslmode="require",
-    options='-c search_path=gregipelago'
-)
-
-class ItemSend(db.Entity):
-    _table_ = "itemlog"
-    _schema_ = "gregipelago"
-
-    id = PrimaryKey(int, auto=True)
-    sender = Required(str)
-    item = Required(str)
-    receiver = Required(str)
-    roomid = Required(str)
-    timestamp = Required(datetime.datetime, default=lambda: datetime.datetime.now(datetime.UTC))
-
-class DeathSend(db.Entity):
-    _table_ = "deathlink"
-    _schema_ = "gregipelago"
-
-    id = PrimaryKey(int, auto=True)
-    sender = Required(str)
-    cause = Optional(str, nullable=True)
-    roomid = Required(str)
-    timestamp = Required(datetime.datetime, default=lambda: datetime.datetime.now(datetime.UTC))
-
-class CompleteSend(db.Entity):
-    _table_ = "completions"
-    _schema_ = "gregipelago"
-
-    id = PrimaryKey(int, auto=True)
-    sender = Required(str)
-    goal = Required(bool)
-    roomid = Required(str)
-    timestamp = Required(datetime.datetime, default=lambda: datetime.datetime.now(datetime.UTC))
-
-class PlaylogSend(db.Entity):
-    _table_ = "playlog"
-    _schema_ = "gregipelago"
-
-    id = PrimaryKey(int, auto=True)
-    sender = Required(str)
-    roomid = Required(str)
-    timestamp = Required(datetime.datetime, default=lambda: datetime.datetime.now(datetime.UTC))
-    status = Required(str)
-    tags = Required(str)
-
-db.generate_mapping(create_tables=False)
 
 def remove_from_list(container, value):
     try:
@@ -269,22 +206,22 @@ class Client(Endpoint):
 
 team_slot = typing.Tuple[int, int]
 
-@db_session
-def send_item(data):
-    for sender, item, receiver,room_id in data:
-        ItemSend(sender=sender, item=item, receiver=receiver,roomid=room_id)
+# @db_session
+# def ItemSend.send(data):
+#     for sender, item, receiver,room_id in data:
+#         ItemSend(sender=sender, item=item, receiver=receiver,roomid=room_id)
 
-@db_session
-def send_death(sender, cause, roomid):
-    DeathSend(sender=sender, cause=cause, roomid=roomid)
+# @db_session
+# def DeathSend.send(sender, cause, roomid):
+#     DeathSend(sender=sender, cause=cause, roomid=roomid)
 
-@db_session
-def send_complete(sender, goal, roomid):
-    CompleteSend(sender=sender, goal=goal, roomid=roomid)
+# @db_session
+# def CompleteSend.send(sender, goal, roomid):
+#     CompleteSend(sender=sender, goal=goal, roomid=roomid)
 
-@db_session
-def send_playlog(sender, roomid, status, tags):
-    PlaylogSend(sender=sender, status=status, roomid=roomid, tags=tags)
+# @db_session
+# def PlaylogSend.send(sender, roomid, status, tags):
+#     PlaylogSend(sender=sender, status=status, roomid=roomid, tags=tags)
 
 class Context:
     dumper = staticmethod(encode)
@@ -944,7 +881,7 @@ class Context:
         self.save()  # save goal completion flag
 
         ### For SQL upload
-        send_complete(client.name, True, str(self.room_id))
+        CompleteSend.send(client.name, True, str(self.room_id))
 
     def on_new_hint(self, team: int, slot: int):
         self.on_changed_hints(team, slot)
@@ -1048,7 +985,7 @@ async def on_client_joined(ctx: Context, client: Client):
             break
     else:
         final_verb = "playing"
-        send_playlog(ctx.player_names[(client.team, client.slot)],str(ctx.room_id),"Connected",str(client.tags))
+        PlaylogSend.send(ctx.player_names[(client.team, client.slot)],str(ctx.room_id),"Connected",str(client.tags))
 
     ctx.broadcast_text_all(
         f"{ctx.get_aliased_name(client.team, client.slot)} (Team #{client.team + 1}) "
@@ -1082,7 +1019,7 @@ async def on_client_left(ctx: Context, client: Client):
         final_verb = "left"
 
     if final_verb == "left":
-        send_playlog(ctx.player_names[(client.team, client.slot)],str(ctx.room_id),"Disconnected",str(client.tags))
+        PlaylogSend.send(ctx.player_names[(client.team, client.slot)],str(ctx.room_id),"Disconnected",str(client.tags))
 
     ctx.broadcast_text_all(
         f"{ctx.get_aliased_name(client.team, client.slot)} (Team #{client.team + 1}) has {final_verb} the game. "
@@ -1184,7 +1121,7 @@ def release_player(ctx: Context, team: int, slot: int, log_release=True):
 
     ### For SQL upload
     if log_release:
-        send_complete(ctx.player_names[(team, slot)], False, str(ctx.room_id))
+        CompleteSend.send(ctx.player_names[(team, slot)], False, str(ctx.room_id))
 
 
 def collect_player(ctx: Context, team: int, slot: int, is_group: bool = False):
@@ -1258,7 +1195,7 @@ def register_location_checks(ctx: Context, team: int, slot: int, locations: typi
             batch_data.append((ctx.player_names[(team, slot)], ctx.item_names[ctx.slot_info[target_player].game][item_id], ctx.player_names[(team, target_player)], str(ctx.room_id)))
 
         ### Fire SQL query
-        send_item(batch_data)
+        ItemSend.send(batch_data)
 
         ctx.broadcast_team(team, info_texts)
         del info_texts
@@ -2272,7 +2209,7 @@ async def process_client_cmd(ctx: Context, client: Client, args: dict):
                     #cause = ''
                     cause = None
                     
-                send_death(sender, cause, str(ctx.room_id))
+                DeathSend.send(sender, cause, str(ctx.room_id))
 
             #region BOT ADDITION
 
@@ -2563,7 +2500,7 @@ def _goal_player(ctx: Context, team: int, slot: int):
         ctx.save()
 
         ### For SQL upload
-        send_complete(ctx.player_names[(team, slot)], True, str(ctx.room_id))
+        CompleteSend.send(ctx.player_names[(team, slot)], True, str(ctx.room_id))
 
 def _request_slot_item_hints(ctx: Context, team: int, slot: int, input_text: str) -> tuple[bool, list[Hint], str]:
     """"""
@@ -3124,6 +3061,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument('--log_network', default=defaults["log_network"], action="store_true")
 
     args = parser.parse_args()
+
+    #region Gregipelago Additions
+
+    args.greg_db = get_settings().greg_db_options.as_dict()
+
+    #endregion
+
     return args
 
 
@@ -3164,6 +3108,15 @@ async def main(args: argparse.Namespace):
     Utils.init_logging(name="Server",
                        loglevel=args.loglevel.lower(),
                        add_timestamp=args.logtime)
+    
+    logging.info(f"greg db: {args.greg_db}")
+    
+    #region Gregipelago Additions
+
+    # Initialise greg db from host.yaml options
+    init_db(args.greg_db)
+
+    #endregion
 
     ctx = Context(args.host, args.port, args.server_password, args.password, args.location_check_points,
                   args.hint_cost, not args.disable_item_cheat, args.release_mode, args.collect_mode,

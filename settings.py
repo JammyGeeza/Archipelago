@@ -628,23 +628,6 @@ class ServerOptions(Group):
     auto_shutdown: AutoShutdown = AutoShutdown(0)
     compatibility: Compatibility = Compatibility(2)
     log_network: LogNetwork = LogNetwork(0)
-
-class DiscordGatewayOptions(Group):
-    """Options for the Discord Gateway"""
-
-    class Token(str):
-        """The bot auth token, generated from the discord developer portal."""
-
-    token: Token = Token("")
-    admin_only: bool = True
-    loglevel: str = "info"
-    logtime: bool = False
-
-class DiscordAgentOptions(Group):
-    """Options for the Discord Agents"""
-    host: str = "localhost"
-    loglevel: str = "info"
-    logtime: bool = False 
     
 class GeneratorOptions(Group):
     """Options for Generation"""
@@ -755,12 +738,27 @@ class BizHawkClientOptions(Group):
 
 # Top-level group with lazy loading of worlds
 
+#region Gregipelago Additions
+
+class GregDbOptions(Group):
+    """Settings for pony.orm (greg/GregStore.py)"""
+
+    provider: str = "postgres"
+    host: str = "127.0.0.1"
+    user: str = "multiserver"
+    password: str = ""
+    database: str = "hetzner"
+    connect_timeout: int = 10
+    sslmode: str = "require"
+    options: str = "-c search_path=gregipelago"
+
+#endregion
+
 class Settings(Group):
     general_options: GeneralOptions = GeneralOptions()
     server_options: ServerOptions = ServerOptions()
-    discord_gateway_options: DiscordGatewayOptions = DiscordGatewayOptions()
-    discord_agent_options: DiscordAgentOptions = DiscordAgentOptions()
     generator: GeneratorOptions = GeneratorOptions()
+    greg_db_options: GregDbOptions = GregDbOptions()
     sni_options: SNIOptions = SNIOptions()
     bizhawkclient_options: BizHawkClientOptions = BizHawkClientOptions()
 
