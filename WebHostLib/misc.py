@@ -22,7 +22,7 @@ db = Database()
 
 db.bind(
     provider='postgres',
-    host="127.0.0.1",
+    host="host.docker.internal",
     user="multiserver",
     password="strongpassword",
     database="hetzner",
