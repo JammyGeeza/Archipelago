@@ -104,6 +104,17 @@ class CompleteSend(db.Entity):
     roomid = Required(str)
     timestamp = Required(datetime.datetime, default=lambda: datetime.datetime.now(datetime.UTC))
 
+class PlaylogSend(db.Entity):
+    _table_ = "playlog"
+    _schema_ = "gregipelago"
+
+    id = PrimaryKey(int, auto=True)
+    sender = Required(str)
+    roomid = Required(str)
+    timestamp = Required(datetime.datetime, default=lambda: datetime.datetime.now(datetime.UTC))
+    status = Required(str)
+    tags = Required(str)
+
 db.generate_mapping(create_tables=False)
 
 def remove_from_list(container, value):
@@ -269,6 +280,10 @@ def send_death(sender, cause, roomid):
 @db_session
 def send_complete(sender, goal, roomid):
     CompleteSend(sender=sender, goal=goal, roomid=roomid)
+
+@db_session
+def send_playlog(sender, roomid, status, tags):
+    PlaylogSend(sender=sender, status=status, roomid=roomid, tags=tags)
 
 class Context:
     dumper = staticmethod(encode)
@@ -917,14 +932,13 @@ class Context:
     # "events"
 
     def on_goal_achieved(self, client: Client):
-        print('goal received')
         finished_msg = f'{self.get_aliased_name(client.team, client.slot)} (Team #{client.team + 1})' \
                        f' has completed their goal.'
         self.broadcast_text_all(finished_msg, {"type": "Goal", "team": client.team, "slot": client.slot})
         if "auto" in self.collect_mode:
             collect_player(self, client.team, client.slot)
         if "auto" in self.release_mode:
-            release_player(self, client.team, client.slot)
+            release_player(self, client.team, client.slot, False)
         self.save()  # save goal completion flag
 
         ### For SQL upload
@@ -1032,6 +1046,7 @@ async def on_client_joined(ctx: Context, client: Client):
             break
     else:
         final_verb = "playing"
+        send_playlog(ctx.player_names[(client.team, client.slot)],str(ctx.room_id),"Connected",str(client.tags))
 
     ctx.broadcast_text_all(
         f"{ctx.get_aliased_name(client.team, client.slot)} (Team #{client.team + 1}) "
@@ -1063,6 +1078,9 @@ async def on_client_left(ctx: Context, client: Client):
             break
     else:
         final_verb = "left"
+
+    if final_verb == "left":
+        send_playlog(ctx.player_names[(client.team, client.slot)],str(ctx.room_id),"Disconnected",str(client.tags))
 
     ctx.broadcast_text_all(
         f"{ctx.get_aliased_name(client.team, client.slot)} (Team #{client.team + 1}) has {final_verb} the game. "
@@ -1153,7 +1171,7 @@ def update_checked_locations(ctx: Context, team: int, slot: int):
                   [{"cmd": "RoomUpdate", "checked_locations": get_checked_checks(ctx, team, slot)}])
 
 
-def release_player(ctx: Context, team: int, slot: int):
+def release_player(ctx: Context, team: int, slot: int, log_release=True):
     """register any locations that are in the multidata"""
     all_locations = set(ctx.locations[slot])
     ctx.broadcast_text_all("%s (Team #%d) has released all remaining items from their world."
@@ -1163,8 +1181,8 @@ def release_player(ctx: Context, team: int, slot: int):
     update_checked_locations(ctx, team, slot)
 
     ### For SQL upload
-    print('sending release')
-    send_complete(ctx.player_names[(team, slot)], False, str(ctx.room_id))
+    if log_release:
+        send_complete(ctx.player_names[(team, slot)], False, str(ctx.room_id))
 
 
 def collect_player(ctx: Context, team: int, slot: int, is_group: bool = False):
@@ -2486,14 +2504,15 @@ def _goal_player(ctx: Context, team: int, slot: int):
 
         # Collect and/or release if enabled
         if "auto" in ctx.collect_mode: collect_player(ctx, team, slot)
-        if "auto" in ctx.release_mode: release_player(ctx, team, slot)
+        if "auto" in ctx.release_mode: release_player(ctx, team, slot, False)
 
         # Update server state
         ctx.client_game_state[(team, slot)] = ClientStatus.CLIENT_GOAL
         ctx.on_client_status_change(team, slot)
         ctx.save()
-    ### For SQL upload
-    send_complete(ctx.player_names[(team, slot)], True, str(ctx.room_id))
+
+        ### For SQL upload
+        send_complete(ctx.player_names[(team, slot)], True, str(ctx.room_id))
 
 #endregion
 
