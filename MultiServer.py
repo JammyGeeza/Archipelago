@@ -3109,8 +3109,6 @@ async def main(args: argparse.Namespace):
                        loglevel=args.loglevel.lower(),
                        add_timestamp=args.logtime)
     
-    logging.info(f"greg db: {args.greg_db}")
-    
     #region Gregipelago Additions
 
     # Initialise greg db from host.yaml options
