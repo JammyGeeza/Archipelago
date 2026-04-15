@@ -362,8 +362,8 @@ def create_trap_items(world: MultiWorld, player: int, options: StacklandsOptions
 
             # Select traps using trap weights
             trap_selection = world.random.choices(
-                population=list(world.trap_weights.keys()),
-                weights=list(world.trap_weights.values()),
+                population=list(world.trap_weights[player].keys()),
+                weights=list(world.trap_weights[player].values()),
                 k=trap_count
             )
 
@@ -418,8 +418,8 @@ def create_filler_items(world: MultiWorld, player: int, items: List[ItemData], o
 
             # Select filler boosters using weights
             booster_selection = world.random.choices(
-                population=list(world.filler_booster_weights.keys()),
-                weights=list(world.filler_booster_weights.values()),
+                population=list(world.filler_booster_weights[player].keys()),
+                weights=list(world.filler_booster_weights[player].values()),
                 k=unfilled_count
             )
 

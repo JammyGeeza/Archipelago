@@ -1589,9 +1589,9 @@ def set_rules(world: MultiWorld, player: int):
    set_rule(world.get_location("Goal Complete", player),
             lambda state: (
                bool(options.goal.value & (GoalFlags.AllBosses | GoalFlags.RandomBoss))
-               and (not bool(world.goal_boards & RegionFlags.Mainland) or state.has("Demon", player))
-               and (not bool(world.goal_boards & RegionFlags.Forest) or state.has("Wicked Witch", player))
-               and (not bool(world.goal_boards & RegionFlags.Island) or state.has("Demon Lord", player))
+               and (not bool(world.goal_boards[player] & RegionFlags.Mainland) or state.has("Demon", player))
+               and (not bool(world.goal_boards[player] & RegionFlags.Forest) or state.has("Wicked Witch", player))
+               and (not bool(world.goal_boards[player] & RegionFlags.Island) or state.has("Demon Lord", player))
             ))
                
 

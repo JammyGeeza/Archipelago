@@ -76,32 +76,44 @@ class StacklandsWorld(World):
 
     def generate_early(self) -> None:
 
+        if not hasattr(self.multiworld, "goal_weights"):
+            self.multiworld.goal_weights = {}
+
         # Define goal weights based on options
-        goal_weights: Dict[RegionFlags, int] = {
+        self.multiworld.goal_weights[self.player] = {
             RegionFlags.Mainland: 1 if bool(self.options.boards.value & RegionFlags.Mainland) else 0,
             RegionFlags.Forest: 1 if bool(self.options.boards.value & RegionFlags.Forest) else 0,
             RegionFlags.Island: 1 if bool(self.options.boards.value & RegionFlags.Island) else 0
         }
 
+        if not hasattr(self.multiworld, "goal_boards"):
+            self.multiworld.goal_boards = {}
+
         # Set goal bosses as all bosses if selected, otherwise select random boss
-        self.multiworld.goal_boards = (
+        self.multiworld.goal_boards[self.player] = (
             self.options.boards.value 
-            if self.options.goal.value is GoalFlags.AllBosses.value else 
-            self.multiworld.random.choices(
-                population=list(goal_weights.keys()),
-                weights=list(goal_weights.values()),
+            if self.options.goal.value == GoalFlags.AllBosses.value else 
+            self.random.choices(
+                population=list(self.multiworld.goal_weights[self.player].keys()),
+                weights=list(self.multiworld.goal_weights[self.player].values()),
                 k=1
             ).pop()
         )
 
+        if not hasattr(self.multiworld, "filler_booster_weights"):
+            self.multiworld.filler_booster_weights = {}
+
         # Get resource booster item weights
-        self.multiworld.filler_booster_weights = {
+        self.multiworld.filler_booster_weights[self.player] = {
             "Mainland Resource Booster Pack": 1 if bool(self.options.boards.value & RegionFlags.Mainland) else 0,
             "Island Resource Booster Pack": 1 if bool(self.options.boards.value & RegionFlags.Island) else 0,
         }
 
+        if not hasattr(self.multiworld, "trap_weights"):
+            self.multiworld.trap_weights = {}
+
         # Get trap item weights
-        self.multiworld.trap_weights = {
+        self.multiworld.trap_weights[self.player] = {
             "Feed Villagers Trap": self.options.feed_villagers_trap_weight.value,
             "Mob Trap": self.options.mob_trap_weight.value,
             "Sell Cards Trap": self.options.sell_cards_trap_weight.value,
@@ -146,7 +158,7 @@ class StacklandsWorld(World):
 
         # Add additional data to slot data
         slot_data.update({
-            "goal_boards": self.multiworld.goal_boards,
+            "goal_boards": self.multiworld.goal_boards[self.player],
             "version": "0.2.4"
         })
 
