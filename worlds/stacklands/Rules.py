@@ -645,6 +645,11 @@ def set_rules(world: MultiWorld, player: int):
    set_rule(world.get_location("Have 10 Sticks", player),
             lambda state:  # Phase one
                state.sl_has_idea("Stick", player))
+   
+   # Misc
+   set_rule(world.get_location("Research at a University", player),
+            lambda state:  # Phase Three
+               state.sl_has_all_ideas(["Brick", "Magic Wand", "University"], player))
 
    #endregion
 
@@ -1502,6 +1507,10 @@ def set_rules(world: MultiWorld, player: int):
                lambda state:  # Phase Three
                   state.can_reach_location("Get an Iron Bar", player)
                   and state.sl_has_idea("Stove", player))
+      
+      set_rule(world.get_location("Build a University", player),
+               lambda state: # Phase Two
+                  state.sl_has_all_ideas(["Brick", "University"]))
 
       set_rule(world.get_location("Build a Warehouse", player),
                lambda state:  # Phase Three

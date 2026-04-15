@@ -76,6 +76,7 @@ item_table: List[ItemData] = [
     ItemData("Idea: Sword"                          , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
     ItemData("Idea: Temple"                         , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression_skip_balancing), # <- Try not to release this too early
     ItemData("Idea: Throwing Stars"                 , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression_skip_balancing), # <- Try not to release this too early
+    ItemData("Idea: University"                     , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
     ItemData("Idea: Warehouse"                      , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression_skip_balancing), # <- Try not to release this too early
     ItemData("Idea: Wooden Shield"                  , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
 
@@ -113,7 +114,6 @@ item_table: List[ItemData] = [
     ItemData("Idea: Iron Mine"                      , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Structuresanity   , ItemClassification.useful),
     ItemData("Idea: Resource Chest"                 , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Structuresanity   , ItemClassification.useful),
     ItemData("Idea: Sawmill"                        , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Structuresanity   , ItemClassification.useful),
-    ItemData("Idea: University"                     , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Structuresanity   , ItemClassification.filler),
 
 #endregion
 
