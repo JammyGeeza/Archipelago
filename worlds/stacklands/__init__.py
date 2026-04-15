@@ -159,7 +159,7 @@ class StacklandsWorld(World):
         # Add additional data to slot data
         slot_data.update({
             "goal_boards": self.multiworld.goal_boards[self.player],
-            "version": "0.2.4"
+            "version": "0.2.5"
         })
 
         return slot_data
