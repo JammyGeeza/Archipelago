@@ -86,7 +86,7 @@ class StacklandsWorld(World):
         # Set goal bosses as all bosses if selected, otherwise select random boss
         self.multiworld.goal_boards = (
             self.options.boards.value 
-            if self.options.goal.value is GoalFlags.AllBosses else 
+            if self.options.goal.value is GoalFlags.AllBosses.value else 
             self.multiworld.random.choices(
                 population=list(goal_weights.keys()),
                 weights=list(goal_weights.values()),
