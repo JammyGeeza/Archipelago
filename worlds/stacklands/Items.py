@@ -76,6 +76,7 @@ item_table: List[ItemData] = [
     ItemData("Idea: Sword"                          , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
     ItemData("Idea: Temple"                         , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression_skip_balancing), # <- Try not to release this too early
     ItemData("Idea: Throwing Stars"                 , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression_skip_balancing), # <- Try not to release this too early
+    ItemData("Idea: University"                     , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
     ItemData("Idea: Warehouse"                      , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression_skip_balancing), # <- Try not to release this too early
     ItemData("Idea: Wooden Shield"                  , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.NONE              , ItemClassification.progression),
 
@@ -113,7 +114,6 @@ item_table: List[ItemData] = [
     ItemData("Idea: Iron Mine"                      , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Structuresanity   , ItemClassification.useful),
     ItemData("Idea: Resource Chest"                 , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Structuresanity   , ItemClassification.useful),
     ItemData("Idea: Sawmill"                        , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Structuresanity   , ItemClassification.useful),
-    ItemData("Idea: University"                     , RegionFlags.Mainland              , ItemType.Idea         , OptionFlags.Structuresanity   , ItemClassification.filler),
 
 #endregion
 
@@ -362,8 +362,8 @@ def create_trap_items(world: MultiWorld, player: int, options: StacklandsOptions
 
             # Select traps using trap weights
             trap_selection = world.random.choices(
-                population=list(world.trap_weights.keys()),
-                weights=list(world.trap_weights.values()),
+                population=list(world.trap_weights[player].keys()),
+                weights=list(world.trap_weights[player].values()),
                 k=trap_count
             )
 
@@ -418,8 +418,8 @@ def create_filler_items(world: MultiWorld, player: int, items: List[ItemData], o
 
             # Select filler boosters using weights
             booster_selection = world.random.choices(
-                population=list(world.filler_booster_weights.keys()),
-                weights=list(world.filler_booster_weights.values()),
+                population=list(world.filler_booster_weights[player].keys()),
+                weights=list(world.filler_booster_weights[player].values()),
                 k=unfilled_count
             )
 

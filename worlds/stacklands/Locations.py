@@ -141,6 +141,8 @@ location_table: List[LocationData] = [
     LocationData("Have 10 Planks"                                       , RegionFlags.Mainland      , ProgressionPhase.PhaseTwo     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
     LocationData("Have 10 Sticks"                                       , RegionFlags.Mainland      , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
 
+    LocationData("Research at a University"                             , RegionFlags.Mainland      , ProgressionPhase.PhaseTwo     , CheckType.Check    , OptionFlags.NONE           , LocationProgressType.DEFAULT ),
+
 #endregion
 
 #region The Dark Forest Quests
@@ -351,7 +353,7 @@ location_table: List[LocationData] = [
     LocationData("Build a Sawmill"                                      , RegionFlags.Mainland      , ProgressionPhase.PhaseThree   , CheckType.Check    , OptionFlags.Structuresanity  , LocationProgressType.DEFAULT ),
     LocationData("Build a Smelter"                                      , RegionFlags.Mainland      , ProgressionPhase.PhaseTwo     , CheckType.Check    , OptionFlags.Structuresanity  , LocationProgressType.DEFAULT ),
     LocationData("Build a Stove"                                        , RegionFlags.Mainland      , ProgressionPhase.PhaseThree   , CheckType.Check    , OptionFlags.Structuresanity  , LocationProgressType.DEFAULT ),
-    LocationData("Build a University"                                   , RegionFlags.Mainland      , ProgressionPhase.PhaseThree   , CheckType.Check    , OptionFlags.Structuresanity  , LocationProgressType.DEFAULT ),
+    LocationData("Build a University"                                   , RegionFlags.Mainland      , ProgressionPhase.PhaseTwo     , CheckType.Check    , OptionFlags.Structuresanity  , LocationProgressType.DEFAULT ),
     LocationData("Build a Warehouse"                                    , RegionFlags.Mainland      , ProgressionPhase.PhaseThree   , CheckType.Check    , OptionFlags.Structuresanity  , LocationProgressType.DEFAULT ),
 
     # The Island
