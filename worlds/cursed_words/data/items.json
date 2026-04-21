@@ -1,0 +1,26 @@
+[
+    {
+        "name": "First Character",
+        "classification": 1,
+        "include_for": [ "First Character" ]
+    },
+    {
+        "name": "First Character - Sticker Bundle",
+        "classification": 1,
+        "include_for": [ "First Character" ]
+    },
+    {
+        "name": "First Character - Sticker Bundle Upgrades",
+        "classification": 1,
+        "include_for": [ "First Character" ]
+    },
+    {
+        "name": "First Character - Stamp Bundle",
+        "classification": 1,
+        "include_for": [ "First Character" ]
+    },
+    {
+        "name": "Money",
+        "classification": 0
+    }
+]

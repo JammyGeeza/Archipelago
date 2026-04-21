@@ -1,0 +1,111 @@
+[
+    {
+        "name": "Menu",
+        "exits": [
+            {
+                "name": "Menu to First Character",
+                "destination": "First Character",
+                "access_rule": {
+                    "rule": "HasAll",
+                    "options": [],
+                    "args": {
+                        "item_names": [
+                            "First Character"
+                        ]
+                    }
+
+                },
+                "include_for": [ "First Character" ]
+            }
+        ]
+    },
+    {
+        "name": "First Character",
+        "exits": [
+            {
+                "name": "First Character to Stage 1",
+                "destination": "First Character - Stage 1",
+                "include_for": [ "First Character" ]
+            }
+        ],
+        "include_for": [ "First Character" ]
+    },
+    {
+        "name": "First Character - Stage 1",
+        "exits": [
+            {
+                "name": "First Character to Stage 2",
+                "destination": "First Character - Stage 2",
+                "access_rule": {
+                    "rule": "HasAny",
+                    "options": [],
+                    "args": {
+                        "item_names": [
+                            "First Character - Sticker Bundle",
+                            "First Character - Stamp Bundle"
+                        ]
+                    }
+                },
+                "include_for": [ "First Character" ]
+            }
+        ],
+        "include_for": [ "First Character" ]
+    },
+    {
+        "name": "First Character - Stage 2",
+        "exits": [
+            {
+                "name": "First Character to Stage 3",
+                "destination": "First Character - Stage 3",
+                "access_rule": {
+                    "rule": "HasAll",
+                    "options": [],
+                    "args": {
+                        "item_names": [
+                            "First Character - Sticker Bundle",
+                            "First Character - Stamp Bundle"
+                        ]
+                    }
+                },
+                "include_for": [ "First Character" ]
+            }
+        ],
+        "include_for": [ "First Character" ]
+    },
+    {
+        "name": "First Character - Stage 3",
+        "exits": [
+            {
+                "name": "First Character to Stage 4",
+                "destination": "First Character - Stage 4",
+                "access_rule": {
+                    "rule": "HasAll",
+                    "options": [],
+                    "args": {
+                        "item_names": [
+                            "First Character - Sticker Bundle Upgrades"
+                        ]
+                    }
+                },
+                "include_for": [ "First Character" ]
+            }
+        ],
+        "include_for": [ "First Character" ]
+    },
+    {
+        "name": "First Character - Stage 4",
+        "exits": [
+            {
+                "name": "First Character to Stage 5",
+                "destination": "First Character - Stage 5",
+                "include_for": [ "First Character" ]
+            }
+        ],
+        "include_for": [ "First Character" ]
+    },
+    {
+        "name": "First Character - Stage 5",
+        "exits": [],
+        "include_for": [ "First Character" ]
+    }
+]
