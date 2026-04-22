@@ -3,109 +3,302 @@
         "name": "Menu",
         "exits": [
             {
-                "name": "Menu to First Character",
-                "destination": "First Character",
+                "name": "Menu to Rodman",
+                "destination": "Rodman"
+            },
+            {
+                "name": "Menu to Nina Nix",
+                "destination": "Nina Nix"
+            },
+            {
+                "name": "Menu to Hayley Bayles",
+                "destination": "Hayley Bayles"
+            }
+        ]
+    },
+    {
+        "name": "Rodman",
+        "exits": [
+            {
                 "access_rule": {
                     "rule": "HasAll",
                     "options": [],
                     "args": {
                         "item_names": [
-                            "First Character"
+                            "Rodman"
                         ]
                     }
 
                 },
-                "include_for": [ "First Character" ]
-            }
-        ]
-    },
-    {
-        "name": "First Character",
-        "exits": [
-            {
-                "name": "First Character to Stage 1",
-                "destination": "First Character - Stage 1",
-                "include_for": [ "First Character" ]
+                "destination": "Rodman - Stage 1",
+                "name": "Rodman to Stage 1",
+                "tags": [ "Rodman" ]
             }
         ],
-        "include_for": [ "First Character" ]
+        "tags": [ "Rodman" ]
     },
     {
-        "name": "First Character - Stage 1",
+        "name": "Rodman - Stage 1",
         "exits": [
             {
-                "name": "First Character to Stage 2",
-                "destination": "First Character - Stage 2",
+                "name": "Rodman to Stage 2",
+                "destination": "Rodman - Stage 2",
                 "access_rule": {
                     "rule": "HasAny",
                     "options": [],
                     "args": {
                         "item_names": [
-                            "First Character - Sticker Bundle",
-                            "First Character - Stamp Bundle"
+                            "Rodman - Sticker Bundle",
+                            "Rodman - Stamp Bundle"
                         ]
                     }
-                },
-                "include_for": [ "First Character" ]
+                }
             }
         ],
-        "include_for": [ "First Character" ]
+        "tags": [ "Rodman" ]
     },
     {
-        "name": "First Character - Stage 2",
+        "name": "Rodman - Stage 2",
         "exits": [
             {
-                "name": "First Character to Stage 3",
-                "destination": "First Character - Stage 3",
+                "name": "Rodman to Stage 3",
+                "destination": "Rodman - Stage 3",
                 "access_rule": {
                     "rule": "HasAll",
                     "options": [],
                     "args": {
                         "item_names": [
-                            "First Character - Sticker Bundle",
-                            "First Character - Stamp Bundle"
+                            "Rodman - Sticker Bundle",
+                            "Rodman - Stamp Bundle"
                         ]
                     }
-                },
-                "include_for": [ "First Character" ]
+                }
             }
         ],
-        "include_for": [ "First Character" ]
+        "tags": [ "Rodman" ]
     },
     {
-        "name": "First Character - Stage 3",
+        "name": "Rodman - Stage 3",
         "exits": [
             {
-                "name": "First Character to Stage 4",
-                "destination": "First Character - Stage 4",
+                "name": "Rodman to Stage 4",
+                "destination": "Rodman - Stage 4",
                 "access_rule": {
                     "rule": "HasAll",
                     "options": [],
                     "args": {
                         "item_names": [
-                            "First Character - Sticker Bundle Upgrades"
+                            "Rodman - Sticker Bundle Upgrades"
                         ]
                     }
-                },
-                "include_for": [ "First Character" ]
+                }
             }
         ],
-        "include_for": [ "First Character" ]
+        "tags": [ "Rodman" ]
     },
     {
-        "name": "First Character - Stage 4",
+        "name": "Rodman - Stage 4",
         "exits": [
             {
-                "name": "First Character to Stage 5",
-                "destination": "First Character - Stage 5",
-                "include_for": [ "First Character" ]
+                "name": "Rodman to Stage 5",
+                "destination": "Rodman - Stage 5"
             }
         ],
-        "include_for": [ "First Character" ]
+        "tags": [ "Rodman" ]
     },
     {
-        "name": "First Character - Stage 5",
+        "name": "Rodman - Stage 5",
         "exits": [],
-        "include_for": [ "First Character" ]
+        "tags": [ "Rodman" ]
+    },
+    {
+        "name": "Nina Nix",
+        "exits": [
+            {
+                "access_rule": {
+                    "rule": "HasAll",
+                    "options": [],
+                    "args": {
+                        "item_names": [
+                            "Nina Nix"
+                        ]
+                    }
+
+                },
+                "destination": "Nina Nix - Stage 1",
+                "name": "Nina Nix to Stage 1",
+                "tags": [ "Nina Nix" ]
+            }
+        ],
+        "tags": [ "Nina Nix" ]
+    },
+    {
+        "name": "Nina Nix - Stage 1",
+        "exits": [
+            {
+                "name": "Nina Nix to Stage 2",
+                "destination": "Nina Nix - Stage 2",
+                "access_rule": {
+                    "rule": "HasAny",
+                    "options": [],
+                    "args": {
+                        "item_names": [
+                            "Nina Nix - Sticker Bundle",
+                            "Nina Nix - Stamp Bundle"
+                        ]
+                    }
+                }
+            }
+        ],
+        "tags": [ "Nina Nix" ]
+    },
+    {
+        "name": "Nina Nix - Stage 2",
+        "exits": [
+            {
+                "name": "Nina Nix to Stage 3",
+                "destination": "Nina Nix - Stage 3",
+                "access_rule": {
+                    "rule": "HasAll",
+                    "options": [],
+                    "args": {
+                        "item_names": [
+                            "Nina Nix - Sticker Bundle",
+                            "Nina Nix - Stamp Bundle"
+                        ]
+                    }
+                }
+            }
+        ],
+        "tags": [ "Nina Nix" ]
+    },
+    {
+        "name": "Nina Nix - Stage 3",
+        "exits": [
+            {
+                "name": "Nina Nix to Stage 4",
+                "destination": "Nina Nix - Stage 4",
+                "access_rule": {
+                    "rule": "HasAll",
+                    "options": [],
+                    "args": {
+                        "item_names": [
+                            "Nina Nix - Sticker Bundle Upgrades"
+                        ]
+                    }
+                }
+            }
+        ],
+        "tags": [ "Nina Nix" ]
+    },
+    {
+        "name": "Nina Nix - Stage 4",
+        "exits": [
+            {
+                "name": "Nina Nix to Stage 5",
+                "destination": "Nina Nix - Stage 5"
+            }
+        ],
+        "tags": [ "Nina Nix" ]
+    },
+    {
+        "name": "Nina Nix - Stage 5",
+        "exits": [],
+        "tags": [ "Nina Nix" ]
+    },
+    {
+        "name": "Hayley Bayles",
+        "exits": [
+            {
+                "access_rule": {
+                    "rule": "HasAll",
+                    "options": [],
+                    "args": {
+                        "item_names": [
+                            "Hayley Bayles"
+                        ]
+                    }
+
+                },
+                "destination": "Hayley Bayles - Stage 1",
+                "name": "Hayley Bayles to Stage 1",
+                "tags": [ "Hayley Bayles" ]
+            }
+        ],
+        "tags": [ "Hayley Bayles" ]
+    },
+    {
+        "name": "Hayley Bayles - Stage 1",
+        "exits": [
+            {
+                "name": "Hayley Bayles to Stage 2",
+                "destination": "Hayley Bayles - Stage 2",
+                "access_rule": {
+                    "rule": "HasAny",
+                    "options": [],
+                    "args": {
+                        "item_names": [
+                            "Hayley Bayles - Sticker Bundle",
+                            "Hayley Bayles - Stamp Bundle"
+                        ]
+                    }
+                }
+            }
+        ],
+        "tags": [ "Hayley Bayles" ]
+    },
+    {
+        "name": "Hayley Bayles - Stage 2",
+        "exits": [
+            {
+                "name": "Hayley Bayles to Stage 3",
+                "destination": "Hayley Bayles - Stage 3",
+                "access_rule": {
+                    "rule": "HasAll",
+                    "options": [],
+                    "args": {
+                        "item_names": [
+                            "Hayley Bayles - Sticker Bundle",
+                            "Hayley Bayles - Stamp Bundle"
+                        ]
+                    }
+                }
+            }
+        ],
+        "tags": [ "Hayley Bayles" ]
+    },
+    {
+        "name": "Hayley Bayles - Stage 3",
+        "exits": [
+            {
+                "name": "Hayley Bayles to Stage 4",
+                "destination": "Hayley Bayles - Stage 4",
+                "access_rule": {
+                    "rule": "HasAll",
+                    "options": [],
+                    "args": {
+                        "item_names": [
+                            "Hayley Bayles - Sticker Bundle Upgrades"
+                        ]
+                    }
+                }
+            }
+        ],
+        "tags": [ "Hayley Bayles" ]
+    },
+    {
+        "name": "Hayley Bayles - Stage 4",
+        "exits": [
+            {
+                "name": "Hayley Bayles to Stage 5",
+                "destination": "Hayley Bayles - Stage 5"
+            }
+        ],
+        "tags": [ "Hayley Bayles" ]
+    },
+    {
+        "name": "Hayley Bayles - Stage 5",
+        "exits": [],
+        "tags": [ "Hayley Bayles" ]
     }
 ]

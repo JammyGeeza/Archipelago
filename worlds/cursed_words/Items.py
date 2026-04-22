@@ -11,14 +11,14 @@ class CursedWordsItem:
 
     def __init__(self, json_data: dict):
         self.name: str = json_data.get("name")
-        self.region: str = json_data.get("region")
         self.classification: ItemClassification = ItemClassification(json_data.get("classification", ItemClassification.filler.value))
-        self.include_for: List[str] = json_data.get("include_for", [])
+        self.region: str = json_data.get("region")
+        self.tags: List[str] = json_data.get("tags", [])
 
-    def is_included(self, inclusions: List[str]) -> bool:
-        """Check this item against the world inclusions to see if it should be included."""
-        return not self.include_for or bool(set(self.include_for) & set(inclusions))
-    
+    def has_tags(self, tags: List[str]) -> bool:
+        """Check if all of this item's tags are present in a tags list"""
+        return set(self.tags).issubset(set(tags))
+
     def is_classification(self, classification: ItemClassification) -> bool:
         """Check if this item has a matching classification flag"""
         return self.classification & classification if classification != ItemClassification.filler else self.classification == classification
@@ -43,45 +43,50 @@ for item in item_table:
     _cur_id += 1
 
 
-def create_items(world: World) -> List[Item]:
+def generate_items(world: World):
     """Get all items applicable for the multiworld generation"""
 
     logging.info(f"Generating items for multiworld...")
 
-    # Get all progression / useful items to be included
-    items: List[Item] = [ 
-        Item(itm.name, itm.classification, itm.id, world.player)
-        for itm in item_table 
-        if itm.is_included(world.inclusions)
-        and itm.is_classification(ItemClassification.progression | ItemClassification.useful)
+    # Get all progression/useful items with matching tags from configuration options
+    enabled_items: List[CursedWordsItem] = [
+        item for item in item_table
+        if item.has_tags(world.tags) and item.is_classification(ItemClassification.progression | ItemClassification.useful)
     ]
 
-    logging.info(f"Found {len(items)} progression / useful items...")
+    logging.info(f"Found {len(enabled_items)} enabled progression/useful items for the multiworld")
 
-    # Append progression items to item pool
-    world.multiworld.itempool += items
+    # Create items
+    for item_data in enabled_items:
+        logging.info(f"Creating item: {item_data.name}...")
 
-    # Check if all locations are filled
+        # Add to item pool
+        item: Item = Item(item_data.name, item_data.classification, item_data.id, world.player)
+        world.multiworld.itempool.append(item)
+
+    # Check if all locations would be filled
     unfilled_location_count: int = len(world.multiworld.get_unfilled_locations(world.player))
-    if unfilled_location_count > 0:
-        logging.info(f"{unfilled_location_count} un-filled locations detected ...")
-        world.multiworld.itempool += create_filler_items(world, unfilled_location_count)
+    required_filler_count: int = unfilled_location_count - len(world.multiworld.itempool)
 
-def create_filler_items(world: World, amount: int) -> List[Item]:
+    # Append filler items if required
+    if required_filler_count > 0:
+        logging.info(f"Found {required_filler_count} empty spaces for filler items")
+        world.multiworld.itempool += generate_filler_items(world, required_filler_count)
+
+def generate_filler_items(world: World, amount: int) -> List[Item]:
     """Randomly select {amount} filler items."""
 
-    logging.info(f"Generating {amount} filler items...")
+    logging.info(f"Generating {amount} filler item(s)...")
 
     # Get applicable filler items
-    filler_items = [
+    enabled_filler_items = [
         itm for itm in item_table 
-        if item.is_included(world.inclusions)
-        and itm.is_classification(ItemClassification.filler)
+        if item.has_tags(world.tags) and itm.is_classification(ItemClassification.filler)
     ]
 
     # Randomly select from filler items
     selected_filler = world.random.choices(
-        filler_items,
+        enabled_filler_items,
         k=amount
     )
 

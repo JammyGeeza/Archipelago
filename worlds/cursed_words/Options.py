@@ -8,58 +8,57 @@ from .Regions import region_table
 from typing import Dict, List
 
 # Pre-defined keys
-_character_names = [ "First Character" ]
+_character_names = [ "Rodman", "Nina Nix", "Hayley Bayles" ]
 _filler_item_names: List[str] = [ item.name for item in item_table if item.classification == ItemClassification.filler.value ]
 
-class Goal(OptionList):
+class PlayableCharacters(OptionList):
     """
-    Character(s) required to win runs with to complete your goal.
-    Use [ "All" ] to set all characters as required
-    Use [ "First Character", "Nina Nix", "Hayley Bayles" ] etc. to select a custom set of characters.
-    """
-    display_name = "Goal"
-    valid_keys_casefold = False
-    valid_keys = [ "All" ] + _character_names
-    default = [ "All" ]
+    Select character(s) to include as playable.
 
-class Characters(OptionList):
+    Use [ "Rodman", "Nina Nix", "Hayley Bayles" ] etc. will all characters in the list as playable.
+    Use [ "All" ] will select all characters as playable.
     """
-    Character(s) to include as playable in your session.
-    Use [ "All" ] to include all characters as playable.
-    Use [ "First Character", "Nina Nix", "Hayley Bayles" ] etc. to select a custom set of characters as playable.
-    Selections from <Goal> will always be automatically included.
-    """
-    display_name = "Characters"
+    display_name = "Playable Characters"
     valid_keys_casefold = False
     valid_keys = [ "All" ] + _character_names
     default = [ "All" ]
 
 class StartingCharacter(OptionList):
     """
-    The character to start the randomizer with - selection MUST MATCH character(s) from the <Character> option.
-    Use [ "Nina Mix" ] to select a specific character to start with.
-    Use [ "First Character", "Nina Mix", "Hayley Bayles" ] etc. to randomly select one from the list.
-    Use [ "Random" ] to randomly select a character.
+    Select the character to start with.
+
+    Use [ "Rodman", "Nina Mix", "Hayley Bayles" ] etc. will select one character from the list as your starting character.
+    Use [ "Random" ] will randomly select one character from <Playable Characters> as your starting character.
+
+    NOTE: Manual selections MUST ONLY include characters selected in the <Playable Characters> option.
+          If no characters match, it will default to 'Random'.
     """
-    display_name = "Starting Characters"
+    display_name = "Starting Character"
     valid_keys_casefold = False
     valid_keys = [ "Random" ] + _character_names
     default = [ "Random" ]
 
-class Mapsanity(Toggle):
+class Goal(OptionList):
     """
-    All steps within each stage are included as location checks for each character.
+    Select character(s) required to win runs with to complete your goal.
+
+    Use [ "Rodman", "Nina Nix", "Hayley Bayles" ] etc. will to select all characters in the list as required to goal.
+    Use [ "All" ] will select all characters from <Playable Characters> as required to goal.
+
+    NOTE: Manual selections MUST ONLY include characters selected in the <Playable Characters> option.
+          If no characters match, it will default to 'All'.
     """
-    display_name = "Mapsanity"
-    default = 0
+    display_name = "Goal"
+    valid_keys_casefold = False
+    valid_keys = [ "All" ] + _character_names
+    default = [ "All" ]
 
 @dataclass
 class CursedWordsOptions(PerGameCommonOptions):
     """"""
-    goal: Goal
-    characters: Characters
+    characters: PlayableCharacters
     starting_character: StartingCharacter
-    mapsanity: Mapsanity
+    goal: Goal
 
     # Built-in
     start_inventory_from_pool: StartInventoryPool
@@ -67,39 +66,38 @@ class CursedWordsOptions(PerGameCommonOptions):
     def resolve_options(self):
         """Resolve options to ensure successful generation."""
 
+        logging.info(f"Playable Characters selection: {self.characters.value}")
+
+        # Check if 'All' exists in Characters option
+        if "All" in self.characters.value:
+            logging.info(f"  -> 'All' found, including all characters...")
+            self.characters.value = _character_names
+
+        logging.info(f"Starting character selection: {self.starting_character.value}")
+        
+        # Check if 'Random' exists in Starting Character option
+        if "Random" in self.starting_character.value:
+            logging.info(f"  -> 'Random' found, selecting all characters from <Playable Characters> selection...")
+            self.starting_character.value = self.characters.value
+        else:
+            logging.info(f"  -> Removing characters not included in <Playable Characters>...")
+            self.starting_character.value = list(set(self.starting_character.value) & set(self.characters.value))
+
+        # Revert to 'Random' if no characters remain
+        if len(self.starting_character.value) == 0:
+            logging.info(f"  -> No matching characters selected, defaulting to 'Random'...")
+            self.starting_character.value = self.characters.value    
+
         logging.info(f"Goal selection: {self.goal.value}")
 
         # Check if 'All' exists in Goal options
         if "All" in self.goal.value:
-            logging.info(f"'All' entry found, requiring all characters for goal...")
+            logging.info(f"  -> 'All' found, requiring all <Playable Characters> for goal...")
             self.goal.value = _character_names
-
-        logging.info(f"Character selection: {self.characters.value}")
-
-        # Check if 'All' exists in Characters option
-        if "All" in self.characters.value:
-            logging.info(f"'All' entry found, including all characters...")
-            self.characters.value = _character_names
+        else:
+            logging.info(f"  -> Removing characters not included in <Playable Characters>...")
+            self.goal.value = list(set(self.starting_character.value) & set(self.characters.value))
         
-        # Include characters from goal selection if missing from character selection
-        for goal_character in [gc for gc in self.goal.value if gc not in self.characters.value ]:
-            logging.info(f"'{goal_character}' goal character not defined in character inclusion, adding...")
-            self.characters.value.append(goal_character)
-
-        logging.info(f"Starting character selection: {self.starting_character.value}")
-
-        # Check if 'Random' exists in Starting Character option
-        if "Random" in self.starting_character.value:
-            logging.info(f"'Random' entry found, including all characters from <Character> selection...")
-            self.starting_character.value = self.characters.value
-
-        # Remove characters from 'Starting Character' that don't match 'Characters' option
-        mismatching_start_characters = [ sc for sc in self.starting_character.value if sc not in self.characters.value ]
-        for mismatch in mismatching_start_characters:
-            logging.info(f"'{mismatch}' not present in included characters, removing...")
-            self.starting_character.value.remove(mismatch)
-
-        # If no starting characters remain, default to Random
-        if len(self.starting_character.value) == 0:
-            logging.info("No starting characters defined, defaulting to 'Random'...")
-            self.starting_character.value = self.characters.value
+        if len(self.goal.value) == 0:
+            logging.info(f"  -> No matching characters selected, defaulting to 'All'...")
+            self.goal.value = self.characters.value

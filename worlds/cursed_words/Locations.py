@@ -11,17 +11,17 @@ class CursedWordsLocation:
 
     def __init__(self, json_data: Dict[any, any]):
         self.access_rule: Optional[Dict[str, any]] = json_data.get("access_rule", {})
-        self.include_for: List[str] = json_data.get("include_for", [])
         self.name: str = json_data.get("name")
         self.region: str = json_data.get("region")
+        self.tags: List[str] = json_data.get("tags", [])
 
     def is_for_region(self, region: str) -> bool:
         """Check if this location is for a specified region."""
         return self.region == region
 
-    def is_included(self, inclusions: List[str]) -> bool:
-        """Check this location against the world inclusions list to see if it should be included."""
-        return not self.include_for or bool(set(self.include_for) & set(inclusions))
+    def has_tags(self, tags: List[str]) -> bool:
+        """Check if all of this location's tags are present in a tags list"""
+        return set(self.tags).issubset(set(tags))
 
 # Read items data from JSON
 with open(os.path.join(os.path.dirname(__file__), 'data\\locations.json'), 'r') as file:

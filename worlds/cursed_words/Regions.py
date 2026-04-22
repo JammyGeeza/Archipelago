@@ -19,7 +19,7 @@ class CursedWordsExit:
 
     def is_included(self, inclusions: List[str]) -> bool:
         """Check this exit against the world inclusions list to see if it should be included."""
-        return not self.include_for or bool(set(self.include_for) & set(inclusions))
+        return not self.include_for or set(self.include_for).issubset(set(inclusions))
 
 @dataclass
 class CursedWordsRegion:
@@ -27,12 +27,12 @@ class CursedWordsRegion:
     def __init__(self, json_data: Dict[any, any]):
         self.name: str = json_data["name"]
         self.exits: List[CursedWordsExit] = [ CursedWordsExit(entrance) for entrance in json_data.get("exits", []) ]
-        self.include_for: List[str] = json_data.get("include_for", [])
+        self.tags: List[str] = json_data.get("tags", [])
         # self.starting_inventory: List[str] = json_data.get("starting_inventory", [])
 
-    def is_included(self, inclusions: List[str]) -> bool:
-        """Check this region against the world inclusions list to see if it should be included."""
-        return not self.include_for or bool(set(self.include_for) & set(inclusions))
+    def has_tags(self, tags: List[str]) -> bool:
+        """Check if all of this region's tags are present in a tags list"""
+        return set(self.tags).issubset(set(tags))
 
 # Read regions data from JSON
 with open(os.path.join(os.path.dirname(__file__), 'data\\regions.json'), 'r') as file:
@@ -43,79 +43,65 @@ region_table: List[CursedWordsRegion] = [ CursedWordsRegion(data) for data in _r
 
 logging.info(f"Found {len(location_table)} regions from regions.json configuration")
 
-def create_regions(world: World):
+def generate_regions(world: World):
     """Create all applicable regions for this multiworld."""
 
-    regions: List[Region] = []
-
-    # Get regions to be included
-    applicable_regions: List[CursedWordsRegion] = [
+    # Get all regions with matching tags from configuration options
+    enabled_regions: List[CursedWordsRegion] = [
         region for region in region_table
-        if region.is_included(world.inclusions)
+        if region.has_tags(world.tags)
     ]
 
-    # Get exits to be included
-    applicable_exits: List[CursedWordsExit] = []
+    logging.info(f"Found {len(enabled_regions)} enabled regions based on configuration options")
 
-    logging.info(f"Found {len(applicable_regions)} applicable regions for this multiworld")
-
-    # Create regions from region data models
-    for region_model in applicable_regions:
-        logging.info(f"Creating region: {region_model.name}...")
+    # First pass to create regions from region data models
+    for region_model in enabled_regions:
+        logging.info(f"  -> Creating region: {region_model.name}...")
 
         # Create region
         region: Region = Region(region_model.name, world.player, world.multiworld)
 
-        # Get applicable exits
-        applicable_exit_models: List[CursedWordsExit] = [
-            exit for exit in region_model.exits
-            if exit.is_included(world.inclusions)
-        ]
-
-        # Create exits for region
-        for exit_model in applicable_exit_models:
-            logging.info(f"\tCreating entrance: {exit_model.name}...")
-
-            # Create exit
-            exit: Entrance = Entrance(world.player, exit_model.name, region, randomization_type=exit_model.type)
-            if exit_model.access_rule:
-                world.set_rule(exit, world.rule_from_dict(exit_model.access_rule))
-
-            # Append to region
-            region.exits.append(exit)
-
-        # Add to applicable exits
-        applicable_exits += applicable_exit_models
-
-        # Get applicable locations for this region
-        applicable_locations: List[CursedWordsLocation] = [
+        # Get enabled locations for region with matching tags from configuration options
+        enabled_locations: List[CursedWordsLocation] = [
             location for location in location_table
-            if location.is_included(world.inclusions)
-            and location.is_for_region(region.name)
+            if location.is_for_region(region.name) and location.has_tags(world.tags)
         ]
 
-        logging.info(f"Found {len(applicable_locations)} locations for region...")
+        logging.info(f"  -> Found {len(enabled_locations)} enabled locations for region")
 
         # Create locations and add to region
-        for location_model in applicable_locations:
-            logging.info(f"\t Creating location: {location_model.name}")
+        for location_model in enabled_locations:
+            logging.info(f"    -> Creating location: {location_model.name}...")
 
             # Create location
             location: Location = Location(world.player, location_model.name, location_model.id, region)
             if location_model.access_rule:
-                world.set_rule(location, world.rule_from_dict(exit_model.access_rule))
+                world.set_rule(location, world.rule_from_dict(location_model.access_rule))
 
             # Append to region
             region.locations.append(location)
 
-        # Append region to list
-        regions.append(region)
+        # Append region to multiworld
+        world.multiworld.regions.append(region)
 
-    # Append regions to multiworld
-    world.multiworld.regions += regions
+    # Second pass to create and connect exits (regions have to exist in the multiworld first)
+    for region_data in enabled_regions:
+        # Get region from multiworld
+        region: Region = world.multiworld.get_region(region_data.name, world.player)
 
-    # Connect all exits now that all regions are present
-    for exit_model in applicable_exits:
-        exit: Entrance = world.get_entrance(exit_model.name)
-        region: Region = world.get_region(exit_model.destination)
-        exit.connect(region)
+        logging.info(f"  -> Found {len(region_data.exits)} exits for region '{region_data.name}'")
+
+        for exit_model in region_data.exits:
+            logging.info(f"    -> Creating exit: {exit_model.name}")
+            exit: Entrance = Entrance(world.player, exit_model.name, region, randomization_type=exit_model.type)
+
+            # Create access rule, if one exists
+            if exit_model.access_rule:
+                world.set_rule(exit, world.rule_from_dict(exit_model.access_rule))
+
+            # Connect exit to destination region
+            destination_region: Region = world.multiworld.get_region(exit_model.destination, world.player)
+            exit.connect(destination_region)
+
+            # Append exit to region
+            region.exits.append(exit)

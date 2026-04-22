@@ -1,26 +1,74 @@
 [
     {
-        "name": "First Character",
+        "name": "Rodman",
         "classification": 1,
-        "include_for": [ "First Character" ]
+        "tags": [ "Rodman" ]
     },
     {
-        "name": "First Character - Sticker Bundle",
+        "name": "Rodman - Sticker Bundle",
         "classification": 1,
-        "include_for": [ "First Character" ]
+        "tags": [ "Rodman" ]
     },
     {
-        "name": "First Character - Sticker Bundle Upgrades",
+        "name": "Rodman - Sticker Bundle Upgrades",
         "classification": 1,
-        "include_for": [ "First Character" ]
+        "tags": [ "Rodman" ]
     },
     {
-        "name": "First Character - Stamp Bundle",
+        "name": "Rodman - Stamp Bundle",
         "classification": 1,
-        "include_for": [ "First Character" ]
+        "tags": [ "Rodman" ]
     },
     {
-        "name": "Money",
+        "name": "Nina Nix",
+        "classification": 1,
+        "tags": [ "Nina Nix" ]
+    },
+    {
+        "name": "Nina Nix - Sticker Bundle",
+        "classification": 1,
+        "tags": [ "Nina Nix" ]
+    },
+    {
+        "name": "Nina Nix - Sticker Bundle Upgrades",
+        "classification": 1,
+        "tags": [ "Nina Nix" ]
+    },
+    {
+        "name": "Nina Nix - Stamp Bundle",
+        "classification": 1,
+        "tags": [ "Nina Nix" ]
+    },
+    {
+        "name": "Hayley Bayles",
+        "classification": 1,
+        "tags": [ "Hayley Bayles" ]
+    },
+    {
+        "name": "Hayley Bayles - Sticker Bundle",
+        "classification": 1,
+        "tags": [ "Hayley Bayles" ]
+    },
+    {
+        "name": "Hayley Bayles - Sticker Bundle Upgrades",
+        "classification": 1,
+        "tags": [ "Hayley Bayles" ]
+    },
+    {
+        "name": "Hayley Bayles - Stamp Bundle",
+        "classification": 1,
+        "tags": [ "Hayley Bayles" ]
+    },
+    {
+        "name": "$1",
+        "classification": 0
+    },
+    {
+        "name": "$2",
+        "classification": 0
+    },
+    {
+        "name": "$3",
         "classification": 0
     }
 ]
