@@ -11,6 +11,7 @@ class CursedWordsLocation:
 
     def __init__(self, json_data: Dict[any, any]):
         self.access_rule: Optional[Dict[str, any]] = json_data.get("access_rule", {})
+        self.count: int = json_data.get("count", 1)
         self.name: str = json_data.get("name")
         self.region: str = json_data.get("region")
         self.tags: List[str] = json_data.get("tags", [])
@@ -33,12 +34,17 @@ location_table: List[CursedWordsLocation] = [ CursedWordsLocation(data) for data
 logging.info(f"Found {len(location_table)} items from locations.json configuration")
 
 # Create item lookup
-_base_id: int = 322000
-_cur_id: int = _base_id
+_base_loc_id: int = 322000
+_cur_loc_id: int = _base_loc_id
 location_name_to_id_lookup: Dict[str, int] = {}
 
-# Get items from JSON file
+# Get locations from JSON file
 for location in location_table:
-    location.id = _cur_id
-    location_name_to_id_lookup[location.name] = location.id
-    _cur_id += 1
+    for i in range(location.count):
+        loc_name: str = location.name.format(count=i+1)
+        loc_id: str = _cur_loc_id
+
+        logging.info(f"Adding location lookup '{loc_name}': {loc_id}")
+        
+        location_name_to_id_lookup[loc_name] = loc_id
+        _cur_loc_id += 1

@@ -12,6 +12,8 @@ class CursedWordsItem:
     def __init__(self, json_data: dict):
         self.name: str = json_data.get("name")
         self.classification: ItemClassification = ItemClassification(json_data.get("classification", ItemClassification.filler.value))
+        self.count: int = json_data.get("count", 1)
+        self.groups: List[str] = json_data.get("groups", [])
         self.region: str = json_data.get("region")
         self.tags: List[str] = json_data.get("tags", [])
 
@@ -33,14 +35,20 @@ item_table: List[CursedWordsItem] = [ CursedWordsItem(item) for item in _items_d
 logging.info(f"Found {len(item_table)} items from items.json configuration")
 
 # Create item name-to-id lookup
-_base_id: int = 323000
-_cur_id: int = _base_id
+_base_item_id: int = 323000
+_cur_item_id: int = _base_item_id
 item_name_to_id_lookup: Dict[str, int] = {}
+item_name_groups_lookup: Dict[str, set] = {}
 
 for item in item_table:
-    item.id = _cur_id
+    item.id = _cur_item_id
     item_name_to_id_lookup[item.name] = item.id
-    _cur_id += 1
+
+    # Add item to groups, if set
+    for group in item.groups:
+        item_name_groups_lookup.setdefault(group, set()).add(item.name)
+
+    _cur_item_id += 1
 
 
 def generate_items(world: World):
@@ -58,11 +66,13 @@ def generate_items(world: World):
 
     # Create items
     for item_data in enabled_items:
-        logging.info(f"Creating item: {item_data.name}...")
+        for i in range(item_data.count):
 
-        # Add to item pool
-        item: Item = Item(item_data.name, item_data.classification, item_data.id, world.player)
-        world.multiworld.itempool.append(item)
+            logging.info(f"Creating item: {item_data.name}...")
+
+            # Add to item pool
+            item: Item = Item(item_data.name, item_data.classification, item_data.id, world.player)
+            world.multiworld.itempool.append(item)
 
     # Check if all locations would be filled
     unfilled_location_count: int = len(world.multiworld.get_unfilled_locations(world.player))

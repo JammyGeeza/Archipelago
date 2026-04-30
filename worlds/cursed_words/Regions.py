@@ -1,7 +1,7 @@
 from BaseClasses import Entrance, EntranceType, Location, MultiWorld, Region
 from dataclasses import dataclass
 import json, logging, os
-from .Locations import location_table, CursedWordsLocation
+from .Locations import location_table, location_name_to_id_lookup, CursedWordsLocation
 # from .Options import CastNChillOptions
 # from .Rules import compile_access_rules
 from typing import Dict, List
@@ -15,11 +15,16 @@ class CursedWordsExit:
         self.destination: str = json_data["destination"]
         self.include_for: List[str] = json_data.get("include_for", [])
         self.name: str = json_data.get("name")
+        self.tags: str = json_data.get("tags", [])
         self.type: EntranceType = EntranceType(json_data.get("type", 2))
 
     def is_included(self, inclusions: List[str]) -> bool:
         """Check this exit against the world inclusions list to see if it should be included."""
         return not self.include_for or set(self.include_for).issubset(set(inclusions))
+    
+    def has_tags(self, tags: List[str]) -> bool:
+        """Check if all of this exit's tags are present in a tags list"""
+        return set(self.tags).issubset(set(tags))
 
 @dataclass
 class CursedWordsRegion:
@@ -67,19 +72,24 @@ def generate_regions(world: World):
             if location.is_for_region(region.name) and location.has_tags(world.tags)
         ]
 
-        logging.info(f"  -> Found {len(enabled_locations)} enabled locations for region")
+        # logging.info(f"  -> Found {len(enabled_locations)} enabled locations for region")
 
         # Create locations and add to region
         for location_model in enabled_locations:
-            logging.info(f"    -> Creating location: {location_model.name}...")
 
-            # Create location
-            location: Location = Location(world.player, location_model.name, location_model.id, region)
-            if location_model.access_rule:
-                world.set_rule(location, world.rule_from_dict(location_model.access_rule))
+            for i in range(location_model.count):
+                loc_name: str = location_model.name.format(count=i+1)
+                loc_id: int = world.location_name_to_id[loc_name]
 
-            # Append to region
-            region.locations.append(location)
+                logging.info(f"    -> Creating location: {loc_name} with ID {loc_id}...")
+
+                # Create location
+                location: Location = Location(world.player, loc_name, loc_id, region)
+                if location_model.access_rule:
+                    world.set_rule(location, world.rule_from_dict(location_model.access_rule))
+
+                # Append to region
+                region.locations.append(location)
 
         # Append region to multiworld
         world.multiworld.regions.append(region)
@@ -89,9 +99,8 @@ def generate_regions(world: World):
         # Get region from multiworld
         region: Region = world.multiworld.get_region(region_data.name, world.player)
 
-        logging.info(f"  -> Found {len(region_data.exits)} exits for region '{region_data.name}'")
+        for exit_model in [ exit for exit in region_data.exits if exit.has_tags(world.tags)]:
 
-        for exit_model in region_data.exits:
             logging.info(f"    -> Creating exit: {exit_model.name}")
             exit: Entrance = Entrance(world.player, exit_model.name, region, randomization_type=exit_model.type)
 

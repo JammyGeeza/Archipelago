@@ -93,7 +93,7 @@ class CursedWordsOptions(PerGameCommonOptions):
         # Check if 'All' exists in Goal options
         if "All" in self.goal.value:
             logging.info(f"  -> 'All' found, requiring all <Playable Characters> for goal...")
-            self.goal.value = _character_names
+            self.goal.value = self.characters.value
         else:
             logging.info(f"  -> Removing characters not included in <Playable Characters>...")
             self.goal.value = list(set(self.starting_character.value) & set(self.characters.value))

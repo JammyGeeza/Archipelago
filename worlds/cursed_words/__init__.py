@@ -1,6 +1,6 @@
 from worlds.AutoWorld import World, WebWorld
 from BaseClasses import Item, ItemClassification, Tutorial
-from .Items import CursedWordsItem, item_name_to_id_lookup, item_table, generate_items, generate_filler_items
+from .Items import CursedWordsItem, item_name_groups_lookup, item_name_to_id_lookup, item_table, generate_items, generate_filler_items
 from .Locations import location_name_to_id_lookup
 from .Options import CursedWordsOptions
 from .Regions import CursedWordsRegion, region_table, generate_regions
@@ -34,6 +34,8 @@ class CursedWordsWorld(World):
     options: CursedWordsOptions
 
     item_name_to_id = item_name_to_id_lookup
+    item_name_groups = item_name_groups_lookup
+
     location_name_to_id = location_name_to_id_lookup
 
     def generate_early(self):

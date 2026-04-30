@@ -2,73 +2,106 @@
     {
         "name": "Rodman",
         "classification": 1,
+        "groups": [ "Characters" ],
         "tags": [ "Rodman" ]
     },
     {
-        "name": "Rodman - Sticker Bundle",
+        "name": "Rodman Sticker Bundle",
         "classification": 1,
+        "groups": [ "Stickers" ],
         "tags": [ "Rodman" ]
     },
     {
-        "name": "Rodman - Sticker Bundle Upgrades",
+        "name": "Rodman Sticker Bundle Upgrades",
         "classification": 1,
+        "groups": [ "Stickers" ],
         "tags": [ "Rodman" ]
     },
     {
-        "name": "Rodman - Stamp Bundle",
+        "name": "Rodman Stamp Bundle",
         "classification": 1,
+        "groups": [ "Stamps" ],
         "tags": [ "Rodman" ]
     },
     {
         "name": "Nina Nix",
         "classification": 1,
+        "groups": [ "Characters" ],
         "tags": [ "Nina Nix" ]
     },
     {
-        "name": "Nina Nix - Sticker Bundle",
+        "name": "Nina Nix Sticker Bundle",
         "classification": 1,
+        "groups": [ "Stickers" ],
         "tags": [ "Nina Nix" ]
     },
     {
-        "name": "Nina Nix - Sticker Bundle Upgrades",
+        "name": "Nina Nix Sticker Bundle Upgrades",
         "classification": 1,
+        "groups": [ "Stickers" ],
         "tags": [ "Nina Nix" ]
     },
     {
-        "name": "Nina Nix - Stamp Bundle",
+        "name": "Nina Nix Stamp Bundle",
         "classification": 1,
+        "groups": [ "Stamps" ],
         "tags": [ "Nina Nix" ]
     },
     {
         "name": "Hayley Bayles",
         "classification": 1,
+        "groups": [ "Characters" ],
         "tags": [ "Hayley Bayles" ]
     },
     {
-        "name": "Hayley Bayles - Sticker Bundle",
+        "name": "Hayley Bayles Sticker Bundle",
         "classification": 1,
+        "groups": [ "Stickers" ],
         "tags": [ "Hayley Bayles" ]
     },
     {
-        "name": "Hayley Bayles - Sticker Bundle Upgrades",
+        "name": "Hayley Bayles Sticker Bundle Upgrades",
         "classification": 1,
+        "groups": [ "Stickers" ],
         "tags": [ "Hayley Bayles" ]
     },
     {
-        "name": "Hayley Bayles - Stamp Bundle",
+        "name": "Hayley Bayles Stamp Bundle",
         "classification": 1,
+        "groups": [ "Stamps" ],
         "tags": [ "Hayley Bayles" ]
+    },
+    {
+        "count": 5,
+        "name": "Progressive Sticker Slots",
+        "classification": 1,
+        "groups": [ "Sticker Slots" ]
+    },
+    {
+        "count": 5,
+        "name": "Progressive Stamp Slots",
+        "classification": 1,
+        "groups": [ "Stamp Slots" ]
+    },
+    {
+        "count": 3,
+        "name": "Progressive Re-roll",
+        "classification": 2,
+        "groups": [ "Re-Rolls" ]
     },
     {
         "name": "$1",
-        "classification": 0
+        "classification": 0,
+        "groups": [ "Money" ]
     },
     {
         "name": "$2",
-        "classification": 0
+        "classification": 0,
+        "groups": [ "Money" ]
     },
     {
         "name": "$3",
-        "classification": 0
+        "classification": 0,
+        "groups": [ "Money" ]
     }
 ]

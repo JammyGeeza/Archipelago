@@ -11,6 +11,8 @@ def generate_goal(world: World):
     # Add events for each character's run completion
     for goal_character in world.options.goal.value:
         region: Region = world.multiworld.get_region(f"{goal_character} - Stage 5", world.player)
+
+        logging.info(f"Creating goal location for region {region.name}")
         
         event: Location = Location(world.player, goal_character, None, region)
         event.place_locked_item(Item("Victory", ItemClassification.progression, None, world.player))
