@@ -8,7 +8,7 @@ from .Rules import generate_goal
 import logging
 from typing import Any, Dict, List
 
-class CursedWorldsWeb(WebWorld):
+class CursedWordsWeb(WebWorld):
 
     tutorials = [Tutorial(
         "Multiworld Setup Guide",
@@ -27,7 +27,7 @@ class CursedWordsWorld(World):
     """
 
     game = "Cursed Words"
-    web = CursedWorldsWeb()
+    web = CursedWordsWeb()
     topology_present = False
 
     options_dataclass = CursedWordsOptions

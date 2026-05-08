@@ -57,10 +57,26 @@
                     }
 
                 },
+                "name": "Menu to Shop",
+                "destination": "Shop"
+            },
+            {
+                "access_rule": {
+                    "rule": "HasGroup",
+                    "options": [],
+                    "args": {
+                        "item_name_group": "Characters",
+                        "count": 1
+                    }
+
+                },
                 "name": "Menu to Words",
                 "destination": "Words"
             }
         ]
+    },
+    {
+        "name": "Shop"
     },
     {
         "name": "Words"
@@ -143,10 +159,52 @@
     },
     {
         "name": "Rodman - Stage 3",
+        "tags": [ "Rodman" ]
+    },
+    {
+        "name": "Nina Nix - Stage 1",
         "exits": [
             {
-                "name": "Rodman to Stage 4",
-                "destination": "Rodman - Stage 4",
+                "name": "Nina Nix to Stage 2",
+                "destination": "Nina Nix - Stage 2",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasAny",
+                            "args": {
+                                "item_names": [
+                                    "Nina Nix Sticker Bundle",
+                                    "Nina Nix Stamp Bundle"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 2
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 2
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Nina Nix" ]
+    },
+    {
+        "name": "Nina Nix - Stage 2",
+        "exits": [
+            {
+                "name": "Nina Nix to Stage 3",
+                "destination": "Nina Nix - Stage 3",
                 "access_rule": {
                     "rule": "And",
                     "children": [
@@ -154,7 +212,45 @@
                             "rule": "HasAll",
                             "args": {
                                 "item_names": [
-                                    "Rodman Sticker Bundle Upgrades"
+                                    "Nina Nix Sticker Bundle",
+                                    "Nina Nix Stamp Bundle"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 3
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 3
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Nina Nix" ]
+    },
+    {
+        "name": "Nina Nix - Stage 3",
+        "exits": [
+            {
+                "name": "Nina Nix to Stage 4",
+                "destination": "Nina Nix - Stage 4",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasAll",
+                            "args": {
+                                "item_names": [
+                                    "Nina Nix Sticker Bundle Upgrades"
                                 ]
                             }
                         },
@@ -176,14 +272,131 @@
                 }
             }
         ],
-        "tags": [ "Rodman" ]
+        "tags": [ "Nina Nix" ]
     },
     {
-        "name": "Rodman - Stage 4",
+        "name": "Nina Nix - Stage 4",
+        "tags": [ "Nina Nix" ]
+    },
+    {
+        "name": "Hayley Bayles - Stage 1",
         "exits": [
             {
-                "name": "Rodman to Stage 5",
-                "destination": "Rodman - Stage 5",
+                "name": "Hayley Bayles to Stage 2",
+                "destination": "Hayley Bayles - Stage 2",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasAny",
+                            "args": {
+                                "item_names": [
+                                    "Hayley Bayles Sticker Bundle",
+                                    "Hayley Bayles Stamp Bundle"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 2
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 2
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Hayley Bayles" ]
+    },
+    {
+        "name": "Hayley Bayles - Stage 2",
+        "exits": [
+            {
+                "name": "Hayley Bayles to Stage 3",
+                "destination": "Hayley Bayles - Stage 3",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasAll",
+                            "args": {
+                                "item_names": [
+                                    "Hayley Bayles Sticker Bundle",
+                                    "Hayley Bayles Stamp Bundle"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 3
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 3
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Hayley Bayles" ]
+    },
+    {
+        "name": "Hayley Bayles - Stage 3",
+        "exits": [
+            {
+                "name": "Hayley Bayles to Stage 4",
+                "destination": "Hayley Bayles - Stage 4",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasAll",
+                            "args": {
+                                "item_names": [
+                                    "Hayley Bayles Sticker Bundle Upgrades"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 4
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 4
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Hayley Bayles" ]
+    },
+    {
+        "name": "Hayley Bayles - Stage 4",
+        "exits": [
+            {
+                "name": "Hayley Bayles to Stage 5",
+                "destination": "Hayley Bayles - Stage 5",
                 "access_rule": {
                     "rule": "And",
                     "children": [
@@ -203,154 +416,6 @@
                         }
                     ]
                 }
-            }
-        ],
-        "tags": [ "Rodman" ]
-    },
-    {
-        "name": "Rodman - Stage 5",
-        "exits": [],
-        "tags": [ "Rodman" ]
-    },
-    {
-        "name": "Nina Nix - Stage 1",
-        "exits": [
-            {
-                "name": "Nina Nix to Stage 2",
-                "destination": "Nina Nix - Stage 2",
-                "access_rule": {
-                    "rule": "HasAny",
-                    "options": [],
-                    "args": {
-                        "item_names": [
-                            "Nina Nix Sticker Bundle",
-                            "Nina Nix Stamp Bundle"
-                        ]
-                    }
-                }
-            }
-        ],
-        "tags": [ "Nina Nix" ]
-    },
-    {
-        "name": "Nina Nix - Stage 2",
-        "exits": [
-            {
-                "name": "Nina Nix to Stage 3",
-                "destination": "Nina Nix - Stage 3",
-                "access_rule": {
-                    "rule": "HasAll",
-                    "options": [],
-                    "args": {
-                        "item_names": [
-                            "Nina Nix Sticker Bundle",
-                            "Nina Nix Stamp Bundle"
-                        ]
-                    }
-                }
-            }
-        ],
-        "tags": [ "Nina Nix" ]
-    },
-    {
-        "name": "Nina Nix - Stage 3",
-        "exits": [
-            {
-                "name": "Nina Nix to Stage 4",
-                "destination": "Nina Nix - Stage 4",
-                "access_rule": {
-                    "rule": "HasAll",
-                    "options": [],
-                    "args": {
-                        "item_names": [
-                            "Nina Nix Sticker Bundle Upgrades"
-                        ]
-                    }
-                }
-            }
-        ],
-        "tags": [ "Nina Nix" ]
-    },
-    {
-        "name": "Nina Nix - Stage 4",
-        "exits": [
-            {
-                "name": "Nina Nix to Stage 5",
-                "destination": "Nina Nix - Stage 5"
-            }
-        ],
-        "tags": [ "Nina Nix" ]
-    },
-    {
-        "name": "Nina Nix - Stage 5",
-        "exits": [],
-        "tags": [ "Nina Nix" ]
-    },
-    {
-        "name": "Hayley Bayles - Stage 1",
-        "exits": [
-            {
-                "name": "Hayley Bayles to Stage 2",
-                "destination": "Hayley Bayles - Stage 2",
-                "access_rule": {
-                    "rule": "HasAny",
-                    "options": [],
-                    "args": {
-                        "item_names": [
-                            "Hayley Bayles Sticker Bundle",
-                            "Hayley Bayles Stamp Bundle"
-                        ]
-                    }
-                }
-            }
-        ],
-        "tags": [ "Hayley Bayles" ]
-    },
-    {
-        "name": "Hayley Bayles - Stage 2",
-        "exits": [
-            {
-                "name": "Hayley Bayles to Stage 3",
-                "destination": "Hayley Bayles - Stage 3",
-                "access_rule": {
-                    "rule": "HasAll",
-                    "options": [],
-                    "args": {
-                        "item_names": [
-                            "Hayley Bayles Sticker Bundle",
-                            "Hayley Bayles Stamp Bundle"
-                        ]
-                    }
-                }
-            }
-        ],
-        "tags": [ "Hayley Bayles" ]
-    },
-    {
-        "name": "Hayley Bayles - Stage 3",
-        "exits": [
-            {
-                "name": "Hayley Bayles to Stage 4",
-                "destination": "Hayley Bayles - Stage 4",
-                "access_rule": {
-                    "rule": "HasAll",
-                    "options": [],
-                    "args": {
-                        "item_names": [
-                            "Hayley Bayles Sticker Bundle Upgrades"
-                        ]
-                    }
-                }
-            }
-        ],
-        "tags": [ "Hayley Bayles" ]
-    },
-    {
-        "name": "Hayley Bayles - Stage 4",
-        "exits": [
-            {
-                "name": "Hayley Bayles to Stage 5",
-                "destination": "Hayley Bayles - Stage 5"
             }
         ],
         "tags": [ "Hayley Bayles" ]

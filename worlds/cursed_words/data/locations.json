@@ -6,27 +6,15 @@
         "tags": [ "Rodman" ]
     },
     {
-        "count": 5,
+        "count": 3,
         "name": "Rodman - 2-{count} Complete",
         "region": "Rodman - Stage 2",
         "tags": [ "Rodman" ]
     },
     {
-        "count": 5,
+        "count": 3,
         "name": "Rodman - 3-{count} Complete",
         "region": "Rodman - Stage 3",
-        "tags": [ "Rodman" ]
-    },
-    {
-        "count": 5,
-        "name": "Rodman - 4-{count} Complete",
-        "region": "Rodman - Stage 4",
-        "tags": [ "Rodman" ]
-    },
-    {
-        "count": 5,
-        "name": "Rodman - 5-{count} Complete",
-        "region": "Rodman - Stage 5",
         "tags": [ "Rodman" ]
     },
     {
@@ -36,27 +24,21 @@
         "tags": [ "Nina Nix" ]
     },
     {
-        "count": 5,
+        "count": 3,
         "name": "Nina Nix - 2-{count} Complete",
         "region": "Nina Nix - Stage 2",
         "tags": [ "Nina Nix" ]
     },
     {
-        "count": 5,
+        "count": 3,
         "name": "Nina Nix - 3-{count} Complete",
         "region": "Nina Nix - Stage 3",
         "tags": [ "Nina Nix" ]
     },
     {
-        "count": 5,
+        "count": 3,
         "name": "Nina Nix - 4-{count} Complete",
         "region": "Nina Nix - Stage 4",
-        "tags": [ "Nina Nix" ]
-    },
-    {
-        "count": 5,
-        "name": "Nina Nix - 5-{count} Complete",
-        "region": "Nina Nix - Stage 5",
         "tags": [ "Nina Nix" ]
     },
     {
@@ -66,25 +48,65 @@
         "tags": [ "Hayley Bayles" ]
     },
     {
-        "count": 5,
+        "count": 3,
         "name": "Hayley Bayles - 2-{count} Complete",
         "region": "Hayley Bayles - Stage 2",
         "tags": [ "Hayley Bayles" ]
     },
     {
-        "count": 5,
+        "count": 3,
         "name": "Hayley Bayles - 3-{count} Complete",
         "region": "Hayley Bayles - Stage 3",
         "tags": [ "Hayley Bayles" ]
     },
     {
-        "count": 5,
+        "count": 3,
         "name": "Hayley Bayles - 4-{count} Complete",
         "region": "Hayley Bayles - Stage 4",
         "tags": [ "Hayley Bayles" ]
     },
     {
-        "count": 5,
+        "name": "Buy a Sticker",
+        "region": "Shop"
+    },
+    {
+        "name": "Buy a Stamp",
+        "region": "Shop"
+    },
+    {
+        "name": "Buy a Tile",
+        "region": "Shop"
+    },
+    {
+        "name": "Destroy a Tile",
+        "region": "Shop"
+    },
+    {
+        "name": "Freeze a Sticker",
+        "region": "Shop"
+    },
+    {
+        "name": "Freeze a Stamp",
+        "region": "Shop"
+    },
+    {
+        "name": "Restock the Shop",
+        "region": "Shop"
+    },
+    {
+        "name": "Sell a Sticker",
+        "region": "Shop"
+    },
+    {
+        "name": "Sell a Stamp",
+        "region": "Shop"
+    },
+    {
+        "name": "Sell a Tile",
+        "region": "Shop"
+    },
+    {
+        "count": 3,
         "name": "Hayley Bayles - 5-{count} Complete",
         "region": "Hayley Bayles - Stage 5",
         "tags": [ "Hayley Bayles" ]
