@@ -94,8 +94,26 @@
                             "rule": "HasAny",
                             "args": {
                                 "item_names": [
-                                    "Rodman Sticker Bundle",
-                                    "Rodman Stamp Bundle"
+                                    "Sticker Bundle - Blue Tiles",
+                                    "Sticker Bundle - Red Tiles"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasAny",
+                            "args": {
+                                "item_names": [
+                                    "Stamp Bundle - Blue Tiles",
+                                    "Stamp Bundle - Red Tiles"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasAny",
+                            "args": {
+                                "item_names": [
+                                    "Blue Tiles",
+                                    "Red Tiles"
                                 ]
                             }
                         },
@@ -103,14 +121,14 @@
                             "rule": "HasGroup",
                             "args": {
                                 "item_name_group": "Sticker Slots",
-                                "count": 2
+                                "count": 1
                             }
                         },
                         {
                             "rule": "HasGroup",
                             "args": {
                                 "item_name_group": "Stamp Slots",
-                                "count": 2
+                                "count": 1
                             }
                         }
                     ]
@@ -132,8 +150,8 @@
                             "rule": "HasAll",
                             "args": {
                                 "item_names": [
-                                    "Rodman Sticker Bundle",
-                                    "Rodman Stamp Bundle"
+                                    "Blue Tiles",
+                                    "Red Tiles"
                                 ]
                             }
                         },
@@ -141,14 +159,14 @@
                             "rule": "HasGroup",
                             "args": {
                                 "item_name_group": "Sticker Slots",
-                                "count": 3
+                                "count": 2
                             }
                         },
                         {
                             "rule": "HasGroup",
                             "args": {
                                 "item_name_group": "Stamp Slots",
-                                "count": 3
+                                "count": 2
                             }
                         }
                     ]
@@ -174,8 +192,26 @@
                             "rule": "HasAny",
                             "args": {
                                 "item_names": [
-                                    "Nina Nix Sticker Bundle",
-                                    "Nina Nix Stamp Bundle"
+                                    "Sticker Bundle - Shiny Tiles",
+                                    "Stamp Bundle - Shiny Tiles"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasAny",
+                            "args": {
+                                "item_names": [
+                                    "Sticker Bundle - Void Tiles",
+                                    "Stamp Bundle - Void Tiles"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasAny",
+                            "args": {
+                                "item_names": [
+                                    "Shiny Tiles",
+                                    "Void Tiles"
                                 ]
                             }
                         },
@@ -183,14 +219,14 @@
                             "rule": "HasGroup",
                             "args": {
                                 "item_name_group": "Sticker Slots",
-                                "count": 2
+                                "count": 1
                             }
                         },
                         {
                             "rule": "HasGroup",
                             "args": {
                                 "item_name_group": "Stamp Slots",
-                                "count": 2
+                                "count": 1
                             }
                         }
                     ]
@@ -212,8 +248,8 @@
                             "rule": "HasAll",
                             "args": {
                                 "item_names": [
-                                    "Nina Nix Sticker Bundle",
-                                    "Nina Nix Stamp Bundle"
+                                    "Shiny Tiles",
+                                    "Void Tiles"
                                 ]
                             }
                         },
@@ -221,14 +257,14 @@
                             "rule": "HasGroup",
                             "args": {
                                 "item_name_group": "Sticker Slots",
-                                "count": 3
+                                "count": 2
                             }
                         },
                         {
                             "rule": "HasGroup",
                             "args": {
                                 "item_name_group": "Stamp Slots",
-                                "count": 3
+                                "count": 2
                             }
                         }
                     ]
@@ -250,7 +286,8 @@
                             "rule": "HasAll",
                             "args": {
                                 "item_names": [
-                                    "Nina Nix Sticker Bundle Upgrades"
+                                    "Sticker Bundle - Shiny Tiles",
+                                    "Sticker Bundle - Void Tiles"
                                 ]
                             }
                         },
@@ -258,14 +295,14 @@
                             "rule": "HasGroup",
                             "args": {
                                 "item_name_group": "Sticker Slots",
-                                "count": 4
+                                "count": 3
                             }
                         },
                         {
                             "rule": "HasGroup",
                             "args": {
                                 "item_name_group": "Stamp Slots",
-                                "count": 4
+                                "count": 3
                             }
                         }
                     ]
@@ -291,8 +328,16 @@
                             "rule": "HasAny",
                             "args": {
                                 "item_names": [
-                                    "Hayley Bayles Sticker Bundle",
-                                    "Hayley Bayles Stamp Bundle"
+                                    "Sticker Bundle - Number Tiles",
+                                    "Stamp Bundle - Number Tiles"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasAll",
+                            "args": {
+                                "item_names": [
+                                    "Number Tiles"
                                 ]
                             }
                         },
@@ -300,14 +345,14 @@
                             "rule": "HasGroup",
                             "args": {
                                 "item_name_group": "Sticker Slots",
-                                "count": 2
+                                "count": 1
                             }
                         },
                         {
                             "rule": "HasGroup",
                             "args": {
                                 "item_name_group": "Stamp Slots",
-                                "count": 2
+                                "count": 1
                             }
                         }
                     ]
@@ -329,8 +374,8 @@
                             "rule": "HasAll",
                             "args": {
                                 "item_names": [
-                                    "Hayley Bayles Sticker Bundle",
-                                    "Hayley Bayles Stamp Bundle"
+                                    "Sticker Bundle - Number Tiles",
+                                    "Stamp Bundle - Number Tiles"
                                 ]
                             }
                         },
@@ -338,14 +383,14 @@
                             "rule": "HasGroup",
                             "args": {
                                 "item_name_group": "Sticker Slots",
-                                "count": 3
+                                "count": 2
                             }
                         },
                         {
                             "rule": "HasGroup",
                             "args": {
                                 "item_name_group": "Stamp Slots",
-                                "count": 3
+                                "count": 2
                             }
                         }
                     ]
@@ -364,25 +409,17 @@
                     "rule": "And",
                     "children": [
                         {
-                            "rule": "HasAll",
-                            "args": {
-                                "item_names": [
-                                    "Hayley Bayles Sticker Bundle Upgrades"
-                                ]
-                            }
-                        },
-                        {
                             "rule": "HasGroup",
                             "args": {
                                 "item_name_group": "Sticker Slots",
-                                "count": 4
+                                "count": 3
                             }
                         },
                         {
                             "rule": "HasGroup",
                             "args": {
                                 "item_name_group": "Stamp Slots",
-                                "count": 4
+                                "count": 3
                             }
                         }
                     ]

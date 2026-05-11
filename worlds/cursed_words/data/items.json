@@ -6,45 +6,9 @@
         "tags": [ "Rodman" ]
     },
     {
-        "name": "Rodman Sticker Bundle",
-        "classification": 1,
-        "groups": [ "Stickers" ],
-        "tags": [ "Rodman" ]
-    },
-    {
-        "name": "Rodman Sticker Bundle Upgrades",
-        "classification": 1,
-        "groups": [ "Stickers" ],
-        "tags": [ "Rodman" ]
-    },
-    {
-        "name": "Rodman Stamp Bundle",
-        "classification": 1,
-        "groups": [ "Stamps" ],
-        "tags": [ "Rodman" ]
-    },
-    {
         "name": "Nina Nix",
         "classification": 1,
         "groups": [ "Characters" ],
-        "tags": [ "Nina Nix" ]
-    },
-    {
-        "name": "Nina Nix Sticker Bundle",
-        "classification": 1,
-        "groups": [ "Stickers" ],
-        "tags": [ "Nina Nix" ]
-    },
-    {
-        "name": "Nina Nix Sticker Bundle Upgrades",
-        "classification": 1,
-        "groups": [ "Stickers" ],
-        "tags": [ "Nina Nix" ]
-    },
-    {
-        "name": "Nina Nix Stamp Bundle",
-        "classification": 1,
-        "groups": [ "Stamps" ],
         "tags": [ "Nina Nix" ]
     },
     {
@@ -72,14 +36,90 @@
         "tags": [ "Hayley Bayles" ]
     },
     {
+        "name": "Sticker Bundle - Blue Tiles",
+        "classification": 1,
+        "groups": [ "Sticker Bundles" ]
+    },
+    {
+        "name": "Sticker Bundle - Number Tiles",
+        "classification": 1,
+        "groups": [ "Sticker Bundles" ]
+    },
+    {
+        "name": "Sticker Bundle - Red Tiles",
+        "classification": 1,
+        "groups": [ "Sticker Bundles" ]
+    },
+    {
+        "name": "Sticker Bundle - Shiny Tiles",
+        "classification": 1,
+        "groups": [ "Sticker Bundles" ]
+    },
+    {
+        "name": "Sticker Bundle - Void Tiles",
+        "classification": 1,
+        "groups": [ "Sticker Bundles" ],
+        "tags": [ "Rodman" ]
+    },
+    {
+        "name": "Stamp Bundle - Blue Tiles",
+        "classification": 1,
+        "groups": [ "Stamp Bundles" ]
+    },
+    {
+        "name": "Stamp Bundle - Number Tiles",
+        "classification": 1,
+        "groups": [ "Stamp Bundles" ]
+    },
+    {
+        "name": "Stamp Bundle - Red Tiles",
+        "classification": 1,
+        "groups": [ "Stamp Bundles" ]
+    },
+    {
+        "name": "Stamp Bundle - Shiny Tiles",
+        "classification": 1,
+        "groups": [ "Stamp Bundles" ]
+    },
+    {
+        "name": "Stamp Bundle - Void Tiles",
+        "classification": 1,
+        "groups": [ "Stamp Bundles" ]
+    },
+    {
+        "name": "Blue Tiles",
+        "classification": 1,
+        "groups": [ "Tiles" ]
+    },
+    {
+        "name": "Number Tiles",
+        "classification": 1,
+        "groups": [ "Tiles" ]
+    },
+    {
+        "name": "Red Tiles",
+        "classification": 1,
+        "groups": [ "Tiles" ]
+    },
+    {
+        "name": "Shiny Tiles",
+        "classification": 1,
+        "groups": [ "Tiles" ]
+    },
+    {
+        "name": "Void Tiles",
+        "classification": 1,
+        "groups": [ "Tiles" ]
+    },
+    {
         "count": 5,
-        "name": "Progressive Sticker Slots",
+        "name": "Progressive Sticker Slot",
         "classification": 1,
         "groups": [ "Sticker Slots" ]
     },
     {
         "count": 5,
-        "name": "Progressive Stamp Slots",
+        "name": "Progressive Stamp Slot",
         "classification": 1,
         "groups": [ "Stamp Slots" ]
     },
