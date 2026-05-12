@@ -79,7 +79,105 @@
         "name": "Shop"
     },
     {
-        "name": "Words"
+        "name": "Words",
+        "exits": [
+            {
+                "name": "Words to Medium",
+                "destination": "Words Medium",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Stamp Bundles",
+                                "count": 2
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Sticker Bundles",
+                                "count": 2
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Sticker Slots",
+                                "count": 2
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Stamp Slots",
+                                "count": 2
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Tiles",
+                                "count": 2
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "name": "Words Medium",
+        "exits": [
+            {
+                "name": "Words to High",
+                "destination": "Words High",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Stamp Bundles",
+                                "count": 4
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Sticker Bundles",
+                                "count": 4
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Sticker Slots",
+                                "count": 4
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Stamp Slots",
+                                "count": 4
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Tiles",
+                                "count": 4
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "name": "Words High"
     },
     {
         "name": "Rodman - Stage 1",
@@ -90,24 +188,6 @@
                 "access_rule": {
                     "rule": "And",
                     "children": [
-                        {
-                            "rule": "HasAny",
-                            "args": {
-                                "item_names": [
-                                    "Sticker Bundle - Blue Tiles",
-                                    "Sticker Bundle - Red Tiles"
-                                ]
-                            }
-                        },
-                        {
-                            "rule": "HasAny",
-                            "args": {
-                                "item_names": [
-                                    "Stamp Bundle - Blue Tiles",
-                                    "Stamp Bundle - Red Tiles"
-                                ]
-                            }
-                        },
                         {
                             "rule": "HasAny",
                             "args": {
@@ -147,6 +227,15 @@
                     "rule": "And",
                     "children": [
                         {
+                            "rule": "HasAny",
+                            "args": {
+                                "item_names": [
+                                    "Blue Stickers",
+                                    "Red Stickers"
+                                ]
+                            }
+                        },
+                        {
                             "rule": "HasAll",
                             "args": {
                                 "item_names": [
@@ -177,6 +266,91 @@
     },
     {
         "name": "Rodman - Stage 3",
+        "exits": [
+            {
+                "name": "Rodman to Stage 4",
+                "destination": "Rodman - Stage 4",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasAll",
+                            "args": {
+                                "item_names": [
+                                    "Blue Stickers",
+                                    "Red Stickers"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasAny",
+                            "args": {
+                                "item_names": [
+                                    "Blue Stickers",
+                                    "Red Stickers"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 3
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 3
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Rodman" ]
+    },
+    {
+        "name": "Rodman - Stage 4",
+        "exits": [
+            {
+                "name": "Rodman to Stage 5",
+                "destination": "Rodman - Stage 5",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasAll",
+                            "args": {
+                                "item_names": [
+                                    "Blue Stamps",
+                                    "Red Stamps"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 5
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 5
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Rodman" ]
+    },
+    {
+        "name": "Rodman - Stage 5",
         "tags": [ "Rodman" ]
     },
     {
@@ -188,33 +362,6 @@
                 "access_rule": {
                     "rule": "And",
                     "children": [
-                        {
-                            "rule": "HasAny",
-                            "args": {
-                                "item_names": [
-                                    "Sticker Bundle - Shiny Tiles",
-                                    "Stamp Bundle - Shiny Tiles"
-                                ]
-                            }
-                        },
-                        {
-                            "rule": "HasAny",
-                            "args": {
-                                "item_names": [
-                                    "Sticker Bundle - Void Tiles",
-                                    "Stamp Bundle - Void Tiles"
-                                ]
-                            }
-                        },
-                        {
-                            "rule": "HasAny",
-                            "args": {
-                                "item_names": [
-                                    "Shiny Tiles",
-                                    "Void Tiles"
-                                ]
-                            }
-                        },
                         {
                             "rule": "HasGroup",
                             "args": {
@@ -244,6 +391,15 @@
                 "access_rule": {
                     "rule": "And",
                     "children": [
+                        {
+                            "rule": "HasAny",
+                            "args": {
+                                "item_names": [
+                                    "Shiny Stickers",
+                                    "Void Stickers"
+                                ]
+                            }
+                        },
                         {
                             "rule": "HasAll",
                             "args": {
@@ -286,8 +442,17 @@
                             "rule": "HasAll",
                             "args": {
                                 "item_names": [
-                                    "Sticker Bundle - Shiny Tiles",
-                                    "Sticker Bundle - Void Tiles"
+                                    "Shiny Stickers",
+                                    "Void Stickers"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasAny",
+                            "args": {
+                                "item_names": [
+                                    "Shiny Stamps",
+                                    "Void Stamps"
                                 ]
                             }
                         },
@@ -313,6 +478,44 @@
     },
     {
         "name": "Nina Nix - Stage 4",
+        "exits": [
+            {
+                "name": "Nina Nix to Stage 5",
+                "destination": "Nina Nix - Stage 5",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasAll",
+                            "args": {
+                                "item_names": [
+                                    "Shiny Stamps",
+                                    "Void Stamps"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 5
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 5
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Nina Nix" ]
+    },
+    {
+        "name": "Nina Nix - Stage 5",
         "tags": [ "Nina Nix" ]
     },
     {
@@ -324,23 +527,6 @@
                 "access_rule": {
                     "rule": "And",
                     "children": [
-                        {
-                            "rule": "HasAny",
-                            "args": {
-                                "item_names": [
-                                    "Sticker Bundle - Number Tiles",
-                                    "Stamp Bundle - Number Tiles"
-                                ]
-                            }
-                        },
-                        {
-                            "rule": "HasAll",
-                            "args": {
-                                "item_names": [
-                                    "Number Tiles"
-                                ]
-                            }
-                        },
                         {
                             "rule": "HasGroup",
                             "args": {
@@ -374,8 +560,15 @@
                             "rule": "HasAll",
                             "args": {
                                 "item_names": [
-                                    "Sticker Bundle - Number Tiles",
-                                    "Stamp Bundle - Number Tiles"
+                                    "Number Stickers"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasAll",
+                            "args": {
+                                "item_names": [
+                                    "Number Tiles"
                                 ]
                             }
                         },
@@ -408,6 +601,14 @@
                 "access_rule": {
                     "rule": "And",
                     "children": [
+                        {
+                            "rule": "HasAll",
+                            "args": {
+                                "item_names": [
+                                    "Number Stamps"
+                                ]
+                            }
+                        },
                         {
                             "rule": "HasGroup",
                             "args": {

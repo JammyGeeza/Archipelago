@@ -18,55 +18,64 @@
         "tags": [ "Hayley Bayles" ]
     },
     {
-        "name": "Sticker Bundle - Blue Tiles",
+        "name": "Blue Stamps",
+        "classification": 1,
+        "groups": [ "Stamp Bundles" ]
+    },
+    {
+        "name": "Number Stamps",
+        "classification": 1,
+        "groups": [ "Stamp Bundles" ]
+    },
+    {
+        "name": "Rainbow Stamps",
+        "classification": 1,
+        "groups": [ "Stamp Bundles" ]
+    },
+    {
+        "name": "Red Stamps",
+        "classification": 1,
+        "groups": [ "Stamp Bundles" ]
+    },
+    {
+        "name": "Shiny Stamps",
+        "classification": 1,
+        "groups": [ "Stamp Bundles" ]
+    },
+    {
+        "name": "Void Stamps",
+        "classification": 1,
+        "groups": [ "Stamp Bundles" ]
+    },
+    {
+        "name": "Blue Stickers",
         "classification": 1,
         "groups": [ "Sticker Bundles" ]
     },
     {
-        "name": "Sticker Bundle - Number Tiles",
+        "name": "Number Stickers",
         "classification": 1,
         "groups": [ "Sticker Bundles" ]
     },
     {
-        "name": "Sticker Bundle - Red Tiles",
+        "name": "Rainbow Stickers",
         "classification": 1,
         "groups": [ "Sticker Bundles" ]
     },
     {
-        "name": "Sticker Bundle - Shiny Tiles",
+        "name": "Red Stickers",
         "classification": 1,
         "groups": [ "Sticker Bundles" ]
     },
     {
-        "name": "Sticker Bundle - Void Tiles",
+        "name": "Shiny Stickers",
         "classification": 1,
-        "groups": [ "Sticker Bundles" ],
-        "tags": [ "Rodman" ]
+        "groups": [ "Sticker Bundles" ]
     },
     {
-        "name": "Stamp Bundle - Blue Tiles",
+        "name": "Void Stickers",
         "classification": 1,
-        "groups": [ "Stamp Bundles" ]
-    },
-    {
-        "name": "Stamp Bundle - Number Tiles",
-        "classification": 1,
-        "groups": [ "Stamp Bundles" ]
-    },
-    {
-        "name": "Stamp Bundle - Red Tiles",
-        "classification": 1,
-        "groups": [ "Stamp Bundles" ]
-    },
-    {
-        "name": "Stamp Bundle - Shiny Tiles",
-        "classification": 1,
-        "groups": [ "Stamp Bundles" ]
-    },
-    {
-        "name": "Stamp Bundle - Void Tiles",
-        "classification": 1,
-        "groups": [ "Stamp Bundles" ]
+        "groups": [ "Sticker Bundles" ]
     },
     {
         "name": "Blue Tiles",

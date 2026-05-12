@@ -90,8 +90,8 @@ class CursedWordsWorld(World):
 
         # Add required options data
         slot_data: Dict[str, any] = self.options.as_dict(
-            "goal",
-            "characters",
+            "deathlink",
+            "goal"
         )
 
         return slot_data

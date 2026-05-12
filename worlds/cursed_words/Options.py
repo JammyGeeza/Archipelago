@@ -3,7 +3,7 @@ from BaseClasses import ItemClassification, Options
 # from .Enums import GoalType
 from .Items import item_table
 import logging
-from Options import Choice, OptionDict, OptionList, ItemDict, PerGameCommonOptions, StartInventoryPool, Toggle
+from Options import Choice, DeathLink, OptionDict, OptionList, ItemDict, PerGameCommonOptions, StartInventoryPool, Toggle
 from .Regions import region_table
 from typing import Dict, List
 
@@ -59,6 +59,7 @@ class CursedWordsOptions(PerGameCommonOptions):
     characters: PlayableCharacters
     starting_character: StartingCharacter
     goal: Goal
+    deathlink: DeathLink
 
     # Built-in
     start_inventory_from_pool: StartInventoryPool

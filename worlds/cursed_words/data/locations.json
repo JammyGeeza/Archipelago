@@ -19,6 +19,18 @@
     },
     {
         "count": 3,
+        "name": "Rodman - 4-{count} Complete",
+        "region": "Rodman - Stage 4",
+        "tags": [ "Rodman" ]
+    },
+    {
+        "count": 3,
+        "name": "Rodman - 5-{count} Complete",
+        "region": "Rodman - Stage 5",
+        "tags": [ "Rodman" ]
+    },
+    {
+        "count": 3,
         "name": "Nina Nix - 1-{count} Complete",
         "region": "Nina Nix - Stage 1",
         "tags": [ "Nina Nix" ]
@@ -43,6 +55,12 @@
     },
     {
         "count": 3,
+        "name": "Nina Nix - 5-{count} Complete",
+        "region": "Nina Nix - Stage 5",
+        "tags": [ "Nina Nix" ]
+    },
+    {
+        "count": 3,
         "name": "Hayley Bayles - 1-{count} Complete",
         "region": "Hayley Bayles - Stage 1",
         "tags": [ "Hayley Bayles" ]
@@ -63,6 +81,12 @@
         "count": 3,
         "name": "Hayley Bayles - 4-{count} Complete",
         "region": "Hayley Bayles - Stage 4",
+        "tags": [ "Hayley Bayles" ]
+    },
+    {
+        "count": 3,
+        "name": "Hayley Bayles - 5-{count} Complete",
+        "region": "Hayley Bayles - Stage 5",
         "tags": [ "Hayley Bayles" ]
     },
     {
@@ -106,14 +130,32 @@
         "region": "Shop"
     },
     {
-        "count": 3,
-        "name": "Hayley Bayles - 5-{count} Complete",
-        "region": "Hayley Bayles - Stage 5",
-        "tags": [ "Hayley Bayles" ]
+        "count": 5,
+        "name": "Word Length {count}",
+        "region": "Words"
     },
     {
-        "count": 10,
-        "name": "Word Length {count}",
+        "name": "Word Length 6",
+        "region": "Words Medium"
+    },
+    {
+        "name": "Word Length 7",
+        "region": "Words Medium"
+    },
+    {
+        "name": "Word Length 8",
+        "region": "Words Medium"
+    },
+    {
+        "name": "Word Length 9",
+        "region": "Words High"
+    },
+    {
+        "name": "Word Length 10",
+        "region": "Words High"
+    },
+    {
+        "name": "Word Score > 5",
         "region": "Words"
     },
     {
@@ -121,118 +163,35 @@
         "region": "Words"
     },
     {
+        "name": "Word Score > 25",
+        "region": "Words"
+    },
+    {
         "name": "Word Score > 50",
-        "region": "Words",
-        "access_rule": {
-            "rule": "And",
-            "children": [
-                {
-                    "rule": "HasGroup",
-                    "args" : {
-                        "item_name_group": "Sticker Slots",
-                        "count": 1
-                    }
-                },
-                {
-                    "rule": "HasGroup",
-                    "args" : {
-                        "item_name_group": "Stamp Slots",
-                        "count": 1
-                    }
-                }
-            ]
-        }
+        "region": "Words Medium"
+    },
+    {
+        "name": "Word Score > 75",
+        "region": "Words Medium"
     },
     {
         "name": "Word Score > 100",
-        "region": "Words",
-        "access_rule": {
-            "rule": "And",
-            "children": [
-                {
-                    "rule": "HasGroup",
-                    "args" : {
-                        "item_name_group": "Sticker Slots",
-                        "count": 2
-                    }
-                },
-                {
-                    "rule": "HasGroup",
-                    "args" : {
-                        "item_name_group": "Stamp Slots",
-                        "count": 2
-                    }
-                }
-            ]
-        }
+        "region": "Words Medium"
     },
     {
         "name": "Word Score > 250",
-        "region": "Words",
-        "access_rule": {
-            "rule": "And",
-            "children": [
-                {
-                    "rule": "HasGroup",
-                    "args" : {
-                        "item_name_group": "Sticker Slots",
-                        "count": 3
-                    }
-                },
-                {
-                    "rule": "HasGroup",
-                    "args" : {
-                        "item_name_group": "Stamp Slots",
-                        "count": 3
-                    }
-                }
-            ]
-        }
+        "region": "Words Medium"
     },
     {
         "name": "Word Score > 500",
-        "region": "Words",
-        "access_rule": {
-            "rule": "And",
-            "children": [
-                {
-                    "rule": "HasGroup",
-                    "args" : {
-                        "item_name_group": "Sticker Slots",
-                        "count": 4
-                    }
-                },
-                {
-                    "rule": "HasGroup",
-                    "args" : {
-                        "item_name_group": "Stamp Slots",
-                        "count": 4
-                    }
-                }
-            ]
-        }
+        "region": "Words High"
+    },
+    {
+        "name": "Word Score > 750",
+        "region": "Words High"
     },
     {
         "name": "Word Score > 1000",
-        "region": "Words",
-        "access_rule": {
-            "rule": "And",
-            "children": [
-                {
-                    "rule": "HasGroup",
-                    "args" : {
-                        "item_name_group": "Sticker Slots",
-                        "count": 5
-                    }
-                },
-                {
-                    "rule": "HasGroup",
-                    "args" : {
-                        "item_name_group": "Stamp Slots",
-                        "count": 5
-                    }
-                }
-            ]
-        }
+        "region": "Words High"
     }
 ]
