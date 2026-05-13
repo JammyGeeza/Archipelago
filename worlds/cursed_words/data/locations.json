@@ -106,11 +106,11 @@
         "region": "Shop"
     },
     {
-        "name": "Freeze a Sticker",
+        "name": "Freeze a Stamp",
         "region": "Shop"
     },
     {
-        "name": "Freeze a Stamp",
+        "name": "Freeze a Sticker",
         "region": "Shop"
     },
     {
@@ -123,10 +123,6 @@
     },
     {
         "name": "Sell a Stamp",
-        "region": "Shop"
-    },
-    {
-        "name": "Sell a Tile",
         "region": "Shop"
     },
     {
