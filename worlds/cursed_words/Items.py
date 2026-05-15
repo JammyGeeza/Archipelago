@@ -32,7 +32,7 @@ with open(os.path.join(os.path.dirname(__file__), 'data\\items.json'), 'r') as f
 # Parse as items
 item_table: List[CursedWordsItem] = [ CursedWordsItem(item) for item in _items_data ]
 
-logging.info(f"Found {len(item_table)} items from items.json configuration")
+# logging.info(f"Found {len(item_table)} items from items.json configuration")
 
 # Create item name-to-id lookup
 _base_item_id: int = 323000
@@ -54,7 +54,7 @@ for item in item_table:
 def generate_items(world: World):
     """Get all items applicable for the multiworld generation"""
 
-    logging.info(f"Generating items for multiworld...")
+    # logging.info(f"Generating items for multiworld...")
 
     # Get all progression/useful items with matching tags from configuration options
     enabled_items: List[CursedWordsItem] = [
@@ -62,13 +62,13 @@ def generate_items(world: World):
         if item.has_tags(world.tags) and item.is_classification(ItemClassification.progression | ItemClassification.useful)
     ]
 
-    logging.info(f"Found {len(enabled_items)} enabled progression/useful items for the multiworld")
+    # logging.info(f"Found {len(enabled_items)} enabled progression/useful items for the multiworld")
 
     # Create items
     for item_data in enabled_items:
         for i in range(item_data.count):
 
-            logging.info(f"Creating item: {item_data.name}...")
+            # logging.info(f"Creating item: {item_data.name}...")
 
             # Add to item pool
             item: Item = Item(item_data.name, item_data.classification, item_data.id, world.player)
@@ -80,13 +80,13 @@ def generate_items(world: World):
 
     # Append filler items if required
     if required_filler_count > 0:
-        logging.info(f"Found {required_filler_count} empty spaces for filler items")
+        # logging.info(f"Found {required_filler_count} empty spaces for filler items")
         world.multiworld.itempool += generate_filler_items(world, required_filler_count)
 
 def generate_filler_items(world: World, amount: int) -> List[Item]:
     """Randomly select {amount} filler items."""
 
-    logging.info(f"Generating {amount} filler item(s)...")
+    # logging.info(f"Generating {amount} filler item(s)...")
 
     # Get applicable filler items
     enabled_filler_items = [

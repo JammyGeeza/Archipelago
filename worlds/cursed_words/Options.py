@@ -67,38 +67,38 @@ class CursedWordsOptions(PerGameCommonOptions):
     def resolve_options(self):
         """Resolve options to ensure successful generation."""
 
-        logging.info(f"Playable Characters selection: {self.characters.value}")
+        # logging.info(f"Playable Characters selection: {self.characters.value}")
 
         # Check if 'All' exists in Characters option
         if "All" in self.characters.value:
-            logging.info(f"  -> 'All' found, including all characters...")
+            # logging.info(f"  -> 'All' found, including all characters...")
             self.characters.value = _character_names
 
-        logging.info(f"Starting character selection: {self.starting_character.value}")
+        # logging.info(f"Starting character selection: {self.starting_character.value}")
         
         # Check if 'Random' exists in Starting Character option
         if "Random" in self.starting_character.value:
-            logging.info(f"  -> 'Random' found, selecting all characters from <Playable Characters> selection...")
+            # logging.info(f"  -> 'Random' found, selecting all characters from <Playable Characters> selection...")
             self.starting_character.value = self.characters.value
         else:
-            logging.info(f"  -> Removing characters not included in <Playable Characters>...")
+            # logging.info(f"  -> Removing characters not included in <Playable Characters>...")
             self.starting_character.value = list(set(self.starting_character.value) & set(self.characters.value))
 
         # Revert to 'Random' if no characters remain
         if len(self.starting_character.value) == 0:
-            logging.info(f"  -> No matching characters selected, defaulting to 'Random'...")
+            # logging.info(f"  -> No matching characters selected, defaulting to 'Random'...")
             self.starting_character.value = self.characters.value    
 
         logging.info(f"Goal selection: {self.goal.value}")
 
         # Check if 'All' exists in Goal options
         if "All" in self.goal.value:
-            logging.info(f"  -> 'All' found, requiring all <Playable Characters> for goal...")
+            # logging.info(f"  -> 'All' found, requiring all <Playable Characters> for goal...")
             self.goal.value = self.characters.value
         else:
-            logging.info(f"  -> Removing characters not included in <Playable Characters>...")
+            # logging.info(f"  -> Removing characters not included in <Playable Characters>...")
             self.goal.value = list(set(self.starting_character.value) & set(self.characters.value))
         
         if len(self.goal.value) == 0:
-            logging.info(f"  -> No matching characters selected, defaulting to 'All'...")
+            # logging.info(f"  -> No matching characters selected, defaulting to 'All'...")
             self.goal.value = self.characters.value

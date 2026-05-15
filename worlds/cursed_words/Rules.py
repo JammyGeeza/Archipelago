@@ -13,15 +13,7 @@ def generate_goal(world: World):
 
         region: Region = world.multiworld.get_region(f"{goal_character} - Stage 5", world.player)
 
-        # match goal_character:
-        #     case "Rodman":
-        #         region = world.multiworld.get_region(f"{goal_character} - Stage 3", world.player)
-        #     case "Nina Nix":
-        #         region = world.multiworld.get_region(f"{goal_character} - Stage 4", world.player)
-        #     case _:
-        #         region = world.multiworld.get_region(f"{goal_character} - Stage 5", world.player)
-
-        logging.info(f"Creating goal location for region {region.name}")
+        # logging.info(f"Creating goal location for region {region.name}")
         
         event: Location = Location(world.player, goal_character, None, region)
         event.place_locked_item(Item("Victory", ItemClassification.progression, None, world.player))

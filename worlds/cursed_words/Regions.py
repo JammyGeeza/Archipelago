@@ -46,7 +46,7 @@ with open(os.path.join(os.path.dirname(__file__), 'data\\regions.json'), 'r') as
 # Parse as region objects
 region_table: List[CursedWordsRegion] = [ CursedWordsRegion(data) for data in _regions_data ]
 
-logging.info(f"Found {len(location_table)} regions from regions.json configuration")
+# logging.info(f"Found {len(location_table)} regions from regions.json configuration")
 
 def generate_regions(world: World):
     """Create all applicable regions for this multiworld."""
@@ -57,11 +57,11 @@ def generate_regions(world: World):
         if region.has_tags(world.tags)
     ]
 
-    logging.info(f"Found {len(enabled_regions)} enabled regions based on configuration options")
+    # logging.info(f"Found {len(enabled_regions)} enabled regions based on configuration options")
 
     # First pass to create regions from region data models
     for region_model in enabled_regions:
-        logging.info(f"  -> Creating region: {region_model.name}...")
+        # logging.info(f"  -> Creating region: {region_model.name}...")
 
         # Create region
         region: Region = Region(region_model.name, world.player, world.multiworld)
@@ -81,7 +81,7 @@ def generate_regions(world: World):
                 loc_name: str = location_model.name.format(count=i+1)
                 loc_id: int = world.location_name_to_id[loc_name]
 
-                logging.info(f"    -> Creating location: {loc_name} with ID {loc_id}...")
+                # logging.info(f"    -> Creating location: {loc_name} with ID {loc_id}...")
 
                 # Create location
                 location: Location = Location(world.player, loc_name, loc_id, region)
@@ -101,7 +101,7 @@ def generate_regions(world: World):
 
         for exit_model in [ exit for exit in region_data.exits if exit.has_tags(world.tags)]:
 
-            logging.info(f"    -> Creating exit: {exit_model.name}")
+            # logging.info(f"    -> Creating exit: {exit_model.name}")
             exit: Entrance = Entrance(world.player, exit_model.name, region, randomization_type=exit_model.type)
 
             # Create access rule, if one exists

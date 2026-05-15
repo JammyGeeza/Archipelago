@@ -31,7 +31,7 @@ with open(os.path.join(os.path.dirname(__file__), 'data\\locations.json'), 'r') 
 # Parse as location objects
 location_table: List[CursedWordsLocation] = [ CursedWordsLocation(data) for data in _locations_data ]
 
-logging.info(f"Found {len(location_table)} items from locations.json configuration")
+# logging.info(f"Found {len(location_table)} items from locations.json configuration")
 
 # Create item lookup
 _base_loc_id: int = 322000
@@ -44,7 +44,7 @@ for location in location_table:
         loc_name: str = location.name.format(count=i+1)
         loc_id: str = _cur_loc_id
 
-        logging.info(f"Adding location lookup '{loc_name}': {loc_id}")
+        # logging.info(f"Adding location lookup '{loc_name}': {loc_id}")
         
         location_name_to_id_lookup[loc_name] = loc_id
         _cur_loc_id += 1
