@@ -183,10 +183,10 @@
         "groups": [ "Stamp Slots" ]
     },
     {
-        "count": 3,
-        "name": "Progressive Re-roll",
+        "count": 5,
+        "name": "Progressive Grid Re-roll",
         "classification": 2,
-        "groups": [ "Re-Rolls" ]
+        "groups": [ "Rerolls" ]
     },
     {
         "name": "$1",
