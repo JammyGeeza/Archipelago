@@ -90,19 +90,159 @@
         "tags": [ "Hayley Bayles" ]
     },
     {
+        "count": 3,
+        "name": "Bones the Dog - 1-{count} Complete",
+        "region": "Bones the Dog - Stage 1",
+        "tags": [ "Bones the Dog" ]
+    },
+    {
+        "count": 3,
+        "name": "Bones the Dog - 2-{count} Complete",
+        "region": "Bones the Dog - Stage 2",
+        "tags": [ "Bones the Dog" ]
+    },
+    {
+        "count": 3,
+        "name": "Bones the Dog - 3-{count} Complete",
+        "region": "Bones the Dog - Stage 3",
+        "tags": [ "Bones the Dog" ]
+    },
+    {
+        "count": 3,
+        "name": "Bones the Dog - 4-{count} Complete",
+        "region": "Bones the Dog - Stage 4",
+        "tags": [ "Bones the Dog" ]
+    },
+    {
+        "count": 3,
+        "name": "Bones the Dog - 5-{count} Complete",
+        "region": "Bones the Dog - Stage 5",
+        "tags": [ "Bones the Dog" ]
+    },
+    {
+        "count": 3,
+        "name": "Sam Gambit - 1-{count} Complete",
+        "region": "Sam Gambit - Stage 1",
+        "tags": [ "Sam Gambit" ]
+    },
+    {
+        "count": 3,
+        "name": "Sam Gambit - 2-{count} Complete",
+        "region": "Sam Gambit - Stage 2",
+        "tags": [ "Sam Gambit" ]
+    },
+    {
+        "count": 3,
+        "name": "Sam Gambit - 3-{count} Complete",
+        "region": "Sam Gambit - Stage 3",
+        "tags": [ "Sam Gambit" ]
+    },
+    {
+        "count": 3,
+        "name": "Sam Gambit - 4-{count} Complete",
+        "region": "Sam Gambit - Stage 4",
+        "tags": [ "Sam Gambit" ]
+    },
+    {
+        "count": 3,
+        "name": "Sam Gambit - 5-{count} Complete",
+        "region": "Sam Gambit - Stage 5",
+        "tags": [ "Sam Gambit" ]
+    },
+    {
+        "count": 3,
+        "name": "Octacles - 1-{count} Complete",
+        "region": "Octacles - Stage 1",
+        "tags": [ "Octacles" ]
+    },
+    {
+        "count": 3,
+        "name": "Octacles - 2-{count} Complete",
+        "region": "Octacles - Stage 2",
+        "tags": [ "Octacles" ]
+    },
+    {
+        "count": 3,
+        "name": "Octacles - 3-{count} Complete",
+        "region": "Octacles - Stage 3",
+        "tags": [ "Octacles" ]
+    },
+    {
+        "count": 3,
+        "name": "Octacles - 4-{count} Complete",
+        "region": "Octacles - Stage 4",
+        "tags": [ "Octacles" ]
+    },
+    {
+        "count": 3,
+        "name": "Octacles - 5-{count} Complete",
+        "region": "Octacles - Stage 5",
+        "tags": [ "Octacles" ]
+    },
+    {
+        "name": "Skip a Grid",
+        "region": "Encounters"
+    },
+    {
+        "name": "Place a Consumable Tile",
+        "region": "Encounters"
+    },
+    {
+        "name": "Earn $10",
+        "region": "Money"
+    },
+    {
+        "name": "Earn $25",
+        "region": "Money"
+    },
+    {
+        "name": "Earn $50",
+        "region": "Money"
+    },
+    {
+        "name": "Earn $75",
+        "region": "Money Medium"
+    },
+    {
+        "name": "Earn $100",
+        "region": "Money Medium"
+    },
+    {
+        "name": "Earn $250",
+        "region": "Money High"
+    },
+    {
+        "name": "Earn $500",
+        "region": "Money High"
+    },
+    {
         "name": "Buy a Sticker",
-        "region": "Shop"
+        "region": "Shop",
+        "access_rule": {
+            "rule": "HasGroup",
+            "args" : {
+                "item_name_group": "Sticker Slots",
+                "count": 1
+            }
+        }
     },
     {
         "name": "Buy a Stamp",
+        "region": "Shop",
+        "access_rule": {
+            "rule": "HasGroup",
+            "args" : {
+                "item_name_group": "Stamp Slots",
+                "count": 1
+            }
+        }
+    },
+    {
+        "name": "Buy a Consumable Tile",
         "region": "Shop"
     },
     {
-        "name": "Buy a Tile",
-        "region": "Shop"
-    },
-    {
-        "name": "Destroy a Tile",
+        "name": "Destroy a Consumable Tile",
         "region": "Shop"
     },
     {
@@ -119,11 +259,25 @@
     },
     {
         "name": "Sell a Sticker",
-        "region": "Shop"
+        "region": "Shop",
+        "access_rule": {
+            "rule": "HasGroup",
+            "args" : {
+                "item_name_group": "Sticker Slots",
+                "count": 1
+            }
+        }
     },
     {
         "name": "Sell a Stamp",
-        "region": "Shop"
+        "region": "Shop",
+        "access_rule": {
+            "rule": "HasGroup",
+            "args" : {
+                "item_name_group": "Stamp Slots",
+                "count": 1
+            }
+        }
     },
     {
         "count": 5,

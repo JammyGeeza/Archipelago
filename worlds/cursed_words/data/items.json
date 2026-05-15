@@ -18,7 +18,40 @@
         "tags": [ "Hayley Bayles" ]
     },
     {
+        "name": "Bones the Dog",
+        "classification": 1,
+        "groups": [ "Characters" ],
+        "tags": [ "Bones the Dog" ]
+    },
+    {
+        "name": "Sam Gambit",
+        "classification": 1,
+        "groups": [ "Characters" ],
+        "tags": [ "Sam Gambit" ]
+    },
+    {
+        "name": "Octacles",
+        "classification": 1,
+        "groups": [ "Characters" ],
+        "tags": [ "Octacles" ]
+    },
+    {
         "name": "Blue Stamps",
+        "classification": 1,
+        "groups": [ "Stamp Bundles" ]
+    },
+    {
+        "name": "Card Stamps",
+        "classification": 1,
+        "groups": [ "Stamp Bundles" ]
+    },
+    {
+        "name": "Chess Stamps",
+        "classification": 1,
+        "groups": [ "Stamp Bundles" ]
+    },
+    {
+        "name": "Cursed Stamps",
         "classification": 1,
         "groups": [ "Stamp Bundles" ]
     },
@@ -53,6 +86,21 @@
         "groups": [ "Sticker Bundles" ]
     },
     {
+        "name": "Card Stickers",
+        "classification": 1,
+        "groups": [ "Sticker Bundles" ]
+    },
+    {
+        "name": "Chess Stickers",
+        "classification": 1,
+        "groups": [ "Sticker Bundles" ]
+    },
+    {
+        "name": "Cursed Stickers",
+        "classification": 1,
+        "groups": [ "Sticker Bundles" ]
+    },
+    {
         "name": "Number Stickers",
         "classification": 1,
         "groups": [ "Sticker Bundles" ]
@@ -79,6 +127,26 @@
     },
     {
         "name": "Blue Tiles",
+        "classification": 1,
+        "groups": [ "Tiles" ]
+    },
+    {
+        "name": "Card Tiles",
+        "classification": 1,
+        "groups": [ "Tiles" ]
+    },
+    {
+        "name": "Chess Tiles",
+        "classification": 1,
+        "groups": [ "Tiles" ]
+    },
+    {
+        "name": "Currency Tiles",
+        "classification": 1,
+        "groups": [ "Tiles" ]
+    },
+    {
+        "name": "Fraction Tiles",
         "classification": 1,
         "groups": [ "Tiles" ]
     },

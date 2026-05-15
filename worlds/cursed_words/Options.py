@@ -8,15 +8,15 @@ from .Regions import region_table
 from typing import Dict, List
 
 # Pre-defined keys
-_character_names = [ "Rodman", "Nina Nix", "Hayley Bayles" ]
+_character_names = [ "Rodman", "Nina Nix", "Hayley Bayles", "Bones the Dog", "Sam Gambit", "Octacles" ]
 _filler_item_names: List[str] = [ item.name for item in item_table if item.classification == ItemClassification.filler.value ]
 
 class PlayableCharacters(OptionList):
     """
     Select character(s) to include as playable.
 
-    Use [ "Rodman", "Nina Nix", "Hayley Bayles" ] etc. will all characters in the list as playable.
-    Use [ "All" ] will select all characters as playable.
+    Using [ "Rodman", "Nina Nix", "Hayley Bayles" ] etc. will select these specific characters as playable.
+    Using [ "All" ] will select all characters as playable.
     """
     display_name = "Playable Characters"
     valid_keys_casefold = False
@@ -27,10 +27,10 @@ class StartingCharacter(OptionList):
     """
     Select the character to start with.
 
-    Use [ "Rodman", "Nina Mix", "Hayley Bayles" ] etc. will select one character from the list as your starting character.
-    Use [ "Random" ] will randomly select one character from <Playable Characters> as your starting character.
+    Using [ "Rodman", "Nina Mix", "Hayley Bayles" ] etc. will randomly select one of these specific characters as your starting character.
+    Using [ "Random" ] will randomly select one character from <Playable Characters> as your starting character.
 
-    NOTE: Manual selections MUST ONLY include characters selected in the <Playable Characters> option.
+    NOTE: Characters not included in <Playable Characters> will be ignored and never selected as your starting character.
           If no characters match, it will default to 'Random'.
     """
     display_name = "Starting Character"
@@ -42,10 +42,10 @@ class Goal(OptionList):
     """
     Select character(s) required to win runs with to complete your goal.
 
-    Use [ "Rodman", "Nina Nix", "Hayley Bayles" ] etc. will to select all characters in the list as required to goal.
+    Use [ "Rodman", "Nina Nix", "Hayley Bayles" ] etc. will select these three specific characters as required to goal.
     Use [ "All" ] will select all characters from <Playable Characters> as required to goal.
 
-    NOTE: Manual selections MUST ONLY include characters selected in the <Playable Characters> option.
+    NOTE: Characters not included in <Playable Characters> will be ignored and never selected as a goal requirement character.
           If no characters match, it will default to 'All'.
     """
     display_name = "Goal"

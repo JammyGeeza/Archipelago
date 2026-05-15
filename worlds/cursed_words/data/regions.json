@@ -49,6 +49,77 @@
             },
             {
                 "access_rule": {
+                    "rule": "HasAll",
+                    "options": [],
+                    "args": {
+                        "item_names": [
+                            "Bones the Dog"
+                        ]
+                    }
+
+                },
+                "name": "Menu to Bones the Dog - Stage 1",
+                "destination": "Bones the Dog - Stage 1",
+                "tags": [ "Bones the Dog" ]
+            },
+            {
+                "access_rule": {
+                    "rule": "HasAll",
+                    "options": [],
+                    "args": {
+                        "item_names": [
+                            "Sam Gambit"
+                        ]
+                    }
+
+                },
+                "name": "Menu to Sam Gambit - Stage 1",
+                "destination": "Sam Gambit - Stage 1",
+                "tags": [ "Sam Gambit" ]
+            },
+            {
+                "access_rule": {
+                    "rule": "HasAll",
+                    "options": [],
+                    "args": {
+                        "item_names": [
+                            "Octacles"
+                        ]
+                    }
+
+                },
+                "name": "Menu to Octacles - Stage 1",
+                "destination": "Octacles - Stage 1",
+                "tags": [ "Octacles" ]
+            },
+            {
+                "access_rule": {
+                    "rule": "HasGroup",
+                    "options": [],
+                    "args": {
+                        "item_name_group": "Characters",
+                        "count": 1
+                    }
+
+                },
+                "name": "Menu to Encounters",
+                "destination": "Encounters"
+            },
+            {
+                "access_rule": {
+                    "rule": "HasGroup",
+                    "options": [],
+                    "args": {
+                        "item_name_group": "Characters",
+                        "count": 1
+                    }
+
+                },
+                "name": "Menu to Money",
+                "destination": "Money"
+            },
+            {
+                "access_rule": {
                     "rule": "HasGroup",
                     "options": [],
                     "args": {
@@ -74,6 +145,110 @@
                 "destination": "Words"
             }
         ]
+    },
+    {
+        "name": "Encounters"
+    },
+    {
+        "name": "Money",
+        "exits": [
+            {
+                "name": "Money to Medium",
+                "destination": "Money Medium",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Stamp Bundles",
+                                "count": 2
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Sticker Bundles",
+                                "count": 2
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Sticker Slots",
+                                "count": 1
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Stamp Slots",
+                                "count": 1
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Tiles",
+                                "count": 2
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "name": "Money Medium",
+        "exits": [
+            {
+                "name": "Money to High",
+                "destination": "Money High",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Stamp Bundles",
+                                "count": 4
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Sticker Bundles",
+                                "count": 4
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Sticker Slots",
+                                "count": 3
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Stamp Slots",
+                                "count": 3
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Tiles",
+                                "count": 4
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "name": "Money High"
     },
     {
         "name": "Shop"
@@ -565,9 +740,10 @@
                             }
                         },
                         {
-                            "rule": "HasAll",
+                            "rule": "HasAny",
                             "args": {
                                 "item_names": [
+                                    "Fraction Tiles",
                                     "Number Tiles"
                                 ]
                             }
@@ -639,6 +815,15 @@
                     "rule": "And",
                     "children": [
                         {
+                            "rule": "HasAll",
+                            "args": {
+                                "item_names": [
+                                    "Fraction Tiles",
+                                    "Number Tiles"
+                                ]
+                            }
+                        },
+                        {
                             "rule": "HasGroup",
                             "args": {
                                 "item_name_group": "Sticker Slots",
@@ -662,5 +847,490 @@
         "name": "Hayley Bayles - Stage 5",
         "exits": [],
         "tags": [ "Hayley Bayles" ]
+    },
+    {
+        "name": "Bones the Dog - Stage 1",
+        "exits": [
+            {
+                "name": "Bones the Dog to Stage 2",
+                "destination": "Bones the Dog - Stage 2",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 1
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 1
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Bones the Dog" ]
+    },
+    {
+        "name": "Bones the Dog - Stage 2",
+        "exits": [
+            {
+                "name": "Bones the Dog to Stage 3",
+                "destination": "Bones the Dog - Stage 3",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasAll",
+                            "args": {
+                                "item_names": [
+                                    "Card Stickers"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasAll",
+                            "args": {
+                                "item_names": [
+                                    "Card Tiles"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 2
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 2
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Bones the Dog" ]
+    },
+    {
+        "name": "Bones the Dog - Stage 3",
+        "exits": [
+            {
+                "name": "Bones the Dog to Stage 4",
+                "destination": "Bones the Dog - Stage 4",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasAll",
+                            "args": {
+                                "item_names": [
+                                    "Card Stamps"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 3
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 3
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Bones the Dog" ]
+    },
+    {
+        "name": "Bones the Dog - Stage 4",
+        "exits": [
+            {
+                "name": "Bones the Dog to Stage 5",
+                "destination": "Bones the Dog - Stage 5",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 5
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 5
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Bones the Dog" ]
+    },
+    {
+        "name": "Bones the Dog - Stage 5",
+        "exits": [],
+        "tags": [ "Bones the Dog" ]
+    },
+    {
+        "name": "Sam Gambit - Stage 1",
+        "exits": [
+            {
+                "name": "Sam Gambit to Stage 2",
+                "destination": "Sam Gambit - Stage 2",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 1
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 1
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Sam Gambit" ]
+    },
+    {
+        "name": "Sam Gambit - Stage 2",
+        "exits": [
+            {
+                "name": "Sam Gambit to Stage 3",
+                "destination": "Sam Gambit - Stage 3",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasAll",
+                            "args": {
+                                "item_names": [
+                                    "Chess Stickers"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasAll",
+                            "args": {
+                                "item_names": [
+                                    "Chess Tiles"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 2
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 2
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Sam Gambit" ]
+    },
+    {
+        "name": "Sam Gambit - Stage 3",
+        "exits": [
+            {
+                "name": "Sam Gambit to Stage 4",
+                "destination": "Sam Gambit - Stage 4",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasAll",
+                            "args": {
+                                "item_names": [
+                                    "Chess Stamps"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 3
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 3
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Sam Gambit" ]
+    },
+    {
+        "name": "Sam Gambit - Stage 4",
+        "exits": [
+            {
+                "name": "Sam Gambit to Stage 5",
+                "destination": "Sam Gambit - Stage 5",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 5
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 5
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Sam Gambit" ]
+    },
+    {
+        "name": "Sam Gambit - Stage 5",
+        "exits": [],
+        "tags": [ "Sam Gambit" ]
+    },
+    {
+        "name": "Octacles - Stage 1",
+        "exits": [
+            {
+                "name": "Octacles to Stage 2",
+                "destination": "Octacles - Stage 2",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 1
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 1
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Octacles" ]
+    },
+    {
+        "name": "Octacles - Stage 2",
+        "exits": [
+            {
+                "name": "Octacles to Stage 3",
+                "destination": "Octacles - Stage 3",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasAny",
+                            "args": {
+                                "item_names": [
+                                    "Cursed Stickers"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasAny",
+                            "args": {
+                                "item_names": [
+                                    "Chess Stickers",
+                                    "Number Stickers"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasAny",
+                            "args": {
+                                "item_names": [
+                                    "Chess Tiles",
+                                    "Currency Tiles",
+                                    "Fraction Tiles",
+                                    "Number Tiles"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 2
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 2
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Octacles" ]
+    },
+    {
+        "name": "Octacles - Stage 3",
+        "exits": [
+            {
+                "name": "Octacles to Stage 4",
+                "destination": "Octacles - Stage 4",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasAll",
+                            "args": {
+                                "item_names": [
+                                    "Cursed Stamps"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasAny",
+                            "args": {
+                                "item_names": [
+                                    "Chess Stamps",
+                                    "Number Stamps"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 3
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 3
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Octacles" ]
+    },
+    {
+        "name": "Octacles - Stage 4",
+        "exits": [
+            {
+                "name": "Octacles to Stage 5",
+                "destination": "Octacles - Stage 5",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasAll",
+                            "args": {
+                                "item_names": [
+                                    "Chess Stickers",
+                                    "Number Stickers"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasAll",
+                            "args": {
+                                "item_names": [
+                                    "Chess Stamps",
+                                    "Number Stamps"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasAll",
+                            "args": {
+                                "item_names": [
+                                    "Chess Tiles",
+                                    "Currency Tiles",
+                                    "Fraction Tiles",
+                                    "Number Tiles"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 5
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 5
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Octacles" ]
+    },
+    {
+        "name": "Octacles - Stage 5",
+        "exits": [],
+        "tags": [ "Octacles" ]
     }
 ]
