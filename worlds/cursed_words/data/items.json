@@ -216,5 +216,17 @@
         "name": "$3",
         "classification": 0,
         "groups": [ "Money" ]
+    },
+    {
+        "name": "Consumable Tile",
+        "classification": 0
+    },
+    {
+        "name": "Extra Re-roll",
+        "classification": 0
+    },
+    {
+        "name": "Random Tile Boost",
+        "classification": 0
     }
 ]
