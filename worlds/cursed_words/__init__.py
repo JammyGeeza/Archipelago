@@ -74,7 +74,7 @@ class CursedWordsWorld(World):
             # more from each larger 'L' shape - this should also mean a 3x3 starting grid from 'Progressive Grid Size'
             # will only ever contain 3 locked tile positions
             self.selected_tile_positions = (
-                self.random.sample([[0,1], [0,2], [1,1], [1,2]], 1) +
+                self.random.sample([[0,0], [0,1], [1,0], [1,1]], 1) +
                 self.random.sample([[2,0], [2,1], [2,2], [1,2], [0,2]], 2) +
                 self.random.sample([[3,0], [3,1], [3,2], [3,3], [2,3], [1,3], [0,3]], 3) +
                 self.random.sample([[4,0], [4,1], [4,2], [4,3], [4,4], [3,4], [2,4], [1,4], [0,4]], 4)
