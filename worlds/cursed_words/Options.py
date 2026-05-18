@@ -3,7 +3,7 @@ from BaseClasses import ItemClassification, Options
 # from .Enums import GoalType
 from .Items import item_table
 import logging
-from Options import Choice, DeathLink, OptionDict, OptionList, ItemDict, PerGameCommonOptions, StartInventoryPool, Toggle
+from Options import Choice, DeathLink, OptionDict, OptionList, ItemDict, NumericOption, PerGameCommonOptions, StartInventoryPool, Toggle
 from .Regions import region_table
 from typing import Dict, List
 
@@ -53,6 +53,22 @@ class Goal(OptionList):
     valid_keys = [ "All" ] + _character_names
     default = [ "All" ]
 
+class ProgressiveGridSize(Toggle):
+    """
+    The grid starts as 3x3 tiles and adds two 'Progressive Grid Size' items to the pool, each increasing the grid size
+    to 4x4 and then 5x5 tiles.
+    """
+    display_name = "Progressive Grid Size"
+    default = False
+
+class ProgressiveTilePositions(Toggle):
+    """
+    The grid starts with 10 randomly selected tile positions being 'locked', making them un-selectable, and adds 10
+    'Progressive Tile Position' items to the pool, each unlocking one locked tile position.
+    """
+    display_name = "Progressive Tile Positions"
+    default = False
+
 @dataclass
 class CursedWordsOptions(PerGameCommonOptions):
     """"""
@@ -60,6 +76,8 @@ class CursedWordsOptions(PerGameCommonOptions):
     starting_character: StartingCharacter
     goal: Goal
     deathlink: DeathLink
+    progressive_grid_size: ProgressiveGridSize
+    progressive_tile_positions: ProgressiveTilePositions
 
     # Built-in
     start_inventory_from_pool: StartInventoryPool
@@ -89,7 +107,7 @@ class CursedWordsOptions(PerGameCommonOptions):
             # logging.info(f"  -> No matching characters selected, defaulting to 'Random'...")
             self.starting_character.value = self.characters.value    
 
-        logging.info(f"Goal selection: {self.goal.value}")
+        # logging.info(f"Goal selection: {self.goal.value}")
 
         # Check if 'All' exists in Goal options
         if "All" in self.goal.value:

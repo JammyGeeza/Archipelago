@@ -6,6 +6,7 @@ from .Options import CursedWordsOptions
 from .Regions import CursedWordsRegion, region_table, generate_regions
 from .Rules import generate_goal
 import logging
+import math
 from typing import Any, Dict, List
 
 class CursedWordsWeb(WebWorld):
@@ -46,23 +47,38 @@ class CursedWordsWorld(World):
 
         # Gather tags for run (determines what items/locations/regions to include in the run)
         self.tags: List[str] = [
-            *self.options.characters.value
+            *self.options.characters.value,
+            *([self.options.progressive_grid_size.display_name] if self.options.progressive_grid_size.value else []),
+            *([self.options.progressive_tile_positions.display_name] if self.options.progressive_tile_positions.value else [])
             # Additional tag inclusions go here...
         ]
 
-        logging.info(f"Selecting starting character ...")
+        # logging.info(f"Selecting starting character ...")
 
         # Randomly select starting character
         self.start_character: str = self.random.choice(
             self.options.starting_character.value
         )
 
-        logging.info(f"Randomly selected '{self.start_character}' as starting character")
+        # logging.info(f"Randomly selected '{self.start_character}' as starting character")
 
         # Add starting character as starting item from pool
         self.options.start_inventory_from_pool.value.update({ f"{self.start_character}": 1 })
 
-        logging.info(f"Starting inventory from pool: {self.options.start_inventory_from_pool.value}")
+        # logging.info(f"Starting inventory from pool: {self.options.start_inventory_from_pool.value}")
+
+        # If 'Progressive Tile Positions' is enabled
+        self.selected_tile_positions = []
+        if self.options.progressive_tile_positions.value:
+            # To attempt to evenly spread locked tiles, split 5x5 grid into concentric 'L' shapes and randomly select
+            # more from each larger 'L' shape - this should also mean a 3x3 starting grid from 'Progressive Grid Size'
+            # will only ever contain 3 locked tile positions
+            self.selected_tile_positions = (
+                self.random.sample([[0,1], [0,2], [1,1], [1,2]], 1) +
+                self.random.sample([[2,0], [2,1], [2,2], [1,2], [0,2]], 2) +
+                self.random.sample([[3,0], [3,1], [3,2], [3,3], [2,3], [1,3], [0,3]], 3) +
+                self.random.sample([[4,0], [4,1], [4,2], [4,3], [4,4], [3,4], [2,4], [1,4], [0,4]], 4)
+            )
 
     def create_items(self):
         """Create all items for the item pool."""
@@ -91,7 +107,12 @@ class CursedWordsWorld(World):
         # Add required options data
         slot_data: Dict[str, any] = self.options.as_dict(
             "deathlink",
-            "goal"
+            "goal",
+            "progressive_grid_size"
         )
+
+        slot_data.update({
+            "progressive_tile_positions": self.selected_tile_positions
+        })
 
         return slot_data

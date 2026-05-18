@@ -421,6 +421,21 @@
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveGridSize",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Grid Sizes",
+                                "count": 1
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
                             "args": {
                                 "item_name_group": "Sticker Slots",
                                 "count": 2
@@ -506,6 +521,21 @@
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveGridSize",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Grid Sizes",
+                                "count": 2
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
                             "args": {
                                 "item_name_group": "Sticker Slots",
                                 "count": 5
@@ -537,6 +567,21 @@
                 "access_rule": {
                     "rule": "And",
                     "children": [
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 2
+                            },
+                            "filtered_resolution": true
+                        },
                         {
                             "rule": "HasGroup",
                             "args": {
@@ -583,6 +628,36 @@
                                     "Void Tiles"
                                 ]
                             }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveGridSize",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Grid Sizes",
+                                "count": 1
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 4
+                            },
+                            "filtered_resolution": true
                         },
                         {
                             "rule": "HasGroup",
@@ -633,6 +708,21 @@
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 6
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
                             "args": {
                                 "item_name_group": "Sticker Slots",
                                 "count": 3
@@ -671,6 +761,36 @@
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveGridSize",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Grid Sizes",
+                                "count": 2
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 8
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
                             "args": {
                                 "item_name_group": "Sticker Slots",
                                 "count": 5
@@ -702,6 +822,21 @@
                 "access_rule": {
                     "rule": "And",
                     "children": [
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 2
+                            },
+                            "filtered_resolution": true
+                        },
                         {
                             "rule": "HasGroup",
                             "args": {
@@ -750,6 +885,36 @@
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveGridSize",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Grid Sizes",
+                                "count": 1
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 4
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
                             "args": {
                                 "item_name_group": "Sticker Slots",
                                 "count": 2
@@ -784,6 +949,21 @@
                                     "Number Stamps"
                                 ]
                             }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 6
+                            },
+                            "filtered_resolution": true
                         },
                         {
                             "rule": "HasGroup",
@@ -832,6 +1012,36 @@
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveGridSize",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Grid Sizes",
+                                "count": 2
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 8
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
                             "args": {
                                 "item_name_group": "Stamp Slots",
                                 "count": 5
@@ -857,6 +1067,21 @@
                 "access_rule": {
                     "rule": "And",
                     "children": [
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 2
+                            },
+                            "filtered_resolution": true
+                        },
                         {
                             "rule": "HasGroup",
                             "args": {
@@ -904,6 +1129,36 @@
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveGridSize",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Grid Sizes",
+                                "count": 1
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 4
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
                             "args": {
                                 "item_name_group": "Sticker Slots",
                                 "count": 2
@@ -941,6 +1196,21 @@
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 6
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
                             "args": {
                                 "item_name_group": "Sticker Slots",
                                 "count": 3
@@ -968,6 +1238,36 @@
                 "access_rule": {
                     "rule": "And",
                     "children": [
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveGridSize",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Grid Sizes",
+                                "count": 2
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 8
+                            },
+                            "filtered_resolution": true
+                        },
                         {
                             "rule": "HasGroup",
                             "args": {
@@ -1002,6 +1302,21 @@
                 "access_rule": {
                     "rule": "And",
                     "children": [
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 2
+                            },
+                            "filtered_resolution": true
+                        },
                         {
                             "rule": "HasGroup",
                             "args": {
@@ -1049,6 +1364,36 @@
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveGridSize",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Grid Sizes",
+                                "count": 1
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 4
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
                             "args": {
                                 "item_name_group": "Sticker Slots",
                                 "count": 2
@@ -1086,6 +1431,21 @@
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 6
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
                             "args": {
                                 "item_name_group": "Sticker Slots",
                                 "count": 3
@@ -1113,6 +1473,36 @@
                 "access_rule": {
                     "rule": "And",
                     "children": [
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveGridSize",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Grid Sizes",
+                                "count": 2
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 8
+                            },
+                            "filtered_resolution": true
+                        },
                         {
                             "rule": "HasGroup",
                             "args": {
@@ -1147,6 +1537,21 @@
                 "access_rule": {
                     "rule": "And",
                     "children": [
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 2
+                            },
+                            "filtered_resolution": true
+                        },
                         {
                             "rule": "HasGroup",
                             "args": {
@@ -1206,6 +1611,36 @@
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveGridSize",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Grid Sizes",
+                                "count": 1
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 4
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
                             "args": {
                                 "item_name_group": "Sticker Slots",
                                 "count": 2
@@ -1249,6 +1684,21 @@
                                     "Number Stamps"
                                 ]
                             }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 6
+                            },
+                            "filtered_resolution": true
                         },
                         {
                             "rule": "HasGroup",
@@ -1307,6 +1757,36 @@
                                     "Number Tiles"
                                 ]
                             }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveGridSize",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Grid Sizes",
+                                "count": 2
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 8
+                            },
+                            "filtered_resolution": true
                         },
                         {
                             "rule": "HasGroup",

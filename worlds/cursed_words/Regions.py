@@ -2,8 +2,7 @@ from BaseClasses import Entrance, EntranceType, Location, MultiWorld, Region
 from dataclasses import dataclass
 import json, logging, os
 from .Locations import location_table, location_name_to_id_lookup, CursedWordsLocation
-# from .Options import CastNChillOptions
-# from .Rules import compile_access_rules
+import pkgutil
 from typing import Dict, List
 from worlds.AutoWorld import World
 
@@ -40,8 +39,11 @@ class CursedWordsRegion:
         return set(self.tags).issubset(set(tags))
 
 # Read regions data from JSON
-with open(os.path.join(os.path.dirname(__file__), 'data\\regions.json'), 'r') as file:
-    _regions_data = json.loads(file.read())
+# with open(os.path.join(os.path.dirname(__file__), 'data', 'regions.json'), 'r') as file:
+#     _regions_data = json.loads(file.read())
+
+_file_data = pkgutil.get_data(__name__, 'data/regions.json')
+_regions_data = json.loads(_file_data)
 
 # Parse as region objects
 region_table: List[CursedWordsRegion] = [ CursedWordsRegion(data) for data in _regions_data ]

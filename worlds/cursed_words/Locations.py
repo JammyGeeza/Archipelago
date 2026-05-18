@@ -1,6 +1,7 @@
 from BaseClasses import Item, ItemClassification, MultiWorld
 from dataclasses import dataclass
 import json, logging, os
+import pkgutil
 from typing import Dict, List, NamedTuple, Optional
 from worlds.AutoWorld import World
 
@@ -25,8 +26,11 @@ class CursedWordsLocation:
         return set(self.tags).issubset(set(tags))
 
 # Read items data from JSON
-with open(os.path.join(os.path.dirname(__file__), 'data\\locations.json'), 'r') as file:
-    _locations_data = json.loads(file.read())
+# with open(os.path.join(os.path.dirname(__file__), 'data', 'locations.json'), 'r') as file:
+#     _locations_data = json.loads(file.read())
+
+_file_data = pkgutil.get_data(__name__, 'data/locations.json')
+_locations_data = json.loads(_file_data)
 
 # Parse as location objects
 location_table: List[CursedWordsLocation] = [ CursedWordsLocation(data) for data in _locations_data ]

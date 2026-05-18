@@ -1,6 +1,7 @@
 from BaseClasses import Item, ItemClassification, MultiWorld, Optional
 from dataclasses import dataclass
 import json, logging, os
+import pkgutil
 from typing import Dict, List, NamedTuple
 from worlds.AutoWorld import World
 
@@ -26,8 +27,12 @@ class CursedWordsItem:
         return self.classification & classification if classification != ItemClassification.filler else self.classification == classification
 
 # Read items data from JSON config
-with open(os.path.join(os.path.dirname(__file__), 'data\\items.json'), 'r') as file:
-    _items_data = json.loads(file.read())
+
+# with open(os.path.join(os.path.dirname(__file__), 'data', 'items.json'), 'r') as file:
+#     _items_data = json.loads(file.read())
+
+_file_data = pkgutil.get_data(__name__, 'data/items.json')
+_items_data = json.loads(_file_data)
 
 # Parse as items
 item_table: List[CursedWordsItem] = [ CursedWordsItem(item) for item in _items_data ]
