@@ -69,6 +69,13 @@ class ProgressiveTilePositions(Toggle):
     display_name = "Progressive Tile Positions"
     default = False
 
+class Shopsanity(Toggle):
+    """
+    Add 20 shop locations (10 for Stickers, 10 for Stamps) that can be purchased from the shop.
+    """
+    display_name = "Shopsanity"
+    default = False
+
 @dataclass
 class CursedWordsOptions(PerGameCommonOptions):
     """"""
@@ -78,6 +85,7 @@ class CursedWordsOptions(PerGameCommonOptions):
     deathlink: DeathLink
     progressive_grid_size: ProgressiveGridSize
     progressive_tile_positions: ProgressiveTilePositions
+    shopsanity: Shopsanity
 
     # Built-in
     start_inventory_from_pool: StartInventoryPool

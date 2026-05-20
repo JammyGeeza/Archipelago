@@ -280,6 +280,18 @@
         }
     },
     {
+        "count": 10,
+        "name": "Shop Stamp Item {count}",
+        "region": "Shop",
+        "tags": [ "Shopsanity" ]
+    },
+    {
+        "count": 10,
+        "name": "Shop Sticker Item {count}",
+        "region": "Shop",
+        "tags": [ "Shopsanity" ]
+    },
+    {
         "count": 5,
         "name": "Word Length {count}",
         "region": "Words"
