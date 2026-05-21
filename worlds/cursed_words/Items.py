@@ -81,7 +81,7 @@ def generate_items(world: World):
 
     # Check if all locations would be filled
     unfilled_location_count: int = len(world.multiworld.get_unfilled_locations(world.player))
-    required_filler_count: int = unfilled_location_count - len(world.multiworld.itempool)
+    required_filler_count: int = unfilled_location_count - len([item for item in world.multiworld.itempool if item.player == world.player])
 
     # Append filler items if required
     if required_filler_count > 0:
@@ -95,8 +95,8 @@ def generate_filler_items(world: World, amount: int) -> List[Item]:
 
     # Get applicable filler items
     enabled_filler_items = [
-        itm for itm in item_table 
-        if item.has_tags(world.tags) and itm.is_classification(ItemClassification.filler)
+        item for item in item_table 
+        if item.has_tags(world.tags) and item.is_classification(ItemClassification.filler)
     ]
 
     # Randomly select from filler items
@@ -105,4 +105,4 @@ def generate_filler_items(world: World, amount: int) -> List[Item]:
         k=amount
     )
 
-    return [ Item(itm.name, itm.classification, itm.id, world.player) for itm in selected_filler ]
+    return [ Item(item.name, item.classification, item.id, world.player) for item in selected_filler ]

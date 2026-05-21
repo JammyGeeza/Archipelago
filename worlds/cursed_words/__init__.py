@@ -64,7 +64,7 @@ class CursedWordsWorld(World):
         # logging.info(f"Randomly selected '{self.start_character}' as starting character")
 
         # Add starting character as starting item from pool
-        self.options.start_inventory_from_pool.value.update({ f"{self.start_character}": 1 })
+        self.options.start_inventory_from_pool.value = { f"{self.start_character}": 1 }
 
         # logging.info(f"Starting inventory from pool: {self.options.start_inventory_from_pool.value}")
 
