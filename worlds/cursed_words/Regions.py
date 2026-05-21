@@ -78,6 +78,14 @@ def generate_regions(world: World):
 
         # Create locations and add to region
         for location_model in enabled_locations:
+            
+            # --- Intercept locations with specific counts defined ---
+
+            # If 'Shopsanity' is enabled, update the amount of shopsanity checks to include
+            if world.options.shopsanity.value and location_model.name.startswith("Shop Item "):
+                location_model.count = world.options.shopsanity_location_count.value
+
+            # --- End of Intercept ---
 
             for i in range(location_model.count):
                 loc_name: str = location_model.name.format(count=i+1)

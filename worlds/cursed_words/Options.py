@@ -3,7 +3,7 @@ from BaseClasses import ItemClassification, Options
 # from .Enums import GoalType
 from .Items import item_table
 import logging
-from Options import Choice, DeathLink, OptionDict, OptionList, ItemDict, NumericOption, PerGameCommonOptions, StartInventoryPool, Toggle
+from Options import DeathLink, OptionList, PerGameCommonOptions, Range, StartInventoryPool, Toggle
 from .Regions import region_table
 from typing import Dict, List
 
@@ -71,10 +71,30 @@ class ProgressiveTilePositions(Toggle):
 
 class Shopsanity(Toggle):
     """
-    Add 20 shop locations (10 for Stickers, 10 for Stamps) that can be purchased from the shop.
+    Add items to the shop that can be purchased to check locations.
     """
     display_name = "Shopsanity"
     default = False
+
+class ShopsanityLocationCount(Range):
+    """
+    How many shop locations will be available.
+    NOTE: This setting will be ignored if <shopsanity> is 'false'.
+    """
+    display_name = "Shopsanity Location Count"
+    range_start = 1
+    range_end = 30
+    default = 20
+
+class ShopsanityLocationCost(Range):
+    """
+    How much each shop location will cost to purchase.
+    NOTE: This setting is ignored if <shopsanity> is 'false'.
+    """
+    display_name = "Shopsanity Location Cost"
+    range_start = 5
+    range_end = 25
+    default = 12
 
 @dataclass
 class CursedWordsOptions(PerGameCommonOptions):
@@ -86,6 +106,8 @@ class CursedWordsOptions(PerGameCommonOptions):
     progressive_grid_size: ProgressiveGridSize
     progressive_tile_positions: ProgressiveTilePositions
     shopsanity: Shopsanity
+    shopsanity_location_count: ShopsanityLocationCount
+    shopsanity_location_cost: ShopsanityLocationCost
 
     # Built-in
     start_inventory_from_pool: StartInventoryPool

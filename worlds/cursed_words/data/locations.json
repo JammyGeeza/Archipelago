@@ -280,15 +280,28 @@
         }
     },
     {
-        "count": 10,
-        "name": "Shop Stamp Item {count}",
+        "count": 30,
+        "name": "Shop Item {count}",
         "region": "Shop",
-        "tags": [ "Shopsanity" ]
-    },
-    {
-        "count": 10,
-        "name": "Shop Sticker Item {count}",
-        "region": "Shop",
+        "access_rule": {
+            "rule": "And",
+            "children": [
+                {
+                    "rule": "HasGroup",
+                    "args": {
+                        "item_name_group": "Stamp Slots",
+                        "count": 1
+                    }
+                },
+                {
+                    "rule": "HasGroup",
+                    "args": {
+                        "item_name_group": "Sticker Slots",
+                        "count": 1
+                    }
+                }
+            ]
+        },
         "tags": [ "Shopsanity" ]
     },
     {

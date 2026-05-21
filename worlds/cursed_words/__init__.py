@@ -1,7 +1,7 @@
 from worlds.AutoWorld import World, WebWorld
 from BaseClasses import Item, ItemClassification, Tutorial
 from .Items import CursedWordsItem, item_name_groups_lookup, item_name_to_id_lookup, item_table, generate_items, generate_filler_items
-from .Locations import location_name_to_id_lookup
+from .Locations import location_name_to_id_lookup, location_table
 from .Options import CursedWordsOptions
 from .Regions import CursedWordsRegion, region_table, generate_regions
 from .Rules import generate_goal
@@ -68,7 +68,7 @@ class CursedWordsWorld(World):
 
         # logging.info(f"Starting inventory from pool: {self.options.start_inventory_from_pool.value}")
 
-        # If 'Progressive Tile Positions' is enabled
+        # If 'Progressive Tile Positions' is enabled, generate tile positions
         self.selected_tile_positions = []
         if self.options.progressive_tile_positions.value:
             # To attempt to evenly spread locked tiles, split 5x5 grid into concentric 'L' shapes and randomly select
@@ -109,7 +109,9 @@ class CursedWordsWorld(World):
         slot_data: Dict[str, any] = self.options.as_dict(
             "deathlink",
             "goal",
-            "progressive_grid_size"
+            "progressive_grid_size",
+            "shopsanity_location_count",
+            "shopsanity_location_cost"
         )
 
         slot_data.update({
