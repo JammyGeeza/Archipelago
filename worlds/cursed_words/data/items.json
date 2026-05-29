@@ -1,0 +1,242 @@
+[
+    {
+        "name": "Rodman",
+        "classification": 1,
+        "groups": [ "Characters" ],
+        "tags": [ "Rodman" ]
+    },
+    {
+        "name": "Nina Nix",
+        "classification": 1,
+        "groups": [ "Characters" ],
+        "tags": [ "Nina Nix" ]
+    },
+    {
+        "name": "Hayley Bayles",
+        "classification": 1,
+        "groups": [ "Characters" ],
+        "tags": [ "Hayley Bayles" ]
+    },
+    {
+        "name": "Bones the Dog",
+        "classification": 1,
+        "groups": [ "Characters" ],
+        "tags": [ "Bones the Dog" ]
+    },
+    {
+        "name": "Sam Gambit",
+        "classification": 1,
+        "groups": [ "Characters" ],
+        "tags": [ "Sam Gambit" ]
+    },
+    {
+        "name": "Octacles",
+        "classification": 1,
+        "groups": [ "Characters" ],
+        "tags": [ "Octacles" ]
+    },
+    {
+        "name": "Blue Stamps",
+        "classification": 1,
+        "groups": [ "Stamp Bundles" ]
+    },
+    {
+        "name": "Card Stamps",
+        "classification": 1,
+        "groups": [ "Stamp Bundles" ]
+    },
+    {
+        "name": "Chess Stamps",
+        "classification": 1,
+        "groups": [ "Stamp Bundles" ]
+    },
+    {
+        "name": "Cursed Stamps",
+        "classification": 1,
+        "groups": [ "Stamp Bundles" ]
+    },
+    {
+        "name": "Number Stamps",
+        "classification": 1,
+        "groups": [ "Stamp Bundles" ]
+    },
+    {
+        "name": "Rainbow Stamps",
+        "classification": 1,
+        "groups": [ "Stamp Bundles" ]
+    },
+    {
+        "name": "Red Stamps",
+        "classification": 1,
+        "groups": [ "Stamp Bundles" ]
+    },
+    {
+        "name": "Scatter Stamps",
+        "classification": 1,
+        "groups": [ "Stamp Bundles" ]
+    },
+    {
+        "name": "Shiny Stamps",
+        "classification": 1,
+        "groups": [ "Stamp Bundles" ]
+    },
+    {
+        "name": "Void Stamps",
+        "classification": 1,
+        "groups": [ "Stamp Bundles" ]
+    },
+    {
+        "name": "Blue Stickers",
+        "classification": 1,
+        "groups": [ "Sticker Bundles" ]
+    },
+    {
+        "name": "Card Stickers",
+        "classification": 1,
+        "groups": [ "Sticker Bundles" ]
+    },
+    {
+        "name": "Chess Stickers",
+        "classification": 1,
+        "groups": [ "Sticker Bundles" ]
+    },
+    {
+        "name": "Cursed Stickers",
+        "classification": 1,
+        "groups": [ "Sticker Bundles" ]
+    },
+    {
+        "name": "Number Stickers",
+        "classification": 1,
+        "groups": [ "Sticker Bundles" ]
+    },
+    {
+        "name": "Rainbow Stickers",
+        "classification": 1,
+        "groups": [ "Sticker Bundles" ]
+    },
+    {
+        "name": "Red Stickers",
+        "classification": 1,
+        "groups": [ "Sticker Bundles" ]
+    },
+    {
+        "name": "Scatter Stickers",
+        "classification": 1,
+        "groups": [ "Sticker Bundles" ]
+    },
+    {
+        "name": "Shiny Stickers",
+        "classification": 1,
+        "groups": [ "Sticker Bundles" ]
+    },
+    {
+        "name": "Void Stickers",
+        "classification": 1,
+        "groups": [ "Sticker Bundles" ]
+    },
+    {
+        "name": "Blue Tiles",
+        "classification": 1,
+        "groups": [ "Tiles" ]
+    },
+    {
+        "name": "Card Tiles",
+        "classification": 1,
+        "groups": [ "Tiles" ]
+    },
+    {
+        "name": "Chess Tiles",
+        "classification": 1,
+        "groups": [ "Tiles" ]
+    },
+    {
+        "name": "Currency Tiles",
+        "classification": 1,
+        "groups": [ "Tiles" ]
+    },
+    {
+        "name": "Fraction Tiles",
+        "classification": 1,
+        "groups": [ "Tiles" ]
+    },
+    {
+        "name": "Number Tiles",
+        "classification": 1,
+        "groups": [ "Tiles" ]
+    },
+    {
+        "name": "Red Tiles",
+        "classification": 1,
+        "groups": [ "Tiles" ]
+    },
+    {
+        "name": "Shiny Tiles",
+        "classification": 1,
+        "groups": [ "Tiles" ]
+    },
+    {
+        "name": "Void Tiles",
+        "classification": 1,
+        "groups": [ "Tiles" ]
+    },
+    {
+        "count": 5,
+        "name": "Progressive Encounter Re-roll",
+        "classification": 2,
+        "groups": [ "Rerolls" ]
+    },
+    {
+        "count": 2,
+        "name": "Progressive Grid Size",
+        "classification": 1,
+        "groups": [ "Grid Sizes" ],
+        "tags": [ "Progressive Grid Size" ]
+    },
+    {
+        "count": 5,
+        "name": "Progressive Sticker Slot",
+        "classification": 1,
+        "groups": [ "Sticker Slots" ]
+    },
+    {
+        "count": 5,
+        "name": "Progressive Stamp Slot",
+        "classification": 1,
+        "groups": [ "Stamp Slots" ]
+    },
+    {
+        "count": 10,
+        "name": "Progressive Tile Position",
+        "classification": 1,
+        "groups": [ "Tile Positions" ],
+        "tags": [ "Progressive Tile Positions" ]
+    },
+    {
+        "name": "$1",
+        "classification": 0,
+        "groups": [ "Money" ]
+    },
+    {
+        "name": "$2",
+        "classification": 0,
+        "groups": [ "Money" ]
+    },
+    {
+        "name": "$3",
+        "classification": 0,
+        "groups": [ "Money" ]
+    },
+    {
+        "name": "Consumable Tile",
+        "classification": 0
+    },
+    {
+        "name": "Extra Re-roll",
+        "classification": 0
+    },
+    {
+        "name": "Random Tile Boost",
+        "classification": 0
+    }
+]

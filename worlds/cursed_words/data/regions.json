@@ -1,0 +1,1816 @@
+[
+    {
+        "name": "Menu",
+        "exits": [
+            {
+                "access_rule": {
+                    "rule": "HasAll",
+                    "options": [],
+                    "args": {
+                        "item_names": [
+                            "Rodman"
+                        ]
+                    }
+
+                },
+                "name": "Menu to Rodman - Stage 1",
+                "destination": "Rodman - Stage 1",
+                "tags": [ "Rodman" ]
+            },
+            {
+                "access_rule": {
+                    "rule": "HasAll",
+                    "options": [],
+                    "args": {
+                        "item_names": [
+                            "Nina Nix"
+                        ]
+                    }
+
+                },
+                "name": "Menu to Nina Nix - Stage 1",
+                "destination": "Nina Nix - Stage 1",
+                "tags": [ "Nina Nix" ]
+            },
+            {
+                "access_rule": {
+                    "rule": "HasAll",
+                    "options": [],
+                    "args": {
+                        "item_names": [
+                            "Hayley Bayles"
+                        ]
+                    }
+
+                },
+                "name": "Menu to Hayley Bayles - Stage 1",
+                "destination": "Hayley Bayles - Stage 1",
+                "tags": [ "Hayley Bayles" ]
+            },
+            {
+                "access_rule": {
+                    "rule": "HasAll",
+                    "options": [],
+                    "args": {
+                        "item_names": [
+                            "Bones the Dog"
+                        ]
+                    }
+
+                },
+                "name": "Menu to Bones the Dog - Stage 1",
+                "destination": "Bones the Dog - Stage 1",
+                "tags": [ "Bones the Dog" ]
+            },
+            {
+                "access_rule": {
+                    "rule": "HasAll",
+                    "options": [],
+                    "args": {
+                        "item_names": [
+                            "Sam Gambit"
+                        ]
+                    }
+
+                },
+                "name": "Menu to Sam Gambit - Stage 1",
+                "destination": "Sam Gambit - Stage 1",
+                "tags": [ "Sam Gambit" ]
+            },
+            {
+                "access_rule": {
+                    "rule": "HasAll",
+                    "options": [],
+                    "args": {
+                        "item_names": [
+                            "Octacles"
+                        ]
+                    }
+
+                },
+                "name": "Menu to Octacles - Stage 1",
+                "destination": "Octacles - Stage 1",
+                "tags": [ "Octacles" ]
+            },
+            {
+                "access_rule": {
+                    "rule": "HasGroup",
+                    "options": [],
+                    "args": {
+                        "item_name_group": "Characters",
+                        "count": 1
+                    }
+
+                },
+                "name": "Menu to Encounters",
+                "destination": "Encounters"
+            },
+            {
+                "access_rule": {
+                    "rule": "HasGroup",
+                    "options": [],
+                    "args": {
+                        "item_name_group": "Characters",
+                        "count": 1
+                    }
+
+                },
+                "name": "Menu to Money",
+                "destination": "Money"
+            },
+            {
+                "access_rule": {
+                    "rule": "HasGroup",
+                    "options": [],
+                    "args": {
+                        "item_name_group": "Characters",
+                        "count": 1
+                    }
+
+                },
+                "name": "Menu to Shop",
+                "destination": "Shop"
+            },
+            {
+                "access_rule": {
+                    "rule": "HasGroup",
+                    "options": [],
+                    "args": {
+                        "item_name_group": "Characters",
+                        "count": 1
+                    }
+
+                },
+                "name": "Menu to Words",
+                "destination": "Words"
+            }
+        ]
+    },
+    {
+        "name": "Encounters"
+    },
+    {
+        "name": "Money",
+        "exits": [
+            {
+                "name": "Money to Medium",
+                "destination": "Money Medium",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Stamp Bundles",
+                                "count": 2
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Sticker Bundles",
+                                "count": 2
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Sticker Slots",
+                                "count": 1
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Stamp Slots",
+                                "count": 1
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Tiles",
+                                "count": 2
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "name": "Money Medium",
+        "exits": [
+            {
+                "name": "Money to High",
+                "destination": "Money High",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Stamp Bundles",
+                                "count": 4
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Sticker Bundles",
+                                "count": 4
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Sticker Slots",
+                                "count": 3
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Stamp Slots",
+                                "count": 3
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Tiles",
+                                "count": 4
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "name": "Money High"
+    },
+    {
+        "name": "Shop"
+    },
+    {
+        "name": "Words",
+        "exits": [
+            {
+                "name": "Words to Medium",
+                "destination": "Words Medium",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Stamp Bundles",
+                                "count": 2
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Sticker Bundles",
+                                "count": 2
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Sticker Slots",
+                                "count": 2
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Stamp Slots",
+                                "count": 2
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Tiles",
+                                "count": 2
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "name": "Words Medium",
+        "exits": [
+            {
+                "name": "Words to High",
+                "destination": "Words High",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Stamp Bundles",
+                                "count": 4
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Sticker Bundles",
+                                "count": 4
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Sticker Slots",
+                                "count": 4
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Stamp Slots",
+                                "count": 4
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args" : {
+                                "item_name_group": "Tiles",
+                                "count": 4
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "name": "Words High"
+    },
+    {
+        "name": "Rodman - Stage 1",
+        "exits": [
+            {
+                "name": "Rodman to Stage 2",
+                "destination": "Rodman - Stage 2",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasAny",
+                            "args": {
+                                "item_names": [
+                                    "Blue Tiles",
+                                    "Red Tiles"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 1
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 1
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Rodman" ]
+    },
+    {
+        "name": "Rodman - Stage 2",
+        "exits": [
+            {
+                "name": "Rodman to Stage 3",
+                "destination": "Rodman - Stage 3",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasAny",
+                            "args": {
+                                "item_names": [
+                                    "Blue Stickers",
+                                    "Red Stickers"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasAll",
+                            "args": {
+                                "item_names": [
+                                    "Blue Tiles",
+                                    "Red Tiles"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveGridSize",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Grid Sizes",
+                                "count": 1
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 2
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 2
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Rodman" ]
+    },
+    {
+        "name": "Rodman - Stage 3",
+        "exits": [
+            {
+                "name": "Rodman to Stage 4",
+                "destination": "Rodman - Stage 4",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasAll",
+                            "args": {
+                                "item_names": [
+                                    "Blue Stickers",
+                                    "Red Stickers"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasAny",
+                            "args": {
+                                "item_names": [
+                                    "Blue Stickers",
+                                    "Red Stickers"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 3
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 3
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Rodman" ]
+    },
+    {
+        "name": "Rodman - Stage 4",
+        "exits": [
+            {
+                "name": "Rodman to Stage 5",
+                "destination": "Rodman - Stage 5",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasAll",
+                            "args": {
+                                "item_names": [
+                                    "Blue Stamps",
+                                    "Red Stamps"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveGridSize",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Grid Sizes",
+                                "count": 2
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 5
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 5
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Rodman" ]
+    },
+    {
+        "name": "Rodman - Stage 5",
+        "tags": [ "Rodman" ]
+    },
+    {
+        "name": "Nina Nix - Stage 1",
+        "exits": [
+            {
+                "name": "Nina Nix to Stage 2",
+                "destination": "Nina Nix - Stage 2",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 2
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 1
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 1
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Nina Nix" ]
+    },
+    {
+        "name": "Nina Nix - Stage 2",
+        "exits": [
+            {
+                "name": "Nina Nix to Stage 3",
+                "destination": "Nina Nix - Stage 3",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasAny",
+                            "args": {
+                                "item_names": [
+                                    "Shiny Stickers",
+                                    "Void Stickers"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasAll",
+                            "args": {
+                                "item_names": [
+                                    "Shiny Tiles",
+                                    "Void Tiles"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveGridSize",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Grid Sizes",
+                                "count": 1
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 4
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 2
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 2
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Nina Nix" ]
+    },
+    {
+        "name": "Nina Nix - Stage 3",
+        "exits": [
+            {
+                "name": "Nina Nix to Stage 4",
+                "destination": "Nina Nix - Stage 4",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasAll",
+                            "args": {
+                                "item_names": [
+                                    "Shiny Stickers",
+                                    "Void Stickers"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasAny",
+                            "args": {
+                                "item_names": [
+                                    "Shiny Stamps",
+                                    "Void Stamps"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 6
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 3
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 3
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Nina Nix" ]
+    },
+    {
+        "name": "Nina Nix - Stage 4",
+        "exits": [
+            {
+                "name": "Nina Nix to Stage 5",
+                "destination": "Nina Nix - Stage 5",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasAll",
+                            "args": {
+                                "item_names": [
+                                    "Shiny Stamps",
+                                    "Void Stamps"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveGridSize",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Grid Sizes",
+                                "count": 2
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 8
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 5
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 5
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Nina Nix" ]
+    },
+    {
+        "name": "Nina Nix - Stage 5",
+        "tags": [ "Nina Nix" ]
+    },
+    {
+        "name": "Hayley Bayles - Stage 1",
+        "exits": [
+            {
+                "name": "Hayley Bayles to Stage 2",
+                "destination": "Hayley Bayles - Stage 2",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 2
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 1
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 1
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Hayley Bayles" ]
+    },
+    {
+        "name": "Hayley Bayles - Stage 2",
+        "exits": [
+            {
+                "name": "Hayley Bayles to Stage 3",
+                "destination": "Hayley Bayles - Stage 3",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasAll",
+                            "args": {
+                                "item_names": [
+                                    "Number Stickers"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasAny",
+                            "args": {
+                                "item_names": [
+                                    "Fraction Tiles",
+                                    "Number Tiles"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveGridSize",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Grid Sizes",
+                                "count": 1
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 4
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 2
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 2
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Hayley Bayles" ]
+    },
+    {
+        "name": "Hayley Bayles - Stage 3",
+        "exits": [
+            {
+                "name": "Hayley Bayles to Stage 4",
+                "destination": "Hayley Bayles - Stage 4",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasAll",
+                            "args": {
+                                "item_names": [
+                                    "Number Stamps"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 6
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 3
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 3
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Hayley Bayles" ]
+    },
+    {
+        "name": "Hayley Bayles - Stage 4",
+        "exits": [
+            {
+                "name": "Hayley Bayles to Stage 5",
+                "destination": "Hayley Bayles - Stage 5",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasAll",
+                            "args": {
+                                "item_names": [
+                                    "Fraction Tiles",
+                                    "Number Tiles"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 5
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveGridSize",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Grid Sizes",
+                                "count": 2
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 8
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 5
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Hayley Bayles" ]
+    },
+    {
+        "name": "Hayley Bayles - Stage 5",
+        "exits": [],
+        "tags": [ "Hayley Bayles" ]
+    },
+    {
+        "name": "Bones the Dog - Stage 1",
+        "exits": [
+            {
+                "name": "Bones the Dog to Stage 2",
+                "destination": "Bones the Dog - Stage 2",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 2
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 1
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 1
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Bones the Dog" ]
+    },
+    {
+        "name": "Bones the Dog - Stage 2",
+        "exits": [
+            {
+                "name": "Bones the Dog to Stage 3",
+                "destination": "Bones the Dog - Stage 3",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasAll",
+                            "args": {
+                                "item_names": [
+                                    "Card Stickers"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasAll",
+                            "args": {
+                                "item_names": [
+                                    "Card Tiles"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveGridSize",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Grid Sizes",
+                                "count": 1
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 4
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 2
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 2
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Bones the Dog" ]
+    },
+    {
+        "name": "Bones the Dog - Stage 3",
+        "exits": [
+            {
+                "name": "Bones the Dog to Stage 4",
+                "destination": "Bones the Dog - Stage 4",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasAll",
+                            "args": {
+                                "item_names": [
+                                    "Card Stamps"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 6
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 3
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 3
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Bones the Dog" ]
+    },
+    {
+        "name": "Bones the Dog - Stage 4",
+        "exits": [
+            {
+                "name": "Bones the Dog to Stage 5",
+                "destination": "Bones the Dog - Stage 5",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveGridSize",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Grid Sizes",
+                                "count": 2
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 8
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 5
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 5
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Bones the Dog" ]
+    },
+    {
+        "name": "Bones the Dog - Stage 5",
+        "exits": [],
+        "tags": [ "Bones the Dog" ]
+    },
+    {
+        "name": "Sam Gambit - Stage 1",
+        "exits": [
+            {
+                "name": "Sam Gambit to Stage 2",
+                "destination": "Sam Gambit - Stage 2",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 2
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 1
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 1
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Sam Gambit" ]
+    },
+    {
+        "name": "Sam Gambit - Stage 2",
+        "exits": [
+            {
+                "name": "Sam Gambit to Stage 3",
+                "destination": "Sam Gambit - Stage 3",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasAll",
+                            "args": {
+                                "item_names": [
+                                    "Chess Stickers"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasAll",
+                            "args": {
+                                "item_names": [
+                                    "Chess Tiles"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveGridSize",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Grid Sizes",
+                                "count": 1
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 4
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 2
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 2
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Sam Gambit" ]
+    },
+    {
+        "name": "Sam Gambit - Stage 3",
+        "exits": [
+            {
+                "name": "Sam Gambit to Stage 4",
+                "destination": "Sam Gambit - Stage 4",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasAll",
+                            "args": {
+                                "item_names": [
+                                    "Chess Stamps"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 6
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 3
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 3
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Sam Gambit" ]
+    },
+    {
+        "name": "Sam Gambit - Stage 4",
+        "exits": [
+            {
+                "name": "Sam Gambit to Stage 5",
+                "destination": "Sam Gambit - Stage 5",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveGridSize",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Grid Sizes",
+                                "count": 2
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 8
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 5
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 5
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Sam Gambit" ]
+    },
+    {
+        "name": "Sam Gambit - Stage 5",
+        "exits": [],
+        "tags": [ "Sam Gambit" ]
+    },
+    {
+        "name": "Octacles - Stage 1",
+        "exits": [
+            {
+                "name": "Octacles to Stage 2",
+                "destination": "Octacles - Stage 2",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 2
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 1
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 1
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Octacles" ]
+    },
+    {
+        "name": "Octacles - Stage 2",
+        "exits": [
+            {
+                "name": "Octacles to Stage 3",
+                "destination": "Octacles - Stage 3",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasAny",
+                            "args": {
+                                "item_names": [
+                                    "Cursed Stickers"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasAny",
+                            "args": {
+                                "item_names": [
+                                    "Chess Stickers",
+                                    "Number Stickers"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasAny",
+                            "args": {
+                                "item_names": [
+                                    "Chess Tiles",
+                                    "Currency Tiles",
+                                    "Fraction Tiles",
+                                    "Number Tiles"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveGridSize",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Grid Sizes",
+                                "count": 1
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 4
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 2
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 2
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Octacles" ]
+    },
+    {
+        "name": "Octacles - Stage 3",
+        "exits": [
+            {
+                "name": "Octacles to Stage 4",
+                "destination": "Octacles - Stage 4",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasAll",
+                            "args": {
+                                "item_names": [
+                                    "Cursed Stamps"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasAny",
+                            "args": {
+                                "item_names": [
+                                    "Chess Stamps",
+                                    "Number Stamps"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 6
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 3
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 3
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Octacles" ]
+    },
+    {
+        "name": "Octacles - Stage 4",
+        "exits": [
+            {
+                "name": "Octacles to Stage 5",
+                "destination": "Octacles - Stage 5",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "HasAll",
+                            "args": {
+                                "item_names": [
+                                    "Chess Stickers",
+                                    "Number Stickers"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasAll",
+                            "args": {
+                                "item_names": [
+                                    "Chess Stamps",
+                                    "Number Stamps"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasAll",
+                            "args": {
+                                "item_names": [
+                                    "Chess Tiles",
+                                    "Currency Tiles",
+                                    "Fraction Tiles",
+                                    "Number Tiles"
+                                ]
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveGridSize",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Grid Sizes",
+                                "count": 2
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 8
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 5
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "Stamp Slots",
+                                "count": 5
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "tags": [ "Octacles" ]
+    },
+    {
+        "name": "Octacles - Stage 5",
+        "exits": [],
+        "tags": [ "Octacles" ]
+    }
+]
