@@ -48,9 +48,9 @@ class CursedWordsWorld(World):
         # Gather tags for run (determines what items/locations/regions to include in the run)
         self.tags: List[str] = [
             *self.options.characters.value,
-            *([self.options.progressive_grid_size.display_name] if self.options.progressive_grid_size.value else []),
-            *([self.options.progressive_inventory_slots.display_name] if self.options.progressive_inventory_slots.value else []),
-            *([self.options.progressive_tile_positions.display_name] if self.options.progressive_tile_positions.value else []),
+            *([self.options.shuffle_grid_size.display_name] if self.options.shuffle_grid_size.value else []),
+            *([self.options.shuffle_inventory_slots.display_name] if self.options.shuffle_inventory_slots.value else []),
+            *([self.options.shuffle_locked_tile_positions.display_name] if self.options.shuffle_locked_tile_positions.value else []),
             *([self.options.shopsanity.display_name] if self.options.shopsanity.value else []),
 
             # Additional tag inclusions go here...
@@ -72,7 +72,7 @@ class CursedWordsWorld(World):
 
         # If 'Progressive Tile Positions' is enabled, generate tile positions
         self.selected_tile_positions = []
-        if self.options.progressive_tile_positions.value:
+        if self.options.shuffle_locked_tile_positions.value:
             # To attempt to evenly spread locked tiles, split 5x5 grid into concentric 'L' shapes and randomly select
             # more from each larger 'L' shape - this should also mean a 3x3 starting grid from 'Progressive Grid Size'
             # will only ever contain 3 locked tile positions
@@ -114,14 +114,15 @@ class CursedWordsWorld(World):
         slot_data: Dict[str, any] = self.options.as_dict(
             "deathlink",
             "goal",
-            "progressive_grid_size",
-            "progressive_inventory_slots",
-            "shopsanity_location_count",
-            "shopsanity_location_cost",
+            "shuffle_grid_size",
+            "shuffle_inventory_slots",
+            "shuffle_locked_tile_positions",
+            "shopsanity_limit",
+            "shopsanity_cost",
         )
 
         slot_data.update({
-            "progressive_tile_positions": self.selected_tile_positions
+            "shuffle_locked_tile_positions_coords": self.selected_tile_positions
         })
 
         return slot_data

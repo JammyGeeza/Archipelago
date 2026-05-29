@@ -53,28 +53,28 @@ class Goal(OptionList):
     valid_keys = [ "All" ] + _character_names
     default = [ "All" ]
 
-class ProgressiveGridSize(Toggle):
+class ShuffleGridSize(Toggle):
     """
     The grid starts as 3x3 tiles and adds two 'Progressive Grid Size' items to the pool, each increasing the grid size
     to 4x4 and then 5x5 tiles.
     """
-    display_name = "Progressive Grid Size"
+    display_name = "Shuffle Grid Size"
     default = False
 
-class ProgressiveInventorySlots(Toggle):
+class ShuffleInventorySlots(Toggle):
     """
     Your inventory has all Sticker and Stamp Slots locked and cannot be used.
     5x 'Progressive Sticker Slot' and 5x 'Progressive Stamp Slot' items are added to the item pool, each unlocking one respective slot.
     """
-    display_name = "Progressive Inventory Slots"
+    display_name = "Shuffle Inventory Slots"
     default = False
 
-class ProgressiveTilePositions(Toggle):
+class ShuffleLockedTilePositions(Toggle):
     """
-    The grid starts with 10 randomly selected tile positions being 'locked', making them un-selectable, and adds 10
-    'Progressive Tile Position' items to the pool, each unlocking one locked tile position.
+    The grid starts with 10 randomly selected tile positions being 'locked', making them un-selectable.
+    Adds 10 'Progressive Tile Position' items to the pool, each unlocking one locked tile position.
     """
-    display_name = "Progressive Tile Positions"
+    display_name = "Shuffle Locked Tile Positions"
     default = False
 
 class Shopsanity(Toggle):
@@ -84,22 +84,22 @@ class Shopsanity(Toggle):
     display_name = "Shopsanity"
     default = False
 
-class ShopsanityLocationCount(Range):
+class ShopsanityLimit(Range):
     """
-    How many shop locations will be available.
+    How many shop locations will be available for purchase.
     NOTE: This setting will be ignored if <shopsanity> is 'false'.
     """
-    display_name = "Shopsanity Location Count"
+    display_name = "Shopsanity Limit"
     range_start = 1
     range_end = 30
     default = 20
 
-class ShopsanityLocationCost(Range):
+class ShopsanityCost(Range):
     """
     How much each shop location will cost to purchase.
     NOTE: This setting is ignored if <shopsanity> is 'false'.
     """
-    display_name = "Shopsanity Location Cost"
+    display_name = "Shopsanity Cost"
     range_start = 5
     range_end = 25
     default = 12
@@ -111,12 +111,12 @@ class CursedWordsOptions(PerGameCommonOptions):
     starting_character: StartingCharacter
     goal: Goal
     deathlink: DeathLink
-    progressive_grid_size: ProgressiveGridSize
-    progressive_inventory_slots: ProgressiveInventorySlots
-    progressive_tile_positions: ProgressiveTilePositions
+    shuffle_grid_size: ShuffleGridSize
+    shuffle_inventory_slots: ShuffleInventorySlots
+    shuffle_locked_tile_positions: ShuffleLockedTilePositions
     shopsanity: Shopsanity
-    shopsanity_location_count: ShopsanityLocationCount
-    shopsanity_location_cost: ShopsanityLocationCost
+    shopsanity_limit: ShopsanityLimit
+    shopsanity_cost: ShopsanityCost
 
     # Built-in
     start_inventory_from_pool: StartInventoryPool

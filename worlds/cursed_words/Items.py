@@ -85,9 +85,13 @@ def generate_items(world: World):
     unfilled_location_count: int = len(world.multiworld.get_unfilled_locations(world.player))
     required_filler_count: int = unfilled_location_count - len([item for item in world.multiworld.itempool if item.player == world.player])
 
+    logging.info(f"Unfilled locations for player: {unfilled_location_count}")
+    logging.info(f"Required filler for player: {required_filler_count}")
+
+
     # Append filler items if required
     if required_filler_count > 0:
-        # logging.info(f"Found {required_filler_count} empty spaces for filler items")
+        logging.info(f"Found {required_filler_count} empty spaces for filler items")
         world.multiworld.itempool += generate_filler_items(world, required_filler_count)
 
 def generate_filler_items(world: World, amount: int) -> List[Item]:

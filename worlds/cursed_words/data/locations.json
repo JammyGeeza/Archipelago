@@ -222,7 +222,7 @@
             "rule": "HasGroup",
             "options": [
                 {
-                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                    "option": "worlds.cursed_words.Options.ShuffleInventorySlots",
                     "value": 1,
                     "operator": "eq"
                 }
@@ -241,7 +241,7 @@
             "rule": "HasGroup",
             "options": [
                 {
-                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                    "option": "worlds.cursed_words.Options.ShuffleInventorySlots",
                     "value": 1,
                     "operator": "eq"
                 }
@@ -280,7 +280,7 @@
             "rule": "HasGroup",
             "options": [
                 {
-                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                    "option": "worlds.cursed_words.Options.ShuffleInventorySlots",
                     "value": 1,
                     "operator": "eq"
                 }
@@ -299,7 +299,7 @@
             "rule": "HasGroup",
             "options": [
                 {
-                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                    "option": "worlds.cursed_words.Options.ShuffleInventorySlots",
                     "value": 1,
                     "operator": "eq"
                 }
@@ -322,7 +322,7 @@
                     "rule": "HasGroup",
                     "options": [
                         {
-                            "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                            "option": "worlds.cursed_words.Options.ShuffleInventorySlots",
                             "value": 1,
                             "operator": "eq"
                         }
@@ -337,7 +337,7 @@
                     "rule": "HasGroup",
                     "options": [
                         {
-                            "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                            "option": "worlds.cursed_words.Options.ShuffleInventorySlots",
                             "value": 1,
                             "operator": "eq"
                         }
@@ -371,10 +371,18 @@
     },
     {
         "name": "Word Length 9",
-        "region": "Words High"
+        "region": "Words Medium"
     },
     {
         "name": "Word Length 10",
+        "region": "Words High"
+    },
+    {
+        "name": "Word Length 11",
+        "region": "Words High"
+    },
+    {
+        "name": "Word Length 12",
         "region": "Words High"
     },
     {
@@ -415,6 +423,10 @@
     },
     {
         "name": "Word Score > 1000",
+        "region": "Words High"
+    },
+    {
+        "name": "Word Score > 1500",
         "region": "Words High"
     }
 ]

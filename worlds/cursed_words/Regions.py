@@ -83,7 +83,7 @@ def generate_regions(world: World):
 
             # If 'Shopsanity' is enabled, update the amount of shopsanity checks to include
             if world.options.shopsanity.value and location_model.name.startswith("Shop Item "):
-                location_model.count = world.options.shopsanity_location_count.value
+                location_model.count = world.options.shopsanity_limit.value
 
             # --- End of Intercept ---
 
