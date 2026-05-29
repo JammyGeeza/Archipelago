@@ -61,10 +61,12 @@ def generate_items(world: World):
 
     # logging.info(f"Generating items for multiworld...")
 
-    # Get all progression/useful items with matching tags from configuration options
+    # Get all progression/useful items with matching tags from configuration options,
+    # excluding the starting character which is already precollected
     enabled_items: List[CursedWordsItem] = [
         item for item in item_table
         if item.has_tags(world.tags) and item.is_classification(ItemClassification.progression | ItemClassification.useful)
+        and item.name != world.start_character
     ]
 
     # logging.info(f"Found {len(enabled_items)} enabled progression/useful items for the multiworld")

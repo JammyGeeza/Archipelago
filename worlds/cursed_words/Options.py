@@ -117,6 +117,10 @@ class CursedWordsOptions(PerGameCommonOptions):
 
         # logging.info(f"Playable Characters selection: {self.characters.value}")
 
+        # Revert to default if empty list provided
+        if len(self.characters.value) == 0:
+            self.characters.value = self.characters.default
+
         # Check if 'All' exists in Characters option
         if "All" in self.characters.value:
             # logging.info(f"  -> 'All' found, including all characters...")
@@ -124,6 +128,10 @@ class CursedWordsOptions(PerGameCommonOptions):
 
         # logging.info(f"Starting character selection: {self.starting_character.value}")
         
+        # Revert to default if empty list provided
+        if len(self.starting_character.value) == 0:
+            self.starting_character.value = self.starting_character.default  
+
         # Check if 'Random' exists in Starting Character option
         if "Random" in self.starting_character.value:
             # logging.info(f"  -> 'Random' found, selecting all characters from <Playable Characters> selection...")
@@ -138,6 +146,10 @@ class CursedWordsOptions(PerGameCommonOptions):
             self.starting_character.value = self.characters.value    
 
         # logging.info(f"Goal selection: {self.goal.value}")
+
+        # Revert to default if empty list provided
+        if len(self.goal.value) == 0:
+            self.goal.value = self.characters.default
 
         # Check if 'All' exists in Goal options
         if "All" in self.goal.value:

@@ -4,7 +4,7 @@ from .Items import CursedWordsItem, item_name_groups_lookup, item_name_to_id_loo
 from .Locations import location_name_to_id_lookup, location_table
 from .Options import CursedWordsOptions
 from .Regions import CursedWordsRegion, region_table, generate_regions
-from .Rules import generate_goal
+from .Rules import generate_goal_events, generate_goal
 import logging
 import math
 from typing import Any, Dict, List
@@ -63,8 +63,8 @@ class CursedWordsWorld(World):
 
         # logging.info(f"Randomly selected '{self.start_character}' as starting character")
 
-        # Add starting character as starting item from pool
-        self.options.start_inventory_from_pool.value = { f"{self.start_character}": 1 }
+        # Pre-collect starting character so it's always in the initial state
+        self.multiworld.push_precollected(self.create_item(self.start_character))
 
         # logging.info(f"Starting inventory from pool: {self.options.start_inventory_from_pool.value}")
 
@@ -92,11 +92,14 @@ class CursedWordsWorld(World):
     
     def create_filler(self):
         """Create a filler item - used when StartInventoryPool needs to fill a gap created by pre-collected items."""
+        if not hasattr(self, 'tags'):
+            self.tags = []
         return generate_filler_items(self, 1)[0]
 
     def create_regions(self):
         """Create all applicable regions for the configured multiworld."""
         generate_regions(self)
+        generate_goal_events(self)
 
     def set_rules(self):
          """Set access rules for regions, locations and goals."""
