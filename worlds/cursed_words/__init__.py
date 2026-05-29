@@ -7,6 +7,7 @@ from .Regions import CursedWordsRegion, region_table, generate_regions
 from .Rules import generate_goal_events, generate_goal
 import logging
 import math
+from Options import OptionGroup
 from typing import Any, Dict, List
 
 class CursedWordsWeb(WebWorld):
@@ -20,6 +21,30 @@ class CursedWordsWeb(WebWorld):
         ["JammyGeeza"]
     )]
     theme = "jungle"
+
+    option_groups = [
+        OptionGroup("Characters", [
+            Options.PlayableCharacters,
+            Options.StartingCharacter
+        ]),
+        OptionGroup("Goal", [
+            Options.Goal
+        ]),
+        OptionGroup("Shuffles", [
+            Options.ShuffleGridSize,
+            Options.ShuffleInventorySlots,
+            Options.ShuffleTilePositions
+        ]),
+        OptionGroup("Sanities", [
+            Options.Lengthsanity,
+            Options.LengthsanityLimit,
+            Options.Scoresanity,
+            Options.ScoresanityLimit,
+            Options.Shopsanity,
+            Options.ShopsanityLimit,
+            Options.ShopsanityCost
+        ])
+    ]
 
 
 class CursedWordsWorld(World):
@@ -48,9 +73,9 @@ class CursedWordsWorld(World):
         # Gather tags for run (determines what items/locations/regions to include in the run)
         self.tags: List[str] = [
             *self.options.characters.value,
-            *([self.options.progressive_grid_size.display_name] if self.options.progressive_grid_size.value else []),
-            *([self.options.progressive_inventory_slots.display_name] if self.options.progressive_inventory_slots.value else []),
-            *([self.options.progressive_tile_positions.display_name] if self.options.progressive_tile_positions.value else []),
+            *([self.options.shuffle_grid_size.display_name] if self.options.shuffle_grid_size.value else []),
+            *([self.options.shuffle_inventory_slots.display_name] if self.options.shuffle_inventory_slots.value else []),
+            *([self.options.shuffle_tile_positions.display_name] if self.options.shuffle_tile_positions.value else []),
             *([self.options.shopsanity.display_name] if self.options.shopsanity.value else []),
 
             # Additional tag inclusions go here...
@@ -70,9 +95,9 @@ class CursedWordsWorld(World):
 
         # logging.info(f"Starting inventory from pool: {self.options.start_inventory_from_pool.value}")
 
-        # If 'Progressive Tile Positions' is enabled, generate tile positions
+        # If 'Shuffle Tile Positions' is enabled, generate tile positions
         self.selected_tile_positions = []
-        if self.options.progressive_tile_positions.value:
+        if self.options.shuffle_tile_positions.value:
             # To attempt to evenly spread locked tiles, split 5x5 grid into concentric 'L' shapes and randomly select
             # more from each larger 'L' shape - this should also mean a 3x3 starting grid from 'Progressive Grid Size'
             # will only ever contain 3 locked tile positions
@@ -114,14 +139,16 @@ class CursedWordsWorld(World):
         slot_data: Dict[str, any] = self.options.as_dict(
             "deathlink",
             "goal",
-            "progressive_grid_size",
-            "progressive_inventory_slots",
-            "shopsanity_location_count",
-            "shopsanity_location_cost",
+            "lengthsanity",
+            "shuffle_grid_size",
+            "shuffle_inventory_slots",
+            "scoresanity",
+            "shopsanity",
+            "shopsanity_cost",
         )
 
         slot_data.update({
-            "progressive_tile_positions": self.selected_tile_positions
+            "shuffle_tile_positions": self.selected_tile_positions
         })
 
         return slot_data

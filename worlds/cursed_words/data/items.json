@@ -191,28 +191,28 @@
         "name": "Progressive Grid Size",
         "classification": 1,
         "groups": [ "Grid Sizes" ],
-        "tags": [ "Progressive Grid Size" ]
+        "tags": [ "Shuffle Grid Size" ]
     },
     {
         "count": 5,
         "name": "Progressive Sticker Slot",
         "classification": 1,
         "groups": [ "Sticker Slots" ],
-        "tags": [ "Progressive Inventory Slots" ]
+        "tags": [ "Shuffle Inventory Slots" ]
     },
     {
         "count": 5,
         "name": "Progressive Stamp Slot",
         "classification": 1,
         "groups": [ "Stamp Slots" ],
-        "tags": [ "Progressive Inventory Slots" ]
+        "tags": [ "Shuffle Inventory Slots" ]
     },
     {
         "count": 10,
         "name": "Progressive Tile Position",
         "classification": 1,
         "groups": [ "Tile Positions" ],
-        "tags": [ "Progressive Tile Positions" ]
+        "tags": [ "Shuffle Tile Positions" ]
     },
     {
         "name": "$1",

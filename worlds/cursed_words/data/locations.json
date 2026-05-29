@@ -222,7 +222,7 @@
             "rule": "HasGroup",
             "options": [
                 {
-                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                    "option": "worlds.cursed_words.Options.ShuffleInventorySlots",
                     "value": 1,
                     "operator": "eq"
                 }
@@ -241,7 +241,7 @@
             "rule": "HasGroup",
             "options": [
                 {
-                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                    "option": "worlds.cursed_words.Options.ShuffleInventorySlots",
                     "value": 1,
                     "operator": "eq"
                 }
@@ -280,7 +280,7 @@
             "rule": "HasGroup",
             "options": [
                 {
-                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                    "option": "worlds.cursed_words.Options.ShuffleInventorySlots",
                     "value": 1,
                     "operator": "eq"
                 }
@@ -299,7 +299,7 @@
             "rule": "HasGroup",
             "options": [
                 {
-                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                    "option": "worlds.cursed_words.Options.ShuffleInventorySlots",
                     "value": 1,
                     "operator": "eq"
                 }
@@ -322,7 +322,7 @@
                     "rule": "HasGroup",
                     "options": [
                         {
-                            "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                            "option": "worlds.cursed_words.Options.ShuffleInventorySlots",
                             "value": 1,
                             "operator": "eq"
                         }
@@ -337,7 +337,7 @@
                     "rule": "HasGroup",
                     "options": [
                         {
-                            "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                            "option": "worlds.cursed_words.Options.ShuffleInventorySlots",
                             "value": 1,
                             "operator": "eq"
                         }
@@ -355,66 +355,111 @@
     {
         "count": 5,
         "name": "Word Length {count}",
-        "region": "Words"
+        "region": "Words",
+        "tags": [ "Lengthsanity" ]
     },
     {
-        "name": "Word Length 6",
-        "region": "Words Medium"
+        "count": 4,
+        "count_start": 6,
+        "name": "Word Length {count}",
+        "region": "Words Medium",
+        "tags": [ "Lengthsanity" ]
     },
     {
-        "name": "Word Length 7",
-        "region": "Words Medium"
-    },
-    {
-        "name": "Word Length 8",
-        "region": "Words Medium"
-    },
-    {
-        "name": "Word Length 9",
-        "region": "Words High"
-    },
-    {
-        "name": "Word Length 10",
-        "region": "Words High"
+        "count": 6,
+        "count_start": 10,
+        "name": "Word Length {count}",
+        "region": "Words High",
+        "tags": [ "Lengthsanity" ]
     },
     {
         "name": "Word Score > 5",
-        "region": "Words"
+        "region": "Words",
+        "tags": [ "Scoresanity" ]
     },
     {
         "name": "Word Score > 10",
-        "region": "Words"
+        "region": "Words",
+        "tags": [ "Scoresanity" ]
     },
     {
         "name": "Word Score > 25",
-        "region": "Words"
+        "region": "Words",
+        "tags": [ "Scoresanity" ]
     },
     {
         "name": "Word Score > 50",
-        "region": "Words Medium"
+        "region": "Words Medium",
+        "tags": [ "Scoresanity" ]
     },
     {
         "name": "Word Score > 75",
-        "region": "Words Medium"
+        "region": "Words Medium",
+        "tags": [ "Scoresanity" ]
     },
     {
         "name": "Word Score > 100",
-        "region": "Words Medium"
+        "region": "Words Medium",
+        "tags": [ "Scoresanity" ]
     },
     {
         "name": "Word Score > 250",
-        "region": "Words Medium"
+        "region": "Words Medium",
+        "tags": [ "Scoresanity" ]
     },
     {
         "name": "Word Score > 500",
-        "region": "Words High"
+        "region": "Words High",
+        "tags": [ "Scoresanity" ]
     },
     {
         "name": "Word Score > 750",
-        "region": "Words High"
+        "region": "Words High",
+        "tags": [ "Scoresanity" ]
     },
     {
         "name": "Word Score > 1000",
-        "region": "Words High"
+        "region": "Words High",
+        "tags": [ "Scoresanity" ]
+    },
+    {
+        "name": "Word Score > 1250",
+        "region": "Words High",
+        "tags": [ "Scoresanity" ]
+    },
+    {
+        "name": "Word Score > 1500",
+        "region": "Words High",
+        "tags": [ "Scoresanity" ]
+    },
+    {
+        "name": "Word Score > 1750",
+        "region": "Words Very High",
+        "tags": [ "Scoresanity" ]
+    },
+    {
+        "name": "Word Score > 2000",
+        "region": "Words Very High",
+        "tags": [ "Scoresanity" ]
+    },
+    {
+        "name": "Word Score > 2250",
+        "region": "Words Very High",
+        "tags": [ "Scoresanity" ]
+    },
+    {
+        "name": "Word Score > 2500",
+        "region": "Words Very High",
+        "tags": [ "Scoresanity" ]
+    },
+    {
+        "name": "Word Score > 2750",
+        "region": "Words Very High",
+        "tags": [ "Scoresanity" ]
+    },
+    {
+        "name": "Word Score > 3000",
+        "region": "Words Very High",
+        "tags": [ "Scoresanity" ]
     }
 ]
