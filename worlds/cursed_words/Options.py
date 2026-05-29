@@ -61,6 +61,14 @@ class ProgressiveGridSize(Toggle):
     display_name = "Progressive Grid Size"
     default = False
 
+class ProgressiveInventorySlots(Toggle):
+    """
+    Your inventory has all Sticker and Stamp Slots locked and cannot be used.
+    5x 'Progressive Sticker Slot' and 5x 'Progressive Stamp Slot' items are added to the item pool, each unlocking one respective slot.
+    """
+    display_name = "Progressive Inventory Slots"
+    default = False
+
 class ProgressiveTilePositions(Toggle):
     """
     The grid starts with 10 randomly selected tile positions being 'locked', making them un-selectable, and adds 10
@@ -104,6 +112,7 @@ class CursedWordsOptions(PerGameCommonOptions):
     goal: Goal
     deathlink: DeathLink
     progressive_grid_size: ProgressiveGridSize
+    progressive_inventory_slots: ProgressiveInventorySlots
     progressive_tile_positions: ProgressiveTilePositions
     shopsanity: Shopsanity
     shopsanity_location_count: ShopsanityLocationCount

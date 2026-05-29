@@ -197,13 +197,15 @@
         "count": 5,
         "name": "Progressive Sticker Slot",
         "classification": 1,
-        "groups": [ "Sticker Slots" ]
+        "groups": [ "Sticker Slots" ],
+        "tags": [ "Progressive Inventory Slots" ]
     },
     {
         "count": 5,
         "name": "Progressive Stamp Slot",
         "classification": 1,
-        "groups": [ "Stamp Slots" ]
+        "groups": [ "Stamp Slots" ],
+        "tags": [ "Progressive Inventory Slots" ]
     },
     {
         "count": 10,

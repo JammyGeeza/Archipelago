@@ -49,8 +49,10 @@ class CursedWordsWorld(World):
         self.tags: List[str] = [
             *self.options.characters.value,
             *([self.options.progressive_grid_size.display_name] if self.options.progressive_grid_size.value else []),
+            *([self.options.progressive_inventory_slots.display_name] if self.options.progressive_inventory_slots.value else []),
             *([self.options.progressive_tile_positions.display_name] if self.options.progressive_tile_positions.value else []),
-            *([self.options.shopsanity.display_name] if self.options.shopsanity.value else [])
+            *([self.options.shopsanity.display_name] if self.options.shopsanity.value else []),
+
             # Additional tag inclusions go here...
         ]
 
@@ -113,8 +115,9 @@ class CursedWordsWorld(World):
             "deathlink",
             "goal",
             "progressive_grid_size",
+            "progressive_inventory_slots",
             "shopsanity_location_count",
-            "shopsanity_location_cost"
+            "shopsanity_location_cost",
         )
 
         slot_data.update({

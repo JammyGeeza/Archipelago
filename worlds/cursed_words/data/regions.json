@@ -174,17 +174,33 @@
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args" : {
                                 "item_name_group": "Sticker Slots",
                                 "count": 1
-                            }
+                            },
+                            "filtered_resolution": true
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args" : {
                                 "item_name_group": "Stamp Slots",
                                 "count": 1
-                            }
+                            },
+                            "filtered_resolution": true
                         },
                         {
                             "rule": "HasGroup",
@@ -223,17 +239,33 @@
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args" : {
                                 "item_name_group": "Sticker Slots",
                                 "count": 3
-                            }
+                            },
+                            "filtered_resolution": true
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args" : {
                                 "item_name_group": "Stamp Slots",
                                 "count": 3
-                            }
+                            },
+                            "filtered_resolution": true
                         },
                         {
                             "rule": "HasGroup",
@@ -278,17 +310,33 @@
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args" : {
                                 "item_name_group": "Sticker Slots",
                                 "count": 2
-                            }
+                            },
+                            "filtered_resolution": true
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args" : {
                                 "item_name_group": "Stamp Slots",
                                 "count": 2
-                            }
+                            },
+                            "filtered_resolution": true
                         },
                         {
                             "rule": "HasGroup",
@@ -327,17 +375,33 @@
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args" : {
                                 "item_name_group": "Sticker Slots",
                                 "count": 4
-                            }
+                            },
+                            "filtered_resolution": true
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args" : {
                                 "item_name_group": "Stamp Slots",
                                 "count": 4
-                            }
+                            },
+                            "filtered_resolution": true
                         },
                         {
                             "rule": "HasGroup",
@@ -374,17 +438,33 @@
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Sticker Slots",
                                 "count": 1
-                            }
+                            },
+                            "filtered_resolution": true
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Stamp Slots",
                                 "count": 1
-                            }
+                            },
+                            "filtered_resolution": true
                         }
                     ]
                 }
@@ -436,17 +516,33 @@
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Sticker Slots",
                                 "count": 2
-                            }
+                            },
+                            "filtered_resolution": true
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Stamp Slots",
                                 "count": 2
-                            }
+                            },
+                            "filtered_resolution": true
                         }
                     ]
                 }
@@ -483,17 +579,33 @@
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Sticker Slots",
                                 "count": 3
-                            }
+                            },
+                            "filtered_resolution": true
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Stamp Slots",
                                 "count": 3
-                            }
+                            },
+                            "filtered_resolution": true
                         }
                     ]
                 }
@@ -536,17 +648,33 @@
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Sticker Slots",
                                 "count": 5
-                            }
+                            },
+                            "filtered_resolution": true
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Stamp Slots",
                                 "count": 5
-                            }
+                            },
+                            "filtered_resolution": true
                         }
                     ]
                 }
@@ -584,17 +712,33 @@
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Sticker Slots",
                                 "count": 1
-                            }
+                            },
+                            "filtered_resolution": true
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Stamp Slots",
                                 "count": 1
-                            }
+                            },
+                            "filtered_resolution": true
                         }
                     ]
                 }
@@ -661,17 +805,33 @@
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Sticker Slots",
                                 "count": 2
-                            }
+                            },
+                            "filtered_resolution": true
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Stamp Slots",
                                 "count": 2
-                            }
+                            },
+                            "filtered_resolution": true
                         }
                     ]
                 }
@@ -723,17 +883,33 @@
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Sticker Slots",
                                 "count": 3
-                            }
+                            },
+                            "filtered_resolution": true
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Stamp Slots",
                                 "count": 3
-                            }
+                            },
+                            "filtered_resolution": true
                         }
                     ]
                 }
@@ -791,17 +967,33 @@
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Sticker Slots",
                                 "count": 5
-                            }
+                            },
+                            "filtered_resolution": true
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Stamp Slots",
                                 "count": 5
-                            }
+                            },
+                            "filtered_resolution": true
                         }
                     ]
                 }
@@ -839,17 +1031,33 @@
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Sticker Slots",
                                 "count": 1
-                            }
+                            },
+                            "filtered_resolution": true
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Stamp Slots",
                                 "count": 1
-                            }
+                            },
+                            "filtered_resolution": true
                         }
                     ]
                 }
@@ -915,17 +1123,33 @@
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Sticker Slots",
                                 "count": 2
-                            }
+                            },
+                            "filtered_resolution": true
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Stamp Slots",
                                 "count": 2
-                            }
+                            },
+                            "filtered_resolution": true
                         }
                     ]
                 }
@@ -967,17 +1191,33 @@
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Sticker Slots",
                                 "count": 3
-                            }
+                            },
+                            "filtered_resolution": true
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Stamp Slots",
                                 "count": 3
-                            }
+                            },
+                            "filtered_resolution": true
                         }
                     ]
                 }
@@ -1001,13 +1241,6 @@
                                     "Fraction Tiles",
                                     "Number Tiles"
                                 ]
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Sticker Slots",
-                                "count": 5
                             }
                         },
                         {
@@ -1042,10 +1275,33 @@
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Sticker Slots",
+                                "count": 5
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Stamp Slots",
                                 "count": 5
-                            }
+                            },
+                            "filtered_resolution": true
                         }
                     ]
                 }
@@ -1084,17 +1340,33 @@
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Sticker Slots",
                                 "count": 1
-                            }
+                            },
+                            "filtered_resolution": true
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Stamp Slots",
                                 "count": 1
-                            }
+                            },
+                            "filtered_resolution": true
                         }
                     ]
                 }
@@ -1159,17 +1431,33 @@
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Sticker Slots",
                                 "count": 2
-                            }
+                            },
+                            "filtered_resolution": true
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Stamp Slots",
                                 "count": 2
-                            }
+                            },
+                            "filtered_resolution": true
                         }
                     ]
                 }
@@ -1211,17 +1499,33 @@
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Sticker Slots",
                                 "count": 3
-                            }
+                            },
+                            "filtered_resolution": true
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Stamp Slots",
                                 "count": 3
-                            }
+                            },
+                            "filtered_resolution": true
                         }
                     ]
                 }
@@ -1270,17 +1574,33 @@
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Sticker Slots",
                                 "count": 5
-                            }
+                            },
+                            "filtered_resolution": true
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Stamp Slots",
                                 "count": 5
-                            }
+                            },
+                            "filtered_resolution": true
                         }
                     ]
                 }
@@ -1319,17 +1639,33 @@
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Sticker Slots",
                                 "count": 1
-                            }
+                            },
+                            "filtered_resolution": true
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Stamp Slots",
                                 "count": 1
-                            }
+                            },
+                            "filtered_resolution": true
                         }
                     ]
                 }
@@ -1394,17 +1730,33 @@
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Sticker Slots",
                                 "count": 2
-                            }
+                            },
+                            "filtered_resolution": true
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Stamp Slots",
                                 "count": 2
-                            }
+                            },
+                            "filtered_resolution": true
                         }
                     ]
                 }
@@ -1446,17 +1798,33 @@
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Sticker Slots",
                                 "count": 3
-                            }
+                            },
+                            "filtered_resolution": true
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Stamp Slots",
                                 "count": 3
-                            }
+                            },
+                            "filtered_resolution": true
                         }
                     ]
                 }
@@ -1505,17 +1873,33 @@
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Sticker Slots",
                                 "count": 5
-                            }
+                            },
+                            "filtered_resolution": true
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Stamp Slots",
                                 "count": 5
-                            }
+                            },
+                            "filtered_resolution": true
                         }
                     ]
                 }
@@ -1554,17 +1938,33 @@
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Sticker Slots",
                                 "count": 1
-                            }
+                            },
+                            "filtered_resolution": true
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Stamp Slots",
                                 "count": 1
-                            }
+                            },
+                            "filtered_resolution": true
                         }
                     ]
                 }
@@ -1641,17 +2041,33 @@
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Sticker Slots",
                                 "count": 2
-                            }
+                            },
+                            "filtered_resolution": true
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Stamp Slots",
                                 "count": 2
-                            }
+                            },
+                            "filtered_resolution": true
                         }
                     ]
                 }
@@ -1702,17 +2118,33 @@
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Sticker Slots",
                                 "count": 3
-                            }
+                            },
+                            "filtered_resolution": true
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Stamp Slots",
                                 "count": 3
-                            }
+                            },
+                            "filtered_resolution": true
                         }
                     ]
                 }
@@ -1790,17 +2222,33 @@
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Sticker Slots",
                                 "count": 5
-                            }
+                            },
+                            "filtered_resolution": true
                         },
                         {
                             "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ProgressiveInventorySlots",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
                             "args": {
                                 "item_name_group": "Stamp Slots",
                                 "count": 5
-                            }
+                            },
+                            "filtered_resolution": true
                         }
                     ]
                 }
