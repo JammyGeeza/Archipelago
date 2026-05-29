@@ -71,6 +71,11 @@
         "groups": [ "Stamp Bundles" ]
     },
     {
+        "name": "Scatter Stamps",
+        "classification": 1,
+        "groups": [ "Stamp Bundles" ]
+    },
+    {
         "name": "Shiny Stamps",
         "classification": 1,
         "groups": [ "Stamp Bundles" ]
@@ -112,6 +117,11 @@
     },
     {
         "name": "Red Stickers",
+        "classification": 1,
+        "groups": [ "Sticker Bundles" ]
+    },
+    {
+        "name": "Scatter Stickers",
         "classification": 1,
         "groups": [ "Sticker Bundles" ]
     },
