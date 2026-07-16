@@ -610,5 +610,81 @@
             ]
         },
         "character_tags": [ "Nina Nix" ]
+    },
+
+    {
+        "name": "Defeat Axolotl",
+        "region": "Stage 1",
+        "option_tags": [ "Boss-sanity" ]
+    },
+    {
+        "name": "Defeat Badger",
+        "region": "Stage 1",
+        "option_tags": [ "Boss-sanity" ]
+    },
+    {
+        "name": "Defeat Bat",
+        "region": "Stage 1",
+        "option_tags": [ "Boss-sanity" ]
+    },
+    {
+        "name": "Defeat Bison",
+        "region": "Stage 1",
+        "option_tags": [ "Boss-sanity" ]
+    },
+    {
+        "name": "Defeat Capybara",
+        "region": "Stage 2",
+        "option_tags": [ "Boss-sanity" ]
+    },
+    {
+        "name": "Defeat Cobra",
+        "region": "Stage 1",
+        "option_tags": [ "Boss-sanity" ]
+    },
+    {
+        "name": "Defeat Fox",
+        "region": "Stage 1",
+        "option_tags": [ "Boss-sanity" ]
+    },
+    {
+        "name": "Defeat Hyena",
+        "region": "Stage 2",
+        "option_tags": [ "Boss-sanity" ]
+    },
+    {
+        "name": "Defeat Mole",
+        "region": "Stage 1",
+        "option_tags": [ "Boss-sanity" ]
+    },
+    {
+        "name": "Defeat Robo-Eel",
+        "region": "Stage 1",
+        "option_tags": [ "Boss-sanity" ]
+    },
+    {
+        "name": "Defeat Robo-Monkey",
+        "region": "Stage 1",
+        "option_tags": [ "Boss-sanity" ]
+    },
+    {
+        "name": "Defeat Salamander",
+        "region": "Stage 1",
+        "option_tags": [ "Boss-sanity" ]
+    },
+    {
+        "name": "Defeat Toothed Whale",
+        "region": "Stage 1",
+        "option_tags": [ "Boss-sanity" ]
+    },
+    {
+        "name": "Defeat Wolf",
+        "region": "Stage 1",
+        "option_tags": [ "Boss-sanity" ]
+    },
+    {
+        "name": "Defeat Yeti Crab",
+        "region": "Stage 1",
+        "option_tags": [ "Boss-sanity" ]
     }
 ]

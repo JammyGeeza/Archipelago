@@ -77,6 +77,16 @@ class ShuffleLockedTilePositions(Toggle):
     display_name = "Shuffle Locked Tile Positions"
     default = False
 
+class Bosssanity(Toggle):
+    """
+    Add checks for defeating each individual main boss.
+    
+    NOTE: Does not currently include Sandy, Cretacious Meg, Human Boy, Beans or Michael.
+          Will be added in a future update.
+    """
+    display_name = "Boss-sanity"
+    default = False
+
 class Shopsanity(Toggle):
     """
     Add items to the shop that can be purchased to check locations.
@@ -114,6 +124,7 @@ class CursedWordsOptions(PerGameCommonOptions):
     shuffle_grid_size: ShuffleGridSize
     shuffle_inventory_slots: ShuffleInventorySlots
     shuffle_locked_tile_positions: ShuffleLockedTilePositions
+    bosssanity: Bosssanity
     shopsanity: Shopsanity
     shopsanity_limit: ShopsanityLimit
     shopsanity_cost: ShopsanityCost

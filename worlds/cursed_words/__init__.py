@@ -54,6 +54,7 @@ class CursedWordsWorld(World):
             *([self.options.shuffle_grid_size.display_name] if self.options.shuffle_grid_size.value else []),
             *([self.options.shuffle_inventory_slots.display_name] if self.options.shuffle_inventory_slots.value else []),
             *([self.options.shuffle_locked_tile_positions.display_name] if self.options.shuffle_locked_tile_positions.value else []),
+            *([self.options.bosssanity.display_name] if self.options.bosssanity.value else []),
             *([self.options.shopsanity.display_name] if self.options.shopsanity.value else []),
             # Additional tag inclusions go here
         ]
