@@ -10,7 +10,7 @@ def generate_goal_events(world: World):
 
     for goal_character in world.options.goal.value:
 
-        region: Region = world.multiworld.get_region(f"{goal_character} - Stage 5", world.player)
+        region: Region = world.multiworld.get_region(f"{goal_character}: Stage 5", world.player)
 
         event: Location = Location(world.player, goal_character, None, region)
         event.place_locked_item(Item("Victory", ItemClassification.progression, None, world.player))

@@ -12,25 +12,26 @@ class CursedWordsItem:
 
     def __init__(self, json_data: dict):
         self.name: str = json_data.get("name")
+        self.character_tags: List[str] = json_data.get("character_tags", [])
         self.classification: ItemClassification = ItemClassification(json_data.get("classification", ItemClassification.filler.value))
         self.count: int = json_data.get("count", 1)
         self.groups: List[str] = json_data.get("groups", [])
+        self.option_tags: List[str] = json_data.get("option_tags", [])
         self.region: str = json_data.get("region")
-        self.tags: List[str] = json_data.get("tags", [])
 
-    def has_tags(self, tags: List[str]) -> bool:
-        """Check if all of this item's tags are present in a tags list"""
-        return set(self.tags).issubset(set(tags))
+    def has_character_tags(self, tags: List[str]) -> bool:
+        """Check if this item's character tags contains at least one tag from a list."""
+        return not self.character_tags or bool(set(self.character_tags) & set(tags))
+    
+    def has_option_tags(self, tags: List[str]) -> bool:
+        """Check if this item's option tags contains at least one tag from a list."""
+        return not self.option_tags or bool(set(self.option_tags) & set(tags))
 
     def is_classification(self, classification: ItemClassification) -> bool:
         """Check if this item has a matching classification flag"""
         return self.classification & classification if classification != ItemClassification.filler else self.classification == classification
 
 # Read items data from JSON config
-
-# with open(os.path.join(os.path.dirname(__file__), 'data', 'items.json'), 'r') as file:
-#     _items_data = json.loads(file.read())
-
 _file_data = pkgutil.get_data(__name__, 'data/items.json')
 _items_data = json.loads(_file_data)
 
@@ -61,12 +62,21 @@ def generate_items(world: World):
 
     # logging.info(f"Generating items for multiworld...")
 
-    # Get all progression/useful items with matching tags from configuration options,
-    # excluding the starting character which is already precollected
+    # Get all pre-collected item names
+    precollected_item_names = [
+        item.name for item in world.multiworld.precollected_items[world.player]
+    ]
+
+    # Get all progression/useful items with matching tags from configuration options, excluding the following pre-collected items:
+    # - The starting character
+    # - Starting Stamps
+    # - Starting Stickers
     enabled_items: List[CursedWordsItem] = [
         item for item in item_table
-        if item.has_tags(world.tags) and item.is_classification(ItemClassification.progression | ItemClassification.useful)
-        and item.name != world.start_character
+        if item.has_character_tags(world.character_tags)
+        and item.has_option_tags(world.option_tags)
+        and item.is_classification(ItemClassification.progression | ItemClassification.useful)
+        and item.name not in precollected_item_names
     ]
 
     # logging.info(f"Found {len(enabled_items)} enabled progression/useful items for the multiworld")
@@ -85,7 +95,7 @@ def generate_items(world: World):
     unfilled_location_count: int = len(world.multiworld.get_unfilled_locations(world.player))
     required_filler_count: int = unfilled_location_count - len([item for item in world.multiworld.itempool if item.player == world.player])
 
-    logging.info(f"Unfilled locations for player: {unfilled_location_count}")
+    # logging.info(f"Unfilled locations for player: {unfilled_location_count}")
     logging.info(f"Required filler for player: {required_filler_count}")
 
 
@@ -102,7 +112,9 @@ def generate_filler_items(world: World, amount: int) -> List[Item]:
     # Get applicable filler items
     enabled_filler_items = [
         item for item in item_table 
-        if item.has_tags(world.tags) and item.is_classification(ItemClassification.filler)
+        if item.has_character_tags(world.character_tags)
+        and item.has_option_tags(world.option_tags)
+        and item.is_classification(ItemClassification.filler)
     ]
 
     # Randomly select from filler items

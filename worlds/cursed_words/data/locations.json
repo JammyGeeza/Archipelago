@@ -1,223 +1,238 @@
 [
     {
         "count": 3,
-        "name": "Rodman - 1-{count} Complete",
-        "region": "Rodman - Stage 1",
-        "tags": [ "Rodman" ]
+        "name": "Rodman: 1-{count} Complete",
+        "region": "Rodman: Stage 1",
+        "character_tags": [ "Rodman" ]
     },
     {
         "count": 3,
-        "name": "Rodman - 2-{count} Complete",
-        "region": "Rodman - Stage 2",
-        "tags": [ "Rodman" ]
+        "name": "Rodman: 2-{count} Complete",
+        "region": "Rodman: Stage 2",
+        "character_tags": [ "Rodman" ]
     },
     {
         "count": 3,
-        "name": "Rodman - 3-{count} Complete",
-        "region": "Rodman - Stage 3",
-        "tags": [ "Rodman" ]
+        "name": "Rodman: 3-{count} Complete",
+        "region": "Rodman: Stage 3",
+        "character_tags": [ "Rodman" ]
     },
     {
         "count": 3,
-        "name": "Rodman - 4-{count} Complete",
-        "region": "Rodman - Stage 4",
-        "tags": [ "Rodman" ]
+        "name": "Rodman: 4-{count} Complete",
+        "region": "Rodman: Stage 4",
+        "character_tags": [ "Rodman" ]
     },
     {
         "count": 3,
-        "name": "Rodman - 5-{count} Complete",
-        "region": "Rodman - Stage 5",
-        "tags": [ "Rodman" ]
+        "name": "Rodman: 5-{count} Complete",
+        "region": "Rodman: Stage 5",
+        "character_tags": [ "Rodman" ]
     },
     {
         "count": 3,
-        "name": "Nina Nix - 1-{count} Complete",
-        "region": "Nina Nix - Stage 1",
-        "tags": [ "Nina Nix" ]
+        "name": "Nina Nix: 1-{count} Complete",
+        "region": "Nina Nix: Stage 1",
+        "character_tags": [ "Nina Nix" ]
     },
     {
         "count": 3,
-        "name": "Nina Nix - 2-{count} Complete",
-        "region": "Nina Nix - Stage 2",
-        "tags": [ "Nina Nix" ]
+        "name": "Nina Nix: 2-{count} Complete",
+        "region": "Nina Nix: Stage 2",
+        "character_tags": [ "Nina Nix" ]
     },
     {
         "count": 3,
-        "name": "Nina Nix - 3-{count} Complete",
-        "region": "Nina Nix - Stage 3",
-        "tags": [ "Nina Nix" ]
+        "name": "Nina Nix: 3-{count} Complete",
+        "region": "Nina Nix: Stage 3",
+        "character_tags": [ "Nina Nix" ]
     },
     {
         "count": 3,
-        "name": "Nina Nix - 4-{count} Complete",
-        "region": "Nina Nix - Stage 4",
-        "tags": [ "Nina Nix" ]
+        "name": "Nina Nix: 4-{count} Complete",
+        "region": "Nina Nix: Stage 4",
+        "character_tags": [ "Nina Nix" ]
     },
     {
         "count": 3,
-        "name": "Nina Nix - 5-{count} Complete",
-        "region": "Nina Nix - Stage 5",
-        "tags": [ "Nina Nix" ]
+        "name": "Nina Nix: 5-{count} Complete",
+        "region": "Nina Nix: Stage 5",
+        "character_tags": [ "Nina Nix" ]
     },
     {
         "count": 3,
-        "name": "Hayley Bayles - 1-{count} Complete",
-        "region": "Hayley Bayles - Stage 1",
-        "tags": [ "Hayley Bayles" ]
+        "name": "Hayley Bayles: 1-{count} Complete",
+        "region": "Hayley Bayles: Stage 1",
+        "character_tags": [ "Hayley Bayles" ]
     },
     {
         "count": 3,
-        "name": "Hayley Bayles - 2-{count} Complete",
-        "region": "Hayley Bayles - Stage 2",
-        "tags": [ "Hayley Bayles" ]
+        "name": "Hayley Bayles: 2-{count} Complete",
+        "region": "Hayley Bayles: Stage 2",
+        "character_tags": [ "Hayley Bayles" ]
     },
     {
         "count": 3,
-        "name": "Hayley Bayles - 3-{count} Complete",
-        "region": "Hayley Bayles - Stage 3",
-        "tags": [ "Hayley Bayles" ]
+        "name": "Hayley Bayles: 3-{count} Complete",
+        "region": "Hayley Bayles: Stage 3",
+        "character_tags": [ "Hayley Bayles" ]
     },
     {
         "count": 3,
-        "name": "Hayley Bayles - 4-{count} Complete",
-        "region": "Hayley Bayles - Stage 4",
-        "tags": [ "Hayley Bayles" ]
+        "name": "Hayley Bayles: 4-{count} Complete",
+        "region": "Hayley Bayles: Stage 4",
+        "character_tags": [ "Hayley Bayles" ]
     },
     {
         "count": 3,
-        "name": "Hayley Bayles - 5-{count} Complete",
-        "region": "Hayley Bayles - Stage 5",
-        "tags": [ "Hayley Bayles" ]
+        "name": "Hayley Bayles: 5-{count} Complete",
+        "region": "Hayley Bayles: Stage 5",
+        "character_tags": [ "Hayley Bayles" ]
     },
     {
         "count": 3,
-        "name": "Bones the Dog - 1-{count} Complete",
-        "region": "Bones the Dog - Stage 1",
-        "tags": [ "Bones the Dog" ]
+        "name": "Bones the Dog: 1-{count} Complete",
+        "region": "Bones the Dog: Stage 1",
+        "character_tags": [ "Bones the Dog" ]
     },
     {
         "count": 3,
-        "name": "Bones the Dog - 2-{count} Complete",
-        "region": "Bones the Dog - Stage 2",
-        "tags": [ "Bones the Dog" ]
+        "name": "Bones the Dog: 2-{count} Complete",
+        "region": "Bones the Dog: Stage 2",
+        "character_tags": [ "Bones the Dog" ]
     },
     {
         "count": 3,
-        "name": "Bones the Dog - 3-{count} Complete",
-        "region": "Bones the Dog - Stage 3",
-        "tags": [ "Bones the Dog" ]
+        "name": "Bones the Dog: 3-{count} Complete",
+        "region": "Bones the Dog: Stage 3",
+        "character_tags": [ "Bones the Dog" ]
     },
     {
         "count": 3,
-        "name": "Bones the Dog - 4-{count} Complete",
-        "region": "Bones the Dog - Stage 4",
-        "tags": [ "Bones the Dog" ]
+        "name": "Bones the Dog: 4-{count} Complete",
+        "region": "Bones the Dog: Stage 4",
+        "character_tags": [ "Bones the Dog" ]
     },
     {
         "count": 3,
-        "name": "Bones the Dog - 5-{count} Complete",
-        "region": "Bones the Dog - Stage 5",
-        "tags": [ "Bones the Dog" ]
+        "name": "Bones the Dog: 5-{count} Complete",
+        "region": "Bones the Dog: Stage 5",
+        "character_tags": [ "Bones the Dog" ]
     },
     {
         "count": 3,
-        "name": "Sam Gambit - 1-{count} Complete",
-        "region": "Sam Gambit - Stage 1",
-        "tags": [ "Sam Gambit" ]
+        "name": "Sam Gambit: 1-{count} Complete",
+        "region": "Sam Gambit: Stage 1",
+        "character_tags": [ "Sam Gambit" ]
     },
     {
         "count": 3,
-        "name": "Sam Gambit - 2-{count} Complete",
-        "region": "Sam Gambit - Stage 2",
-        "tags": [ "Sam Gambit" ]
+        "name": "Sam Gambit: 2-{count} Complete",
+        "region": "Sam Gambit: Stage 2",
+        "character_tags": [ "Sam Gambit" ]
     },
     {
         "count": 3,
-        "name": "Sam Gambit - 3-{count} Complete",
-        "region": "Sam Gambit - Stage 3",
-        "tags": [ "Sam Gambit" ]
+        "name": "Sam Gambit: 3-{count} Complete",
+        "region": "Sam Gambit: Stage 3",
+        "character_tags": [ "Sam Gambit" ]
     },
     {
         "count": 3,
-        "name": "Sam Gambit - 4-{count} Complete",
-        "region": "Sam Gambit - Stage 4",
-        "tags": [ "Sam Gambit" ]
+        "name": "Sam Gambit: 4-{count} Complete",
+        "region": "Sam Gambit: Stage 4",
+        "character_tags": [ "Sam Gambit" ]
     },
     {
         "count": 3,
-        "name": "Sam Gambit - 5-{count} Complete",
-        "region": "Sam Gambit - Stage 5",
-        "tags": [ "Sam Gambit" ]
+        "name": "Sam Gambit: 5-{count} Complete",
+        "region": "Sam Gambit: Stage 5",
+        "character_tags": [ "Sam Gambit" ]
     },
     {
         "count": 3,
-        "name": "Octacles - 1-{count} Complete",
-        "region": "Octacles - Stage 1",
-        "tags": [ "Octacles" ]
+        "name": "Octacles: 1-{count} Complete",
+        "region": "Octacles: Stage 1",
+        "character_tags": [ "Octacles" ]
     },
     {
         "count": 3,
-        "name": "Octacles - 2-{count} Complete",
-        "region": "Octacles - Stage 2",
-        "tags": [ "Octacles" ]
+        "name": "Octacles: 2-{count} Complete",
+        "region": "Octacles: Stage 2",
+        "character_tags": [ "Octacles" ]
     },
     {
         "count": 3,
-        "name": "Octacles - 3-{count} Complete",
-        "region": "Octacles - Stage 3",
-        "tags": [ "Octacles" ]
+        "name": "Octacles: 3-{count} Complete",
+        "region": "Octacles: Stage 3",
+        "character_tags": [ "Octacles" ]
     },
     {
         "count": 3,
-        "name": "Octacles - 4-{count} Complete",
-        "region": "Octacles - Stage 4",
-        "tags": [ "Octacles" ]
+        "name": "Octacles: 4-{count} Complete",
+        "region": "Octacles: Stage 4",
+        "character_tags": [ "Octacles" ]
     },
     {
         "count": 3,
-        "name": "Octacles - 5-{count} Complete",
-        "region": "Octacles - Stage 5",
-        "tags": [ "Octacles" ]
+        "name": "Octacles: 5-{count} Complete",
+        "region": "Octacles: Stage 5",
+        "character_tags": [ "Octacles" ]
+    },
+
+
+    {
+        "name": "Run: Destroy a Consumable Tile",
+        "region": "Stage 1"
     },
     {
-        "name": "Skip a Grid",
-        "region": "Encounters"
+        "count": 3,
+        "count_start": 5,
+        "count_step": 5,
+        "name": "Run: Earn ${count} Total",
+        "region": "Stage 1"
     },
     {
-        "name": "Place a Consumable Tile",
-        "region": "Encounters"
+        "count": 4,
+        "count_start": 20,
+        "count_step": 10,
+        "name": "Run: Earn ${count} Total",
+        "region": "Stage 2"
     },
     {
-        "name": "Earn $10",
-        "region": "Money"
+        "count": 8,
+        "count_start": 75,
+        "count_step": 25,
+        "name": "Run: Earn ${count} Total",
+        "region": "Stage 3"
     },
     {
-        "name": "Earn $25",
-        "region": "Money"
+        "count": 5,
+        "count_start": 300,
+        "count_step": 50,
+        "name": "Run: Earn ${count} Total",
+        "region": "Stage 4"
     },
     {
-        "name": "Earn $50",
-        "region": "Money"
+        "count": 5,
+        "count_start": 600,
+        "count_step": 10,
+        "name": "Run: Earn ${count} Total",
+        "region": "Stage 5"
     },
     {
-        "name": "Earn $75",
-        "region": "Money Medium"
+        "name": "Run: Place a Consumable Tile",
+        "region": "Stage 1"
     },
     {
-        "name": "Earn $100",
-        "region": "Money Medium"
+        "name": "Run: Skip a Grid",
+        "region": "Stage 1"
     },
+
+
     {
-        "name": "Earn $250",
-        "region": "Money High"
-    },
-    {
-        "name": "Earn $500",
-        "region": "Money High"
-    },
-    {
-        "name": "Buy a Sticker",
-        "region": "Shop",
+        "name": "Shop: Buy a Sticker",
+        "region": "Stage 1",
         "access_rule": {
             "rule": "HasGroup",
             "options": [
@@ -235,8 +250,8 @@
         }
     },
     {
-        "name": "Buy a Stamp",
-        "region": "Shop",
+        "name": "Shop: Buy a Stamp",
+        "region": "Stage 1",
         "access_rule": {
             "rule": "HasGroup",
             "options": [
@@ -254,67 +269,13 @@
         }
     },
     {
-        "name": "Buy a Consumable Tile",
-        "region": "Shop"
-    },
-    {
-        "name": "Destroy a Consumable Tile",
-        "region": "Shop"
-    },
-    {
-        "name": "Freeze a Stamp",
-        "region": "Shop"
-    },
-    {
-        "name": "Freeze a Sticker",
-        "region": "Shop"
-    },
-    {
-        "name": "Restock the Shop",
-        "region": "Shop"
-    },
-    {
-        "name": "Sell a Sticker",
-        "region": "Shop",
-        "access_rule": {
-            "rule": "HasGroup",
-            "options": [
-                {
-                    "option": "worlds.cursed_words.Options.ShuffleInventorySlots",
-                    "value": 1,
-                    "operator": "eq"
-                }
-            ],
-            "args" : {
-                "item_name_group": "Sticker Slots",
-                "count": 1
-            },
-            "filtered_resolution": true
-        }
-    },
-    {
-        "name": "Sell a Stamp",
-        "region": "Shop",
-        "access_rule": {
-            "rule": "HasGroup",
-            "options": [
-                {
-                    "option": "worlds.cursed_words.Options.ShuffleInventorySlots",
-                    "value": 1,
-                    "operator": "eq"
-                }
-            ],
-            "args" : {
-                "item_name_group": "Stamp Slots",
-                "count": 1
-            },
-            "filtered_resolution": true
-        }
+        "name": "Shop: Buy a Consumable Tile",
+        "region": "Stage 1"
     },
     {
         "count": 30,
-        "name": "Shop Item {count}",
-        "region": "Shop",
+        "name": "Shop: Buy Shopsanity Item {count}",
+        "region": "Stage 1",
         "access_rule": {
             "rule": "And",
             "children": [
@@ -350,83 +311,300 @@
                 }
             ]
         },
-        "tags": [ "Shopsanity" ]
+        "option_tags": [ "Shopsanity" ]
+    },
+    {
+        "name": "Shop: Freeze a Stamp",
+        "region": "Stage 1"
+    },
+    {
+        "name": "Shop: Freeze a Sticker",
+        "region": "Stage 1"
+    },
+    {
+        "name": "Shop: Restock the Shop",
+        "region": "Stage 1"
+    },
+    {
+        "name": "Shop: Sell a Sticker",
+        "region": "Stage 1",
+        "access_rule": {
+            "rule": "HasGroup",
+            "options": [
+                {
+                    "option": "worlds.cursed_words.Options.ShuffleInventorySlots",
+                    "value": 1,
+                    "operator": "eq"
+                }
+            ],
+            "args" : {
+                "item_name_group": "Sticker Slots",
+                "count": 1
+            },
+            "filtered_resolution": true
+        }
+    },
+    {
+        "name": "Shop: Sell a Stamp",
+        "region": "Stage 1",
+        "access_rule": {
+            "rule": "HasGroup",
+            "options": [
+                {
+                    "option": "worlds.cursed_words.Options.ShuffleInventorySlots",
+                    "value": 1,
+                    "operator": "eq"
+                }
+            ],
+            "args" : {
+                "item_name_group": "Stamp Slots",
+                "count": 1
+            },
+            "filtered_resolution": true
+        }
+    },
+
+    
+    {
+        "count": 3,
+        "name": "Word: Length {count} Tiles",
+        "region": "Stage 1"
+    },
+    {
+        "count": 3,
+        "count_start": 4,
+        "name": "Word: Length {count} Tiles",
+        "region": "Stage 2"
+    },
+    {
+        "count": 3,
+        "count_start": 7,
+        "name": "Word: Length {count} Tiles",
+        "region": "Stage 3"
+    },
+    {
+        "count": 3,
+        "count_start": 10,
+        "name": "Word: Length {count} Tiles",
+        "region": "Stage 4"
+    },
+
+
+    {
+        "count": 3,
+        "count_start": 5,
+        "count_step": 5,
+        "name": "Word: Score {count}+",
+        "region": "Stage 1"
+    },
+    {
+        "count": 4,
+        "count_start": 20,
+        "count_step": 10,
+        "name": "Word: Score {count}+",
+        "region": "Stage 2"
+    },
+    {
+        "count": 8,
+        "count_start": 75,
+        "count_step": 25,
+        "name": "Word: Score {count}+",
+        "region": "Stage 3"
     },
     {
         "count": 5,
-        "name": "Word Length {count}",
-        "region": "Words"
+        "count_start": 300,
+        "count_step": 50,
+        "name": "Word: Score {count}+",
+        "region": "Stage 4"
     },
     {
-        "name": "Word Length 6",
-        "region": "Words Medium"
+        "count": 5,
+        "count_start": 600,
+        "count_step": 100,
+        "name": "Word: Score {count}+",
+        "region": "Stage 5"
     },
     {
-        "name": "Word Length 7",
-        "region": "Words Medium"
+        "count": 6,
+        "count_start": 1250,
+        "count_step": 250,
+        "name": "Word: Score {count}+",
+        "region": "Stage 5"
+    },
+
+
+    {
+        "name": "Word: Use a ? Tile",
+        "region": "Stage 1",
+        "access_rule": {
+            "rule": "And",
+            "children": [
+                {
+                    "rule": "Has",
+                    "args": {
+                        "item_name": "Octacles"
+                    }
+                }
+            ]
+        },
+        "character_tags": [ "Octacles" ]
     },
     {
-        "name": "Word Length 8",
-        "region": "Words Medium"
+        "name": "Word: Use a Blue Tile",
+        "region": "Stage 1",
+        "access_rule": {
+            "rule": "And",
+            "children": [
+                {
+                    "rule": "Has",
+                    "args": {
+                        "item_name": "Rodman"
+                    }
+                }
+            ]
+        },
+        "character_tags": [ "Rodman" ]
     },
     {
-        "name": "Word Length 9",
-        "region": "Words Medium"
+        "name": "Word: Use a Chess Tile",
+        "region": "Stage 1",
+        "access_rule": {
+            "rule": "And",
+            "children": [
+                {
+                    "rule": "HasAny",
+                    "args": {
+                        "item_names": [
+                            "Sam Gambit",
+                            "Octacles"
+                        ]
+                    }
+                }
+            ]
+        },
+        "character_tags": [ "Sam Gambit", "Octacles" ]
     },
     {
-        "name": "Word Length 10",
-        "region": "Words High"
+        "name": "Word: Use a Card Tile",
+        "region": "Stage 1",
+        "access_rule": {
+            "rule": "And",
+            "children": [
+                {
+                    "rule": "HasAny",
+                    "args": {
+                        "item_names": [
+                            "Bones the Dog",
+                            "Octacles"
+                        ]
+                    }
+                }
+            ]
+        },
+        "character_tags": [ "Bones the Dog", "Octacles" ]
     },
     {
-        "name": "Word Length 11",
-        "region": "Words High"
+        "name": "Word: Use a Currency Tile",
+        "region": "Stage 1",
+        "access_rule": {
+            "rule": "And",
+            "children": [
+                {
+                    "rule": "Has",
+                    "args": {
+                        "item_name": "Octacles"
+                    }
+                }
+            ]
+        },
+        "character_tags": [ "Octacles" ]
     },
     {
-        "name": "Word Length 12",
-        "region": "Words High"
+        "name": "Word: Use a Fraction Tile",
+        "region": "Stage 1",
+        "access_rule": {
+            "rule": "And",
+            "children": [
+                {
+                    "rule": "Has",
+                    "args": {
+                        "item_name": "Octacles"
+                    }
+                }
+            ]
+        },
+        "character_tags": [ "Octacles" ]
     },
     {
-        "name": "Word Score > 5",
-        "region": "Words"
+        "name": "Word: Use a Letter Tile",
+        "region": "Stage 1"
     },
     {
-        "name": "Word Score > 10",
-        "region": "Words"
+        "name": "Word: Use a Number Tile",
+        "region": "Stage 1",
+        "access_rule": {
+            "rule": "And",
+            "children": [
+                {
+                    "rule": "HasAny",
+                    "args": {
+                        "item_names": [
+                            "Hayley Bayles",
+                            "Octacles"
+                        ]
+                    }
+                }
+            ]
+        },
+        "character_tags": [ "Hayley Bayles", "Octacles" ]
     },
     {
-        "name": "Word Score > 25",
-        "region": "Words"
+        "name": "Word: Use a Red Tile",
+        "region": "Stage 1",
+        "access_rule": {
+            "rule": "And",
+            "children": [
+                {
+                    "rule": "Has",
+                    "args": {
+                        "item_name": "Rodman"
+                    }
+                }
+            ]
+        },
+        "character_tags": [ "Rodman" ]
     },
     {
-        "name": "Word Score > 50",
-        "region": "Words Medium"
+        "name": "Word: Use a Shiny Tile",
+        "region": "Stage 1",
+        "access_rule": {
+            "rule": "And",
+            "children": [
+                {
+                    "rule": "Has",
+                    "args": {
+                        "item_name": "Nina Nix"
+                    }
+                }
+            ]
+        },
+        "character_tags": [ "Nina Nix" ]
     },
     {
-        "name": "Word Score > 75",
-        "region": "Words Medium"
-    },
-    {
-        "name": "Word Score > 100",
-        "region": "Words Medium"
-    },
-    {
-        "name": "Word Score > 250",
-        "region": "Words Medium"
-    },
-    {
-        "name": "Word Score > 500",
-        "region": "Words High"
-    },
-    {
-        "name": "Word Score > 750",
-        "region": "Words High"
-    },
-    {
-        "name": "Word Score > 1000",
-        "region": "Words High"
-    },
-    {
-        "name": "Word Score > 1500",
-        "region": "Words High"
+        "name": "Word: Use a Void Tile",
+        "region": "Stage 1",
+        "access_rule": {
+            "rule": "And",
+            "children": [
+                {
+                    "rule": "Has",
+                    "args": {
+                        "item_name": "Nina Nix"
+                    }
+                }
+            ]
+        },
+        "character_tags": [ "Nina Nix" ]
     }
 ]

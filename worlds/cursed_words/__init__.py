@@ -46,14 +46,16 @@ class CursedWordsWorld(World):
         self.options.resolve_options()
 
         # Gather tags for run (determines what items/locations/regions to include in the run)
-        self.tags: List[str] = [
-            *self.options.characters.value,
+        self.character_tags: List[str] = [
+            *self.options.characters.value
+        ]
+
+        self.option_tags: List[str] = [
             *([self.options.shuffle_grid_size.display_name] if self.options.shuffle_grid_size.value else []),
             *([self.options.shuffle_inventory_slots.display_name] if self.options.shuffle_inventory_slots.value else []),
             *([self.options.shuffle_locked_tile_positions.display_name] if self.options.shuffle_locked_tile_positions.value else []),
             *([self.options.shopsanity.display_name] if self.options.shopsanity.value else []),
-
-            # Additional tag inclusions go here...
+            # Additional tag inclusions go here
         ]
 
         # logging.info(f"Selecting starting character ...")
@@ -67,6 +69,26 @@ class CursedWordsWorld(World):
 
         # Pre-collect starting character so it's always in the initial state
         self.multiworld.push_precollected(self.create_item(self.start_character))
+        
+        # Pre-collect 8 generic starting stamps
+        eligible_starting_stamps: List[str] = [
+            stamp.name for stamp in item_table
+            if len(stamp.character_tags) == 0
+            and len(stamp.option_tags) == 0
+            and "Stamps" in stamp.groups
+        ]
+        for stamp in self.random.sample(eligible_starting_stamps, 8):
+            self.multiworld.push_precollected(self.create_item(stamp))
+
+        # Pre-collect 8 generic starting stickers
+        eligible_starting_stickers: List[str] = [
+            sticker.name for sticker in item_table
+            if len(sticker.character_tags) == 0
+            and len(sticker.option_tags) == 0
+            and "Stickers" in sticker.groups
+        ]
+        for sticker in self.random.sample(eligible_starting_stickers, 8):
+            self.multiworld.push_precollected(self.create_item(sticker))
 
         # logging.info(f"Starting inventory from pool: {self.options.start_inventory_from_pool.value}")
 
@@ -117,7 +139,7 @@ class CursedWordsWorld(World):
             "shuffle_grid_size",
             "shuffle_inventory_slots",
             "shuffle_locked_tile_positions",
-            "shopsanity_limit",
+            "shopsanity",
             "shopsanity_cost",
         )
 
