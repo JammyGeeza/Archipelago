@@ -3,190 +3,71 @@
         "name": "Rodman",
         "classification": 1,
         "groups": [ "Characters" ],
-        "tags": [ "Rodman" ]
+        "character_tags": [ "Rodman" ]
     },
     {
         "name": "Nina Nix",
         "classification": 1,
         "groups": [ "Characters" ],
-        "tags": [ "Nina Nix" ]
+        "character_tags": [ "Nina Nix" ]
     },
     {
         "name": "Hayley Bayles",
         "classification": 1,
         "groups": [ "Characters" ],
-        "tags": [ "Hayley Bayles" ]
+        "character_tags": [ "Hayley Bayles" ]
     },
     {
         "name": "Bones the Dog",
         "classification": 1,
         "groups": [ "Characters" ],
-        "tags": [ "Bones the Dog" ]
+        "character_tags": [ "Bones the Dog" ]
     },
     {
         "name": "Sam Gambit",
         "classification": 1,
         "groups": [ "Characters" ],
-        "tags": [ "Sam Gambit" ]
+        "character_tags": [ "Sam Gambit" ]
     },
     {
         "name": "Octacles",
         "classification": 1,
         "groups": [ "Characters" ],
-        "tags": [ "Octacles" ]
+        "character_tags": [ "Octacles" ]
     },
     {
-        "name": "Blue Stamps",
-        "classification": 1,
-        "groups": [ "Stamp Bundles" ]
+        "count": 5,
+        "name": "Progressive Encounter Re-roll",
+        "classification": 2,
+        "groups": [ "Rerolls" ]
     },
     {
-        "name": "Card Stamps",
+        "count": 2,
+        "name": "Progressive Grid Size",
         "classification": 1,
-        "groups": [ "Stamp Bundles" ]
-    },
-    {
-        "name": "Chess Stamps",
-        "classification": 1,
-        "groups": [ "Stamp Bundles" ]
-    },
-    {
-        "name": "Cursed Stamps",
-        "classification": 1,
-        "groups": [ "Stamp Bundles" ]
-    },
-    {
-        "name": "Number Stamps",
-        "classification": 1,
-        "groups": [ "Stamp Bundles" ]
-    },
-    {
-        "name": "Rainbow Stamps",
-        "classification": 1,
-        "groups": [ "Stamp Bundles" ]
-    },
-    {
-        "name": "Red Stamps",
-        "classification": 1,
-        "groups": [ "Stamp Bundles" ]
-    },
-    {
-        "name": "Shiny Stamps",
-        "classification": 1,
-        "groups": [ "Stamp Bundles" ]
-    },
-    {
-        "name": "Void Stamps",
-        "classification": 1,
-        "groups": [ "Stamp Bundles" ]
-    },
-    {
-        "name": "Blue Stickers",
-        "classification": 1,
-        "groups": [ "Sticker Bundles" ]
-    },
-    {
-        "name": "Card Stickers",
-        "classification": 1,
-        "groups": [ "Sticker Bundles" ]
-    },
-    {
-        "name": "Chess Stickers",
-        "classification": 1,
-        "groups": [ "Sticker Bundles" ]
-    },
-    {
-        "name": "Cursed Stickers",
-        "classification": 1,
-        "groups": [ "Sticker Bundles" ]
-    },
-    {
-        "name": "Number Stickers",
-        "classification": 1,
-        "groups": [ "Sticker Bundles" ]
-    },
-    {
-        "name": "Rainbow Stickers",
-        "classification": 1,
-        "groups": [ "Sticker Bundles" ]
-    },
-    {
-        "name": "Red Stickers",
-        "classification": 1,
-        "groups": [ "Sticker Bundles" ]
-    },
-    {
-        "name": "Shiny Stickers",
-        "classification": 1,
-        "groups": [ "Sticker Bundles" ]
-    },
-    {
-        "name": "Void Stickers",
-        "classification": 1,
-        "groups": [ "Sticker Bundles" ]
-    },
-    {
-        "name": "Blue Tiles",
-        "classification": 1,
-        "groups": [ "Tiles" ]
-    },
-    {
-        "name": "Card Tiles",
-        "classification": 1,
-        "groups": [ "Tiles" ]
-    },
-    {
-        "name": "Chess Tiles",
-        "classification": 1,
-        "groups": [ "Tiles" ]
-    },
-    {
-        "name": "Currency Tiles",
-        "classification": 1,
-        "groups": [ "Tiles" ]
-    },
-    {
-        "name": "Fraction Tiles",
-        "classification": 1,
-        "groups": [ "Tiles" ]
-    },
-    {
-        "name": "Number Tiles",
-        "classification": 1,
-        "groups": [ "Tiles" ]
-    },
-    {
-        "name": "Red Tiles",
-        "classification": 1,
-        "groups": [ "Tiles" ]
-    },
-    {
-        "name": "Shiny Tiles",
-        "classification": 1,
-        "groups": [ "Tiles" ]
-    },
-    {
-        "name": "Void Tiles",
-        "classification": 1,
-        "groups": [ "Tiles" ]
+        "groups": [ "Grid Sizes" ],
+        "option_tags": [ "Shuffle Grid Size" ]
     },
     {
         "count": 5,
         "name": "Progressive Sticker Slot",
         "classification": 1,
-        "groups": [ "Sticker Slots" ]
+        "groups": [ "Sticker Slots" ],
+        "option_tags": [ "Shuffle Inventory Slots" ]
     },
     {
         "count": 5,
         "name": "Progressive Stamp Slot",
         "classification": 1,
-        "groups": [ "Stamp Slots" ]
+        "groups": [ "Stamp Slots" ],
+        "option_tags": [ "Shuffle Inventory Slots" ]
     },
     {
-        "count": 5,
-        "name": "Progressive Grid Re-roll",
-        "classification": 2,
-        "groups": [ "Rerolls" ]
+        "count": 10,
+        "name": "Progressive Tile Position",
+        "classification": 1,
+        "groups": [ "Tile Positions" ],
+        "option_tags": [ "Shuffle Locked Tile Positions" ]
     },
     {
         "name": "$1",
@@ -202,5 +83,899 @@
         "name": "$3",
         "classification": 0,
         "groups": [ "Money" ]
+    },
+    {
+        "name": "Consumable Tile",
+        "classification": 0
+    },
+    {
+        "name": "Extra Re-roll",
+        "classification": 0
+    },
+    {
+        "name": "Random Tile Boost",
+        "classification": 0
+    },
+
+
+    {
+        "name": "April Shower",
+        "classification": 1,
+        "groups": [ "Stickers", "Blue Scattering" ],
+        "character_tags": [ "Rodman" ]
+    },
+    {
+        "name": "Artist's Palette",
+        "classification": 1,
+        "groups": [ "Stickers", "Blue Scoring", "Red Scoring", "Shiny Scoring", "Void Scoring" ],
+        "character_tags": [ "Rodman", "Nina Nix" ]
+    },
+    {
+        "name": "Blueberries",
+        "classification": 1,
+        "groups": [ "Stickers", "Blue Scoring" ],
+        "character_tags": [ "Rodman" ]
+    },
+    {
+        "name": "Chequered Flag",
+        "classification": 1,
+        "groups": [ "Stickers" ]
+    },
+    {
+        "name": "Cherries",
+        "classification": 1,
+        "groups": [ "Stickers", "Red Scattering" ],
+        "character_tags": [ "Rodman" ]
+    },
+    {
+        "name": "Cherry Pie",
+        "classification": 1,
+        "groups": [ "Stickers", "Red Build" ],
+        "character_tags": [ "Rodman" ]
+    },
+    {
+        "name": "Chips",
+        "classification": 1,
+        "groups": [ "Stickers" ]
+    },
+    {
+        "name": "Credit Card",
+        "classification": 1,
+        "groups": [ "Stickers" ]
+    },
+    {
+        "name": "Dusty Coffin",
+        "classification": 1,
+        "groups": [ "Stickers", "Void Scoring" ],
+        "character_tags": [ "Nina Nix" ]
+    },
+    {
+        "name": "Egg",
+        "classification": 1,
+        "groups": [ "Stickers" ]
+    },
+    {
+        "name": "Electric Guitar",
+        "classification": 1,
+        "groups": [ "Stickers", "Red Scoring" ],
+        "character_tags": [ "Rodman" ]
+    },
+    {
+        "name": "Fire Extinguisher",
+        "classification": 1,
+        "groups": [ "Stickers", "Red Scoring" ],
+        "character_tags": [ "Rodman" ]
+    },
+    {
+        "name": "Fountain",
+        "classification": 1,
+        "groups": [ "Stickers", "Blue Scattering" ],
+        "character_tags": [ "Rodman" ]
+    },
+    {
+        "name": "Glass of Milk",
+        "classification": 1,
+        "groups": [ "Stickers", "? Scoring", "Cursed Scoring" ],
+        "character_tags": [ "Rodman", "Octacles" ]
+    },
+    {
+        "name": "Graduation Cap",
+        "classification": 1,
+        "groups": [ "Stickers" ]
+    },
+    {
+        "name": "Ham Sandwich",
+        "classification": 1,
+        "groups": [ "Stickers" ]
+    },
+    {
+        "name": "Hi Vis Jacket",
+        "classification": 1,
+        "groups": [ "Stickers" ]
+    },
+    {
+        "name": "Lipstick",
+        "classification": 1,
+        "groups": [ "Stickers", "Red Scattering" ],
+        "character_tags": [ "Rodman" ]
+    },
+    {
+        "name": "Lucky Scarf",
+        "classification": 1,
+        "groups": [ "Stickers", "Red Scoring" ],
+        "character_tags": [ "Rodman" ]
+    },
+    {
+        "name": "Magic Wand",
+        "classification": 1,
+        "groups": [ "Stickers", "Blue Scoring", "Red Scoring", "Shiny Scattering" ],
+        "character_tags": [ "Rodman", "Nina Nix" ]
+    },
+    {
+        "name": "Maple Leaf",
+        "classification": 1,
+        "groups": [ "Stickers", "Red Scoring" ],
+        "character_tags": [ "Rodman" ]
+    },
+    {
+        "name": "Ornate Key",
+        "classification": 1,
+        "groups": [ "Stickers", "Blue Scoring", "Red Scoring", "Shiny Scoring", "Void Scoring" ],
+        "character_tags": [ "Rodman", "Nina Nix" ]
+    },
+    {
+        "name": "Pair of Socks",
+        "classification": 1,
+        "groups": [ "Stickers", "Blue Scoring" ],
+        "character_tags": [ "Rodman" ]
+    },
+    {
+        "name": "Pneumonia",
+        "classification": 1,
+        "groups": [ "Stickers" ]
+    },
+    {
+        "name": "Sequoia Sapking",
+        "classification": 1,
+        "groups": [ "Stickers" ]
+    },
+    {
+        "name": "Sly Spy",
+        "classification": 1,
+        "groups": [ "Stickers" ]
+    },
+    {
+        "name": "Stilton",
+        "classification": 1,
+        "groups": [ "Stickers", "Blue Scoring" ],
+        "character_tags": [ "Rodman" ]
+    },
+    {
+        "name": "Sunflower",
+        "classification": 1,
+        "groups": [ "Stickers" ]
+    },
+    {
+        "name": "Telescope",
+        "classification": 1,
+        "groups": [ "Stickers", "Red Scoring" ],
+        "character_tags": [ "Rodman" ]
+    },
+    {
+        "name": "Wheezy Vixen",
+        "classification": 1,
+        "groups": [ "Stickers" ]
+    },
+    {
+        "name": "Worn-out Jeans",
+        "classification": 1,
+        "groups": [ "Stickers", "? Scattering", "Blue Scoring", "Cursed Scattering" ],
+        "character_tags": [ "Rodman", "Octacles" ]
+    },
+    {
+        "name": "Yellow Glasses",
+        "classification": 1,
+        "groups": [ "Stickers" ]
+    },
+
+    {
+        "name": "Mystery Gift",
+        "classification": 1,
+        "groups": [ "Stickers" ]
+    },
+    {
+        "name": "Hungry Hippo",
+        "classification": 1,
+        "groups": [ "Stickers" ]
+    },
+    {
+        "name": "Sushi",
+        "classification": 1,
+        "groups": [ "Stickers" ]
+    },
+    {
+        "name": "Ambulance",
+        "classification": 1,
+        "groups": [ "Stickers" ]
+    },
+    {
+        "name": "Dartboard",
+        "classification": 1,
+        "groups": [ "Stickers" ]
+    },
+    {
+        "name": "Magic 8 Ball",
+        "classification": 1,
+        "groups": [ "Stickers", "Chess Scoring" ],
+        "character_tags": [ "Sam Gambit" ]
+    },
+    {
+        "name": "Wind Chime",
+        "classification": 1,
+        "groups": [ "Stickers", "Card Scoring" ],
+        "character_tags": [ "Bones the Dog" ]
+    },
+    {
+        "name": "Michael's Book",
+        "classification": 1,
+        "groups": [ "Stickers" ]
+    },
+    {
+        "name": "Luffing Jib Crane",
+        "classification": 1,
+        "groups": [ "Stickers"]
+    },
+    {
+        "name": "Base Camp",
+        "classification": 1,
+        "groups": [ "Stickers" ]
+    },
+
+
+    {
+        "name": "Deep Sea Horror",
+        "classification": 1,
+        "groups": [ "Stickers", "Void Scoring" ],
+        "character_tags": [ "Nina Nix" ]
+    },
+    {
+        "name": "Doughnut",
+        "classification": 1,
+        "groups": [ "Stickers", "Blue Scoring", "Red Scoring", "Shiny Scoring", "Void Scoring" ],
+        "character_tags": [ "Rodman", "Nina Nix" ]
+    },
+    {
+        "name": "Ferris Wheel",
+        "classification": 1,
+        "groups": [ "Stickers", "Blue Scoring", "Red Scoring", "Shiny Scoring", "Void Scoring" ],
+        "character_tags": [ "Rodman", "Nina Nix" ]
+    },
+    {
+        "name": "Fish Cake",
+        "classification": 1,
+        "groups": [ "Stickers", "Shiny Scoring" ],
+        "character_tags": [ "Nina Nix" ]
+    },
+    {
+        "name": "Game Pad",
+        "classification": 1,
+        "groups": [ "Stickers", "Blue Scattering", "Red Scattering", "Void Scattering" ],
+        "character_tags": [ "Rodman", "Nina Nix" ]
+    },
+    {
+        "name": "Jigsaw Piece",
+        "classification": 1,
+        "groups": [ "Stickers", "Void Scoring" ],
+        "character_tags": [ "Nina Nix" ]
+    },
+    {
+        "name": "Maracas",
+        "classification": 1,
+        "groups": [ "Stickers", "Blue Scattering", "Red Scattering", "Shiny Scattering", "Void Scattering" ],
+        "character_tags": [ "Rodman", "Nina Nix" ]
+    },
+    {
+        "name": "Rainbow Sprinkles",
+        "classification": 1,
+        "groups": [ "Stickers", "Shiny Scattering" ],
+        "character_tags": [ "Nina Nix" ]
+    },
+    {
+        "name": "Tombstone",
+        "classification": 1,
+        "groups": [ "Stickers", "Void Scoring" ],
+        "character_tags": [ "Nina Nix" ]
+    },
+
+
+    {
+        "name": "Alembic Flask",
+        "classification": 1,
+        "groups": [ "Stickers", "Number Scoring" ],
+        "character_tags": [ "Hayley Bayles" ]
+    },
+    {
+        "name": "Birthday Cake",
+        "classification": 1,
+        "groups": [ "Stickers", "Number Scoring" ],
+        "character_tags": [ "Hayley Bayles" ]
+    },
+    {
+        "name": "Boomerang",
+        "classification": 1,
+        "groups": [ "Stickers", "Number Scoring" ],
+        "character_tags": [ "Hayley Bayles" ]
+    },
+    {
+        "name": "Brain",
+        "classification": 1,
+        "groups": [ "Stickers", "Number Scoring" ],
+        "character_tags": [ "Hayley Bayles" ]
+    },
+    {
+        "name": "Lab Coat",
+        "classification": 1,
+        "groups": [ "Stickers", "Number Scoring" ],
+        "character_tags": [ "Hayley Bayles" ]
+    },
+    {
+        "name": "Ladybird",
+        "classification": 1,
+        "groups": [ "Stickers", "Number Scattering", "Red Scattering", "Void Scattering" ],
+        "character_tags": [ "Rodman", "Nina Nix", "Hayley Bayles" ]
+    },
+    {
+        "name": "Lucky Dice",
+        "classification": 1,
+        "groups": [ "Stickers", "Number Scoring" ],
+        "character_tags": [ "Hayley Bayles" ]
+    },
+    {
+        "name": "Petri Dish",
+        "classification": 1,
+        "groups": [ "Stickers", "Cursed Scattering", "Number Scattering" ],
+        "character_tags": [ "Hayley Bayles", "Octacles" ]
+    },
+    {
+        "name": "Soaring Kite",
+        "classification": 1,
+        "groups": [ "Stickers", "Blue Scattering", "Cursed Scattering", "Number Scattering" ],
+        "character_tags": [ "Rodman", "Hayley Bayles", "Octacles" ]
+    },
+    {
+        "name": "Ten Pin Bowling",
+        "classification": 1,
+        "groups": [ "Stickers", "Cursed Scattering", "Number Scattering", "Void Scattering" ],
+        "character_tags": [ "Nina Nix", "Hayley Bayles", "Octacles" ]
+    },
+    {
+        "name": "Traffic Lights",
+        "classification": 1,
+        "groups": [ "Stickers", "Blue Scattering", "Cursed Scattering", "Number Scattering", "Red Scattering", "Shiny Scattering", "Void Scattering" ],
+        "character_tags": [ "Rodman", "Nina Nix", "Hayley Bayles", "Octacles" ]
+    },
+
+
+    {
+        "name": "Backpack",
+        "classification": 1,
+        "groups": [ "Stickers", "Chess Scattering", "Cursed Scattering", "Red Scattering" ],
+        "character_tags": [ "Rodman", "Sam Gambit", "Octacles" ]
+    },
+    {
+        "name": "Carousel Horse",
+        "classification": 1,
+        "groups": [ "Stickers", "Chess Scattering", "Cursed Scattering" ],
+        "character_tags": [ "Sam Gambit", "Octacles" ]
+    },
+    {
+        "name": "Clapper Board",
+        "classification": 1,
+        "groups": [ "Stickers", "Chess Scoring" ],
+        "character_tags": [ "Sam Gambit" ]
+    },
+    {
+        "name": "Gorilla",
+        "classification": 1,
+        "groups": [ "Stickers", "Chess Scattering", "Cursed Scattering", "Void Scattering" ],
+        "character_tags": [ "Nina Nix", "Sam Gambit", "Octacles" ]
+    },
+    {
+        "name": "Movie Camera",
+        "classification": 1,
+        "groups": [ "Stickers", "Chess Scoring" ],
+        "character_tags": [ "Sam Gambit" ]
+    },
+    {
+        "name": "Raccoon",
+        "classification": 1,
+        "groups": [ "Stickers", "Chess Scattering", "Cursed Scattering" ],
+        "character_tags": [ "Sam Gambit", "Octacles" ]
+    },
+    {
+        "name": "Suitcase",
+        "classification": 1,
+        "groups": [ "Stickers", "Blue Scattering", "Chess Scattering", "Cursed Scattering" ],
+        "character_tags": [ "Rodman", "Sam Gambit", "Octacles" ]
+    },
+    {
+        "name": "Zebra",
+        "classification": 1,
+        "groups": [ "Stickers", "Chess Scoring" ],
+        "character_tags": [ "Sam Gambit" ]
+    },
+
+
+    {
+        "name": "Celestial Body",
+        "classification": 1,
+        "groups": [ "Stickers", "Card Scoring" ],
+        "character_tags": [ "Bones the Dog" ]
+    },
+    {
+        "name": "Hanafuda",
+        "classification": 1,
+        "groups": [ "Stickers", "Card Scoring" ],
+        "character_tags": [ "Bones the Dog" ]
+    },
+    {
+        "name": "Joker",
+        "classification": 1,
+        "groups": [ "Stickers", "Card Scattering", "Cursed Scattering" ],
+        "character_tags": [ "Bones the Dog", "Octacles" ]
+    },
+    {
+        "name": "Kadomatsu",
+        "classification": 1,
+        "groups": [ "Stickers", "Card Scoring" ],
+        "character_tags": [ "Bones the Dog" ]
+    },
+    {
+        "name": "Musical Notes",
+        "classification": 1,
+        "groups": [ "Stickers", "Blue Scattering", "Card Scattering", "Cursed Scattering" ],
+        "character_tags": [ "Rodman", "Bones the Dog", "Octacles" ]
+    },
+    {
+        "name": "Peacock",
+        "classification": 1,
+        "groups": [ "Stickers", "Card Scoring" ],
+        "character_tags": [ "Bones the Dog" ]
+    },
+    {
+        "name": "Pear",
+        "classification": 1,
+        "groups": [ "Stickers", "Card Scoring" ],
+        "character_tags": [ "Bones the Dog" ]
+    },
+    {
+        "name": "Peas Of A Pod",
+        "classification": 1,
+        "groups": [ "Stickers", "Card Scoring" ],
+        "character_tags": [ "Bones the Dog" ]
+    },
+    {
+        "name": "Poker Face",
+        "classification": 1,
+        "groups": [ "Stickers", "Card Scoring", "Chess Scoring" ],
+        "character_tags": [ "Sam Gambit", "Bones the Dog" ]
+    },
+    {
+        "name": "Postal Horn",
+        "classification": 1,
+        "groups": [ "Stickers", "Card Scattering", "Cursed Scattering" ],
+        "character_tags": [ "Bones the Dog", "Octacles" ]
+    },
+    {
+        "name": "Slide",
+        "classification": 1,
+        "groups": [ "Stickers", "Card Scoring" ],
+        "character_tags": [ "Bones the Dog" ]
+    },
+    {
+        "name": "Wrestlers",
+        "classification": 1,
+        "groups": [ "Stickers", "Card Scoring" ],
+        "character_tags": [ "Bones the Dog" ]
+    },
+
+
+    {
+        "name": "Amphora",
+        "classification": 1,
+        "groups": [ "Stickers", "Cursed Scattering" ],
+        "character_tags": [ "Octacles" ]
+    },
+    {
+        "name": "Broom",
+        "classification": 1,
+        "groups": [ "Stickers", "Cursed Scoring" ],
+        "character_tags": [ "Octacles" ]
+    },
+    {
+        "name": "Ghost",
+        "classification": 1,
+        "groups": [ "Stickers", "Cursed Scattering" ],
+        "character_tags": [ "Octacles" ]
+    },
+    {
+        "name": "Jack-o'-Lantern",
+        "classification": 1,
+        "groups": [ "Stickers", "Card Scoring", "Cursed Scoring", "Chess Scoring", "Number Scoring" ],
+        "character_tags": [ "Hayley Bayles", "Sam Gambit", "Bones the Dog", "Octacles" ]
+    },
+    {
+        "name": "Mischievous Imp",
+        "classification": 1,
+        "groups": [ "Stickers", "Card Scoring", "Cursed Scoring", "Chess Scoring", "Number Scoring" ],
+        "character_tags": [ "Hayley Bayles", "Sam Gambit", "Bones the Dog", "Octacles" ]
+    },
+    {
+        "name": "Moai",
+        "classification": 1,
+        "groups": [ "Stickers", "Card Scoring", "Cursed Scoring", "Chess Scoring", "Number Scoring" ],
+        "character_tags": [ "Hayley Bayles", "Sam Gambit", "Bones the Dog", "Octacles" ]
+    },
+    {
+        "name": "Mysterious Amulet",
+        "classification": 1,
+        "groups": [ "Stickers", "Card Scoring", "Cursed Scoring", "Chess Scoring", "Number Scoring" ],
+        "character_tags": [ "Hayley Bayles", "Sam Gambit", "Bones the Dog", "Octacles" ]
+    },
+
+
+    {
+        "name": "Avocado",
+        "classification": 1,
+        "groups": [ "Stamps" ]
+    },
+    {
+        "name": "Bento Box",
+        "classification": 1,
+        "groups": [ "Stamps" ]
+    },
+    {
+        "name": "Bubble Tea",
+        "classification": 1,
+        "groups": [ "Stamps" ]
+    },
+    {
+        "name": "Downward Trending Chart",
+        "classification": 1,
+        "groups": [ "Stamps" ]
+    },
+    {
+        "name": "Efficient Recycler",
+        "classification": 1,
+        "groups": [ "Stamps" ]
+    },
+    {
+        "name": "Family Ticket",
+        "classification": 1,
+        "groups": [ "Stamps", "Red Scattering" ],
+        "character_tags": [ "Rodman" ]
+    },
+    {
+        "name": "Full Moon",
+        "classification": 1,
+        "groups": [ "Stamps" ]
+    },
+    {
+        "name": "Golden Record",
+        "classification": 1,
+        "groups": [ "Stamps" ]
+    },
+    {
+        "name": "Golden Scales",
+        "classification": 1,
+        "groups": [ "Stamps" ]
+    },
+    {
+        "name": "Hungry Snake",
+        "classification": 1,
+        "groups": [ "Stamps" ]
+    },
+    {
+        "name": "Kimono",
+        "classification": 1,
+        "groups": [ "Stamps", "? Scattering", "Blue Scoring", "Cursed Scattering" ],
+        "character_tags": [ "Rodman", "Octacles" ]
+    },
+    {
+        "name": "Limnophila",
+        "classification": 1,
+        "groups": [ "Stamps" ]
+    },
+    {
+        "name": "Nest Egg",
+        "classification": 1,
+        "groups": [ "Stamps", "Blue Scoring" ],
+        "character_tags": [ "Rodman" ]
+    },
+    {
+        "name": "Paper Lantern",
+        "classification": 1,
+        "groups": [ "Stamps", "Red Scattering" ],
+        "character_tags": [ "Rodman" ]
+    },
+    {
+        "name": "Parachute",
+        "classification": 1,
+        "groups": [ "Stamps", "Red Scattering" ],
+        "character_tags": [ "Rodman" ]
+    },
+    {
+        "name": "Piñata",
+        "classification": 1,
+        "groups": [ "Stamps", "Shiny Scattering" ],
+        "character_tags": [ "Nina Nix" ]
+    },
+    {
+        "name": "Queenie",
+        "classification": 1,
+        "groups": [ "Stamps" ]
+    },
+    {
+        "name": "Red Envelope",
+        "classification": 1,
+        "groups": [ "Stamps", "Red Scoring" ],
+        "character_tags": [ "Rodman" ]
+    },
+    {
+        "name": "Saxophone",
+        "classification": 1,
+        "groups": [ "Stamps", "Blue Scoring" ],
+        "character_tags": [ "Rodman" ]
+    },
+    {
+        "name": "Slot Machine",
+        "classification": 1,
+        "groups": [ "Stamps", "Void Scattering" ],
+        "character_tags": [ "Nina Nix" ]
+    },
+    {
+        "name": "Sluggish Zombie",
+        "classification": 1,
+        "groups": [ "Stamps" ]
+    },
+    {
+        "name": "Teapot",
+        "classification": 1,
+        "groups": [ "Stamps", "Blue Scattering" ],
+        "character_tags": [ "Rodman" ]
+    },
+    {
+        "name": "Tile Ninja",
+        "classification": 1,
+        "groups": [ "Stamps" ]
+    },
+    {
+        "name": "Waxy Vizor",
+        "classification": 1,
+        "groups": [ "Stamps", "Blue Scattering" ],
+        "character_tags": [ "Rodman" ]
+    },
+    {
+        "name": "Weekly Shop",
+        "classification": 1,
+        "groups": [ "Stamps" ]
+    },
+    {
+        "name": "Window",
+        "classification": 1,
+        "groups": [ "Stamps", "Blue Scattering" ],
+        "character_tags": [ "Rodman" ]
+    },
+    {
+        "name": "Xray",
+        "classification": 1,
+        "groups": [ "Stamps", "? Scattering", "Blue Scoring", "Cursed Scattering" ],
+        "character_tags": [ "Rodman", "Octacles" ]
+    },
+    {
+        "name": "Young Cardinal",
+        "classification": 1,
+        "groups": [ "Stamps" ]
+    },
+
+
+    {
+        "name": "Banana",
+        "classification": 1,
+        "groups": [ "Stamps" ]
+    },
+    {
+        "name": "Head Trauma",
+        "classification": 1,
+        "groups": [ "Stamps", "? Scattering", "Blue Scattering", "Cursed Scattering", "Void Scattering" ],
+        "character_tags": [ "Rodman", "Nina Nix", "Octacles" ]
+    },
+    {
+        "name": "Busy Schedule",
+        "classification": 1,
+        "groups": [ "Stamps", "Cursed Scattering", "Number Scattering" ],
+        "character_tags": [ "Hayley Bayles", "Octacles" ]
+    },
+    {
+        "name": "Number Go Up",
+        "classification": 1,
+        "groups": [ "Stamps", "Number Scoring" ],
+        "character_tags": [ "Hayley Bayles" ]
+    },
+    {
+        "name": "Bar of Soap",
+        "classification": 1,
+        "groups": [ "Stamps", "? Scattering", "Cursed Scattering", "Shiny Scattering" ],
+        "character_tags": [ "Nina Nix", "Octacles" ]
+    },
+    {
+        "name": "Honeypot",
+        "classification": 1,
+        "groups": [ "Stamps" ]
+    },
+    {
+        "name": "Ruler",
+        "classification": 1,
+        "groups": [ "Stamps" ]
+    },
+    {
+        "name": "Christmas Tree",
+        "classification": 1,
+        "groups": [ "Stamps", "Blue Scattering", "Red Scattering", "Shiny Scattering", "Void Scattering" ],
+        "character_tags": [ "Rodman", "Nina Nix" ]
+    },
+    {
+        "name": "Juice Box",
+        "classification": 1,
+        "groups": [ "Stamps" ]
+    },
+    {
+        "name": "Chick",
+        "classification": 1,
+        "groups": [ "Stamps" ]
+    },
+    {
+        "name": "Spicy Pepper",
+        "classification": 1,
+        "groups": [ "Stamps", "Red Scoring" ],
+        "character_tags": [ "Rodman" ]
+    },
+    {
+        "name": "Rosebud",
+        "classification": 1,
+        "groups": [ "Stamps", "Red Scattering" ],
+        "character_tags": [ "Rodman" ]
+    },
+    {
+        "name": "Angel Investment",
+        "classification": 1,
+        "groups": [ "Stamps" ]
+    },
+    {
+        "name": "Eraser",
+        "classification": 1,
+        "groups": [ "Stamps" ]
+    },
+    {
+        "name": "Tin of Beans",
+        "classification": 1,
+        "groups": [ "Stamps", "Blue Scattering", "Red Scattering", "Shiny Scattering", "Void Scattering" ],
+        "character_tags": [ "Rodman", "Nina Nix" ]
+    },
+
+
+    {
+        "name": "Chocolate Candy",
+        "classification": 1,
+        "groups": [ "Stamps", "Blue Scattering", "Red Scattering", "Shiny Scattering", "Void Scattering" ],
+        "character_tags": [ "Rodman", "Nina Nix" ]
+    },
+    {
+        "name": "Dangerous Summit",
+        "classification": 1,
+        "groups": [ "Stamps", "Void Scattering" ],
+        "character_tags": [ "Nina Nix" ]
+    },
+    {
+        "name": "Dango",
+        "classification": 1,
+        "groups": [ "Stamps", "Blue Scoring", "Red Scoring", "Shiny Scoring", "Void Scoring" ],
+        "character_tags": [ "Rodman", "Nina Nix" ]
+    },
+
+
+    {
+        "name": "Flamingo",
+        "classification": 1,
+        "groups": [ "Stamps", "Cursed Scattering", "Number Scattering", "Shiny Scoring"  ],
+        "character_tags": [ "Nina Nix", "Hayley Bayles", "Octacles" ]
+    },
+    {
+        "name": "Full Battery",
+        "classification": 1,
+        "groups": [ "Stamps", "Cursed Scoring", "Number Scoring" ],
+        "character_tags": [ "Hayley Bayles", "Octacles" ]
+    },
+    {
+        "name": "Microscope",
+        "classification": 1,
+        "groups": [ "Stamps", "Cursed Scattering", "Number Scattering" ],
+        "character_tags": [ "Hayley Bayles", "Octacles" ]
+    },
+    {
+        "name": "Test Tube",
+        "classification": 1,
+        "groups": [ "Stamps", "Cursed Scattering", "Number Scattering" ],
+        "character_tags": [ "Hayley Bayles", "Octacles" ]
+    },
+
+
+    {
+        "name": "Business Goose",
+        "classification": 1,
+        "groups": [ "Stamps", "Cursed Scattering", "Chess Scattering" ],
+        "character_tags": [ "Sam Gambit", "Octacles" ]
+    },
+    {
+        "name": "Queen Bee",
+        "classification": 1,
+        "groups": [ "Stamps", "Cursed Scattering", "Chess Scattering" ],
+        "character_tags": [ "Sam Gambit", "Octacles" ]
+    },
+
+    {
+        "name": "Card Shark",
+        "classification": 1,
+        "groups": [ "Stamps", "Card Scoring" ],
+        "character_tags": [ "Bones the Dog" ]
+    },
+    {
+        "name": "Four Leaf Clover",
+        "classification": 1,
+        "groups": [ "Stamps", "Blue Scattering", "Card Scattering", "Cursed Scattering", "Red Scattering", "Shiny Scattering", "Void Scattering" ],
+        "character_tags": [ "Rodman", "Nina Nix", "Bones the Dog", "Octacles" ]
+    },
+    {
+        "name": "Go Fish!",
+        "classification": 1,
+        "groups": [ "Stamps", "Blue Scattering", "Card Scattering", "Cursed Scattering", "Number Scattering" ],
+        "character_tags": [ "Rodman", "Hayley Bayles", "Bones the Dog", "Octacles" ]
+    },
+    {
+        "name": "Magician's Hat",
+        "classification": 1,
+        "groups": [ "Stamps", "Card Scattering", "Cursed Scattering" ],
+        "character_tags": [ "Bones the Dog", "Octacles" ]
+    },
+    {
+        "name": "Martini",
+        "classification": 1,
+        "groups": [ "Stamps", "Card Scoring" ],
+        "character_tags": [ "Bones the Dog" ]
+    },
+    {
+        "name": "Smart Shirt",
+        "classification": 1,
+        "groups": [ "Stamps", "Card Scattering", "Cursed Scattering" ],
+        "character_tags": [ "Bones the Dog", "Octacles" ]
+    },
+    {
+        "name": "Valentine's Day Card",
+        "classification": 1,
+        "groups": [ "Stamps", "Card Scattering", "Cursed Scattering" ],
+        "character_tags": [ "Bones the Dog", "Octacles" ]
+    },
+
+    {
+        "name": "Haunted Mirror",
+        "classification": 1,
+        "groups": [ "Stamps", "Blue Scattering", "Cursed Scattering", "Red Scattering", "Shiny Scattering", "Void Scattering" ],
+        "character_tags": [ "Rodman", "Nina Nix", "Octacles" ]
+    },
+    {
+        "name": "Oden",
+        "classification": 1,
+        "groups": [ "Stamps", "Cursed Scoring" ],
+        "character_tags": [ "Octacles" ]
     }
 ]

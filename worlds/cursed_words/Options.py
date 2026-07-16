@@ -3,7 +3,7 @@ from BaseClasses import ItemClassification, Options
 # from .Enums import GoalType
 from .Items import item_table
 import logging
-from Options import Choice, DeathLink, OptionDict, OptionList, ItemDict, PerGameCommonOptions, StartInventoryPool, Toggle
+from Options import DeathLink, OptionList, PerGameCommonOptions, Range, StartInventoryPool, Toggle
 from .Regions import region_table
 from typing import Dict, List
 
@@ -53,6 +53,67 @@ class Goal(OptionList):
     valid_keys = [ "All" ] + _character_names
     default = [ "All" ]
 
+class ShuffleGridSize(Toggle):
+    """
+    The grid starts as 3x3 tiles and adds two 'Progressive Grid Size' items to the pool, each increasing the grid size
+    to 4x4 and then 5x5 tiles.
+    """
+    display_name = "Shuffle Grid Size"
+    default = False
+
+class ShuffleInventorySlots(Toggle):
+    """
+    Your inventory has all Sticker and Stamp Slots locked and cannot be used.
+    5x 'Progressive Sticker Slot' and 5x 'Progressive Stamp Slot' items are added to the item pool, each unlocking one respective slot.
+    """
+    display_name = "Shuffle Inventory Slots"
+    default = False
+
+class ShuffleLockedTilePositions(Toggle):
+    """
+    The grid starts with 10 randomly selected tile positions being 'locked', making them un-selectable.
+    Adds 10 'Progressive Tile Position' items to the pool, each unlocking one locked tile position.
+    """
+    display_name = "Shuffle Locked Tile Positions"
+    default = False
+
+class Bosssanity(Toggle):
+    """
+    Add checks for defeating each individual main boss.
+    
+    NOTE: Does not currently include Sandy, Cretacious Meg, Human Boy, Beans or Michael.
+          Will be added in a future update.
+    """
+    display_name = "Boss-sanity"
+    default = False
+
+class Shopsanity(Toggle):
+    """
+    Add items to the shop that can be purchased to check locations.
+    """
+    display_name = "Shopsanity"
+    default = False
+
+class ShopsanityLimit(Range):
+    """
+    How many shop locations will be available for purchase.
+    NOTE: This setting will be ignored if <shopsanity> is 'false'.
+    """
+    display_name = "Shopsanity Limit"
+    range_start = 1
+    range_end = 30
+    default = 20
+
+class ShopsanityCost(Range):
+    """
+    How much each shop location will cost to purchase.
+    NOTE: This setting is ignored if <shopsanity> is 'false'.
+    """
+    display_name = "Shopsanity Cost"
+    range_start = 5
+    range_end = 25
+    default = 12
+
 @dataclass
 class CursedWordsOptions(PerGameCommonOptions):
     """"""
@@ -60,6 +121,13 @@ class CursedWordsOptions(PerGameCommonOptions):
     starting_character: StartingCharacter
     goal: Goal
     deathlink: DeathLink
+    shuffle_grid_size: ShuffleGridSize
+    shuffle_inventory_slots: ShuffleInventorySlots
+    shuffle_locked_tile_positions: ShuffleLockedTilePositions
+    bosssanity: Bosssanity
+    shopsanity: Shopsanity
+    shopsanity_limit: ShopsanityLimit
+    shopsanity_cost: ShopsanityCost
 
     # Built-in
     start_inventory_from_pool: StartInventoryPool
@@ -69,6 +137,10 @@ class CursedWordsOptions(PerGameCommonOptions):
 
         # logging.info(f"Playable Characters selection: {self.characters.value}")
 
+        # Revert to default if empty list provided
+        if len(self.characters.value) == 0:
+            self.characters.value = self.characters.default
+
         # Check if 'All' exists in Characters option
         if "All" in self.characters.value:
             # logging.info(f"  -> 'All' found, including all characters...")
@@ -76,6 +148,10 @@ class CursedWordsOptions(PerGameCommonOptions):
 
         # logging.info(f"Starting character selection: {self.starting_character.value}")
         
+        # Revert to default if empty list provided
+        if len(self.starting_character.value) == 0:
+            self.starting_character.value = self.starting_character.default  
+
         # Check if 'Random' exists in Starting Character option
         if "Random" in self.starting_character.value:
             # logging.info(f"  -> 'Random' found, selecting all characters from <Playable Characters> selection...")
@@ -89,7 +165,11 @@ class CursedWordsOptions(PerGameCommonOptions):
             # logging.info(f"  -> No matching characters selected, defaulting to 'Random'...")
             self.starting_character.value = self.characters.value    
 
-        logging.info(f"Goal selection: {self.goal.value}")
+        # logging.info(f"Goal selection: {self.goal.value}")
+
+        # Revert to default if empty list provided
+        if len(self.goal.value) == 0:
+            self.goal.value = self.characters.default
 
         # Check if 'All' exists in Goal options
         if "All" in self.goal.value:

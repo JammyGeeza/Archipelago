@@ -1,11 +1,12 @@
 from worlds.AutoWorld import World, WebWorld
 from BaseClasses import Item, ItemClassification, Tutorial
 from .Items import CursedWordsItem, item_name_groups_lookup, item_name_to_id_lookup, item_table, generate_items, generate_filler_items
-from .Locations import location_name_to_id_lookup
+from .Locations import location_name_to_id_lookup, location_table
 from .Options import CursedWordsOptions
 from .Regions import CursedWordsRegion, region_table, generate_regions
-from .Rules import generate_goal
+from .Rules import generate_goal_events, generate_goal
 import logging
+import math
 from typing import Any, Dict, List
 
 class CursedWordsWeb(WebWorld):
@@ -45,24 +46,65 @@ class CursedWordsWorld(World):
         self.options.resolve_options()
 
         # Gather tags for run (determines what items/locations/regions to include in the run)
-        self.tags: List[str] = [
+        self.character_tags: List[str] = [
             *self.options.characters.value
-            # Additional tag inclusions go here...
         ]
 
-        logging.info(f"Selecting starting character ...")
+        self.option_tags: List[str] = [
+            *([self.options.shuffle_grid_size.display_name] if self.options.shuffle_grid_size.value else []),
+            *([self.options.shuffle_inventory_slots.display_name] if self.options.shuffle_inventory_slots.value else []),
+            *([self.options.shuffle_locked_tile_positions.display_name] if self.options.shuffle_locked_tile_positions.value else []),
+            *([self.options.bosssanity.display_name] if self.options.bosssanity.value else []),
+            *([self.options.shopsanity.display_name] if self.options.shopsanity.value else []),
+            # Additional tag inclusions go here
+        ]
+
+        # logging.info(f"Selecting starting character ...")
 
         # Randomly select starting character
         self.start_character: str = self.random.choice(
             self.options.starting_character.value
         )
 
-        logging.info(f"Randomly selected '{self.start_character}' as starting character")
+        # logging.info(f"Randomly selected '{self.start_character}' as starting character")
 
-        # Add starting character as starting item from pool
-        self.options.start_inventory_from_pool.value.update({ f"{self.start_character}": 1 })
+        # Pre-collect starting character so it's always in the initial state
+        self.multiworld.push_precollected(self.create_item(self.start_character))
+        
+        # Pre-collect 8 generic starting stamps
+        eligible_starting_stamps: List[str] = [
+            stamp.name for stamp in item_table
+            if len(stamp.character_tags) == 0
+            and len(stamp.option_tags) == 0
+            and "Stamps" in stamp.groups
+        ]
+        for stamp in self.random.sample(eligible_starting_stamps, 8):
+            self.multiworld.push_precollected(self.create_item(stamp))
 
-        logging.info(f"Starting inventory from pool: {self.options.start_inventory_from_pool.value}")
+        # Pre-collect 8 generic starting stickers
+        eligible_starting_stickers: List[str] = [
+            sticker.name for sticker in item_table
+            if len(sticker.character_tags) == 0
+            and len(sticker.option_tags) == 0
+            and "Stickers" in sticker.groups
+        ]
+        for sticker in self.random.sample(eligible_starting_stickers, 8):
+            self.multiworld.push_precollected(self.create_item(sticker))
+
+        # logging.info(f"Starting inventory from pool: {self.options.start_inventory_from_pool.value}")
+
+        # If 'Progressive Tile Positions' is enabled, generate tile positions
+        self.selected_tile_positions = []
+        if self.options.shuffle_locked_tile_positions.value:
+            # To attempt to evenly spread locked tiles, split 5x5 grid into concentric 'L' shapes and randomly select
+            # more from each larger 'L' shape - this should also mean a 3x3 starting grid from 'Progressive Grid Size'
+            # will only ever contain 3 locked tile positions
+            self.selected_tile_positions = (
+                self.random.sample([[0,0], [0,1], [1,0], [1,1]], 1) +
+                self.random.sample([[2,0], [2,1], [2,2], [1,2], [0,2]], 2) +
+                self.random.sample([[3,0], [3,1], [3,2], [3,3], [2,3], [1,3], [0,3]], 3) +
+                self.random.sample([[4,0], [4,1], [4,2], [4,3], [4,4], [3,4], [2,4], [1,4], [0,4]], 4)
+            )
 
     def create_items(self):
         """Create all items for the item pool."""
@@ -75,11 +117,14 @@ class CursedWordsWorld(World):
     
     def create_filler(self):
         """Create a filler item - used when StartInventoryPool needs to fill a gap created by pre-collected items."""
+        if not hasattr(self, 'tags'):
+            self.tags = []
         return generate_filler_items(self, 1)[0]
 
     def create_regions(self):
         """Create all applicable regions for the configured multiworld."""
         generate_regions(self)
+        generate_goal_events(self)
 
     def set_rules(self):
          """Set access rules for regions, locations and goals."""
@@ -91,7 +136,16 @@ class CursedWordsWorld(World):
         # Add required options data
         slot_data: Dict[str, any] = self.options.as_dict(
             "deathlink",
-            "goal"
+            "goal",
+            "shuffle_grid_size",
+            "shuffle_inventory_slots",
+            "shuffle_locked_tile_positions",
+            "shopsanity",
+            "shopsanity_cost",
         )
+
+        slot_data.update({
+            "shuffle_locked_tile_positions_coords": self.selected_tile_positions
+        })
 
         return slot_data

@@ -1510,7 +1510,7 @@ def set_rules(world: MultiWorld, player: int):
       
       set_rule(world.get_location("Build a University", player),
                lambda state: # Phase Two
-                  state.sl_has_all_ideas(["Brick", "University"]))
+                  state.sl_has_all_ideas(["Brick", "University"], player))
 
       set_rule(world.get_location("Build a Warehouse", player),
                lambda state:  # Phase Three
