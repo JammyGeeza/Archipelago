@@ -182,56 +182,56 @@
 
 
     {
-        "name": "Run: Destroy a Consumable Tile",
+        "name": "Destroy a Consumable Tile",
         "region": "Stage 1"
     },
     {
         "count": 3,
         "count_start": 5,
         "count_step": 5,
-        "name": "Run: Earn ${count} Total",
+        "name": "Earn ${count} in a Run",
         "region": "Stage 1"
     },
     {
         "count": 4,
         "count_start": 20,
         "count_step": 10,
-        "name": "Run: Earn ${count} Total",
+        "name": "Earn ${count} in a Run",
         "region": "Stage 2"
     },
     {
         "count": 8,
         "count_start": 75,
         "count_step": 25,
-        "name": "Run: Earn ${count} Total",
+        "name": "Earn ${count} in a Run",
         "region": "Stage 3"
     },
     {
         "count": 5,
         "count_start": 300,
         "count_step": 50,
-        "name": "Run: Earn ${count} Total",
+        "name": "Earn ${count} in a Run",
         "region": "Stage 4"
     },
     {
         "count": 5,
         "count_start": 600,
-        "count_step": 10,
-        "name": "Run: Earn ${count} Total",
+        "count_step": 100,
+        "name": "Earn ${count} in a Run",
         "region": "Stage 5"
     },
     {
-        "name": "Run: Place a Consumable Tile",
+        "name": "Place a Consumable Tile",
         "region": "Stage 1"
     },
     {
-        "name": "Run: Skip a Grid",
+        "name": "Skip a Grid",
         "region": "Stage 1"
     },
 
 
     {
-        "name": "Shop: Buy a Sticker",
+        "name": "Buy a Sticker",
         "region": "Stage 1",
         "access_rule": {
             "rule": "HasGroup",
@@ -250,7 +250,7 @@
         }
     },
     {
-        "name": "Shop: Buy a Stamp",
+        "name": "Buy a Stamp",
         "region": "Stage 1",
         "access_rule": {
             "rule": "HasGroup",
@@ -269,12 +269,12 @@
         }
     },
     {
-        "name": "Shop: Buy a Consumable Tile",
+        "name": "Buy a Consumable Tile",
         "region": "Stage 1"
     },
     {
         "count": 30,
-        "name": "Shop: Buy Shopsanity Item {count}",
+        "name": "Buy Shopsanity Item {count}",
         "region": "Stage 1",
         "access_rule": {
             "rule": "And",
@@ -314,19 +314,19 @@
         "option_tags": [ "Shopsanity" ]
     },
     {
-        "name": "Shop: Freeze a Stamp",
+        "name": "Freeze a Stamp",
         "region": "Stage 1"
     },
     {
-        "name": "Shop: Freeze a Sticker",
+        "name": "Freeze a Sticker",
         "region": "Stage 1"
     },
     {
-        "name": "Shop: Restock the Shop",
+        "name": "Restock the Shop",
         "region": "Stage 1"
     },
     {
-        "name": "Shop: Sell a Sticker",
+        "name": "Sell a Sticker",
         "region": "Stage 1",
         "access_rule": {
             "rule": "HasGroup",
@@ -345,7 +345,7 @@
         }
     },
     {
-        "name": "Shop: Sell a Stamp",
+        "name": "Sell a Stamp",
         "region": "Stage 1",
         "access_rule": {
             "rule": "HasGroup",
@@ -367,25 +367,25 @@
     
     {
         "count": 3,
-        "name": "Word: Length {count} Tiles",
+        "name": "Word Length: {count} Tiles",
         "region": "Stage 1"
     },
     {
         "count": 3,
         "count_start": 4,
-        "name": "Word: Length {count} Tiles",
+        "name": "Word Length: {count} Tiles",
         "region": "Stage 2"
     },
     {
         "count": 3,
         "count_start": 7,
-        "name": "Word: Length {count} Tiles",
+        "name": "Word Length: {count} Tiles",
         "region": "Stage 3"
     },
     {
         "count": 3,
         "count_start": 10,
-        "name": "Word: Length {count} Tiles",
+        "name": "Word Length: {count} Tiles",
         "region": "Stage 4"
     },
 
@@ -394,48 +394,48 @@
         "count": 3,
         "count_start": 5,
         "count_step": 5,
-        "name": "Word: Score {count}+",
+        "name": "Word Score: {count}+",
         "region": "Stage 1"
     },
     {
         "count": 4,
         "count_start": 20,
         "count_step": 10,
-        "name": "Word: Score {count}+",
+        "name": "Word Score: {count}+",
         "region": "Stage 2"
     },
     {
         "count": 8,
         "count_start": 75,
         "count_step": 25,
-        "name": "Word: Score {count}+",
+        "name": "Word Score: {count}+",
         "region": "Stage 3"
     },
     {
         "count": 5,
         "count_start": 300,
         "count_step": 50,
-        "name": "Word: Score {count}+",
+        "name": "Word Score: {count}+",
         "region": "Stage 4"
     },
     {
         "count": 5,
         "count_start": 600,
         "count_step": 100,
-        "name": "Word: Score {count}+",
+        "name": "Word Score: {count}+",
         "region": "Stage 5"
     },
     {
         "count": 6,
         "count_start": 1250,
         "count_step": 250,
-        "name": "Word: Score {count}+",
+        "name": "Word Score: {count}+",
         "region": "Stage 5"
     },
 
 
     {
-        "name": "Word: Use a ? Tile",
+        "name": "Use a Blank Tile",
         "region": "Stage 1",
         "access_rule": {
             "rule": "And",
@@ -451,7 +451,7 @@
         "character_tags": [ "Octacles" ]
     },
     {
-        "name": "Word: Use a Blue Tile",
+        "name": "Use a Blue Tile",
         "region": "Stage 1",
         "access_rule": {
             "rule": "And",
@@ -467,7 +467,7 @@
         "character_tags": [ "Rodman" ]
     },
     {
-        "name": "Word: Use a Chess Tile",
+        "name": "Use a Chess Tile",
         "region": "Stage 1",
         "access_rule": {
             "rule": "And",
@@ -486,62 +486,47 @@
         "character_tags": [ "Sam Gambit", "Octacles" ]
     },
     {
-        "name": "Word: Use a Card Tile",
-        "region": "Stage 1",
-        "access_rule": {
-            "rule": "And",
-            "children": [
-                {
-                    "rule": "HasAny",
-                    "args": {
-                        "item_names": [
-                            "Bones the Dog",
-                            "Octacles"
-                        ]
-                    }
-                }
-            ]
-        },
-        "character_tags": [ "Bones the Dog", "Octacles" ]
-    },
-    {
-        "name": "Word: Use a Currency Tile",
-        "region": "Stage 1",
-        "access_rule": {
-            "rule": "And",
-            "children": [
-                {
-                    "rule": "Has",
-                    "args": {
-                        "item_name": "Octacles"
-                    }
-                }
-            ]
-        },
-        "character_tags": [ "Octacles" ]
-    },
-    {
-        "name": "Word: Use a Fraction Tile",
-        "region": "Stage 1",
-        "access_rule": {
-            "rule": "And",
-            "children": [
-                {
-                    "rule": "Has",
-                    "args": {
-                        "item_name": "Octacles"
-                    }
-                }
-            ]
-        },
-        "character_tags": [ "Octacles" ]
-    },
-    {
-        "name": "Word: Use a Letter Tile",
+        "name": "Use a Colourless Tile",
         "region": "Stage 1"
     },
     {
-        "name": "Word: Use a Number Tile",
+        "name": "Use a Currency Tile",
+        "region": "Stage 1",
+        "access_rule": {
+            "rule": "And",
+            "children": [
+                {
+                    "rule": "Has",
+                    "args": {
+                        "item_name": "Octacles"
+                    }
+                }
+            ]
+        },
+        "character_tags": [ "Octacles" ]
+    },
+    {
+        "name": "Use a Fraction Tile",
+        "region": "Stage 1",
+        "access_rule": {
+            "rule": "And",
+            "children": [
+                {
+                    "rule": "Has",
+                    "args": {
+                        "item_name": "Octacles"
+                    }
+                }
+            ]
+        },
+        "character_tags": [ "Octacles" ]
+    },
+    {
+        "name": "Use a Letter Tile",
+        "region": "Stage 1"
+    },
+    {
+        "name": "Use a Number Tile",
         "region": "Stage 1",
         "access_rule": {
             "rule": "And",
@@ -560,7 +545,7 @@
         "character_tags": [ "Hayley Bayles", "Octacles" ]
     },
     {
-        "name": "Word: Use a Red Tile",
+        "name": "Use a Red Tile",
         "region": "Stage 1",
         "access_rule": {
             "rule": "And",
@@ -576,7 +561,7 @@
         "character_tags": [ "Rodman" ]
     },
     {
-        "name": "Word: Use a Shiny Tile",
+        "name": "Use a Shiny Tile",
         "region": "Stage 1",
         "access_rule": {
             "rule": "And",
@@ -592,7 +577,26 @@
         "character_tags": [ "Nina Nix" ]
     },
     {
-        "name": "Word: Use a Void Tile",
+        "name": "Use a Suited Tile",
+        "region": "Stage 1",
+        "access_rule": {
+            "rule": "And",
+            "children": [
+                {
+                    "rule": "HasAny",
+                    "args": {
+                        "item_names": [
+                            "Bones the Dog",
+                            "Octacles"
+                        ]
+                    }
+                }
+            ]
+        },
+        "character_tags": [ "Bones the Dog", "Octacles" ]
+    },
+    {
+        "name": "Use a Void Tile",
         "region": "Stage 1",
         "access_rule": {
             "rule": "And",

@@ -98,7 +98,7 @@ def generate_regions(world: World):
                 # --- Intercept locations with specific counts defined ---
 
                 # If 'Shopsanity' is enabled, update the amount of shopsanity checks to include
-                if world.options.shopsanity.value and location_model.name.startswith("Shop: Buy Shopsanity Item "):
+                if world.options.shopsanity.value and location_model.name.startswith("Buy Shopsanity Item "):
                     location_model.count = world.options.shopsanity_limit.value
 
                 # --- End of Intercept ---
