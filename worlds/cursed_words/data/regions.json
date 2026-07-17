@@ -26,21 +26,6 @@
                     "rule": "And",
                     "children": [
                         {
-                            "rule": "HasGroup",
-                            "options": [
-                                {
-                                    "option": "worlds.cursed_words.Options.ShuffleLockedTilePositions",
-                                    "value": 1,
-                                    "operator": "eq"
-                                }
-                            ],
-                            "args": {
-                                "item_name_group": "Tile Positions",
-                                "count": 2
-                            },
-                            "filtered_resolution": true
-                        },
-                        {
                             "rule": "And",
                             "options": [
                                 {
@@ -65,6 +50,21 @@
                                     }
                                 }
                             ],
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ShuffleLockedTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 2
+                            },
                             "filtered_resolution": true
                         },
                         {
@@ -212,21 +212,6 @@
                             "filtered_resolution": true
                         },
                         {
-                            "rule": "HasGroup",
-                            "options": [
-                                {
-                                    "option": "worlds.cursed_words.Options.ShuffleLockedTilePositions",
-                                    "value": 1,
-                                    "operator": "eq"
-                                }
-                            ],
-                            "args": {
-                                "item_name_group": "Tile Positions",
-                                "count": 4
-                            },
-                            "filtered_resolution": true
-                        },
-                        {
                             "rule": "And",
                             "options": [
                                 {
@@ -251,6 +236,36 @@
                                     }
                                 }
                             ],
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ShuffleItemRarities",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Item Rarities",
+                                "count": 1
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ShuffleLockedTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 4
+                            },
                             "filtered_resolution": true
                         },
                         {
@@ -525,21 +540,6 @@
                             "filtered_resolution": true
                         },
                         {
-                            "rule": "HasGroup",
-                            "options": [
-                                {
-                                    "option": "worlds.cursed_words.Options.ShuffleLockedTilePositions",
-                                    "value": 1,
-                                    "operator": "eq"
-                                }
-                            ],
-                            "args": {
-                                "item_name_group": "Tile Positions",
-                                "count": 6
-                            },
-                            "filtered_resolution": true
-                        },
-                        {
                             "rule": "And",
                             "options": [
                                 {
@@ -564,6 +564,21 @@
                                     }
                                 }
                             ],
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ShuffleLockedTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 6
+                            },
                             "filtered_resolution": true
                         },
                         {
@@ -823,21 +838,6 @@
                     "rule": "And",
                     "children": [
                         {
-                            "rule": "HasGroup",
-                            "options": [
-                                {
-                                    "option": "worlds.cursed_words.Options.ShuffleLockedTilePositions",
-                                    "value": 1,
-                                    "operator": "eq"
-                                }
-                            ],
-                            "args": {
-                                "item_name_group": "Tile Positions",
-                                "count": 10
-                            },
-                            "filtered_resolution": true
-                        },
-                        {
                             "rule": "And",
                             "options": [
                                 {
@@ -862,6 +862,36 @@
                                     }
                                 }
                             ],
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ShuffleItemRarities",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Item Rarities",
+                                "count": 2
+                            },
+                            "filtered_resolution": true
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "options": [
+                                {
+                                    "option": "worlds.cursed_words.Options.ShuffleLockedTilePositions",
+                                    "value": 1,
+                                    "operator": "eq"
+                                }
+                            ],
+                            "args": {
+                                "item_name_group": "Tile Positions",
+                                "count": 10
+                            },
                             "filtered_resolution": true
                         },
                         {

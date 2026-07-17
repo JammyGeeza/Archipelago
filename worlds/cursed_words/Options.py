@@ -69,6 +69,13 @@ class ShuffleInventorySlots(Toggle):
     display_name = "Shuffle Inventory Slots"
     default = False
 
+class ShuffleItemRarities(Toggle):
+    """
+    Adds two 'Progressive Item Rarity' items to the pool which will allow higher rarity items to appear in the shop.
+    """
+    display_name = "Shuffle Item Rarities"
+    default = False
+
 class ShuffleLockedTilePositions(Toggle):
     """
     The grid starts with 10 randomly selected tile positions being 'locked', making them un-selectable.
@@ -123,6 +130,7 @@ class CursedWordsOptions(PerGameCommonOptions):
     deathlink: DeathLink
     shuffle_grid_size: ShuffleGridSize
     shuffle_inventory_slots: ShuffleInventorySlots
+    shuffle_item_rarities: ShuffleItemRarities
     shuffle_locked_tile_positions: ShuffleLockedTilePositions
     bosssanity: Bosssanity
     shopsanity: Shopsanity

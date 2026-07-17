@@ -53,9 +53,11 @@ class CursedWordsWorld(World):
         self.option_tags: List[str] = [
             *([self.options.shuffle_grid_size.display_name] if self.options.shuffle_grid_size.value else []),
             *([self.options.shuffle_inventory_slots.display_name] if self.options.shuffle_inventory_slots.value else []),
+            *([self.options.shuffle_item_rarities.display_name] if self.options.shuffle_item_rarities.value else []),
             *([self.options.shuffle_locked_tile_positions.display_name] if self.options.shuffle_locked_tile_positions.value else []),
             *([self.options.bosssanity.display_name] if self.options.bosssanity.value else []),
             *([self.options.shopsanity.display_name] if self.options.shopsanity.value else []),
+            
             # Additional tag inclusions go here
         ]
 
@@ -139,6 +141,7 @@ class CursedWordsWorld(World):
             "goal",
             "shuffle_grid_size",
             "shuffle_inventory_slots",
+            "shuffle_item_rarities",
             "shuffle_locked_tile_positions",
             "shopsanity",
             "shopsanity_cost",
