@@ -1,0 +1,26 @@
+Traceback (most recent call last):
+  File "D:\Repositories\Archipelago\Fuzz.py", line 328, in gen_wrapper
+    call_generate(yaml_path.name, args)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Repositories\Archipelago\Fuzz.py", line 296, in call_generate
+    ERmain(erargs, seed)
+    ~~~~~~^^^^^^^^^^^^^^
+  File "D:\Repositories\Archipelago\Main.py", line 115, in main
+    AutoWorld.call_all(multiworld, "create_items")
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Repositories\Archipelago\worlds\AutoWorld.py", line 205, in call_all
+    call_single(multiworld, method_name, player, *args)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Repositories\Archipelago\worlds\AutoWorld.py", line 191, in call_single
+    raise e
+  File "D:\Repositories\Archipelago\worlds\AutoWorld.py", line 184, in call_single
+    ret = _timed_call(method, *args, multiworld=multiworld, player=player)
+  File "D:\Repositories\Archipelago\worlds\AutoWorld.py", line 169, in _timed_call
+    ret = method(*args)
+  File "D:\Repositories\Archipelago\worlds\cursed_words\__init__.py", line 135, in create_items
+    generate_items(self)
+    ~~~~~~~~~~~~~~^^^^^^
+  File "D:\Repositories\Archipelago\worlds\cursed_words\Items.py", line 131, in generate_items
+    raise Exception(f"Critical items count {critical_copy_count} will exceed location count ({unfilled_location_count}) for player {world.player} - thresholds may be too aggressive or not enough locations.")
+Exception: Critical items count 116 will exceed location count (115) for player 1 - thresholds may be too aggressive or not enough locations.
+Exception in <bound method CursedWordsWorld.create_items of <worlds.cursed_words.CursedWordsWorld object at 0x000001FE491B4050>> for player 1, named 865-0.

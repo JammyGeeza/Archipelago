@@ -3,13 +3,16 @@ from BaseClasses import ItemClassification, Options
 # from .Enums import GoalType
 from .Items import item_table
 import logging
-from Options import DeathLink, OptionList, PerGameCommonOptions, Range, StartInventoryPool, Toggle
+from Options import DeathLink, ItemSet, OptionList, OptionSet, PerGameCommonOptions, Range, StartInventoryPool, Toggle
 from .Regions import region_table
 from typing import Dict, List
 
 # Pre-defined keys
 _character_names = [ "Rodman", "Nina Nix", "Hayley Bayles", "Bones the Dog", "Sam Gambit", "Octacles" ]
 _filler_item_names: List[str] = [ item.name for item in item_table if item.classification == ItemClassification.filler.value ]
+
+_stamp_names: List[str] = [ item.name for item in item_table if "Stamps" in item.groups ]
+_sticker_names: List[str] = [ item.name for item in item_table if "Stickers" in item.groups ]
 
 class PlayableCharacters(OptionList):
     """
@@ -52,6 +55,60 @@ class Goal(OptionList):
     valid_keys_casefold = False
     valid_keys = [ "All" ] + _character_names
     default = [ "All" ]
+
+class GuaranteedStickers(ItemSet):
+    """
+    Due to the large number of available stickers, most stickers are attributed to specific <Characters> to help ensure that
+    stickers in the pool will synergise with the selected characters. This means that some stickers may not appear in the
+    item pool if its character(s) have not been selected in the <Characters> option.
+
+    If there are any stickers you want to guarantee are in the item pool please add them here.
+    You can select a maximum of 10 Stickers, any stickers after the 10th will not be guaranteed.
+    """
+    display_name = "Guaranteed Stickers"
+    valid_keys = frozenset(_sticker_names)
+    convert_name_groups = False
+
+    def verify(self, world, player_name, plando_options):
+        super().verify(world, player_name, plando_options)
+
+        # Remove duplicates, if any
+        seen = []
+        for name in self.value:
+            if name not in seen:
+                seen.append(name)
+        self.value = seen
+
+        # Trim any stickers over the 10 limit
+        if len(self.value) > 10:
+            self.value = seen[:10]
+
+class GuaranteedStamps(OptionSet):
+    """
+    Due to the large number of available stamps, most stamps are attributed to specific <Characters> to help ensure that
+    stamps in the pool will synergise with the selected characters. This means that some stamps may not appear in the
+    item pool if its character(s) have not been selected in the <Characters> option.
+
+    If there are any stamps you want to guarantee are in the item pool please add them here.
+    You can select a maximum of 10 Stickers, any stamps after the 10th will not be guaranteed.
+    """
+    display_name = "Guaranteed Stamps"
+    valid_keys = frozenset(_stamp_names)
+    convert_name_groups = False
+
+    def verify(self, world, player_name, plando_options):
+        super().verify(world, player_name, plando_options)
+
+        # Remove duplicates, if any
+        seen = []
+        for name in self.value:
+            if name not in seen:
+                seen.append(name)
+        self.value = seen
+
+        # Trim any stamps over the 10 limit
+        if len(self.value) > 10:
+            self.value = seen[:10]
 
 class ShuffleGridSize(Toggle):
     """
@@ -127,6 +184,8 @@ class CursedWordsOptions(PerGameCommonOptions):
     characters: PlayableCharacters
     starting_character: StartingCharacter
     goal: Goal
+    guaranteed_stamps: GuaranteedStamps
+    guaranteed_stickers: GuaranteedStickers
     deathlink: DeathLink
     shuffle_grid_size: ShuffleGridSize
     shuffle_inventory_slots: ShuffleInventorySlots

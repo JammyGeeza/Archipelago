@@ -1,0 +1,163 @@
+description: Cursed Words Template, generated with https://github.com/Eijebong/Archipelago-fuzzer
+game: Cursed Words
+requires:
+  version: 0.6.7
+Cursed Words:
+  progression_balancing: 11
+  accessibility: minimal
+  characters:
+  - Rodman
+  - Nina Nix
+  starting_character:
+  - Octacles
+  - Sam Gambit
+  - Nina Nix
+  - Hayley Bayles
+  - Random
+  goal:
+  - Rodman
+  - Hayley Bayles
+  - Sam Gambit
+  - All
+  - Bones the Dog
+  - Octacles
+  guaranteed_stamps:
+  - Christmas Tree
+  - Snail
+  - Diya
+  - Piece of Cake
+  - Torii Gate
+  - Bubble Tea
+  - Downward Trending Chart
+  - Book of Openings
+  - Work of Art
+  - Number Factory
+  - Tin of Beans
+  - King of the Bridge
+  - Sewing Needle
+  - Haunted House
+  - Four Leaf Clover
+  - Golden Record
+  - Rollercoaster
+  - Waxy Vizor
+  - Big Bang
+  - Haunted Mirror
+  - Chocolate Candy
+  - Bar Chart
+  - Globe Trotter
+  - Silly Puppy
+  - Limnophila
+  - Briefcase
+  - Flashy Fountain Pen
+  - Parachute
+  - Full Moon
+  - Go Fish!
+  - Takeout Box
+  - Business Goose
+  - Dragon
+  - Banana
+  - Head Trauma
+  - Pocket Money
+  - Cartwheeler
+  - Queen Bee
+  - Chess Board
+  - Flamingo
+  - Blessing of the Shopkeeper
+  - Mushroom Upgrade
+  - Dove
+  - Nest Egg
+  - Full Battery
+  - Jellyfish
+  - Fortune Cookie
+  - Busy Schedule
+  - Bento Box
+  - Window
+  - Dango
+  - Shaved Ice
+  - Test Tube
+  - Sluggish Zombie
+  - Magician's Hat
+  - Twinkle Toes
+  - Angel Investment
+  - Young Cardinal
+  - Supervillain
+  - Stadium
+  - Fried Shrimp
+  - Disco Ball
+  - Bar of Soap
+  - Slot Machine
+  - Beam Me Up
+  - Xray
+  - Genie
+  - Hourglass
+  - Cable Car
+  - Heart on Fire
+  - Television
+  - Receipt
+  - Bunch Of Grapes
+  - Juice Box
+  - Microphone
+  - Kimono
+  - Avocado
+  - Chick
+  - Eraser
+  - Magnet
+  - Golden Scales
+  - Fraction Frog
+  - Valentine's Day Card
+  - Mutating DNA
+  - Eclipse
+  - Underhand
+  - Family Ticket
+  - Red Envelope
+  - Ruler
+  - Wheel
+  - Erupting Volcano
+  - Tile Ninja
+  - Paper Lantern
+  - Neapolitan
+  - Oden
+  - Spicy Pepper
+  - Stethoscope
+  - Bank
+  - Saxophone
+  - Martini
+  - Fan
+  - Weekly Shop
+  - Jolly Roger
+  - Dangerous Summit
+  - Falling Leaf
+  - Teapot
+  - Honeypot
+  - Giraffe
+  - Unicorn
+  - Builder
+  - Ogre
+  - Efficient Recycler
+  - Bomb
+  - Spouting Whale
+  - Stack Of Pancakes
+  - Smart Shirt
+  - Card Shark
+  - Suspension Bridge
+  - Queenie
+  guaranteed_stickers: []
+  deathlink: 'false'
+  shuffle_grid_size: 'false'
+  shuffle_inventory_slots: 'true'
+  shuffle_item_rarities: 'true'
+  shuffle_locked_tile_positions: 'true'
+  bosssanity: 'false'
+  shopsanity: 'false'
+  shopsanity_limit: 26
+  shopsanity_cost: 17
+  local_items: []
+  non_local_items: []
+  start_inventory: {}
+  start_inventory_from_pool: {}
+  start_hints: []
+  start_location_hints: []
+  exclude_locations: []
+  priority_locations: []
+  item_links: []
+  plando_items: []

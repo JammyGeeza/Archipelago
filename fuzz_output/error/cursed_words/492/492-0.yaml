@@ -1,0 +1,114 @@
+description: Cursed Words Template, generated with https://github.com/Eijebong/Archipelago-fuzzer
+game: Cursed Words
+requires:
+  version: 0.6.7
+Cursed Words:
+  progression_balancing: 79
+  accessibility: full
+  characters:
+  - Rodman
+  - Bones the Dog
+  - Nina Nix
+  - Sam Gambit
+  - Hayley Bayles
+  starting_character:
+  - Octacles
+  - Sam Gambit
+  goal:
+  - Hayley Bayles
+  - Octacles
+  - Nina Nix
+  - Bones the Dog
+  - All
+  guaranteed_stamps:
+  - Efficient Recycler
+  - Microscope
+  - Ogre
+  - Magician's Hat
+  - Red Balloon
+  - Giraffe
+  - Bento Box
+  - Magnet
+  - Valentine's Day Card
+  - Golden Record
+  - Christmas Tree
+  - Family Ticket
+  - Dragon
+  - Stiletto
+  - Banana
+  - Jellyfish
+  - Business Goose
+  - Briefcase
+  - Dangerous Summit
+  - Honeypot
+  - Rosebud
+  - Bar Chart
+  - Haunted Mirror
+  - Sluggish Zombie
+  - Piece of Cake
+  - Statue of Liberty
+  - Mushroom Upgrade
+  - Diya
+  - Slot Machine
+  - Globe Trotter
+  - ID Card
+  - Paper Lantern
+  - Unicorn
+  - Avocado
+  - Mutating DNA
+  - Dove
+  - Chick
+  - Fraction Frog
+  - Spicy Pepper
+  - Hourglass
+  - Martini
+  - Cable Car
+  - Chocolate Candy
+  - Stack Of Pancakes
+  - Falling Leaf
+  - Black Hole
+  - Work of Art
+  - Empty Jar
+  - Eraser
+  - Bomb
+  - Akoya Pearl
+  - Beefeater
+  - Nest Egg
+  - Head Trauma
+  - Saxophone
+  - Fan
+  - Haunted House
+  - Pocket Money
+  - Window
+  - Ruler
+  - Underhand
+  - Test Tube
+  - Microphone
+  - Full Battery
+  - Disco Ball
+  - Shaved Ice
+  - Builder
+  - Weekly Shop
+  - Waxy Vizor
+  - Four Leaf Clover
+  - Cartwheeler
+  guaranteed_stickers: []
+  deathlink: 'true'
+  shuffle_grid_size: 'false'
+  shuffle_inventory_slots: 'true'
+  shuffle_item_rarities: 'false'
+  shuffle_locked_tile_positions: 'true'
+  bosssanity: 'false'
+  shopsanity: 'true'
+  shopsanity_limit: 2
+  shopsanity_cost: 15
+  local_items: []
+  non_local_items: []
+  start_inventory: {}
+  start_inventory_from_pool: {}
+  start_hints: []
+  start_location_hints: []
+  exclude_locations: []
+  priority_locations: []
+  item_links: []
+  plando_items: []

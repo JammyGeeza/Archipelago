@@ -4,10 +4,10 @@ from .Items import CursedWordsItem, item_name_groups_lookup, item_name_to_id_loo
 from .Locations import location_name_to_id_lookup, location_table
 from .Options import CursedWordsOptions
 from .Regions import CursedWordsRegion, region_table, generate_regions
-from .Rules import generate_goal_events, generate_goal
+from .Rules import generate_stage_thresholds, generate_goal_events, generate_goal, CHARACTER_BUILD_GROUPS, GROUP_THRESHOLD_OVERRIDES, STANDARD_GROUP_THRESHOLD
 import logging
 import math
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Set, Tuple
 
 class CursedWordsWeb(WebWorld):
 
@@ -38,6 +38,8 @@ class CursedWordsWorld(World):
     item_name_groups = item_name_groups_lookup
 
     location_name_to_id = location_name_to_id_lookup
+
+    
 
     def generate_early(self):
         """Perform actions before generation."""
@@ -73,27 +75,47 @@ class CursedWordsWorld(World):
         # Pre-collect starting character so it's always in the initial state
         self.multiworld.push_precollected(self.create_item(self.start_character))
         
-        # Pre-collect 8 generic starting stamps
+        # Pre-collect 12 common, generic starting stamps
         eligible_starting_stamps: List[str] = [
             stamp.name for stamp in item_table
             if len(stamp.character_tags) == 0
             and len(stamp.option_tags) == 0
             and "Stamps" in stamp.groups
+            and stamp.metadata.get("rarity", 0) == 0
         ]
-        for stamp in self.random.sample(eligible_starting_stamps, 8):
+
+        for stamp in self.random.sample(eligible_starting_stamps, 12):
             self.multiworld.push_precollected(self.create_item(stamp))
 
-        # Pre-collect 8 generic starting stickers
+        # Pre-collect 12 common, generic starting stickers
         eligible_starting_stickers: List[str] = [
             sticker.name for sticker in item_table
             if len(sticker.character_tags) == 0
             and len(sticker.option_tags) == 0
             and "Stickers" in sticker.groups
+            and sticker.metadata.get("rarity", 0) == 0
         ]
-        for sticker in self.random.sample(eligible_starting_stickers, 8):
+
+        for sticker in self.random.sample(eligible_starting_stickers, 12):
             self.multiworld.push_precollected(self.create_item(sticker))
 
         # logging.info(f"Starting inventory from pool: {self.options.start_inventory_from_pool.value}")
+        
+        # Get relevant item groups for selected characters
+        relevant_groups: Set[str] = set()
+        for character in self.character_tags:
+            relevant_groups.update(CHARACTER_BUILD_GROUPS.get(character, []))
+
+        # Calculate thresholds for sticker / stamp requirement count per group
+        self.group_thresholds: Dict[str, Dict[str, int]] = {}
+        for group in relevant_groups:
+            eligible = [
+                item.name for item in item_table
+                if item.has_character_tags(self.character_tags)
+                and item.has_option_tags(self.option_tags)
+                and group in item.groups
+            ]
+            self.group_thresholds[group] = generate_stage_thresholds(group, len(eligible))
 
         # If 'Progressive Tile Positions' is enabled, generate tile positions
         self.selected_tile_positions = []

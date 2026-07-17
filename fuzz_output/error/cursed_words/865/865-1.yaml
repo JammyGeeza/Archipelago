@@ -1,0 +1,91 @@
+description: Cursed Words Template, generated with https://github.com/Eijebong/Archipelago-fuzzer
+game: Cursed Words
+requires:
+  version: 0.6.7
+Cursed Words:
+  progression_balancing: 6
+  accessibility: full
+  characters:
+  - Hayley Bayles
+  - Sam Gambit
+  - Bones the Dog
+  - Nina Nix
+  starting_character:
+  - Nina Nix
+  - Octacles
+  - Bones the Dog
+  goal: []
+  guaranteed_stamps:
+  - Tin of Beans
+  - Cable Car
+  - Rollercoaster
+  - Jellyfish
+  - Big Bang
+  - Hungry Snake
+  - Martini
+  - Queen Bee
+  - Stack Of Pancakes
+  - Wheel
+  - Smart Shirt
+  - Slot Machine
+  - Test Tube
+  - Eclipse
+  - Full Moon
+  - Number Go Up
+  - Sluggish Zombie
+  - Saxophone
+  - Spicy Pepper
+  - Beam Me Up
+  - Statue of Liberty
+  - Red Envelope
+  - Juice Box
+  - Stiletto
+  - Book of Openings
+  - Family Ticket
+  - Fan
+  - Number Factory
+  - Torii Gate
+  - Full Battery
+  - Young Cardinal
+  - Fraction Frog
+  - Neapolitan
+  - Kokeshi Dolls
+  - Avocado
+  - Silly Puppy
+  - Kimono
+  - Unicorn
+  - Bento Box
+  - Supervillain
+  - Erupting Volcano
+  - Black Hole
+  - Ruler
+  - Cartwheeler
+  - Empty Jar
+  - Bubble Tea
+  - Microscope
+  - Microphone
+  - Haunted House
+  - Beefeater
+  - Flashy Fountain Pen
+  - Parachute
+  - Builder
+  guaranteed_stickers: []
+  deathlink: 'true'
+  shuffle_grid_size: 'false'
+  shuffle_inventory_slots: 'false'
+  shuffle_item_rarities: 'false'
+  shuffle_locked_tile_positions: 'true'
+  bosssanity: 'false'
+  shopsanity: 'false'
+  shopsanity_limit: 19
+  shopsanity_cost: 25
+  local_items: []
+  non_local_items: []
+  start_inventory: {}
+  start_inventory_from_pool: {}
+  start_hints: []
+  start_location_hints: []
+  exclude_locations: []
+  priority_locations: []
+  item_links: []
+  plando_items: []
