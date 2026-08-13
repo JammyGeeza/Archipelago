@@ -278,7 +278,7 @@ location_table: List[LocationData] = [
     # The Island
     LocationData("Make a Bottle of Water"                               , RegionFlags.Island        , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.Foodsanity       , LocationProgressType.DEFAULT ),
     LocationData("Make Grilled Fish"                                    , RegionFlags.Island        , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.Foodsanity       , LocationProgressType.DEFAULT ),
-    LocationData("Make Tamago Sushi"                                    , RegionFlags.Island        , ProgressionPhase.PhaseOne     , CheckType.Check    , OptionFlags.Foodsanity       , LocationProgressType.DEFAULT ),
+    LocationData("Make Tamago Sushi"                                    , RegionFlags.Island        , ProgressionPhase.PhaseThree   , CheckType.Check    , OptionFlags.Foodsanity       , LocationProgressType.DEFAULT ),
 
 #endregion
 

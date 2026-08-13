@@ -1206,9 +1206,9 @@ def set_rules(world: MultiWorld, player: int):
                      state.sl_has_all_ideas(["Campfire", "Stick"], player))
          
          set_rule(world.get_location("Make Tamago Sushi", player),
-                  lambda state:  # Phase One
+                  lambda state:  # Phase Three (needs Sloop or Frigate to transport Seaweed)
                      state.can_reach_location("Cook an Omelette", player)
-                     and state.can_reach_region("The Island: Progression Phase Three", player)
+                     and state.sl_has_any_ideas(["Frigate", "Sloop"])
                      and state.sl_has_idea("Tamago Sushi", player))
          
          #endregion
