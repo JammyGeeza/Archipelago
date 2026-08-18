@@ -1,12 +1,13 @@
 from worlds.AutoWorld import World, WebWorld
-from BaseClasses import Item, ItemClassification, Tutorial
+from BaseClasses import Item, Tutorial
 from .Items import CursedWordsItem, item_name_groups_lookup, item_name_to_id_lookup, item_table, generate_items, generate_filler_items
-from .Locations import location_name_to_id_lookup, location_table
+from .Locations import location_name_to_id_lookup
 from .Options import CursedWordsOptions
-from .Regions import CursedWordsRegion, region_table, generate_regions
+from .Regions import generate_regions
 from .Rules import generate_all_group_thresholds, CROWN_NAMES, generate_goal_events, generate_goal
 import logging
 import math
+from Options import OptionGroup
 from typing import Any, Dict, List, Set, Tuple
 
 class CursedWordsWeb(WebWorld):
@@ -20,6 +21,38 @@ class CursedWordsWeb(WebWorld):
         ["JammyGeeza"]
     )]
     theme = "jungle"
+
+    option_groups = [
+        OptionGroup("Character Selection", [
+            Options.Characters,
+            Options.StartingCharacter,
+        ]),
+        OptionGroup("Run Difficulty", [
+            Options.Michael,
+            Options.Crowns
+        ]),
+        OptionGroup("Goal", [
+            Options.Goal,
+            Options.GoalCharacters
+        ]),
+        OptionGroup("Items", [
+            Options.GuaranteedStickers,
+            Options.GuaranteedStamps
+        ]),
+        OptionGroup("Shuffle", [
+            Options.ShuffleGridSize,
+            Options.ShuffleInventorySlots,
+            Options.ShuffleItemRarities,
+            Options.ShuffleLockedTilePositions
+        ]),
+        OptionGroup("Sanities", [
+            Options.Bosssanity,
+            Options.Shopsanity,
+            Options.ShopsanityCost,
+            Options.ShopsanityLimit,
+            Options.Tilesanity
+        ])
+    ]
 
 
 class CursedWordsWorld(World):
