@@ -1,9 +1,8 @@
-from BaseClasses import Item, ItemClassification, MultiWorld
 from dataclasses import dataclass
-import json, logging, os
+import json
 import pkgutil
-from typing import Dict, List, NamedTuple, Optional
-from worlds.AutoWorld import World
+from typing import Dict, List, Optional
+from .classes.ExpandHelper import expand_item
 
 @dataclass
 class CursedWordsLocation:
@@ -32,12 +31,13 @@ class CursedWordsLocation:
         """Check if this region's option tags contains at least one tag from a list."""
         return not self.option_tags or bool(set(self.option_tags) & set(tags))
 
-# Read items data from JSON
-_file_data = pkgutil.get_data(__name__, 'data/locations.json')
-_locations_data = json.loads(_file_data)
+# Get locations and lookups from JSON files
+_lookups: Dict[str, any] = json.loads(pkgutil.get_data(__name__, 'data/lookups.json'))
+_locations: List[Dict[str, any]] = json.loads(pkgutil.get_data(__name__, 'data/locations.json'))
 
-# Parse as location objects
-location_table: List[CursedWordsLocation] = [ CursedWordsLocation(data) for data in _locations_data ]
+# Expand each location and parse them
+_expanded_locations: List[Dict[any, any]] = [ expanded for l in _locations for expanded in expand_item(l, _lookups) ]
+location_table: List[CursedWordsLocation] = [ CursedWordsLocation(data) for data in _expanded_locations ]
 
 # logging.info(f"Found {len(location_table)} items from locations.json configuration")
 

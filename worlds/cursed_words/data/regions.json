@@ -15,7 +15,6 @@
             }
         ]
     },
-    
     {
         "name": "Stage 1",
         "exits": [
@@ -90,100 +89,21 @@
                 }
             },
             {
-                "name": "to Rodman: Stage 1",
-                "destination": "Rodman: Stage 1",
+                "name": "{character} to {character}: Stage 1",
+                "destination": "{character}: Stage 1",
                 "access_rule": {
-                    "rule": "And",
-                    "children": [
-                        {
-                            "rule": "Has",
-                            "args": {
-                                "item_name": "Rodman"
-                            }
-                        }
-                    ]
+                    "rule": "Has",
+                    "args": {
+                        "item_name": "{character}"
+                    }
                 },
-                "character_tags": [ "Rodman" ]
-            },
-            {
-                "name": "to Nina Nix: Stage 1",
-                "destination": "Nina Nix: Stage 1",
-                "access_rule": {
-                    "rule": "And",
-                    "children": [
-                        {
-                            "rule": "Has",
-                            "args": {
-                                "item_name": "Nina Nix"
-                            }
-                        }
-                    ]
-                },
-                "character_tags": [ "Nina Nix" ]
-            },
-            {
-                "name": "to Hayley Bayles: Stage 1",
-                "destination": "Hayley Bayles: Stage 1",
-                "access_rule": {
-                    "rule": "And",
-                    "children": [
-                        {
-                            "rule": "Has",
-                            "args": {
-                                "item_name": "Hayley Bayles"
-                            }
-                        }
-                    ]
-                },
-                "character_tags": [ "Hayley Bayles" ]
-            },
-            {
-                "name": "to Sam Gambit: Stage 1",
-                "destination": "Sam Gambit: Stage 1",
-                "access_rule": {
-                    "rule": "And",
-                    "children": [
-                        {
-                            "rule": "Has",
-                            "args": {
-                                "item_name": "Sam Gambit"
-                            }
-                        }
-                    ]
-                },
-                "character_tags": [ "Sam Gambit" ]
-            },
-            {
-                "name": "to Bones the Dog: Stage 1",
-                "destination": "Bones the Dog: Stage 1",
-                "access_rule": {
-                    "rule": "And",
-                    "children": [
-                        {
-                            "rule": "Has",
-                            "args": {
-                                "item_name": "Bones the Dog"
-                            }
-                        }
-                    ]
-                },
-                "character_tags": [ "Bones the Dog" ]
-            },
-            {
-                "name": "to Octacles: Stage 1",
-                "destination": "Octacles: Stage 1",
-                "access_rule": {
-                    "rule": "And",
-                    "children": [
-                        {
-                            "rule": "Has",
-                            "args": {
-                                "item_name": "Octacles"
-                            }
-                        }
-                    ]
-                },
-                "character_tags": [ "Octacles" ]
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
             }
         ]
     },
@@ -291,275 +211,46 @@
                 }
             },
             {
-                "name": "to Rodman: Stage 2",
-                "destination": "Rodman: Stage 2",
+                "name": "{character} to {character}: Stage 2",
+                "destination": "{character}: Stage 2",
                 "access_rule": {
                     "rule": "And",
                     "children": [
                         {
                             "rule": "Has",
                             "args": {
-                                "item_name": "Rodman"
-                            }
-                        },
-                        {
-                            "rule": "Or",
-                            "children": [
-                                {
-                                    "rule": "And",
-                                    "children": [
-                                        {
-                                            "rule": "HasGroup",
-                                            "args": {
-                                                "item_name_group": "Blue Scattering",
-                                                "count": {
-                                                    "resolver": "FromWorldAttr",
-                                                    "name": "group_thresholds.Blue Scattering.stage_2"
-                                                }
-                                            }
-                                        },
-                                        {
-                                            "rule": "HasGroup",
-                                            "args": {
-                                                "item_name_group": "Blue Scoring",
-                                                "count": {
-                                                    "resolver": "FromWorldAttr",
-                                                    "name": "group_thresholds.Blue Scoring.stage_2"
-                                                }
-                                            }
-                                        }
-                                    ]
-                                },
-                                {
-                                    "rule": "And",
-                                    "children": [
-                                        {
-                                            "rule": "HasGroup",
-                                            "args": {
-                                                "item_name_group": "Red Scattering",
-                                                "count": {
-                                                    "resolver": "FromWorldAttr",
-                                                    "name": "group_thresholds.Red Scattering.stage_2"
-                                                }
-                                            }
-                                        },
-                                        {
-                                            "rule": "HasGroup",
-                                            "args": {
-                                                "item_name_group": "Red Scoring",
-                                                "count": {
-                                                    "resolver": "FromWorldAttr",
-                                                    "name": "group_thresholds.Red Scoring.stage_2"
-                                                }
-                                            }
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    ]
-                },
-                "character_tags": [ "Rodman" ]
-            },
-            {
-                "name": "to Nina Nix: Stage 2",
-                "destination": "Nina Nix: Stage 2",
-                "access_rule": {
-                    "rule": "And",
-                    "children": [
-                        {
-                            "rule": "Has",
-                            "args": {
-                                "item_name": "Nina Nix"
+                                "item_name": "{character}"
                             }
                         },
                         {
                             "rule": "HasGroup",
                             "args": {
-                                "item_name_group": "Shiny Scattering",
+                                "item_name_group": "{character}: Base Stickers",
                                 "count": {
                                     "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Shiny Scattering.stage_2"
+                                    "name": "group_thresholds.{character}: Base Stickers.stage_2"
                                 }
                             }
                         },
                         {
                             "rule": "HasGroup",
                             "args": {
-                                "item_name_group": "Shiny Scoring",
+                                "item_name_group": "{character}: Base Stamps",
                                 "count": {
                                     "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Shiny Scoring.stage_2"
-                                }
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Void Scattering",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Void Scattering.stage_2"
-                                }
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Void Scoring",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Void Scattering.stage_2"
+                                    "name": "group_thresholds.{character}: Base Stamps.stage_2"
                                 }
                             }
                         }
                     ]
                 },
-                "character_tags": [ "Nina Nix" ]
-            },
-            {
-                "name": "to Hayley Bayles: Stage 2",
-                "destination": "Hayley Bayles: Stage 2",
-                "access_rule": {
-                    "rule": "And",
-                    "children": [
-                        {
-                            "rule": "Has",
-                            "args": {
-                                "item_name": "Hayley Bayles"
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Number Scattering",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Number Scattering.stage_2"
-                                }
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Number Scoring",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Number Scoring.stage_2"
-                                }
-                            }
-                        }
-                    ]
-                },
-                "character_tags": [ "Hayley Bayles" ]
-            },
-            {
-                "name": "to Sam Gambit: Stage 2",
-                "destination": "Sam Gambit: Stage 2",
-                "access_rule": {
-                    "rule": "And",
-                    "children": [
-                        {
-                            "rule": "Has",
-                            "args": {
-                                "item_name": "Sam Gambit"
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Chess Scattering",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Chess Scattering.stage_2"
-                                }
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Chess Scoring",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Chess Scoring.stage_2"
-                                }
-                            }
-                        }
-                    ]
-                },
-                "character_tags": [ "Sam Gambit" ]
-            },
-            {
-                "name": "to Bones the Dog: Stage 2",
-                "destination": "Bones the Dog: Stage 2",
-                "access_rule": {
-                    "rule": "And",
-                    "children": [
-                        {
-                            "rule": "Has",
-                            "args": {
-                                "item_name": "Bones the Dog"
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Card Scattering",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Card Scattering.stage_2"
-                                }
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Card Scoring",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Card Scoring.stage_2"
-                                }
-                            }
-                        }
-                    ]
-                },
-                "character_tags": [ "Bones the Dog" ]
-            },
-            {
-                "name": "to Octacles: Stage 2",
-                "destination": "Octacles: Stage 2",
-                "access_rule": {
-                    "rule": "And",
-                    "children": [
-                        {
-                            "rule": "Has",
-                            "args": {
-                                "item_name": "Octacles"
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Cursed Scattering",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Cursed Scattering.stage_2"
-                                }
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Cursed Scoring",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Cursed Scoring.stage_2"
-                                }
-                            }
-                        }
-                    ]
-                },
-                "character_tags": [ "Octacles" ]
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
             }
         ]
     },
@@ -652,275 +343,46 @@
                 }
             },
             {
-                "name": "to Rodman: Stage 3",
-                "destination": "Rodman: Stage 3",
+                "name": "{character} to {character}: Stage 3",
+                "destination": "{character}: Stage 3",
                 "access_rule": {
                     "rule": "And",
                     "children": [
                         {
                             "rule": "Has",
                             "args": {
-                                "item_name": "Rodman"
-                            }
-                        },
-                        {
-                            "rule": "Or",
-                            "children": [
-                                {
-                                    "rule": "And",
-                                    "children": [
-                                        {
-                                            "rule": "HasGroup",
-                                            "args": {
-                                                "item_name_group": "Blue Scattering",
-                                                "count": {
-                                                    "resolver": "FromWorldAttr",
-                                                    "name": "group_thresholds.Blue Scattering.stage_3"
-                                                }
-                                            }
-                                        },
-                                        {
-                                            "rule": "HasGroup",
-                                            "args": {
-                                                "item_name_group": "Blue Scoring",
-                                                "count": {
-                                                    "resolver": "FromWorldAttr",
-                                                    "name": "group_thresholds.Blue Scoring.stage_3"
-                                                }
-                                            }
-                                        }
-                                    ]
-                                },
-                                {
-                                    "rule": "And",
-                                    "children": [
-                                        {
-                                            "rule": "HasGroup",
-                                            "args": {
-                                                "item_name_group": "Red Scattering",
-                                                "count": {
-                                                    "resolver": "FromWorldAttr",
-                                                    "name": "group_thresholds.Red Scattering.stage_3"
-                                                }
-                                            }
-                                        },
-                                        {
-                                            "rule": "HasGroup",
-                                            "args": {
-                                                "item_name_group": "Red Scoring",
-                                                "count": {
-                                                    "resolver": "FromWorldAttr",
-                                                    "name": "group_thresholds.Red Scoring.stage_3"
-                                                }
-                                            }
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    ]
-                },
-                "character_tags": [ "Rodman" ]
-            },
-            {
-                "name": "to Nina Nix: Stage 3",
-                "destination": "Nina Nix: Stage 3",
-                "access_rule": {
-                    "rule": "And",
-                    "children": [
-                        {
-                            "rule": "Has",
-                            "args": {
-                                "item_name": "Nina Nix"
+                                "item_name": "{character}"
                             }
                         },
                         {
                             "rule": "HasGroup",
                             "args": {
-                                "item_name_group": "Shiny Scattering",
+                                "item_name_group": "{character}: Base Stickers",
                                 "count": {
                                     "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Shiny Scattering.stage_3"
+                                    "name": "group_thresholds.{character}: Base Stickers.stage_3"
                                 }
                             }
                         },
                         {
                             "rule": "HasGroup",
                             "args": {
-                                "item_name_group": "Shiny Scoring",
+                                "item_name_group": "{character}: Base Stamps",
                                 "count": {
                                     "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Shiny Scoring.stage_3"
-                                }
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Void Scattering",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Void Scattering.stage_3"
-                                }
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Void Scoring",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Void Scoring.stage_3"
+                                    "name": "group_thresholds.{character}: Base Stamps.stage_3"
                                 }
                             }
                         }
                     ]
                 },
-                "character_tags": [ "Nina Nix" ]
-            },
-            {
-                "name": "to Hayley Bayles: Stage 3",
-                "destination": "Hayley Bayles: Stage 3",
-                "access_rule": {
-                    "rule": "And",
-                    "children": [
-                        {
-                            "rule": "Has",
-                            "args": {
-                                "item_name": "Hayley Bayles"
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Number Scattering",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Number Scattering.stage_3"
-                                }
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Number Scoring",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Number Scoring.stage_3"
-                                }
-                            }
-                        }
-                    ]
-                },
-                "character_tags": [ "Hayley Bayles" ]
-            },
-            {
-                "name": "to Sam Gambit: Stage 3",
-                "destination": "Sam Gambit: Stage 3",
-                "access_rule": {
-                    "rule": "And",
-                    "children": [
-                        {
-                            "rule": "Has",
-                            "args": {
-                                "item_name": "Sam Gambit"
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Chess Scattering",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Chess Scattering.stage_3"
-                                }
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Chess Scoring",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Chess Scoring.stage_3"
-                                }
-                            }
-                        }
-                    ]
-                },
-                "character_tags": [ "Sam Gambit" ]
-            },
-            {
-                "name": "to Bones the Dog: Stage 3",
-                "destination": "Bones the Dog: Stage 3",
-                "access_rule": {
-                    "rule": "And",
-                    "children": [
-                        {
-                            "rule": "Has",
-                            "args": {
-                                "item_name": "Bones the Dog"
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Card Scattering",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Card Scattering.stage_3"
-                                }
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Card Scoring",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Card Scoring.stage_3"
-                                }
-                            }
-                        }
-                    ]
-                },
-                "character_tags": [ "Bones the Dog" ]
-            },
-            {
-                "name": "to Octacles: Stage 3",
-                "destination": "Octacles: Stage 3",
-                "access_rule": {
-                    "rule": "And",
-                    "children": [
-                        {
-                            "rule": "Has",
-                            "args": {
-                                "item_name": "Octacles"
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Cursed Scattering",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Cursed Scattering.stage_3"
-                                }
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Cursed Scoring",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Cursed Scoring.stage_3"
-                                }
-                            }
-                        }
-                    ]
-                },
-                "character_tags": [ "Octacles" ]
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
             }
         ]
     },
@@ -1013,275 +475,46 @@
                 }
             },
             {
-                "name": "to Rodman: Stage 4",
-                "destination": "Rodman: Stage 4",
+                "name": "{character} to {character}: Stage 4",
+                "destination": "{character}: Stage 4",
                 "access_rule": {
                     "rule": "And",
                     "children": [
                         {
                             "rule": "Has",
                             "args": {
-                                "item_name": "Rodman"
-                            }
-                        },
-                        {
-                            "rule": "Or",
-                            "children": [
-                                {
-                                    "rule": "And",
-                                    "children": [
-                                        {
-                                            "rule": "HasGroup",
-                                            "args": {
-                                                "item_name_group": "Blue Scattering",
-                                                "count": {
-                                                    "resolver": "FromWorldAttr",
-                                                    "name": "group_thresholds.Blue Scattering.stage_4"
-                                                }
-                                            }
-                                        },
-                                        {
-                                            "rule": "HasGroup",
-                                            "args": {
-                                                "item_name_group": "Blue Scoring",
-                                                "count": {
-                                                    "resolver": "FromWorldAttr",
-                                                    "name": "group_thresholds.Blue Scoring.stage_4"
-                                                }
-                                            }
-                                        }
-                                    ]
-                                },
-                                {
-                                    "rule": "And",
-                                    "children": [
-                                        {
-                                            "rule": "HasGroup",
-                                            "args": {
-                                                "item_name_group": "Red Scattering",
-                                                "count": {
-                                                    "resolver": "FromWorldAttr",
-                                                    "name": "group_thresholds.Red Scattering.stage_4"
-                                                }
-                                            }
-                                        },
-                                        {
-                                            "rule": "HasGroup",
-                                            "args": {
-                                                "item_name_group": "Red Scoring",
-                                                "count": {
-                                                    "resolver": "FromWorldAttr",
-                                                    "name": "group_thresholds.Red Scoring.stage_4"
-                                                }
-                                            }
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    ]
-                },
-                "character_tags": [ "Rodman" ]
-            },
-            {
-                "name": "to Nina Nix: Stage 4",
-                "destination": "Nina Nix: Stage 4",
-                "access_rule": {
-                    "rule": "And",
-                    "children": [
-                        {
-                            "rule": "Has",
-                            "args": {
-                                "item_name": "Nina Nix"
+                                "item_name": "{character}"
                             }
                         },
                         {
                             "rule": "HasGroup",
                             "args": {
-                                "item_name_group": "Shiny Scattering",
+                                "item_name_group": "{character}: Base Stickers",
                                 "count": {
                                     "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Shiny Scattering.stage_4"
+                                    "name": "group_thresholds.{character}: Base Stickers.stage_4"
                                 }
                             }
                         },
                         {
                             "rule": "HasGroup",
                             "args": {
-                                "item_name_group": "Shiny Scoring",
+                                "item_name_group": "{character}: Base Stamps",
                                 "count": {
                                     "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Shiny Scoring.stage_4"
-                                }
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Void Scattering",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Void Scattering.stage_4"
-                                }
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Void Scoring",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Void Scoring.stage_4"
+                                    "name": "group_thresholds.{character}: Base Stamps.stage_4"
                                 }
                             }
                         }
                     ]
                 },
-                "character_tags": [ "Nina Nix" ]
-            },
-            {
-                "name": "to Hayley Bayles: Stage 4",
-                "destination": "Hayley Bayles: Stage 4",
-                "access_rule": {
-                    "rule": "And",
-                    "children": [
-                        {
-                            "rule": "Has",
-                            "args": {
-                                "item_name": "Hayley Bayles"
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Number Scattering",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Number Scattering.stage_4"
-                                }
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Number Scoring",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Number Scoring.stage_4"
-                                }
-                            }
-                        }
-                    ]
-                },
-                "character_tags": [ "Hayley Bayles" ]
-            },
-            {
-                "name": "to Sam Gambit: Stage 4",
-                "destination": "Sam Gambit: Stage 4",
-                "access_rule": {
-                    "rule": "And",
-                    "children": [
-                        {
-                            "rule": "Has",
-                            "args": {
-                                "item_name": "Sam Gambit"
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Chess Scattering",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Chess Scattering.stage_4"
-                                }
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Chess Scoring",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Chess Scoring.stage_4"
-                                }
-                            }
-                        }
-                    ]
-                },
-                "character_tags": [ "Sam Gambit" ]
-            },
-            {
-                "name": "to Bones the Dog: Stage 4",
-                "destination": "Bones the Dog: Stage 4",
-                "access_rule": {
-                    "rule": "And",
-                    "children": [
-                        {
-                            "rule": "Has",
-                            "args": {
-                                "item_name": "Bones the Dog"
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Card Scattering",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Card Scattering.stage_4"
-                                }
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Card Scoring",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Card Scoring.stage_4"
-                                }
-                            }
-                        }
-                    ]
-                },
-                "character_tags": [ "Bones the Dog" ]
-            },
-            {
-                "name": "to Octacles: Stage 4",
-                "destination": "Octacles: Stage 4",
-                "access_rule": {
-                    "rule": "And",
-                    "children": [
-                        {
-                            "rule": "Has",
-                            "args": {
-                                "item_name": "Octacles"
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Cursed Scattering",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Cursed Scattering.stage_4"
-                                }
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Cursed Scoring",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Cursed Scoring.stage_4"
-                                }
-                            }
-                        }
-                    ]
-                },
-                "character_tags": [ "Octacles" ]
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
             }
         ]
     },
@@ -1289,318 +522,2555 @@
         "name": "Stage 5",
         "exits": [
             {
-                "name": "to Rodman: Stage 5",
-                "destination": "Rodman: Stage 5",
+                "name": "{character} to {character}: Stage 5",
+                "destination": "{character}: Stage 5",
                 "access_rule": {
                     "rule": "And",
                     "children": [
                         {
                             "rule": "Has",
                             "args": {
-                                "item_name": "Rodman"
+                                "item_name": "{character}"
                             }
                         },
                         {
-                            "rule": "Or",
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "{character}: Base Stickers",
+                                "count": {
+                                    "resolver": "FromWorldAttr",
+                                    "name": "group_thresholds.{character}: Base Stickers.stage_5"
+                                }
+                            }
+                        },
+                        {
+                            "rule": "HasGroup",
+                            "args": {
+                                "item_name_group": "{character}: Base Stamps",
+                                "count": {
+                                    "resolver": "FromWorldAttr",
+                                    "name": "group_thresholds.{character}: Base Stamps.stage_5"
+                                }
+                            }
+                        }
+                    ]
+                },
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "{character}: Stage {stage}",
+        "exits": [],
+        "iterate": [
+            {
+                "placeholder": "character",
+                "values": "character_names",
+                "tag": "character_tags"
+            },
+            {
+                "placeholder": "stage",
+                "values": [
+                    1,
+                    2,
+                    3,
+                    4
+                ]
+            }
+        ]
+    },
+    {
+        "name": "{character}: Stage 5",
+        "exits": [
+            {
+                "name": "{character} to Purple Crown - Stage 1",
+                "destination": "Purple Crown - Stage 1",
+                "access_rule": {
+                    "rule": "Has",
+                    "args": {
+                        "item_name": "{character}: Progressive Crown",
+                        "count": 1
+                    }
+                },
+                "option_tags": [
+                    "Purple"
+                ]
+            }
+        ],
+        "iterate": [
+            {
+                "placeholder": "character",
+                "values": "character_names",
+                "tag": "character_tags"
+            }
+        ]
+    },
+    {
+        "name": "Purple Crown - Stage 1",
+        "option_tags": [
+            "Purple"
+        ],
+        "exits": [
+            {
+                "name": "to Purple Crown - Stage 2",
+                "destination": "Purple Crown - Stage 2",
+                "option_tags": [
+                    "Purple"
+                ]
+            },
+            {
+                "name": "{character} to {character}: Purple Crown - Stage 1",
+                "destination": "{character}: Purple Crown - Stage 1",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "Has",
+                            "args": {
+                                "item_name": "{character}"
+                            }
+                        },
+                        {
+                            "rule": "And",
                             "children": [
                                 {
-                                    "rule": "And",
-                                    "children": [
-                                        {
-                                            "rule": "HasGroup",
-                                            "args": {
-                                                "item_name_group": "Blue Scattering",
-                                                "count": {
-                                                    "resolver": "FromWorldAttr",
-                                                    "name": "group_thresholds.Blue Scattering.stage_5"
-                                                }
-                                            }
-                                        },
-                                        {
-                                            "rule": "HasGroup",
-                                            "args": {
-                                                "item_name_group": "Blue Scoring",
-                                                "count": {
-                                                    "resolver": "FromWorldAttr",
-                                                    "name": "group_thresholds.Blue Scoring.stage_5"
-                                                }
-                                            }
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stickers",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stickers.purple_stage_1"
                                         }
-                                    ]
+                                    }
                                 },
                                 {
-                                    "rule": "And",
-                                    "children": [
-                                        {
-                                            "rule": "HasGroup",
-                                            "args": {
-                                                "item_name_group": "Red Scattering",
-                                                "count": {
-                                                    "resolver": "FromWorldAttr",
-                                                    "name": "group_thresholds.Red Scattering.stage_5"
-                                                }
-                                            }
-                                        },
-                                        {
-                                            "rule": "HasGroup",
-                                            "args": {
-                                                "item_name_group": "Red Scoring",
-                                                "count": {
-                                                    "resolver": "FromWorldAttr",
-                                                    "name": "group_thresholds.Red Scoring.stage_5"
-                                                }
-                                            }
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stamps",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stamps.purple_stage_1"
                                         }
-                                    ]
+                                    }
                                 }
                             ]
                         }
                     ]
                 },
-                "character_tags": [ "Rodman" ]
-            },
-            {
-                "name": "to Nina Nix: Stage 5",
-                "destination": "Nina Nix: Stage 5",
-                "access_rule": {
-                    "rule": "And",
-                    "children": [
-                        {
-                            "rule": "Has",
-                            "args": {
-                                "item_name": "Nina Nix"
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Shiny Scattering",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Shiny Scattering.stage_5"
-                                }
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Shiny Scoring",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Shiny Scoring.stage_5"
-                                }
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Void Scattering",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Void Scoring.stage_5"
-                                }
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Void Scoring",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Void Scoring.stage_5"
-                                }
-                            }
-                        }
-                    ]
-                },
-                "character_tags": [ "Nina Nix" ]
-            },
-            {
-                "name": "to Hayley Bayles: Stage 5",
-                "destination": "Hayley Bayles: Stage 5",
-                "access_rule": {
-                    "rule": "And",
-                    "children": [
-                        {
-                            "rule": "Has",
-                            "args": {
-                                "item_name": "Hayley Bayles"
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Number Scattering",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Number Scattering.stage_5"
-                                }
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Number Scoring",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Number Scoring.stage_5"
-                                }
-                            }
-                        }
-                    ]
-                },
-                "character_tags": [ "Hayley Bayles" ]
-            },
-            {
-                "name": "to Sam Gambit: Stage 5",
-                "destination": "Sam Gambit: Stage 5",
-                "access_rule": {
-                    "rule": "And",
-                    "children": [
-                        {
-                            "rule": "Has",
-                            "args": {
-                                "item_name": "Sam Gambit"
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Chess Scattering",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Chess Scattering.stage_5"
-                                }
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Chess Scoring",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Chess Scoring.stage_5"
-                                }
-                            }
-                        }
-                    ]
-                },
-                "character_tags": [ "Sam Gambit" ]
-            },
-            {
-                "name": "to Bones the Dog: Stage 5",
-                "destination": "Bones the Dog: Stage 5",
-                "access_rule": {
-                    "rule": "And",
-                    "children": [
-                        {
-                            "rule": "Has",
-                            "args": {
-                                "item_name": "Bones the Dog"
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Card Scattering",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Card Scattering.stage_5"
-                                }
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Card Scoring",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Card Scoring.stage_5"
-                                }
-                            }
-                        }
-                    ]
-                },
-                "character_tags": [ "Bones the Dog" ]
-            },
-            {
-                "name": "to Octacles: Stage 5",
-                "destination": "Octacles: Stage 5",
-                "access_rule": {
-                    "rule": "And",
-                    "children": [
-                        {
-                            "rule": "Has",
-                            "args": {
-                                "item_name": "Octacles"
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Cursed Scattering",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Cursed Scattering.stage_5"
-                                }
-                            }
-                        },
-                        {
-                            "rule": "HasGroup",
-                            "args": {
-                                "item_name_group": "Cursed Scoring",
-                                "count": {
-                                    "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.Cursed Scoring.stage_5"
-                                }
-                            }
-                        }
-                    ]
-                },
-                "character_tags": [ "Octacles" ]
+                "option_tags": [
+                    "Purple"
+                ],
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
             }
         ]
     },
-
-
     {
-        "count": 5,
-        "name": "Rodman: Stage {count}",
-        "character_tags": [ "Rodman" ]
+        "name": "Purple Crown - Stage 2",
+        "option_tags": [
+            "Purple"
+        ],
+        "exits": [
+            {
+                "name": "to Purple Crown - Stage 3",
+                "destination": "Purple Crown - Stage 3",
+                "option_tags": [
+                    "Purple"
+                ]
+            },
+            {
+                "name": "{character} to {character}: Purple Crown - Stage 2",
+                "destination": "{character}: Purple Crown - Stage 2",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "Has",
+                            "args": {
+                                "item_name": "{character}"
+                            }
+                        },
+                        {
+                            "rule": "And",
+                            "children": [
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stickers",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stickers.purple_stage_2"
+                                        }
+                                    }
+                                },
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stamps",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stamps.purple_stage_2"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "option_tags": [
+                    "Purple"
+                ],
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
+            }
+        ]
     },
-
-
     {
-        "count": 5,
-        "name": "Nina Nix: Stage {count}",
-        "character_tags": [ "Nina Nix" ]
+        "name": "Purple Crown - Stage 3",
+        "option_tags": [
+            "Purple"
+        ],
+        "exits": [
+            {
+                "name": "to Purple Crown - Stage 4",
+                "destination": "Purple Crown - Stage 4",
+                "option_tags": [
+                    "Purple"
+                ]
+            },
+            {
+                "name": "{character} to {character}: Purple Crown - Stage 3",
+                "destination": "{character}: Purple Crown - Stage 3",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "Has",
+                            "args": {
+                                "item_name": "{character}"
+                            }
+                        },
+                        {
+                            "rule": "And",
+                            "children": [
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stickers",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stickers.purple_stage_3"
+                                        }
+                                    }
+                                },
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stamps",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stamps.purple_stage_3"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "option_tags": [
+                    "Purple"
+                ],
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
+            }
+        ]
     },
-
-
     {
-        "count": 5,
-        "name": "Hayley Bayles: Stage {count}",
-        "character_tags": [ "Hayley Bayles" ]
+        "name": "Purple Crown - Stage 4",
+        "option_tags": [
+            "Purple"
+        ],
+        "exits": [
+            {
+                "name": "to Purple Crown - Stage 5",
+                "destination": "Purple Crown - Stage 5",
+                "option_tags": [
+                    "Purple"
+                ]
+            },
+            {
+                "name": "{character} to {character}: Purple Crown - Stage 4",
+                "destination": "{character}: Purple Crown - Stage 4",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "Has",
+                            "args": {
+                                "item_name": "{character}"
+                            }
+                        },
+                        {
+                            "rule": "And",
+                            "children": [
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stickers",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stickers.purple_stage_4"
+                                        }
+                                    }
+                                },
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stamps",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stamps.purple_stage_4"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "option_tags": [
+                    "Purple"
+                ],
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
+            }
+        ]
     },
-
-
     {
-        "count": 5,
-        "name": "Sam Gambit: Stage {count}",
-        "character_tags": [ "Sam Gambit" ]
+        "name": "Purple Crown - Stage 5",
+        "option_tags": [
+            "Purple"
+        ],
+        "exits": [
+            {
+                "name": "{character} to {character}: Purple Crown - Stage 5",
+                "destination": "{character}: Purple Crown - Stage 5",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "Has",
+                            "args": {
+                                "item_name": "{character}"
+                            }
+                        },
+                        {
+                            "rule": "And",
+                            "children": [
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stickers",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stickers.purple_stage_5"
+                                        }
+                                    }
+                                },
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stamps",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stamps.purple_stage_5"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "option_tags": [
+                    "Purple"
+                ],
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
+            }
+        ]
     },
-
-
     {
-        "count": 5,
-        "name": "Bones the Dog: Stage {count}",
-        "character_tags": [ "Bones the Dog" ]
+        "name": "Yellow Crown - Stage 1",
+        "option_tags": [
+            "Yellow"
+        ],
+        "exits": [
+            {
+                "name": "to Yellow Crown - Stage 2",
+                "destination": "Yellow Crown - Stage 2",
+                "option_tags": [
+                    "Yellow"
+                ]
+            },
+            {
+                "name": "{character} to {character}: Yellow Crown - Stage 1",
+                "destination": "{character}: Yellow Crown - Stage 1",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "Has",
+                            "args": {
+                                "item_name": "{character}"
+                            }
+                        },
+                        {
+                            "rule": "And",
+                            "children": [
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stickers",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stickers.yellow_stage_1"
+                                        }
+                                    }
+                                },
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stamps",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stamps.yellow_stage_1"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "option_tags": [
+                    "Yellow"
+                ],
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
+            }
+        ]
     },
-
-
     {
-        "count": 5,
-        "name": "Octacles: Stage {count}",
-        "character_tags": [ "Octacles" ]
+        "name": "Yellow Crown - Stage 2",
+        "option_tags": [
+            "Yellow"
+        ],
+        "exits": [
+            {
+                "name": "to Yellow Crown - Stage 3",
+                "destination": "Yellow Crown - Stage 3",
+                "option_tags": [
+                    "Yellow"
+                ]
+            },
+            {
+                "name": "{character} to {character}: Yellow Crown - Stage 2",
+                "destination": "{character}: Yellow Crown - Stage 2",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "Has",
+                            "args": {
+                                "item_name": "{character}"
+                            }
+                        },
+                        {
+                            "rule": "And",
+                            "children": [
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stickers",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stickers.yellow_stage_2"
+                                        }
+                                    }
+                                },
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stamps",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stamps.yellow_stage_2"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "option_tags": [
+                    "Yellow"
+                ],
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Yellow Crown - Stage 3",
+        "option_tags": [
+            "Yellow"
+        ],
+        "exits": [
+            {
+                "name": "to Yellow Crown - Stage 4",
+                "destination": "Yellow Crown - Stage 4",
+                "option_tags": [
+                    "Yellow"
+                ]
+            },
+            {
+                "name": "{character} to {character}: Yellow Crown - Stage 3",
+                "destination": "{character}: Yellow Crown - Stage 3",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "Has",
+                            "args": {
+                                "item_name": "{character}"
+                            }
+                        },
+                        {
+                            "rule": "And",
+                            "children": [
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stickers",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stickers.yellow_stage_3"
+                                        }
+                                    }
+                                },
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stamps",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stamps.yellow_stage_3"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "option_tags": [
+                    "Yellow"
+                ],
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Yellow Crown - Stage 4",
+        "option_tags": [
+            "Yellow"
+        ],
+        "exits": [
+            {
+                "name": "to Yellow Crown - Stage 5",
+                "destination": "Yellow Crown - Stage 5",
+                "option_tags": [
+                    "Yellow"
+                ]
+            },
+            {
+                "name": "{character} to {character}: Yellow Crown - Stage 4",
+                "destination": "{character}: Yellow Crown - Stage 4",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "Has",
+                            "args": {
+                                "item_name": "{character}"
+                            }
+                        },
+                        {
+                            "rule": "And",
+                            "children": [
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stickers",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stickers.yellow_stage_4"
+                                        }
+                                    }
+                                },
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stamps",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stamps.yellow_stage_4"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "option_tags": [
+                    "Yellow"
+                ],
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Yellow Crown - Stage 5",
+        "option_tags": [
+            "Yellow"
+        ],
+        "exits": [
+            {
+                "name": "{character} to {character}: Yellow Crown - Stage 5",
+                "destination": "{character}: Yellow Crown - Stage 5",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "Has",
+                            "args": {
+                                "item_name": "{character}"
+                            }
+                        },
+                        {
+                            "rule": "And",
+                            "children": [
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stickers",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stickers.yellow_stage_5"
+                                        }
+                                    }
+                                },
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stamps",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stamps.yellow_stage_5"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "option_tags": [
+                    "Yellow"
+                ],
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Orange Crown - Stage 1",
+        "option_tags": [
+            "Orange"
+        ],
+        "exits": [
+            {
+                "name": "to Orange Crown - Stage 2",
+                "destination": "Orange Crown - Stage 2",
+                "option_tags": [
+                    "Orange"
+                ]
+            },
+            {
+                "name": "{character} to {character}: Orange Crown - Stage 1",
+                "destination": "{character}: Orange Crown - Stage 1",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "Has",
+                            "args": {
+                                "item_name": "{character}"
+                            }
+                        },
+                        {
+                            "rule": "And",
+                            "children": [
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stickers",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stickers.orange_stage_1"
+                                        }
+                                    }
+                                },
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stamps",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stamps.orange_stage_1"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "option_tags": [
+                    "Orange"
+                ],
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Orange Crown - Stage 2",
+        "option_tags": [
+            "Orange"
+        ],
+        "exits": [
+            {
+                "name": "to Orange Crown - Stage 3",
+                "destination": "Orange Crown - Stage 3",
+                "option_tags": [
+                    "Orange"
+                ]
+            },
+            {
+                "name": "{character} to {character}: Orange Crown - Stage 2",
+                "destination": "{character}: Orange Crown - Stage 2",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "Has",
+                            "args": {
+                                "item_name": "{character}"
+                            }
+                        },
+                        {
+                            "rule": "And",
+                            "children": [
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stickers",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stickers.orange_stage_2"
+                                        }
+                                    }
+                                },
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stamps",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stamps.orange_stage_2"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "option_tags": [
+                    "Orange"
+                ],
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Orange Crown - Stage 3",
+        "option_tags": [
+            "Orange"
+        ],
+        "exits": [
+            {
+                "name": "to Orange Crown - Stage 4",
+                "destination": "Orange Crown - Stage 4",
+                "option_tags": [
+                    "Orange"
+                ]
+            },
+            {
+                "name": "{character} to {character}: Orange Crown - Stage 3",
+                "destination": "{character}: Orange Crown - Stage 3",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "Has",
+                            "args": {
+                                "item_name": "{character}"
+                            }
+                        },
+                        {
+                            "rule": "And",
+                            "children": [
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stickers",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stickers.orange_stage_3"
+                                        }
+                                    }
+                                },
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stamps",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stamps.orange_stage_3"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "option_tags": [
+                    "Orange"
+                ],
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Orange Crown - Stage 4",
+        "option_tags": [
+            "Orange"
+        ],
+        "exits": [
+            {
+                "name": "to Orange Crown - Stage 5",
+                "destination": "Orange Crown - Stage 5",
+                "option_tags": [
+                    "Orange"
+                ]
+            },
+            {
+                "name": "{character} to {character}: Orange Crown - Stage 4",
+                "destination": "{character}: Orange Crown - Stage 4",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "Has",
+                            "args": {
+                                "item_name": "{character}"
+                            }
+                        },
+                        {
+                            "rule": "And",
+                            "children": [
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stickers",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stickers.orange_stage_4"
+                                        }
+                                    }
+                                },
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stamps",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stamps.orange_stage_4"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "option_tags": [
+                    "Orange"
+                ],
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Orange Crown - Stage 5",
+        "option_tags": [
+            "Orange"
+        ],
+        "exits": [
+            {
+                "name": "{character} to {character}: Orange Crown - Stage 5",
+                "destination": "{character}: Orange Crown - Stage 5",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "Has",
+                            "args": {
+                                "item_name": "{character}"
+                            }
+                        },
+                        {
+                            "rule": "And",
+                            "children": [
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stickers",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stickers.orange_stage_5"
+                                        }
+                                    }
+                                },
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stamps",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stamps.orange_stage_5"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "option_tags": [
+                    "Orange"
+                ],
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Pink Crown - Stage 1",
+        "option_tags": [
+            "Pink"
+        ],
+        "exits": [
+            {
+                "name": "to Pink Crown - Stage 2",
+                "destination": "Pink Crown - Stage 2",
+                "option_tags": [
+                    "Pink"
+                ]
+            },
+            {
+                "name": "{character} to {character}: Pink Crown - Stage 1",
+                "destination": "{character}: Pink Crown - Stage 1",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "Has",
+                            "args": {
+                                "item_name": "{character}"
+                            }
+                        },
+                        {
+                            "rule": "And",
+                            "children": [
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stickers",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stickers.pink_stage_1"
+                                        }
+                                    }
+                                },
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stamps",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stamps.pink_stage_1"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "option_tags": [
+                    "Pink"
+                ],
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Pink Crown - Stage 2",
+        "option_tags": [
+            "Pink"
+        ],
+        "exits": [
+            {
+                "name": "to Pink Crown - Stage 3",
+                "destination": "Pink Crown - Stage 3",
+                "option_tags": [
+                    "Pink"
+                ]
+            },
+            {
+                "name": "{character} to {character}: Pink Crown - Stage 2",
+                "destination": "{character}: Pink Crown - Stage 2",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "Has",
+                            "args": {
+                                "item_name": "{character}"
+                            }
+                        },
+                        {
+                            "rule": "And",
+                            "children": [
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stickers",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stickers.pink_stage_2"
+                                        }
+                                    }
+                                },
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stamps",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stamps.pink_stage_2"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "option_tags": [
+                    "Pink"
+                ],
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Pink Crown - Stage 3",
+        "option_tags": [
+            "Pink"
+        ],
+        "exits": [
+            {
+                "name": "to Pink Crown - Stage 4",
+                "destination": "Pink Crown - Stage 4",
+                "option_tags": [
+                    "Pink"
+                ]
+            },
+            {
+                "name": "{character} to {character}: Pink Crown - Stage 3",
+                "destination": "{character}: Pink Crown - Stage 3",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "Has",
+                            "args": {
+                                "item_name": "{character}"
+                            }
+                        },
+                        {
+                            "rule": "And",
+                            "children": [
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stickers",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stickers.pink_stage_3"
+                                        }
+                                    }
+                                },
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stamps",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stamps.pink_stage_3"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "option_tags": [
+                    "Pink"
+                ],
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Pink Crown - Stage 4",
+        "option_tags": [
+            "Pink"
+        ],
+        "exits": [
+            {
+                "name": "to Pink Crown - Stage 5",
+                "destination": "Pink Crown - Stage 5",
+                "option_tags": [
+                    "Pink"
+                ]
+            },
+            {
+                "name": "{character} to {character}: Pink Crown - Stage 4",
+                "destination": "{character}: Pink Crown - Stage 4",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "Has",
+                            "args": {
+                                "item_name": "{character}"
+                            }
+                        },
+                        {
+                            "rule": "And",
+                            "children": [
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stickers",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stickers.pink_stage_4"
+                                        }
+                                    }
+                                },
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stamps",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stamps.pink_stage_4"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "option_tags": [
+                    "Pink"
+                ],
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Pink Crown - Stage 5",
+        "option_tags": [
+            "Pink"
+        ],
+        "exits": [
+            {
+                "name": "{character} to {character}: Pink Crown - Stage 5",
+                "destination": "{character}: Pink Crown - Stage 5",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "Has",
+                            "args": {
+                                "item_name": "{character}"
+                            }
+                        },
+                        {
+                            "rule": "And",
+                            "children": [
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stickers",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stickers.pink_stage_5"
+                                        }
+                                    }
+                                },
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stamps",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stamps.pink_stage_5"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "option_tags": [
+                    "Pink"
+                ],
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Green Crown - Stage 1",
+        "option_tags": [
+            "Green"
+        ],
+        "exits": [
+            {
+                "name": "to Green Crown - Stage 2",
+                "destination": "Green Crown - Stage 2",
+                "option_tags": [
+                    "Green"
+                ]
+            },
+            {
+                "name": "{character} to {character}: Green Crown - Stage 1",
+                "destination": "{character}: Green Crown - Stage 1",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "Has",
+                            "args": {
+                                "item_name": "{character}"
+                            }
+                        },
+                        {
+                            "rule": "And",
+                            "children": [
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stickers",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stickers.green_stage_1"
+                                        }
+                                    }
+                                },
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stamps",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stamps.green_stage_1"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "option_tags": [
+                    "Green"
+                ],
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Green Crown - Stage 2",
+        "option_tags": [
+            "Green"
+        ],
+        "exits": [
+            {
+                "name": "to Green Crown - Stage 3",
+                "destination": "Green Crown - Stage 3",
+                "option_tags": [
+                    "Green"
+                ]
+            },
+            {
+                "name": "{character} to {character}: Green Crown - Stage 2",
+                "destination": "{character}: Green Crown - Stage 2",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "Has",
+                            "args": {
+                                "item_name": "{character}"
+                            }
+                        },
+                        {
+                            "rule": "And",
+                            "children": [
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stickers",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stickers.green_stage_2"
+                                        }
+                                    }
+                                },
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stamps",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stamps.green_stage_2"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "option_tags": [
+                    "Green"
+                ],
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Green Crown - Stage 3",
+        "option_tags": [
+            "Green"
+        ],
+        "exits": [
+            {
+                "name": "to Green Crown - Stage 4",
+                "destination": "Green Crown - Stage 4",
+                "option_tags": [
+                    "Green"
+                ]
+            },
+            {
+                "name": "{character} to {character}: Green Crown - Stage 3",
+                "destination": "{character}: Green Crown - Stage 3",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "Has",
+                            "args": {
+                                "item_name": "{character}"
+                            }
+                        },
+                        {
+                            "rule": "And",
+                            "children": [
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stickers",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stickers.green_stage_3"
+                                        }
+                                    }
+                                },
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stamps",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stamps.green_stage_3"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "option_tags": [
+                    "Green"
+                ],
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Green Crown - Stage 4",
+        "option_tags": [
+            "Green"
+        ],
+        "exits": [
+            {
+                "name": "to Green Crown - Stage 5",
+                "destination": "Green Crown - Stage 5",
+                "option_tags": [
+                    "Green"
+                ]
+            },
+            {
+                "name": "{character} to {character}: Green Crown - Stage 4",
+                "destination": "{character}: Green Crown - Stage 4",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "Has",
+                            "args": {
+                                "item_name": "{character}"
+                            }
+                        },
+                        {
+                            "rule": "And",
+                            "children": [
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stickers",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stickers.green_stage_4"
+                                        }
+                                    }
+                                },
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stamps",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stamps.green_stage_4"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "option_tags": [
+                    "Green"
+                ],
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Green Crown - Stage 5",
+        "option_tags": [
+            "Green"
+        ],
+        "exits": [
+            {
+                "name": "{character} to {character}: Green Crown - Stage 5",
+                "destination": "{character}: Green Crown - Stage 5",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "Has",
+                            "args": {
+                                "item_name": "{character}"
+                            }
+                        },
+                        {
+                            "rule": "And",
+                            "children": [
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stickers",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stickers.green_stage_5"
+                                        }
+                                    }
+                                },
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stamps",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stamps.green_stage_5"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "option_tags": [
+                    "Green"
+                ],
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Blue Crown - Stage 1",
+        "option_tags": [
+            "Blue"
+        ],
+        "exits": [
+            {
+                "name": "to Blue Crown - Stage 2",
+                "destination": "Blue Crown - Stage 2",
+                "option_tags": [
+                    "Blue"
+                ]
+            },
+            {
+                "name": "{character} to {character}: Blue Crown - Stage 1",
+                "destination": "{character}: Blue Crown - Stage 1",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "Has",
+                            "args": {
+                                "item_name": "{character}"
+                            }
+                        },
+                        {
+                            "rule": "And",
+                            "children": [
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stickers",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stickers.blue_stage_1"
+                                        }
+                                    }
+                                },
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stamps",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stamps.blue_stage_1"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "option_tags": [
+                    "Blue"
+                ],
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Blue Crown - Stage 2",
+        "option_tags": [
+            "Blue"
+        ],
+        "exits": [
+            {
+                "name": "to Blue Crown - Stage 3",
+                "destination": "Blue Crown - Stage 3",
+                "option_tags": [
+                    "Blue"
+                ]
+            },
+            {
+                "name": "{character} to {character}: Blue Crown - Stage 2",
+                "destination": "{character}: Blue Crown - Stage 2",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "Has",
+                            "args": {
+                                "item_name": "{character}"
+                            }
+                        },
+                        {
+                            "rule": "And",
+                            "children": [
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stickers",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stickers.blue_stage_2"
+                                        }
+                                    }
+                                },
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stamps",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stamps.blue_stage_2"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "option_tags": [
+                    "Blue"
+                ],
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Blue Crown - Stage 3",
+        "option_tags": [
+            "Blue"
+        ],
+        "exits": [
+            {
+                "name": "to Blue Crown - Stage 4",
+                "destination": "Blue Crown - Stage 4",
+                "option_tags": [
+                    "Blue"
+                ]
+            },
+            {
+                "name": "{character} to {character}: Blue Crown - Stage 3",
+                "destination": "{character}: Blue Crown - Stage 3",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "Has",
+                            "args": {
+                                "item_name": "{character}"
+                            }
+                        },
+                        {
+                            "rule": "And",
+                            "children": [
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stickers",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stickers.blue_stage_3"
+                                        }
+                                    }
+                                },
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stamps",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stamps.blue_stage_3"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "option_tags": [
+                    "Blue"
+                ],
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Blue Crown - Stage 4",
+        "option_tags": [
+            "Blue"
+        ],
+        "exits": [
+            {
+                "name": "to Blue Crown - Stage 5",
+                "destination": "Blue Crown - Stage 5",
+                "option_tags": [
+                    "Blue"
+                ]
+            },
+            {
+                "name": "{character} to {character}: Blue Crown - Stage 4",
+                "destination": "{character}: Blue Crown - Stage 4",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "Has",
+                            "args": {
+                                "item_name": "{character}"
+                            }
+                        },
+                        {
+                            "rule": "And",
+                            "children": [
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stickers",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stickers.blue_stage_4"
+                                        }
+                                    }
+                                },
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stamps",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stamps.blue_stage_4"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "option_tags": [
+                    "Blue"
+                ],
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Blue Crown - Stage 5",
+        "option_tags": [
+            "Blue"
+        ],
+        "exits": [
+            {
+                "name": "{character} to {character}: Blue Crown - Stage 5",
+                "destination": "{character}: Blue Crown - Stage 5",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "Has",
+                            "args": {
+                                "item_name": "{character}"
+                            }
+                        },
+                        {
+                            "rule": "And",
+                            "children": [
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stickers",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stickers.blue_stage_5"
+                                        }
+                                    }
+                                },
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stamps",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stamps.blue_stage_5"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "option_tags": [
+                    "Blue"
+                ],
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Red Crown - Stage 1",
+        "option_tags": [
+            "Red"
+        ],
+        "exits": [
+            {
+                "name": "to Red Crown - Stage 2",
+                "destination": "Red Crown - Stage 2",
+                "option_tags": [
+                    "Red"
+                ]
+            },
+            {
+                "name": "{character} to {character}: Red Crown - Stage 1",
+                "destination": "{character}: Red Crown - Stage 1",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "Has",
+                            "args": {
+                                "item_name": "{character}"
+                            }
+                        },
+                        {
+                            "rule": "And",
+                            "children": [
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stickers",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stickers.red_stage_1"
+                                        }
+                                    }
+                                },
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stamps",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stamps.red_stage_1"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "option_tags": [
+                    "Red"
+                ],
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Red Crown - Stage 2",
+        "option_tags": [
+            "Red"
+        ],
+        "exits": [
+            {
+                "name": "to Red Crown - Stage 3",
+                "destination": "Red Crown - Stage 3",
+                "option_tags": [
+                    "Red"
+                ]
+            },
+            {
+                "name": "{character} to {character}: Red Crown - Stage 2",
+                "destination": "{character}: Red Crown - Stage 2",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "Has",
+                            "args": {
+                                "item_name": "{character}"
+                            }
+                        },
+                        {
+                            "rule": "And",
+                            "children": [
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stickers",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stickers.red_stage_2"
+                                        }
+                                    }
+                                },
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stamps",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stamps.red_stage_2"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "option_tags": [
+                    "Red"
+                ],
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Red Crown - Stage 3",
+        "option_tags": [
+            "Red"
+        ],
+        "exits": [
+            {
+                "name": "to Red Crown - Stage 4",
+                "destination": "Red Crown - Stage 4",
+                "option_tags": [
+                    "Red"
+                ]
+            },
+            {
+                "name": "{character} to {character}: Red Crown - Stage 3",
+                "destination": "{character}: Red Crown - Stage 3",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "Has",
+                            "args": {
+                                "item_name": "{character}"
+                            }
+                        },
+                        {
+                            "rule": "And",
+                            "children": [
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stickers",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stickers.red_stage_3"
+                                        }
+                                    }
+                                },
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stamps",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stamps.red_stage_3"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "option_tags": [
+                    "Red"
+                ],
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Red Crown - Stage 4",
+        "option_tags": [
+            "Red"
+        ],
+        "exits": [
+            {
+                "name": "to Red Crown - Stage 5",
+                "destination": "Red Crown - Stage 5",
+                "option_tags": [
+                    "Red"
+                ]
+            },
+            {
+                "name": "{character} to {character}: Red Crown - Stage 4",
+                "destination": "{character}: Red Crown - Stage 4",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "Has",
+                            "args": {
+                                "item_name": "{character}"
+                            }
+                        },
+                        {
+                            "rule": "And",
+                            "children": [
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stickers",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stickers.red_stage_4"
+                                        }
+                                    }
+                                },
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stamps",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stamps.red_stage_4"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "option_tags": [
+                    "Red"
+                ],
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Red Crown - Stage 5",
+        "option_tags": [
+            "Red"
+        ],
+        "exits": [
+            {
+                "name": "{character} to {character}: Red Crown - Stage 5",
+                "destination": "{character}: Red Crown - Stage 5",
+                "access_rule": {
+                    "rule": "And",
+                    "children": [
+                        {
+                            "rule": "Has",
+                            "args": {
+                                "item_name": "{character}"
+                            }
+                        },
+                        {
+                            "rule": "And",
+                            "children": [
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stickers",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stickers.red_stage_5"
+                                        }
+                                    }
+                                },
+                                {
+                                    "rule": "HasGroup",
+                                    "args": {
+                                        "item_name_group": "{character}: Base Stamps",
+                                        "count": {
+                                            "resolver": "FromWorldAttr",
+                                            "name": "group_thresholds.{character}: Base Stamps.red_stage_5"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "option_tags": [
+                    "Red"
+                ],
+                "iterate": [
+                    {
+                        "placeholder": "character",
+                        "values": "character_names",
+                        "tag": "character_tags"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "{character}: {crown} Crown - Stage {stage}",
+        "option_tags": [
+            "{crown_raw}"
+        ],
+        "exits": [],
+        "iterate": [
+            {
+                "placeholder": "character",
+                "values": "character_names",
+                "tag": "character_tags"
+            },
+            {
+                "placeholder": "crown",
+                "values": "crown_names"
+            },
+            {
+                "placeholder": "stage",
+                "values": [
+                    1,
+                    2,
+                    3,
+                    4
+                ]
+            }
+        ]
+    },
+    {
+        "name": "{character}: Purple Crown - Stage 5",
+        "option_tags": [
+            "Purple"
+        ],
+        "exits": [
+            {
+                "name": "{character} to Yellow Crown - Stage 1",
+                "destination": "Yellow Crown - Stage 1",
+                "access_rule": {
+                    "rule": "Has",
+                    "args": {
+                        "item_name": "{character}: Progressive Crown",
+                        "count": 2
+                    }
+                },
+                "option_tags": [
+                    "Yellow"
+                ]
+            },
+            {
+                "name": "{character} to {character}: Michael",
+                "destination": "{character}: Michael",
+                "option_tags": [
+                    "Michael"
+                ]
+            }
+        ],
+        "iterate": [
+            {
+                "placeholder": "character",
+                "values": "character_names",
+                "tag": "character_tags"
+            }
+        ]
+    },
+    {
+        "name": "{character}: Yellow Crown - Stage 5",
+        "option_tags": [
+            "Yellow"
+        ],
+        "exits": [
+            {
+                "name": "{character} to Orange Crown - Stage 1",
+                "destination": "Orange Crown - Stage 1",
+                "access_rule": {
+                    "rule": "Has",
+                    "args": {
+                        "item_name": "{character}: Progressive Crown",
+                        "count": 3
+                    }
+                },
+                "option_tags": [
+                    "Orange"
+                ]
+            }
+        ],
+        "iterate": [
+            {
+                "placeholder": "character",
+                "values": "character_names",
+                "tag": "character_tags"
+            }
+        ]
+    },
+    {
+        "name": "{character}: Orange Crown - Stage 5",
+        "option_tags": [
+            "Orange"
+        ],
+        "exits": [
+            {
+                "name": "{character} to Pink Crown - Stage 1",
+                "destination": "Pink Crown - Stage 1",
+                "access_rule": {
+                    "rule": "Has",
+                    "args": {
+                        "item_name": "{character}: Progressive Crown",
+                        "count": 4
+                    }
+                },
+                "option_tags": [
+                    "Pink"
+                ]
+            }
+        ],
+        "iterate": [
+            {
+                "placeholder": "character",
+                "values": "character_names",
+                "tag": "character_tags"
+            }
+        ]
+    },
+    {
+        "name": "{character}: Pink Crown - Stage 5",
+        "option_tags": [
+            "Pink"
+        ],
+        "exits": [
+            {
+                "name": "{character} to Green Crown - Stage 1",
+                "destination": "Green Crown - Stage 1",
+                "access_rule": {
+                    "rule": "Has",
+                    "args": {
+                        "item_name": "{character}: Progressive Crown",
+                        "count": 5
+                    }
+                },
+                "option_tags": [
+                    "Green"
+                ]
+            }
+        ],
+        "iterate": [
+            {
+                "placeholder": "character",
+                "values": "character_names",
+                "tag": "character_tags"
+            }
+        ]
+    },
+    {
+        "name": "{character}: Green Crown - Stage 5",
+        "option_tags": [
+            "Green"
+        ],
+        "exits": [
+            {
+                "name": "{character} to Blue Crown - Stage 1",
+                "destination": "Blue Crown - Stage 1",
+                "access_rule": {
+                    "rule": "Has",
+                    "args": {
+                        "item_name": "{character}: Progressive Crown",
+                        "count": 6
+                    }
+                },
+                "option_tags": [
+                    "Blue"
+                ]
+            }
+        ],
+        "iterate": [
+            {
+                "placeholder": "character",
+                "values": "character_names",
+                "tag": "character_tags"
+            }
+        ]
+    },
+    {
+        "name": "{character}: Blue Crown - Stage 5",
+        "option_tags": [
+            "Blue"
+        ],
+        "exits": [
+            {
+                "name": "{character} to Red Crown - Stage 1",
+                "destination": "Red Crown - Stage 1",
+                "access_rule": {
+                    "rule": "Has",
+                    "args": {
+                        "item_name": "{character}: Progressive Crown",
+                        "count": 7
+                    }
+                },
+                "option_tags": [
+                    "Red"
+                ]
+            }
+        ],
+        "iterate": [
+            {
+                "placeholder": "character",
+                "values": "character_names",
+                "tag": "character_tags"
+            }
+        ]
+    },
+    {
+        "name": "{character}: Red Crown - Stage 5",
+        "option_tags": [
+            "Red"
+        ],
+        "exits": [],
+        "iterate": [
+            {
+                "placeholder": "character",
+                "values": "character_names",
+                "tag": "character_tags"
+            }
+        ]
+    },
+    {
+        "name": "{character}: Michael",
+        "option_tags": [
+            "Michael"
+        ],
+        "exits": [],
+        "iterate": [
+            {
+                "placeholder": "character",
+                "values": "character_names",
+                "tag": "character_tags"
+            }
+        ]
     }
 ]

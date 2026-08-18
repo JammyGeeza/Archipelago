@@ -4,7 +4,7 @@ from .Items import CursedWordsItem, item_name_groups_lookup, item_name_to_id_loo
 from .Locations import location_name_to_id_lookup, location_table
 from .Options import CursedWordsOptions
 from .Regions import CursedWordsRegion, region_table, generate_regions
-from .Rules import generate_stage_thresholds, generate_goal_events, generate_goal, CHARACTER_BUILD_GROUPS, GROUP_THRESHOLD_OVERRIDES, STANDARD_GROUP_THRESHOLD
+from .Rules import generate_all_group_thresholds, CROWN_NAMES, generate_goal_events, generate_goal
 import logging
 import math
 from typing import Any, Dict, List, Set, Tuple
@@ -39,8 +39,6 @@ class CursedWordsWorld(World):
 
     location_name_to_id = location_name_to_id_lookup
 
-    
-
     def generate_early(self):
         """Perform actions before generation."""
 
@@ -59,11 +57,13 @@ class CursedWordsWorld(World):
             *([self.options.shuffle_locked_tile_positions.display_name] if self.options.shuffle_locked_tile_positions.value else []),
             *([self.options.bosssanity.display_name] if self.options.bosssanity.value else []),
             *([self.options.shopsanity.display_name] if self.options.shopsanity.value else []),
+            *(["Crowns"] + list(CROWN_NAMES[:self.options.crowns.value]) if self.options.crowns.value else []),
+            *([self.options.michael.display_name] if self.options.michael.value else []),
             
             # Additional tag inclusions go here
         ]
 
-        # logging.info(f"Selecting starting character ...")
+        logging.info(f"Selected option tags: {self.option_tags}")
 
         # Randomly select starting character
         self.start_character: str = self.random.choice(
@@ -100,22 +100,9 @@ class CursedWordsWorld(World):
             self.multiworld.push_precollected(self.create_item(sticker))
 
         # logging.info(f"Starting inventory from pool: {self.options.start_inventory_from_pool.value}")
-        
-        # Get relevant item groups for selected characters
-        relevant_groups: Set[str] = set()
-        for character in self.character_tags:
-            relevant_groups.update(CHARACTER_BUILD_GROUPS.get(character, []))
 
-        # Calculate thresholds for sticker / stamp requirement count per group
-        self.group_thresholds: Dict[str, Dict[str, int]] = {}
-        for group in relevant_groups:
-            eligible = [
-                item.name for item in item_table
-                if item.has_character_tags(self.character_tags)
-                and item.has_option_tags(self.option_tags)
-                and group in item.groups
-            ]
-            self.group_thresholds[group] = generate_stage_thresholds(group, len(eligible))
+        # Calculate the "critical" Character/Crown/Stage/Sticker-Stamp thresholds
+        self.group_thresholds: Dict[str, Dict[str, int]] = generate_all_group_thresholds(item_name_groups_lookup)
 
         # If 'Progressive Tile Positions' is enabled, generate tile positions
         self.selected_tile_positions = []

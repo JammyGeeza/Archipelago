@@ -1,0 +1,37 @@
+{
+    "character_names": [
+        "Rodman",
+        "Nina Nix",
+        "Hayley Bayles",
+        "Bones the Dog",
+        "Sam Gambit",
+        "Octacles"
+    ],
+    "crown_names": [
+        "Purple",
+        "Yellow",
+        "Orange",
+        "Pink",
+        "Green",
+        "Blue",
+        "Red"
+    ],
+    "tile_colours": [
+        "Normal",
+        "Blue",
+        "Red",
+        "Void",
+        "Shiny"
+    ],
+    "tile_glyphs": [
+        "Letter",
+        "?",
+        "Number",
+        "Fraction",
+        "Chess Piece",
+        "Playing Card",
+        "Joker",
+        "Currency",
+        "Item"
+    ]
+}

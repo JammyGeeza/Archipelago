@@ -1,186 +1,147 @@
 [
     {
-        "count": 3,
-        "name": "Rodman: 1-{count} Complete",
-        "region": "Rodman: Stage 1",
-        "character_tags": [ "Rodman" ]
+        "name": "{character}: {stage}-{encounter} Complete",
+        "region": "{character}: {stage}",
+        "iterate": [
+            {
+                "placeholder": "character",
+                "values": [
+                    "Rodman",
+                    "Nina Nix",
+                    "Hayley Bayles",
+                    "Bones the Dog",
+                    "Sam Gambit",
+                    "Octacles"
+                ],
+                "tag": "character_tags"
+            },
+            {
+                "placeholder": "stage",
+                "range": {
+                    "start": 1,
+                    "count": 5
+                },
+                "format": "Stage {value}"
+            },
+            {
+                "placeholder": "encounter",
+                "range": {
+                    "start": 1,
+                    "count": 3
+                }
+            }
+        ]
     },
     {
-        "count": 3,
-        "name": "Rodman: 2-{count} Complete",
-        "region": "Rodman: Stage 2",
-        "character_tags": [ "Rodman" ]
+        "name": "{character}: {stage}-{encounter} Complete",
+        "region": "{character}: Michael",
+        "option_tags": [
+            "Michael"
+        ],
+        "iterate": [
+            {
+                "placeholder": "character",
+                "values": [
+                    "Rodman",
+                    "Nina Nix",
+                    "Hayley Bayles",
+                    "Bones the Dog",
+                    "Sam Gambit",
+                    "Octacles"
+                ],
+                "tag": "character_tags"
+            },
+            {
+                "placeholder": "stage",
+                "range": {
+                    "start": 6
+                },
+                "format": "Stage {value}"
+            },
+            {
+                "placeholder": "encounter",
+                "range": {
+                    "start": 1,
+                    "count": 3
+                }
+            }
+        ]
     },
     {
-        "count": 3,
-        "name": "Rodman: 3-{count} Complete",
-        "region": "Rodman: Stage 3",
-        "character_tags": [ "Rodman" ]
+        "name": "{character}: {crown} {stage}-{encounter} Complete",
+        "region": "{character}: {crown} - {stage}",
+        "iterate": [
+            {
+                "placeholder": "character",
+                "values": [
+                    "Rodman",
+                    "Nina Nix",
+                    "Hayley Bayles",
+                    "Bones the Dog",
+                    "Sam Gambit",
+                    "Octacles"
+                ],
+                "tag": "character_tags"
+            },
+            {
+                "placeholder": "crown",
+                "values": [
+                    "Purple",
+                    "Yellow",
+                    "Orange",
+                    "Pink",
+                    "Green",
+                    "Blue",
+                    "Red"
+                ],
+                "format": "{value} Crown",
+                "tag": "option_tags"
+            },
+            {
+                "placeholder": "stage",
+                "range": {
+                    "start": 1,
+                    "count": 5
+                },
+                "format": "Stage {value}"
+            },
+            {
+                "placeholder": "encounter",
+                "range": {
+                    "start": 1,
+                    "count": 3
+                }
+            }
+        ]
     },
     {
-        "count": 3,
-        "name": "Rodman: 4-{count} Complete",
-        "region": "Rodman: Stage 4",
-        "character_tags": [ "Rodman" ]
+        "name": "{character}: Fairy {fairy}",
+        "region": "{character}: Purple Crown - Stage {fairy}",
+        "option_tags": [
+            "Fairies"
+        ],
+        "iterate": [
+            {
+                "placeholder": "character",
+                "values": [
+                    "Rodman",
+                    "Nina Nix",
+                    "Hayley Bayles",
+                    "Bones the Dog",
+                    "Sam Gambit",
+                    "Octacles"
+                ],
+                "tag": "character_tags"
+            },
+            {
+                "placeholder": "fairy",
+                "range": {
+                    "start": 1,
+                    "count": 5
+                }
+            }
+        ]
     },
-    {
-        "count": 3,
-        "name": "Rodman: 5-{count} Complete",
-        "region": "Rodman: Stage 5",
-        "character_tags": [ "Rodman" ]
-    },
-    {
-        "count": 3,
-        "name": "Nina Nix: 1-{count} Complete",
-        "region": "Nina Nix: Stage 1",
-        "character_tags": [ "Nina Nix" ]
-    },
-    {
-        "count": 3,
-        "name": "Nina Nix: 2-{count} Complete",
-        "region": "Nina Nix: Stage 2",
-        "character_tags": [ "Nina Nix" ]
-    },
-    {
-        "count": 3,
-        "name": "Nina Nix: 3-{count} Complete",
-        "region": "Nina Nix: Stage 3",
-        "character_tags": [ "Nina Nix" ]
-    },
-    {
-        "count": 3,
-        "name": "Nina Nix: 4-{count} Complete",
-        "region": "Nina Nix: Stage 4",
-        "character_tags": [ "Nina Nix" ]
-    },
-    {
-        "count": 3,
-        "name": "Nina Nix: 5-{count} Complete",
-        "region": "Nina Nix: Stage 5",
-        "character_tags": [ "Nina Nix" ]
-    },
-    {
-        "count": 3,
-        "name": "Hayley Bayles: 1-{count} Complete",
-        "region": "Hayley Bayles: Stage 1",
-        "character_tags": [ "Hayley Bayles" ]
-    },
-    {
-        "count": 3,
-        "name": "Hayley Bayles: 2-{count} Complete",
-        "region": "Hayley Bayles: Stage 2",
-        "character_tags": [ "Hayley Bayles" ]
-    },
-    {
-        "count": 3,
-        "name": "Hayley Bayles: 3-{count} Complete",
-        "region": "Hayley Bayles: Stage 3",
-        "character_tags": [ "Hayley Bayles" ]
-    },
-    {
-        "count": 3,
-        "name": "Hayley Bayles: 4-{count} Complete",
-        "region": "Hayley Bayles: Stage 4",
-        "character_tags": [ "Hayley Bayles" ]
-    },
-    {
-        "count": 3,
-        "name": "Hayley Bayles: 5-{count} Complete",
-        "region": "Hayley Bayles: Stage 5",
-        "character_tags": [ "Hayley Bayles" ]
-    },
-    {
-        "count": 3,
-        "name": "Bones the Dog: 1-{count} Complete",
-        "region": "Bones the Dog: Stage 1",
-        "character_tags": [ "Bones the Dog" ]
-    },
-    {
-        "count": 3,
-        "name": "Bones the Dog: 2-{count} Complete",
-        "region": "Bones the Dog: Stage 2",
-        "character_tags": [ "Bones the Dog" ]
-    },
-    {
-        "count": 3,
-        "name": "Bones the Dog: 3-{count} Complete",
-        "region": "Bones the Dog: Stage 3",
-        "character_tags": [ "Bones the Dog" ]
-    },
-    {
-        "count": 3,
-        "name": "Bones the Dog: 4-{count} Complete",
-        "region": "Bones the Dog: Stage 4",
-        "character_tags": [ "Bones the Dog" ]
-    },
-    {
-        "count": 3,
-        "name": "Bones the Dog: 5-{count} Complete",
-        "region": "Bones the Dog: Stage 5",
-        "character_tags": [ "Bones the Dog" ]
-    },
-    {
-        "count": 3,
-        "name": "Sam Gambit: 1-{count} Complete",
-        "region": "Sam Gambit: Stage 1",
-        "character_tags": [ "Sam Gambit" ]
-    },
-    {
-        "count": 3,
-        "name": "Sam Gambit: 2-{count} Complete",
-        "region": "Sam Gambit: Stage 2",
-        "character_tags": [ "Sam Gambit" ]
-    },
-    {
-        "count": 3,
-        "name": "Sam Gambit: 3-{count} Complete",
-        "region": "Sam Gambit: Stage 3",
-        "character_tags": [ "Sam Gambit" ]
-    },
-    {
-        "count": 3,
-        "name": "Sam Gambit: 4-{count} Complete",
-        "region": "Sam Gambit: Stage 4",
-        "character_tags": [ "Sam Gambit" ]
-    },
-    {
-        "count": 3,
-        "name": "Sam Gambit: 5-{count} Complete",
-        "region": "Sam Gambit: Stage 5",
-        "character_tags": [ "Sam Gambit" ]
-    },
-    {
-        "count": 3,
-        "name": "Octacles: 1-{count} Complete",
-        "region": "Octacles: Stage 1",
-        "character_tags": [ "Octacles" ]
-    },
-    {
-        "count": 3,
-        "name": "Octacles: 2-{count} Complete",
-        "region": "Octacles: Stage 2",
-        "character_tags": [ "Octacles" ]
-    },
-    {
-        "count": 3,
-        "name": "Octacles: 3-{count} Complete",
-        "region": "Octacles: Stage 3",
-        "character_tags": [ "Octacles" ]
-    },
-    {
-        "count": 3,
-        "name": "Octacles: 4-{count} Complete",
-        "region": "Octacles: Stage 4",
-        "character_tags": [ "Octacles" ]
-    },
-    {
-        "count": 3,
-        "name": "Octacles: 5-{count} Complete",
-        "region": "Octacles: Stage 5",
-        "character_tags": [ "Octacles" ]
-    },
-
-
     {
         "name": "Destroy a Consumable Tile",
         "region": "Stage 1"
@@ -228,8 +189,6 @@
         "name": "Skip a Grid",
         "region": "Stage 1"
     },
-
-
     {
         "name": "Buy a Sticker",
         "region": "Stage 1",
@@ -242,12 +201,60 @@
                     "operator": "eq"
                 }
             ],
-            "args" : {
+            "args": {
                 "item_name_group": "Sticker Slots",
                 "count": 1
             },
             "filtered_resolution": true
         }
+    },
+    {
+        "name": "Buy a Foil Sticker",
+        "region": "Stage 1",
+        "access_rule": {
+            "rule": "HasGroup",
+            "options": [
+                {
+                    "option": "worlds.cursed_words.Options.ShuffleInventorySlots",
+                    "value": 1,
+                    "operator": "eq"
+                }
+            ],
+            "args": {
+                "item_name_group": "Sticker Slots",
+                "count": 1
+            },
+            "filtered_resolution": true
+        }
+    },
+    {
+        "name": "Upgrade a Sticker to {level}",
+        "region": "Stage 1",
+        "access_rule": {
+            "rule": "HasGroup",
+            "options": [
+                {
+                    "option": "worlds.cursed_words.Options.ShuffleInventorySlots",
+                    "value": 1,
+                    "operator": "eq"
+                }
+            ],
+            "args": {
+                "item_name_group": "Sticker Slots",
+                "count": 1
+            },
+            "filtered_resolution": true
+        },
+        "iterate": [
+            {
+                "placeholder": "level",
+                "range": {
+                    "start": 2,
+                    "count": 2
+                },
+                "format": "Level {value}"
+            }
+        ]
     },
     {
         "name": "Buy a Stamp",
@@ -261,7 +268,7 @@
                     "operator": "eq"
                 }
             ],
-            "args" : {
+            "args": {
                 "item_name_group": "Stamp Slots",
                 "count": 1
             },
@@ -269,8 +276,24 @@
         }
     },
     {
-        "name": "Buy a Consumable Tile",
-        "region": "Stage 1"
+        "name": "Buy a {colour} Tile",
+        "region": "Stage 1",
+        "iterate": [
+            {
+                "placeholder": "colour",
+                "values": "tile_colours"
+            }
+        ]
+    },
+    {
+        "name": "Buy a {glyph} Tile",
+        "region": "Stage 1",
+        "iterate": [
+            {
+                "placeholder": "glyph",
+                "values": "tile_glyphs"
+            }
+        ]
     },
     {
         "count": 30,
@@ -311,7 +334,9 @@
                 }
             ]
         },
-        "option_tags": [ "Shopsanity" ]
+        "option_tags": [
+            "Shopsanity"
+        ]
     },
     {
         "name": "Freeze a Stamp",
@@ -337,7 +362,7 @@
                     "operator": "eq"
                 }
             ],
-            "args" : {
+            "args": {
                 "item_name_group": "Sticker Slots",
                 "count": 1
             },
@@ -356,15 +381,13 @@
                     "operator": "eq"
                 }
             ],
-            "args" : {
+            "args": {
                 "item_name_group": "Stamp Slots",
                 "count": 1
             },
             "filtered_resolution": true
         }
     },
-
-    
     {
         "count": 3,
         "name": "Word Length: {count} Tiles",
@@ -388,8 +411,6 @@
         "name": "Word Length: {count} Tiles",
         "region": "Stage 4"
     },
-
-
     {
         "count": 3,
         "count_start": 5,
@@ -432,259 +453,117 @@
         "name": "Word Score: {count}+",
         "region": "Stage 5"
     },
-
-
-    {
-        "name": "Use a Blank Tile",
-        "region": "Stage 1",
-        "access_rule": {
-            "rule": "And",
-            "children": [
-                {
-                    "rule": "Has",
-                    "args": {
-                        "item_name": "Octacles"
-                    }
-                }
-            ]
-        },
-        "character_tags": [ "Octacles" ]
-    },
-    {
-        "name": "Use a Blue Tile",
-        "region": "Stage 1",
-        "access_rule": {
-            "rule": "And",
-            "children": [
-                {
-                    "rule": "Has",
-                    "args": {
-                        "item_name": "Rodman"
-                    }
-                }
-            ]
-        },
-        "character_tags": [ "Rodman" ]
-    },
-    {
-        "name": "Use a Chess Tile",
-        "region": "Stage 1",
-        "access_rule": {
-            "rule": "And",
-            "children": [
-                {
-                    "rule": "HasAny",
-                    "args": {
-                        "item_names": [
-                            "Sam Gambit",
-                            "Octacles"
-                        ]
-                    }
-                }
-            ]
-        },
-        "character_tags": [ "Sam Gambit", "Octacles" ]
-    },
     {
         "name": "Use a Colourless Tile",
         "region": "Stage 1"
-    },
-    {
-        "name": "Use a Currency Tile",
-        "region": "Stage 1",
-        "access_rule": {
-            "rule": "And",
-            "children": [
-                {
-                    "rule": "Has",
-                    "args": {
-                        "item_name": "Octacles"
-                    }
-                }
-            ]
-        },
-        "character_tags": [ "Octacles" ]
-    },
-    {
-        "name": "Use a Fraction Tile",
-        "region": "Stage 1",
-        "access_rule": {
-            "rule": "And",
-            "children": [
-                {
-                    "rule": "Has",
-                    "args": {
-                        "item_name": "Octacles"
-                    }
-                }
-            ]
-        },
-        "character_tags": [ "Octacles" ]
     },
     {
         "name": "Use a Letter Tile",
         "region": "Stage 1"
     },
     {
-        "name": "Use a Number Tile",
-        "region": "Stage 1",
-        "access_rule": {
-            "rule": "And",
-            "children": [
-                {
-                    "rule": "HasAny",
-                    "args": {
-                        "item_names": [
-                            "Hayley Bayles",
-                            "Octacles"
-                        ]
-                    }
-                }
-            ]
-        },
-        "character_tags": [ "Hayley Bayles", "Octacles" ]
-    },
-    {
-        "name": "Use a Red Tile",
-        "region": "Stage 1",
-        "access_rule": {
-            "rule": "And",
-            "children": [
-                {
-                    "rule": "Has",
-                    "args": {
-                        "item_name": "Rodman"
-                    }
-                }
-            ]
-        },
-        "character_tags": [ "Rodman" ]
-    },
-    {
-        "name": "Use a Shiny Tile",
-        "region": "Stage 1",
-        "access_rule": {
-            "rule": "And",
-            "children": [
-                {
-                    "rule": "Has",
-                    "args": {
-                        "item_name": "Nina Nix"
-                    }
-                }
-            ]
-        },
-        "character_tags": [ "Nina Nix" ]
-    },
-    {
-        "name": "Use a Suited Tile",
-        "region": "Stage 1",
-        "access_rule": {
-            "rule": "And",
-            "children": [
-                {
-                    "rule": "HasAny",
-                    "args": {
-                        "item_names": [
-                            "Bones the Dog",
-                            "Octacles"
-                        ]
-                    }
-                }
-            ]
-        },
-        "character_tags": [ "Bones the Dog", "Octacles" ]
-    },
-    {
-        "name": "Use a Void Tile",
-        "region": "Stage 1",
-        "access_rule": {
-            "rule": "And",
-            "children": [
-                {
-                    "rule": "Has",
-                    "args": {
-                        "item_name": "Nina Nix"
-                    }
-                }
-            ]
-        },
-        "character_tags": [ "Nina Nix" ]
-    },
-
-    {
         "name": "Defeat Axolotl",
         "region": "Stage 1",
-        "option_tags": [ "Boss-sanity" ]
+        "option_tags": [
+            "Boss-sanity"
+        ]
     },
     {
         "name": "Defeat Badger",
         "region": "Stage 1",
-        "option_tags": [ "Boss-sanity" ]
+        "option_tags": [
+            "Boss-sanity"
+        ]
     },
     {
         "name": "Defeat Bat",
         "region": "Stage 1",
-        "option_tags": [ "Boss-sanity" ]
+        "option_tags": [
+            "Boss-sanity"
+        ]
     },
     {
         "name": "Defeat Bison",
         "region": "Stage 1",
-        "option_tags": [ "Boss-sanity" ]
+        "option_tags": [
+            "Boss-sanity"
+        ]
     },
     {
         "name": "Defeat Capybara",
         "region": "Stage 2",
-        "option_tags": [ "Boss-sanity" ]
+        "option_tags": [
+            "Boss-sanity"
+        ]
     },
     {
         "name": "Defeat Cobra",
         "region": "Stage 1",
-        "option_tags": [ "Boss-sanity" ]
+        "option_tags": [
+            "Boss-sanity"
+        ]
     },
     {
         "name": "Defeat Fox",
         "region": "Stage 1",
-        "option_tags": [ "Boss-sanity" ]
+        "option_tags": [
+            "Boss-sanity"
+        ]
     },
     {
         "name": "Defeat Hyena",
         "region": "Stage 2",
-        "option_tags": [ "Boss-sanity" ]
+        "option_tags": [
+            "Boss-sanity"
+        ]
     },
     {
         "name": "Defeat Mole",
         "region": "Stage 1",
-        "option_tags": [ "Boss-sanity" ]
+        "option_tags": [
+            "Boss-sanity"
+        ]
     },
     {
         "name": "Defeat Robo-Eel",
         "region": "Stage 1",
-        "option_tags": [ "Boss-sanity" ]
+        "option_tags": [
+            "Boss-sanity"
+        ]
     },
     {
         "name": "Defeat Robo-Monkey",
         "region": "Stage 1",
-        "option_tags": [ "Boss-sanity" ]
+        "option_tags": [
+            "Boss-sanity"
+        ]
     },
     {
         "name": "Defeat Salamander",
         "region": "Stage 1",
-        "option_tags": [ "Boss-sanity" ]
+        "option_tags": [
+            "Boss-sanity"
+        ]
     },
     {
         "name": "Defeat Toothed Whale",
         "region": "Stage 1",
-        "option_tags": [ "Boss-sanity" ]
+        "option_tags": [
+            "Boss-sanity"
+        ]
     },
     {
         "name": "Defeat Wolf",
         "region": "Stage 1",
-        "option_tags": [ "Boss-sanity" ]
+        "option_tags": [
+            "Boss-sanity"
+        ]
     },
     {
         "name": "Defeat Yeti Crab",
         "region": "Stage 1",
-        "option_tags": [ "Boss-sanity" ]
+        "option_tags": [
+            "Boss-sanity"
+        ]
     }
 ]

@@ -1,39 +1,41 @@
 from dataclasses import dataclass
-from BaseClasses import ItemClassification, Options
-# from .Enums import GoalType
+from BaseClasses import ItemClassification
+from .classes.Constants import CHARACTER_NAMES
 from .Items import item_table
-import logging
-from Options import DeathLink, ItemSet, OptionList, OptionSet, PerGameCommonOptions, Range, StartInventoryPool, Toggle
+from Options import Choice, DeathLink, ItemSet, OptionList, OptionSet, PerGameCommonOptions, Range, StartInventoryPool, Toggle
 from .Regions import region_table
-from typing import Dict, List
+from typing import List
 
 # Pre-defined keys
-_character_names = [ "Rodman", "Nina Nix", "Hayley Bayles", "Bones the Dog", "Sam Gambit", "Octacles" ]
-_filler_item_names: List[str] = [ item.name for item in item_table if item.classification == ItemClassification.filler.value ]
+_character_names = list(CHARACTER_NAMES)
+# _filler_item_names: List[str] = [ item.name for item in item_table if item.classification == ItemClassification.filler.value ]
 
 _stamp_names: List[str] = [ item.name for item in item_table if "Stamps" in item.groups ]
 _sticker_names: List[str] = [ item.name for item in item_table if "Stickers" in item.groups ]
 
-class PlayableCharacters(OptionList):
+class Characters(OptionList):
     """
-    Select character(s) to include as playable.
+    Select the character(s) to include in the seed.
 
     Using [ "Rodman", "Nina Nix", "Hayley Bayles" ] etc. will select these specific characters as playable.
     Using [ "All" ] will select all characters as playable.
+
+    NOTE: Currently only Rodman, Nina Nix, Hayley Bayles, Sam Gambit, Bones the Dog and Octacles are implemented.
+          Additional characters will be added soon.
     """
-    display_name = "Playable Characters"
+    display_name = "Characters"
     valid_keys_casefold = False
     valid_keys = [ "All" ] + _character_names
-    default = [ "All" ]
+    default = _character_names
 
 class StartingCharacter(OptionList):
     """
     Select the character to start with.
 
     Using [ "Rodman", "Nina Mix", "Hayley Bayles" ] etc. will randomly select one of these specific characters as your starting character.
-    Using [ "Random" ] will randomly select one character from <Playable Characters> as your starting character.
+    Using [ "Random" ] will randomly select one character from <Characters> as your starting character.
 
-    NOTE: Characters not included in <Playable Characters> will be ignored and never selected as your starting character.
+    NOTE: Characters not included in <Characters> will be ignored and never selected as your starting character.
           If no characters match, it will default to 'Random'.
     """
     display_name = "Starting Character"
@@ -41,20 +43,57 @@ class StartingCharacter(OptionList):
     valid_keys = [ "Random" ] + _character_names
     default = [ "Random" ]
 
-class Goal(OptionList):
+class Crowns(Choice):
     """
-    Select character(s) required to win runs with to complete your goal.
+    Select the highest Crown Tier to include in the seed - each Tier will ALWAYS include all tiers below it.
+        E.g. Selecting <Crowns> = 'pink' will also include orange, yellow and purple.
 
-    Use [ "Rodman", "Nina Nix", "Hayley Bayles" ] etc. will select these three specific characters as required to goal.
-    Use [ "All" ] will select all characters from <Playable Characters> as required to goal.
-
-    NOTE: Characters not included in <Playable Characters> will be ignored and never selected as a goal requirement character.
-          If no characters match, it will default to 'All'.
+    This setting adds the following to the seed:
+      - '<Character>: Progressive Crown' items to the item pool, each unlocking the next crown tier for the specified character.
+      - (<Characters> * <Crowns> * 15) locations to the location pool, one for every Encounter/Stage/Crown/Character combination.
+            E.g. Selecting <Crowns> = 'red' and <Characters> = 'All' will add 630 locations.
     """
+    display_name = "Crowns"
+    option_none = 0
+    option_purple = 1
+    option_yellow = 2
+    option_orange = 3
+    option_pink = 4
+    option_green = 5
+    option_blue = 6
+    option_red = 7
+    default = option_none
+
+class Michael(Toggle):
+    """
+    Adds a secret Stage 6 encounter with Michael as the boss, for each selected character.
+
+    One of the two selectable bosses at the end of each Crown tier stage is 'cursed' - defeating it grants a Fairy.
+    Collecting all 5 Fairies within a single Crown tier run and completing that tier's Stage 5 unlocks Stage 6,
+    where Michael can be fought. Michael only needs to be defeated once, on any crown tier (earliest being Purple).
+
+    NOTE: Requires <Crowns> to be set to at least 'Purple', since Michael can only be reached via a Crown tier.
+          If enabled while <Crowns> is 'None', <Crowns> will automatically be set to 'Purple'.
+    """
+    display_name = "Michael"
+    default = False
+
+class Goal(Choice):
+    """
+    Select the goal for the seed.
+
+    - runs: Beat at least one run with all <Characters>
+    - michael: Beat <Michael> at least once with all <Characters>
+    - crowns: Beat the highest <Crowns> run at least once with all <Characters>
+
+    NOTE: If <Goal> = 'michael' but <Michael> = 'False', then <Michael> will be forced to 'True'.
+          If <Goal> = 'crowns' but <Crowns> = 'none', then <Crowns> will be forced to 'purple'.
+    """
+
     display_name = "Goal"
-    valid_keys_casefold = False
-    valid_keys = [ "All" ] + _character_names
-    default = [ "All" ]
+    option_runs = 0
+    option_michael = 1
+    option_crowns = 2
 
 class GuaranteedStickers(ItemSet):
     """
@@ -178,10 +217,12 @@ class ShopsanityCost(Range):
     range_end = 25
     default = 12
 
+
+
 @dataclass
 class CursedWordsOptions(PerGameCommonOptions):
     """"""
-    characters: PlayableCharacters
+    characters: Characters
     starting_character: StartingCharacter
     goal: Goal
     guaranteed_stamps: GuaranteedStamps
@@ -195,6 +236,8 @@ class CursedWordsOptions(PerGameCommonOptions):
     shopsanity: Shopsanity
     shopsanity_limit: ShopsanityLimit
     shopsanity_cost: ShopsanityCost
+    crowns: Crowns
+    michael: Michael
 
     # Built-in
     start_inventory_from_pool: StartInventoryPool
@@ -234,18 +277,10 @@ class CursedWordsOptions(PerGameCommonOptions):
 
         # logging.info(f"Goal selection: {self.goal.value}")
 
-        # Revert to default if empty list provided
-        if len(self.goal.value) == 0:
-            self.goal.value = self.characters.default
-
-        # Check if 'All' exists in Goal options
-        if "All" in self.goal.value:
-            # logging.info(f"  -> 'All' found, requiring all <Playable Characters> for goal...")
-            self.goal.value = self.characters.value
-        else:
-            # logging.info(f"  -> Removing characters not included in <Playable Characters>...")
-            self.goal.value = list(set(self.starting_character.value) & set(self.characters.value))
+        # If <Goal> = 'Michael' but <Michael> = 'False' OR <Goal> = 'Crowns' but <Crowns> = 'None', revert to <Goal> = 'Runs'
+        if (self.goal.value == Goal.option_michael and not self.michael.value) or (self.goal.value == Goal.option_crowns and self.crowns.value == Crowns.option_none):
+            self.goal.value = Goal.option_runs
         
-        if len(self.goal.value) == 0:
-            # logging.info(f"  -> No matching characters selected, defaulting to 'All'...")
-            self.goal.value = self.characters.value
+        # If <Michael> = 'True' but <Crowns> = 'None', set <Crowns> to 'Purple' as Michael requires at least Purple Crown access.
+        if self.michael.value and self.crowns.value == Crowns.option_none:
+            self.crowns.value = Crowns.option_purple        
