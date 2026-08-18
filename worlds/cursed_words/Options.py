@@ -15,13 +15,13 @@ _sticker_names: List[str] = [ item.name for item in item_table if "Stickers" in 
 
 class Characters(OptionList):
     """
-    Select the character(s) to include in the seed.
+    Select the character(s) to include.
 
     Using [ "Rodman", "Nina Nix", "Hayley Bayles" ] etc. will select these specific characters as playable.
-    Using [ "All" ] will select all characters as playable.
+    Using [ "All" ] will select all supported characters as playable.
 
-    NOTE: Currently only Rodman, Nina Nix, Hayley Bayles, Sam Gambit, Bones the Dog and Octacles are implemented.
-          Additional characters will be added soon.
+    NOTE: Currently only supports Rodman, Nina Nix, Hayley Bayles, Sam Gambit, Bones the Dog and Octacles.
+          Additional characters will be supported in a future update.
     """
     display_name = "Characters"
     valid_keys_casefold = False
@@ -32,11 +32,12 @@ class StartingCharacter(OptionList):
     """
     Select the character to start with.
 
-    Using [ "Rodman", "Nina Mix", "Hayley Bayles" ] etc. will randomly select one of these specific characters as your starting character.
-    Using [ "Random" ] will randomly select one character from <Characters> as your starting character.
+    Using [ "Octacles" ] or any other single name will guarantee it as your starting character.
+    Using [ "Nina Mix", "Hayley Bayles", "Bones the Dog" ] or any other combination of names will randomly select one as your starting character.
+    Using [ "Random" ] will randomly select one character from your selected <Characters> as your starting character.
 
-    NOTE: Characters not included in <Characters> will be ignored and never selected as your starting character.
-          If no characters match, it will default to 'Random'.
+    NOTE: Any character names that are not selected via the <Characters> option will be ignored.
+          If no character names match, this setting will default to 'Random'.
     """
     display_name = "Starting Character"
     valid_keys_casefold = False
@@ -81,9 +82,9 @@ class Goal(Choice):
     """
     Select the goal for the seed.
 
-    - Runs: Beat at least one run with all selected <Characters>
-    - Michael: Beat <Michael> at least once with all selected <Characters> (requires <Michael> = 'True')
-    - Crowns: Beat the highest <Crowns> Tier run at least once with all selected <Characters> (requires <Crowns> = 'Purple' or higher)
+    - Runs: Beat at least one run with all selected <Goal Characters>.
+    - Michael: Beat <Michael> at least once with all selected <Goal Characters> (requires <Michael> = 'True').
+    - Crowns: Beat the highest <Crowns> Tier run at least once with all selected <Characters> (requires <Crowns> = 'Purple' or higher).
 
     NOTE: If the prerequisite options for 'Michael' or 'Crowns' goals are not met, then <Goal> will be forced back to 'Runs'.
     """
@@ -92,6 +93,22 @@ class Goal(Choice):
     option_runs = 0
     option_michael = 1
     option_crowns = 2
+
+class GoalCharacters(OptionList):
+    """
+    Select which <Characters> are required to achieve the <Goal> condition in order to reach the goal.
+
+    Using [ "Sam Gambit" ] or any other single name will require only that character to reach the <Goal>.
+    Using [ "Rodman", "Hayley Bayles", "Octacles" ] or any other combination of names will require these specific characters to reach the <Goal>.
+    Using [ "All" ] will require all selected <Characters> to reach the <Goal>.
+
+    NOTE: Any character names that are not selected via the <Characters> option will be ignored.
+          If no character names match, this setting will default to 'All'.
+    """
+    display_name = "Goal Characters"
+    valid_keys_casefold = False
+    valid_keys = [ "All" ] + _character_names
+    default = _character_names
 
 class GuaranteedStickers(ItemSet):
     """
@@ -235,6 +252,7 @@ class CursedWordsOptions(PerGameCommonOptions):
     michael: Michael
     crowns: Crowns
     goal: Goal
+    goal_characters: GoalCharacters
     guaranteed_stamps: GuaranteedStamps
     guaranteed_stickers: GuaranteedStickers
     deathlink: DeathLink
@@ -246,15 +264,34 @@ class CursedWordsOptions(PerGameCommonOptions):
     shopsanity: Shopsanity
     shopsanity_limit: ShopsanityLimit
     shopsanity_cost: ShopsanityCost
-    
+    tilesanity: Tilesanity
 
     # Built-in
     start_inventory_from_pool: StartInventoryPool
 
+    def _resolve_character_option(self, option: OptionList, wildcard: str):
+        """
+        Resolve a character option against the selected <Characters> option.
+        """
+        # If empty list, revert to default
+        if len(option.value) == 0:
+            option.value = option.default
+
+        # If wildcard present, set to selected <Characters>, otherwise ignore un-selected <Characters>
+        if wildcard in option.value:
+            option.value = self.characters.value
+        else:
+            option.value = list(set(option.value) & set(self.characters.value))
+
+        # If now empty, revert to selected <Characters>
+        if len(option.value) == 0:
+            option.value = self.characters.value
+
+
     def resolve_options(self):
         """Resolve options to ensure successful generation."""
 
-        # logging.info(f"Playable Characters selection: {self.characters.value}")
+        # ***** Character selection *****
 
         # Revert to default if empty list provided
         if len(self.characters.value) == 0:
@@ -262,34 +299,22 @@ class CursedWordsOptions(PerGameCommonOptions):
 
         # Check if 'All' exists in Characters option
         if "All" in self.characters.value:
-            # logging.info(f"  -> 'All' found, including all characters...")
             self.characters.value = _character_names
 
-        # logging.info(f"Starting character selection: {self.starting_character.value}")
-        
-        # Revert to default if empty list provided
-        if len(self.starting_character.value) == 0:
-            self.starting_character.value = self.starting_character.default  
+        # ***** Starting Character selection
+        self._resolve_character_option(self.starting_character, "Random")
 
-        # Check if 'Random' exists in Starting Character option
-        if "Random" in self.starting_character.value:
-            # logging.info(f"  -> 'Random' found, selecting all characters from <Playable Characters> selection...")
-            self.starting_character.value = self.characters.value
-        else:
-            # logging.info(f"  -> Removing characters not included in <Playable Characters>...")
-            self.starting_character.value = list(set(self.starting_character.value) & set(self.characters.value))
-
-        # Revert to 'Random' if no characters remain
-        if len(self.starting_character.value) == 0:
-            # logging.info(f"  -> No matching characters selected, defaulting to 'Random'...")
-            self.starting_character.value = self.characters.value    
-
-        # logging.info(f"Goal selection: {self.goal.value}")
+        # ***** Goal Character selection *****
+        self._resolve_character_option(self.goal_characters, "All")
 
         # If <Goal> = 'Michael' but <Michael> = 'False' OR <Goal> = 'Crowns' but <Crowns> = 'None', revert to <Goal> = 'Runs'
         if (self.goal.value == Goal.option_michael and not self.michael.value) or (self.goal.value == Goal.option_crowns and self.crowns.value == Crowns.option_none):
             self.goal.value = Goal.option_runs
+
+        # logging.info(f"Goal selection: {self.goal.value}")
         
         # If <Michael> = 'True' but <Crowns> = 'None', set <Crowns> to 'Purple' as Michael requires at least Purple Crown access.
         if self.michael.value and self.crowns.value == Crowns.option_none:
-            self.crowns.value = Crowns.option_purple        
+            self.crowns.value = Crowns.option_purple
+
+        # logging.info(f"Crowns selection: {self.crowns.value}")

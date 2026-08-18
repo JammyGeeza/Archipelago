@@ -147,10 +147,10 @@ class CursedWordsWorld(World):
 
         # Add required options data
         slot_data: Dict[str, any] = self.options.as_dict(
-            "characters",
             "crowns",
             "deathlink",
             "goal",
+            "goal_characters",
             "shuffle_grid_size",
             "shuffle_inventory_slots",
             "shuffle_item_rarities",

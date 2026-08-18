@@ -114,7 +114,7 @@ def generate_goal_events(world: World):
             raise Exception(f"Unhandled goal value: {world.options.goal.value}")
 
     # Add victory item for each character in player YAML options
-    for character in world.options.characters.value:
+    for character in world.options.goal_characters.value:
 
         region: Region = world.multiworld.get_region(f"{character}: {region_name}", world.player)
 
@@ -126,4 +126,4 @@ def generate_goal_events(world: World):
 
 def generate_goal(world: World):
     """Set the goal completion rule."""
-    world.set_completion_rule(Has("Victory", len(world.options.characters.value)))
+    world.set_completion_rule(Has("Victory", len(world.options.goal_characters.value)))
