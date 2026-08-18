@@ -5,14 +5,7 @@
         "iterate": [
             {
                 "placeholder": "character",
-                "values": [
-                    "Rodman",
-                    "Nina Nix",
-                    "Hayley Bayles",
-                    "Bones the Dog",
-                    "Sam Gambit",
-                    "Octacles"
-                ],
+                "values": "character_names",
                 "tag": "character_tags"
             },
             {
@@ -41,14 +34,7 @@
         "iterate": [
             {
                 "placeholder": "character",
-                "values": [
-                    "Rodman",
-                    "Nina Nix",
-                    "Hayley Bayles",
-                    "Bones the Dog",
-                    "Sam Gambit",
-                    "Octacles"
-                ],
+                "values": "character_names",
                 "tag": "character_tags"
             },
             {
@@ -73,27 +59,12 @@
         "iterate": [
             {
                 "placeholder": "character",
-                "values": [
-                    "Rodman",
-                    "Nina Nix",
-                    "Hayley Bayles",
-                    "Bones the Dog",
-                    "Sam Gambit",
-                    "Octacles"
-                ],
+                "values": "character_names",
                 "tag": "character_tags"
             },
             {
                 "placeholder": "crown",
-                "values": [
-                    "Purple",
-                    "Yellow",
-                    "Orange",
-                    "Pink",
-                    "Green",
-                    "Blue",
-                    "Red"
-                ],
+                "values": "crown_names",
                 "format": "{value} Crown",
                 "tag": "option_tags"
             },
@@ -115,30 +86,24 @@
         ]
     },
     {
-        "name": "{character}: Fairy {fairy}",
-        "region": "{character}: Purple Crown - Stage {fairy}",
+        "name": "{character}: {stage} Fairy",
+        "region": "{character}: Purple Crown - {stage}",
         "option_tags": [
             "Fairies"
         ],
         "iterate": [
             {
                 "placeholder": "character",
-                "values": [
-                    "Rodman",
-                    "Nina Nix",
-                    "Hayley Bayles",
-                    "Bones the Dog",
-                    "Sam Gambit",
-                    "Octacles"
-                ],
+                "values": "character_names",
                 "tag": "character_tags"
             },
             {
-                "placeholder": "fairy",
+                "placeholder": "stage",
                 "range": {
                     "start": 1,
                     "count": 5
-                }
+                },
+                "format": "Stage {value}"
             }
         ]
     },
@@ -276,8 +241,13 @@
         }
     },
     {
+        "name": "Buy a Consumable Tile",
+        "region": "Stage 1"
+    },
+    {
         "name": "Buy a {colour} Tile",
         "region": "Stage 1",
+        "option_tags": [ "Tilesanity" ],
         "iterate": [
             {
                 "placeholder": "colour",
@@ -288,6 +258,7 @@
     {
         "name": "Buy a {glyph} Tile",
         "region": "Stage 1",
+        "option_tags": [ "Tilesanity" ],
         "iterate": [
             {
                 "placeholder": "glyph",
@@ -339,12 +310,17 @@
         ]
     },
     {
-        "name": "Freeze a Stamp",
-        "region": "Stage 1"
-    },
-    {
-        "name": "Freeze a Sticker",
-        "region": "Stage 1"
+        "name": "Freeze a {item}",
+        "region": "Stage 1",
+        "iterate": [
+            {
+                "placeholder": "item",
+                "values": [
+                    "Sticker",
+                    "Stamp"
+                ]
+            }
+        ]
     },
     {
         "name": "Restock the Shop",
@@ -454,116 +430,55 @@
         "region": "Stage 5"
     },
     {
-        "name": "Use a Colourless Tile",
+        "name": "Submit a Consumable Tile",
         "region": "Stage 1"
     },
     {
-        "name": "Use a Letter Tile",
-        "region": "Stage 1"
-    },
-    {
-        "name": "Defeat Axolotl",
+        "name": "Submit a {colour} Tile",
         "region": "Stage 1",
-        "option_tags": [
-            "Boss-sanity"
+        "option_tags": [ "Tilesanity" ],
+        "iterate": [
+            {
+                "placeholder": "colour",
+                "values": "tile_colours"
+            }
         ]
     },
     {
-        "name": "Defeat Badger",
+        "name": "Submit a {glyph} Tile",
         "region": "Stage 1",
-        "option_tags": [
-            "Boss-sanity"
+        "option_tags": [ "Tilesanity" ],
+        "iterate": [
+            {
+                "placeholder": "glyph",
+                "values": "tile_glyphs"
+            }
         ]
     },
     {
-        "name": "Defeat Bat",
+        "name": "Defeat {boss}",
         "region": "Stage 1",
         "option_tags": [
             "Boss-sanity"
+        ],
+        "iterate": [
+            {
+                "placeholder": "boss",
+                "values": "boss_names_stage_1"
+            }
         ]
     },
     {
-        "name": "Defeat Bison",
-        "region": "Stage 1",
-        "option_tags": [
-            "Boss-sanity"
-        ]
-    },
-    {
-        "name": "Defeat Capybara",
+        "name": "Defeat {boss}",
         "region": "Stage 2",
         "option_tags": [
             "Boss-sanity"
-        ]
-    },
-    {
-        "name": "Defeat Cobra",
-        "region": "Stage 1",
-        "option_tags": [
-            "Boss-sanity"
-        ]
-    },
-    {
-        "name": "Defeat Fox",
-        "region": "Stage 1",
-        "option_tags": [
-            "Boss-sanity"
-        ]
-    },
-    {
-        "name": "Defeat Hyena",
-        "region": "Stage 2",
-        "option_tags": [
-            "Boss-sanity"
-        ]
-    },
-    {
-        "name": "Defeat Mole",
-        "region": "Stage 1",
-        "option_tags": [
-            "Boss-sanity"
-        ]
-    },
-    {
-        "name": "Defeat Robo-Eel",
-        "region": "Stage 1",
-        "option_tags": [
-            "Boss-sanity"
-        ]
-    },
-    {
-        "name": "Defeat Robo-Monkey",
-        "region": "Stage 1",
-        "option_tags": [
-            "Boss-sanity"
-        ]
-    },
-    {
-        "name": "Defeat Salamander",
-        "region": "Stage 1",
-        "option_tags": [
-            "Boss-sanity"
-        ]
-    },
-    {
-        "name": "Defeat Toothed Whale",
-        "region": "Stage 1",
-        "option_tags": [
-            "Boss-sanity"
-        ]
-    },
-    {
-        "name": "Defeat Wolf",
-        "region": "Stage 1",
-        "option_tags": [
-            "Boss-sanity"
-        ]
-    },
-    {
-        "name": "Defeat Yeti Crab",
-        "region": "Stage 1",
-        "option_tags": [
-            "Boss-sanity"
+        ],
+        "iterate": [
+            {
+                "placeholder": "boss",
+                "values": "boss_names_stage_2"
+            }
         ]
     }
 ]

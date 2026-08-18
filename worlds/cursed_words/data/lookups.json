@@ -1,4 +1,23 @@
 {
+    "boss_names_stage_1":[
+        "Axolotl",
+        "Badger",
+        "Bat",
+        "Bison",
+        "Cobra",
+        "Fox",
+        "Mole",
+        "Robo-Eel",
+        "Robo-Monkey",
+        "Salamander",
+        "Toothed Whale",
+        "Wolf",
+        "Yeti Crab"
+    ],
+    "boss_names_stage_2":[
+        "Capybara",
+        "Hyena"
+    ],
     "character_names": [
         "Rodman",
         "Nina Nix",
@@ -17,21 +36,20 @@
         "Red"
     ],
     "tile_colours": [
-        "Normal",
+        "Colourless",
         "Blue",
         "Red",
         "Void",
         "Shiny"
     ],
     "tile_glyphs": [
-        "Letter",
         "?",
-        "Number",
-        "Fraction",
+        "Card",
         "Chess Piece",
-        "Playing Card",
-        "Joker",
         "Currency",
-        "Item"
+        "Fraction",
+        "Joker",
+        "Letter",
+        "Number"
     ]
 }
