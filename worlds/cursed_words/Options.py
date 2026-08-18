@@ -43,17 +43,30 @@ class StartingCharacter(OptionList):
     valid_keys = [ "Random" ] + _character_names
     default = [ "Random" ]
 
+class Michael(Toggle):
+    """
+    Include locations for obtaining 5 Fairies and beating all Michael (Stage 6) encounters with each of your selected <Characters>.
+    
+    NOTE: Since Michael can only be reached via crown runs, this setting requires <Crowns> to be set to at least 'Purple'.
+          If <Michael> = 'True' but <Crowns> = 'None', then <Crowns> will be forced to 'Purple'.
+    """
+    display_name = "Include Michael"
+    default = False
+
 class Crowns(Choice):
     """
-    Select the highest Crown Tier to include in the seed - each Tier will ALWAYS include all tiers below it.
-        E.g. Selecting <Crowns> = 'pink' will also include orange, yellow and purple.
+    Include locations for beating all 5 Stages on each Crown Tier with each of your selected <Characters>.
 
-    This setting adds the following to the seed:
-      - '<Character>: Progressive Crown' items to the item pool, each unlocking the next crown tier for the specified character.
-      - (<Characters> * <Crowns> * 15) locations to the location pool, one for every Encounter/Stage/Crown/Character combination.
-            E.g. Selecting <Crowns> = 'red' and <Characters> = 'All' will add 630 locations.
+    Use this setting to select the HIGHEST Crown Tier to include - all tiers below it will also be included.
+    E.g. Selecting <Crowns> = 'Pink' will also include Orange, Yellow and Purple.
+
+    Crown Tiers are unlocked by receiving '<Character>: Progressive Crown' items that make the next Crown Tier available for each of your <Characters>.
+    Crown Tier progression remains linear as per vanilla - you must beat Purple before moving on to Yellow, etc.
+
+    WARNING: Depending on your settings, this can add an exponential amount of locations to the pool.
+             E.g. If <Crowns> = 'Red' and <Characters> = 'All' this will add the maximum of 630 locations. (<Characters> * <Crown Tiers> * 15)
     """
-    display_name = "Crowns"
+    display_name = "Include Crowns"
     option_none = 0
     option_purple = 1
     option_yellow = 2
@@ -64,30 +77,15 @@ class Crowns(Choice):
     option_red = 7
     default = option_none
 
-class Michael(Toggle):
-    """
-    Adds a secret Stage 6 encounter with Michael as the boss, for each selected character.
-
-    One of the two selectable bosses at the end of each Crown tier stage is 'cursed' - defeating it grants a Fairy.
-    Collecting all 5 Fairies within a single Crown tier run and completing that tier's Stage 5 unlocks Stage 6,
-    where Michael can be fought. Michael only needs to be defeated once, on any crown tier (earliest being Purple).
-
-    NOTE: Requires <Crowns> to be set to at least 'Purple', since Michael can only be reached via a Crown tier.
-          If enabled while <Crowns> is 'None', <Crowns> will automatically be set to 'Purple'.
-    """
-    display_name = "Michael"
-    default = False
-
 class Goal(Choice):
     """
     Select the goal for the seed.
 
-    - runs: Beat at least one run with all <Characters>
-    - michael: Beat <Michael> at least once with all <Characters>
-    - crowns: Beat the highest <Crowns> run at least once with all <Characters>
+    - Runs: Beat at least one run with all selected <Characters>
+    - Michael: Beat <Michael> at least once with all selected <Characters> (requires <Michael> = 'True')
+    - Crowns: Beat the highest <Crowns> Tier run at least once with all selected <Characters> (requires <Crowns> = 'Purple' or higher)
 
-    NOTE: If <Goal> = 'michael' but <Michael> = 'False', then <Michael> will be forced to 'True'.
-          If <Goal> = 'crowns' but <Crowns> = 'none', then <Crowns> will be forced to 'purple'.
+    NOTE: If the prerequisite options for 'Michael' or 'Crowns' goals are not met, then <Goal> will be forced back to 'Runs'.
     """
 
     display_name = "Goal"
@@ -182,17 +180,17 @@ class ShuffleLockedTilePositions(Toggle):
 
 class Bosssanity(Toggle):
     """
-    Add checks for defeating each individual main boss.
+    Add locations for defeating each boss type (Axolotl, Badger, Bat etc.)
     
-    NOTE: Does not currently include Sandy, Cretacious Meg, Human Boy, Beans or Michael.
-          Will be added in a future update.
+    NOTE: Does not currently support beating the boss versions of Sandy, Cretacious Meg, Human Boy or Beans.
+          These will be supported in a future update.
     """
     display_name = "Boss-sanity"
     default = False
 
 class Shopsanity(Toggle):
     """
-    Add items to the shop that can be purchased to check locations.
+    Add locations which can be checked by buying special 'Shopsanity' items in the shop.
     """
     display_name = "Shopsanity"
     default = False
@@ -217,6 +215,16 @@ class ShopsanityCost(Range):
     range_end = 25
     default = 12
 
+class Tilesanity(Toggle):
+    """
+    Add locations for buying and submitting each Tile Colour and Glyph Type.
+
+    NOTE: Does not currently support the Purple, White, Gold, Pink, Green, Cactus and Glitch colours, 
+          Does not currently support the Item glyph type.
+          These will be supported in a future update.
+    """
+    display_name = "Tilesanity"
+    default = False
 
 
 @dataclass
@@ -224,6 +232,8 @@ class CursedWordsOptions(PerGameCommonOptions):
     """"""
     characters: Characters
     starting_character: StartingCharacter
+    michael: Michael
+    crowns: Crowns
     goal: Goal
     guaranteed_stamps: GuaranteedStamps
     guaranteed_stickers: GuaranteedStickers
@@ -236,8 +246,7 @@ class CursedWordsOptions(PerGameCommonOptions):
     shopsanity: Shopsanity
     shopsanity_limit: ShopsanityLimit
     shopsanity_cost: ShopsanityCost
-    crowns: Crowns
-    michael: Michael
+    
 
     # Built-in
     start_inventory_from_pool: StartInventoryPool
