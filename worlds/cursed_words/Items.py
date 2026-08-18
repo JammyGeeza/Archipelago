@@ -1,9 +1,12 @@
-from BaseClasses import Item, ItemClassification, MultiWorld, Optional
+from BaseClasses import Item, ItemClassification
 from dataclasses import dataclass
-import json, logging, os
+import json, logging
 import pkgutil
-from typing import Dict, List, NamedTuple
+from typing import Dict, List
 from worlds.AutoWorld import World
+from .classes.Constants import CHARACTER_NAMES
+from .Locations import location_table, CursedWordsLocation
+from .Regions import region_table, CursedWordsRegion
 
 @dataclass
 class CursedWordsItem:
@@ -12,25 +15,27 @@ class CursedWordsItem:
 
     def __init__(self, json_data: dict):
         self.name: str = json_data.get("name")
+        self.character_tags: List[str] = json_data.get("character_tags", [])
         self.classification: ItemClassification = ItemClassification(json_data.get("classification", ItemClassification.filler.value))
         self.count: int = json_data.get("count", 1)
         self.groups: List[str] = json_data.get("groups", [])
+        self.metadata: Dict[str, any] = json_data.get("metadata", {})
+        self.option_tags: List[str] = json_data.get("option_tags", [])
         self.region: str = json_data.get("region")
-        self.tags: List[str] = json_data.get("tags", [])
 
-    def has_tags(self, tags: List[str]) -> bool:
-        """Check if all of this item's tags are present in a tags list"""
-        return set(self.tags).issubset(set(tags))
+    def has_character_tags(self, tags: List[str]) -> bool:
+        """Check if this item's character tags contains at least one tag from a list."""
+        return not self.character_tags or bool(set(self.character_tags) & set(tags))
+    
+    def has_option_tags(self, tags: List[str]) -> bool:
+        """Check if this item's option tags contains at least one tag from a list."""
+        return not self.option_tags or bool(set(self.option_tags) & set(tags))
 
     def is_classification(self, classification: ItemClassification) -> bool:
         """Check if this item has a matching classification flag"""
         return self.classification & classification if classification != ItemClassification.filler else self.classification == classification
 
 # Read items data from JSON config
-
-# with open(os.path.join(os.path.dirname(__file__), 'data', 'items.json'), 'r') as file:
-#     _items_data = json.loads(file.read())
-
 _file_data = pkgutil.get_data(__name__, 'data/items.json')
 _items_data = json.loads(_file_data)
 
@@ -55,50 +60,166 @@ for item in item_table:
 
     _cur_item_id += 1
 
+CHARACTER_ITEM_NAMES = set(CHARACTER_NAMES)
+
+# Create the base sticker/stamp item group threshold names for each character
+for character in CHARACTER_NAMES:
+    for kind in ("Stickers", "Stamps"):
+        item_name_groups_lookup.setdefault(f"{character}: Base {kind}", set())
+
+# Set the sticker/stamp threshold names
+for item in item_table:
+    for kind in ("Stickers", "Stamps"):
+        
+        # If not a sticker or stamp, skip it
+        if kind not in item.groups:
+            continue
+
+        for character in item.character_tags:
+            if not item.option_tags:
+                item_name_groups_lookup.setdefault(f"{character}: Base {kind}", set()).add(item.name)
+
+# 
+item_name_to_groups_lookup: Dict[str, List[str]] = {}
+for group_name, member_names in item_name_groups_lookup.items():
+    for member_name in member_names:
+        item_name_to_groups_lookup.setdefault(member_name, []).append(group_name)
 
 def generate_items(world: World):
     """Get all items applicable for the multiworld generation"""
 
-    # logging.info(f"Generating items for multiworld...")
-
-    # Get all progression/useful items with matching tags from configuration options,
-    # excluding the starting character which is already precollected
-    enabled_items: List[CursedWordsItem] = [
-        item for item in item_table
-        if item.has_tags(world.tags) and item.is_classification(ItemClassification.progression | ItemClassification.useful)
-        and item.name != world.start_character
+    # Get pre-collected items (characters / basic stickers and stamps)
+    precollected_item_names = [
+        item.name for item in world.multiworld.precollected_items[world.player]
     ]
 
-    # logging.info(f"Found {len(enabled_items)} enabled progression/useful items for the multiworld")
+    # Get player-selected 'guaranteed' stickers and stamps
+    guaranteed_stickers = set(world.options.guaranteed_stickers.value)
+    guaranteed_stamps = set(world.options.guaranteed_stamps.value)
+    guaranteed_names = guaranteed_stickers | guaranteed_stamps
 
-    # Create items
-    for item_data in enabled_items:
-        for i in range(item_data.count):
+    # Get all progression/useful items this seed could possibly need based on YAML options
+    eligible_items: List[CursedWordsItem] = [
+        item for item in item_table
+        if (item.has_character_tags(world.character_tags) or item.name in guaranteed_names)
+        and item.has_option_tags(world.option_tags)
+        and item.is_classification(ItemClassification.progression | ItemClassification.useful)
+        and item.name not in precollected_item_names
+    ]
 
-            # logging.info(f"Creating item: {item_data.name}...")
+    # Clamp possible 'Progressive Crown' item count to the <Crowns> YAML value
+    for item_data in eligible_items:
+        if item_data.name.endswith(": Progressive Crown"):
+            item_data.count = world.options.crowns.value
+    
+    # Shuffle all eligible items
+    world.random.shuffle(eligible_items)
 
-            # Add to item pool
-            item: Item = Item(item_data.name, item_data.classification, item_data.id, world.player)
+    # logging.info(f"Found {len(eligible_items)} eligible items")
+
+    # Get applicable regions based on player YAML options
+    enabled_regions = [
+        region for region in region_table
+        if region.has_character_tags(world.character_tags)
+        and region.has_option_tags(world.option_tags)
+    ]
+
+    # Get applicable locations based on player YAML options
+    enabled_locations = [
+        location for location in location_table
+        if location.has_character_tags(world.character_tags)
+        and location.has_option_tags(world.option_tags)
+    ]
+
+    # Calculate required item counts based on thresholds from Rules.py
+    required_counts = generate_required_group_counts(enabled_regions, enabled_locations, world.group_thresholds, world.character_tags, world.option_tags)
+    # logging.info(f"Required counts: {required_counts}")
+
+    # Sort items into 'critical' (needed to reach minimum required counts) and 'optional' (can be dropped if item pool too large) piles
+    critical_items: List[CursedWordsItem] = []
+    optional_items: List[CursedWordsItem] = []
+    running_totals: Dict[str, int] = {group: 0 for group in required_counts}
+
+    for item_data in eligible_items:
+        # Always protect character items, progressive crown items and 'guaranteed' items.
+        # (items that are not part of a 'HasGroup' access rule but need to be guaranteed in the pool)
+        item_is_protected: bool = (
+            item_data.name in CHARACTER_ITEM_NAMES 
+            or item_data.name in guaranteed_names
+            or item_data.name.endswith(": Progressive Crown")
+        )
+
+        # Check if still below threshold for item group(s)
+        item_groups = item_name_to_groups_lookup.get(item_data.name, item_data.groups)
+        below_threshold = any(
+            running_totals.get(group, 0) < required_counts[group]
+            for group in item_groups if group in required_counts
+        )
+
+        # If character, crown, guaranteed or below threshold, treat item as 'critical', otherwise optional
+        if item_is_protected or below_threshold:
+            critical_items.append(item_data)
+            for group in item_groups:
+                if group in running_totals:
+                    running_totals[group] += item_data.count
+        else:
+            optional_items.append(item_data)
+
+    # logging.info(f"Critical items: {len(critical)}, optional items: {len(optional)}")
+
+    # Calculate how many slots there are to fill
+    unfilled_location_count = len(world.multiworld.get_unfilled_locations(world.player))
+    critical_copy_count = sum(item_data.count for item_data in critical_items)
+
+    # Check if this will exceed the location count before creating
+    if critical_copy_count > unfilled_location_count:
+        raise Exception(f"Critical items count {critical_copy_count} will exceed location count ({unfilled_location_count}) for player {world.player} - thresholds may be too aggressive or not enough locations.")
+
+    # Calculate any remaining un-filled locations
+    remaining_slots = unfilled_location_count - critical_copy_count
+    selected_optional: List[CursedWordsItem] = []
+    populated_slots = 0
+
+    # Shuffle optional items (In fairness, the original list was already shuffled so this might not be necessary)
+    world.random.shuffle(optional_items)
+
+    # Select required amount of optional items
+    for item_data in optional_items:
+        if populated_slots + item_data.count > remaining_slots:
+            continue
+        
+        selected_optional.append(item_data)
+        populated_slots += item_data.count
+
+    # Add 'critical' items to the pool
+    for item_data in critical_items:
+        for _ in range(item_data.count):
+            item = Item(item_data.name, item_data.classification, item_data.id, world.player)
             world.multiworld.itempool.append(item)
 
-    # Check if all locations would be filled
-    unfilled_location_count: int = len(world.multiworld.get_unfilled_locations(world.player))
-    required_filler_count: int = unfilled_location_count - len([item for item in world.multiworld.itempool if item.player == world.player])
+    # Add 'optional' items to the pool and swap them to 'useful'
+    for item_data in selected_optional:
+        for _ in range(item_data.count):
+            item = Item(item_data.name, ItemClassification.useful, item_data.id, world.player)
+            world.multiworld.itempool.append(item)
 
-    # Append filler items if required
-    if required_filler_count > 0:
-        # logging.info(f"Found {required_filler_count} empty spaces for filler items")
-        world.multiworld.itempool += generate_filler_items(world, required_filler_count)
+    # Check if any locations remain un-filled, if so, populate with filler
+    remaining_slots = remaining_slots - populated_slots
+    if remaining_slots > 0:
+        # logging.info(f"Adding {remaining_slots} filler items")
+        world.multiworld.itempool += generate_filler_items(world, remaining_slots)
 
 def generate_filler_items(world: World, amount: int) -> List[Item]:
-    """Randomly select {amount} filler items."""
+    """Randomly select an {amount} of filler items."""
 
     # logging.info(f"Generating {amount} filler item(s)...")
 
-    # Get applicable filler items
+    # Get applicable filler items based on player YAML options
     enabled_filler_items = [
         item for item in item_table 
-        if item.has_tags(world.tags) and item.is_classification(ItemClassification.filler)
+        if item.has_character_tags(world.character_tags)
+        and item.has_option_tags(world.option_tags)
+        and item.is_classification(ItemClassification.filler)
     ]
 
     # Randomly select from filler items
@@ -108,3 +229,61 @@ def generate_filler_items(world: World, amount: int) -> List[Item]:
     )
 
     return [ Item(item.name, item.classification, item.id, world.player) for item in selected_filler ]
+
+
+def generate_required_group_counts(region_table: List[CursedWordsRegion], location_table: List[CursedWordsLocation], group_thresholds: Dict[str, Dict[str, int]], character_tags: List[str], option_tags: List[str]) -> Dict[str, int]:
+    """Get the highest 'HasGroup' of each item group across all applicable locations and region exits"""
+
+    required: Dict[str, int] = {}
+
+    # Get the count value from the count field
+    def resolve_count(count_field):
+
+        # If the value is an integer, take it
+        if isinstance(count_field, int):
+            return count_field
+        
+        # If it's an object with a resolver, resolve the value from group thresholds.
+        if isinstance(count_field, dict) and count_field.get("resolver") == "FromWorldAttr":
+            path = count_field["name"].split(".")
+            if path[0] == "group_thresholds":
+                return group_thresholds.get(path[1], {}).get(path[2], 0)
+            
+        return 0
+
+    def traverse(node):
+        """Traverse a node's properties"""
+        
+        # If the node is an object, search for 'rule' key with a 'HasGroup' value
+        if isinstance(node, dict):
+            if node.get("rule") == "HasGroup":
+                args = node.get("args", {})
+                item_name_group = args.get("item_name_group")
+                count = resolve_count(args.get("count", 0))
+                
+                if item_name_group:
+                    required[item_name_group] = max(required.get(item_name_group, 0), count)
+            
+            # Continue to traverse each value
+            for value in node.values():
+                traverse(value)
+        
+        # If it's a list, traverse each object in the list
+        elif isinstance(node, list):
+            for item in node:
+                traverse(item)
+
+    # Traverse every applicable Region's access rules
+    for region in region_table:
+        for exit_model in region.exits:
+            if not (exit_model.has_character_tags(character_tags) and exit_model.has_option_tags(option_tags)):
+                continue
+            if exit_model.access_rule:
+                traverse(exit_model.access_rule)
+
+    # Traverse every Location's access rules
+    for location in location_table:
+        if getattr(location, "access_rule", None):
+            traverse(location.access_rule)
+
+    return required

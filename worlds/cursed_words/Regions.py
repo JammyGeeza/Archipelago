@@ -1,54 +1,71 @@
-from BaseClasses import Entrance, EntranceType, Location, MultiWorld, Region
+from BaseClasses import Entrance, EntranceType, Location, Region
 from dataclasses import dataclass
-import json, logging, os
-from .Locations import location_table, location_name_to_id_lookup, CursedWordsLocation
+import json, logging
+from .Locations import location_table, CursedWordsLocation
 import pkgutil
 from typing import Dict, List
 from worlds.AutoWorld import World
+from .classes.ExpandHelper import expand_item
 
 @dataclass
 class CursedWordsExit:
     """Data class for Cursed World exits from JSON configuration"""
     def __init__(self, json_data: Dict[any, any]):
         self.access_rule: Dict[str, any] = json_data.get("access_rule", None)
+        self.character_tags: str = json_data.get("character_tags", [])
         self.destination: str = json_data["destination"]
         self.include_for: List[str] = json_data.get("include_for", [])
         self.name: str = json_data.get("name")
-        self.tags: str = json_data.get("tags", [])
+        self.option_tags: str = json_data.get("option_tags", [])
         self.type: EntranceType = EntranceType(json_data.get("type", 2))
 
     def is_included(self, inclusions: List[str]) -> bool:
         """Check this exit against the world inclusions list to see if it should be included."""
         return not self.include_for or set(self.include_for).issubset(set(inclusions))
     
-    def has_tags(self, tags: List[str]) -> bool:
-        """Check if all of this exit's tags are present in a tags list"""
-        return set(self.tags).issubset(set(tags))
+    def has_character_tags(self, tags: List[str]) -> bool:
+        """Check if this exit's character tags contains at least one tag from a list."""
+        return not self.character_tags or bool(set(self.character_tags) & set(tags))
+    
+    def has_option_tags(self, tags: List[str]) -> bool:
+        """Check if this exit's option tags contains at least one tag from a list."""
+        return not self.option_tags or bool(set(self.option_tags) & set(tags))
 
 @dataclass
 class CursedWordsRegion:
     """Data class for Cursed World regions from JSON configuration"""
     def __init__(self, json_data: Dict[any, any]):
-        self.name: str = json_data["name"]
+        self.character_tags: List[str] = json_data.get("character_tags", [])
         self.exits: List[CursedWordsExit] = [ CursedWordsExit(entrance) for entrance in json_data.get("exits", []) ]
-        self.tags: List[str] = json_data.get("tags", [])
+        self.name: str = json_data["name"]
+        self.option_tags: List[str] = json_data.get("option_tags", [])
         # self.starting_inventory: List[str] = json_data.get("starting_inventory", [])
 
-    def has_tags(self, tags: List[str]) -> bool:
-        """Check if all of this region's tags are present in a tags list"""
-        return set(self.tags).issubset(set(tags))
+    def has_character_tags(self, tags: List[str]) -> bool:
+        """Check if this region's character tags contains at least one tag from a list."""
+        return not self.character_tags or bool(set(self.character_tags) & set(tags))
+    
+    def has_option_tags(self, tags: List[str]) -> bool:
+        """Check if this region's option tags contains at least one tag from a list."""
+        return not self.option_tags or bool(set(self.option_tags) & set(tags))
 
-# Read regions data from JSON
-# with open(os.path.join(os.path.dirname(__file__), 'data', 'regions.json'), 'r') as file:
-#     _regions_data = json.loads(file.read())
+# Get regions and lookups from json files
+_lookups: Dict[str, any] = json.loads(pkgutil.get_data(__name__, 'data/lookups.json'))
+_regions: List[Dict[str, any]] = json.loads(pkgutil.get_data(__name__, 'data/regions.json'))
 
-_file_data = pkgutil.get_data(__name__, 'data/regions.json')
-_regions_data = json.loads(_file_data)
+def _expand_region(entry: Dict[any, any]) -> List[Dict[any, any]]:
+    """Traverse a region's exits for 'iterate' and then the region itself."""
+    expanded_exits = []
+    for exit_entry in entry.get("exits", []):
+        expanded_exits += expand_item(exit_entry, _lookups)
 
-# Parse as region objects
-region_table: List[CursedWordsRegion] = [ CursedWordsRegion(data) for data in _regions_data ]
+    return expand_item({**entry, "exits": expanded_exits}, _lookups)
 
-# logging.info(f"Found {len(location_table)} regions from regions.json configuration")
+# Expand each region and parse them
+_expanded_regions: List[Dict[any, any]] = [ expanded for r in _regions for expanded in _expand_region(r) ]
+region_table: List[CursedWordsRegion] = [ CursedWordsRegion(data) for data in _expanded_regions ]
+
+# logging.info(f"Found {len(region_table)} regions from regions.json")
 
 def generate_regions(world: World):
     """Create all applicable regions for this multiworld."""
@@ -56,22 +73,25 @@ def generate_regions(world: World):
     # Get all regions with matching tags from configuration options
     enabled_regions: List[CursedWordsRegion] = [
         region for region in region_table
-        if region.has_tags(world.tags)
+        if region.has_character_tags(world.character_tags)
+        and region.has_option_tags(world.option_tags)
     ]
 
     # logging.info(f"Found {len(enabled_regions)} enabled regions based on configuration options")
 
     # First pass to create regions from region data models
     for region_model in enabled_regions:
-        # logging.info(f"  -> Creating region: {region_model.name}...")
 
-        # Create region
         region: Region = Region(region_model.name, world.player, world.multiworld)
+
+        # logging.info(f"  -> Creating region: {region.name}")
 
         # Get enabled locations for region with matching tags from configuration options
         enabled_locations: List[CursedWordsLocation] = [
             location for location in location_table
-            if location.is_for_region(region.name) and location.has_tags(world.tags)
+            if location.is_for_region(region.name)
+            and location.has_character_tags(world.character_tags)
+            and location.has_option_tags(world.option_tags)
         ]
 
         # logging.info(f"  -> Found {len(enabled_locations)} enabled locations for region")
@@ -82,13 +102,13 @@ def generate_regions(world: World):
             # --- Intercept locations with specific counts defined ---
 
             # If 'Shopsanity' is enabled, update the amount of shopsanity checks to include
-            if world.options.shopsanity.value and location_model.name.startswith("Shop Item "):
-                location_model.count = world.options.shopsanity_location_count.value
+            if world.options.shopsanity.value and location_model.name.startswith("Buy Shopsanity Item "):
+                location_model.count = world.options.shopsanity_limit.value
 
             # --- End of Intercept ---
 
-            for i in range(location_model.count):
-                loc_name: str = location_model.name.format(count=i+1)
+            for j in range(location_model.count_start, location_model.count_start + location_model.count * location_model.count_step, location_model.count_step):
+                loc_name: str = location_model.name.format(count=j)
                 loc_id: int = world.location_name_to_id[loc_name]
 
                 # logging.info(f"    -> Creating location: {loc_name} with ID {loc_id}...")
@@ -106,12 +126,18 @@ def generate_regions(world: World):
 
     # Second pass to create and connect exits (regions have to exist in the multiworld first)
     for region_data in enabled_regions:
+
         # Get region from multiworld
         region: Region = world.multiworld.get_region(region_data.name, world.player)
 
-        for exit_model in [ exit for exit in region_data.exits if exit.has_tags(world.tags)]:
+        for exit_model in [
+            exit for exit in region_data.exits
+            if exit.has_character_tags(world.character_tags)
+            and exit.has_option_tags(world.option_tags)
+        ]:
 
             # logging.info(f"    -> Creating exit: {exit_model.name}")
+            
             exit: Entrance = Entrance(world.player, exit_model.name, region, randomization_type=exit_model.type)
 
             # Create access rule, if one exists

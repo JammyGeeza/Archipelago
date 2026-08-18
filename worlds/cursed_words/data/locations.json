@@ -1,372 +1,484 @@
 [
     {
-        "count": 3,
-        "name": "Rodman - 1-{count} Complete",
-        "region": "Rodman - Stage 1",
-        "tags": [ "Rodman" ]
+        "name": "{character}: {stage}-{encounter} Complete",
+        "region": "{character}: {stage}",
+        "iterate": [
+            {
+                "placeholder": "character",
+                "values": "character_names",
+                "tag": "character_tags"
+            },
+            {
+                "placeholder": "stage",
+                "range": {
+                    "start": 1,
+                    "count": 5
+                },
+                "format": "Stage {value}"
+            },
+            {
+                "placeholder": "encounter",
+                "range": {
+                    "start": 1,
+                    "count": 3
+                }
+            }
+        ]
+    },
+    {
+        "name": "{character}: {stage}-{encounter} Complete",
+        "region": "{character}: Michael",
+        "option_tags": [
+            "Michael"
+        ],
+        "iterate": [
+            {
+                "placeholder": "character",
+                "values": "character_names",
+                "tag": "character_tags"
+            },
+            {
+                "placeholder": "stage",
+                "range": {
+                    "start": 6
+                },
+                "format": "Stage {value}"
+            },
+            {
+                "placeholder": "encounter",
+                "range": {
+                    "start": 1,
+                    "count": 3
+                }
+            }
+        ]
+    },
+    {
+        "name": "{character}: {crown} {stage}-{encounter} Complete",
+        "region": "{character}: {crown} - {stage}",
+        "iterate": [
+            {
+                "placeholder": "character",
+                "values": "character_names",
+                "tag": "character_tags"
+            },
+            {
+                "placeholder": "crown",
+                "values": "crown_names",
+                "format": "{value} Crown",
+                "tag": "option_tags"
+            },
+            {
+                "placeholder": "stage",
+                "range": {
+                    "start": 1,
+                    "count": 5
+                },
+                "format": "Stage {value}"
+            },
+            {
+                "placeholder": "encounter",
+                "range": {
+                    "start": 1,
+                    "count": 3
+                }
+            }
+        ]
+    },
+    {
+        "name": "{character}: {stage} Fairy",
+        "region": "{character}: Purple Crown - {stage}",
+        "option_tags": [
+            "Fairies"
+        ],
+        "iterate": [
+            {
+                "placeholder": "character",
+                "values": "character_names",
+                "tag": "character_tags"
+            },
+            {
+                "placeholder": "stage",
+                "range": {
+                    "start": 1,
+                    "count": 5
+                },
+                "format": "Stage {value}"
+            }
+        ]
+    },
+    {
+        "name": "Destroy a Consumable Tile",
+        "region": "Stage 1"
     },
     {
         "count": 3,
-        "name": "Rodman - 2-{count} Complete",
-        "region": "Rodman - Stage 2",
-        "tags": [ "Rodman" ]
+        "count_start": 5,
+        "count_step": 5,
+        "name": "Earn ${count} in a Run",
+        "region": "Stage 1"
     },
     {
-        "count": 3,
-        "name": "Rodman - 3-{count} Complete",
-        "region": "Rodman - Stage 3",
-        "tags": [ "Rodman" ]
+        "count": 4,
+        "count_start": 20,
+        "count_step": 10,
+        "name": "Earn ${count} in a Run",
+        "region": "Stage 2"
     },
     {
-        "count": 3,
-        "name": "Rodman - 4-{count} Complete",
-        "region": "Rodman - Stage 4",
-        "tags": [ "Rodman" ]
+        "count": 8,
+        "count_start": 75,
+        "count_step": 25,
+        "name": "Earn ${count} in a Run",
+        "region": "Stage 3"
     },
     {
-        "count": 3,
-        "name": "Rodman - 5-{count} Complete",
-        "region": "Rodman - Stage 5",
-        "tags": [ "Rodman" ]
+        "count": 5,
+        "count_start": 300,
+        "count_step": 50,
+        "name": "Earn ${count} in a Run",
+        "region": "Stage 4"
     },
     {
-        "count": 3,
-        "name": "Nina Nix - 1-{count} Complete",
-        "region": "Nina Nix - Stage 1",
-        "tags": [ "Nina Nix" ]
-    },
-    {
-        "count": 3,
-        "name": "Nina Nix - 2-{count} Complete",
-        "region": "Nina Nix - Stage 2",
-        "tags": [ "Nina Nix" ]
-    },
-    {
-        "count": 3,
-        "name": "Nina Nix - 3-{count} Complete",
-        "region": "Nina Nix - Stage 3",
-        "tags": [ "Nina Nix" ]
-    },
-    {
-        "count": 3,
-        "name": "Nina Nix - 4-{count} Complete",
-        "region": "Nina Nix - Stage 4",
-        "tags": [ "Nina Nix" ]
-    },
-    {
-        "count": 3,
-        "name": "Nina Nix - 5-{count} Complete",
-        "region": "Nina Nix - Stage 5",
-        "tags": [ "Nina Nix" ]
-    },
-    {
-        "count": 3,
-        "name": "Hayley Bayles - 1-{count} Complete",
-        "region": "Hayley Bayles - Stage 1",
-        "tags": [ "Hayley Bayles" ]
-    },
-    {
-        "count": 3,
-        "name": "Hayley Bayles - 2-{count} Complete",
-        "region": "Hayley Bayles - Stage 2",
-        "tags": [ "Hayley Bayles" ]
-    },
-    {
-        "count": 3,
-        "name": "Hayley Bayles - 3-{count} Complete",
-        "region": "Hayley Bayles - Stage 3",
-        "tags": [ "Hayley Bayles" ]
-    },
-    {
-        "count": 3,
-        "name": "Hayley Bayles - 4-{count} Complete",
-        "region": "Hayley Bayles - Stage 4",
-        "tags": [ "Hayley Bayles" ]
-    },
-    {
-        "count": 3,
-        "name": "Hayley Bayles - 5-{count} Complete",
-        "region": "Hayley Bayles - Stage 5",
-        "tags": [ "Hayley Bayles" ]
-    },
-    {
-        "count": 3,
-        "name": "Bones the Dog - 1-{count} Complete",
-        "region": "Bones the Dog - Stage 1",
-        "tags": [ "Bones the Dog" ]
-    },
-    {
-        "count": 3,
-        "name": "Bones the Dog - 2-{count} Complete",
-        "region": "Bones the Dog - Stage 2",
-        "tags": [ "Bones the Dog" ]
-    },
-    {
-        "count": 3,
-        "name": "Bones the Dog - 3-{count} Complete",
-        "region": "Bones the Dog - Stage 3",
-        "tags": [ "Bones the Dog" ]
-    },
-    {
-        "count": 3,
-        "name": "Bones the Dog - 4-{count} Complete",
-        "region": "Bones the Dog - Stage 4",
-        "tags": [ "Bones the Dog" ]
-    },
-    {
-        "count": 3,
-        "name": "Bones the Dog - 5-{count} Complete",
-        "region": "Bones the Dog - Stage 5",
-        "tags": [ "Bones the Dog" ]
-    },
-    {
-        "count": 3,
-        "name": "Sam Gambit - 1-{count} Complete",
-        "region": "Sam Gambit - Stage 1",
-        "tags": [ "Sam Gambit" ]
-    },
-    {
-        "count": 3,
-        "name": "Sam Gambit - 2-{count} Complete",
-        "region": "Sam Gambit - Stage 2",
-        "tags": [ "Sam Gambit" ]
-    },
-    {
-        "count": 3,
-        "name": "Sam Gambit - 3-{count} Complete",
-        "region": "Sam Gambit - Stage 3",
-        "tags": [ "Sam Gambit" ]
-    },
-    {
-        "count": 3,
-        "name": "Sam Gambit - 4-{count} Complete",
-        "region": "Sam Gambit - Stage 4",
-        "tags": [ "Sam Gambit" ]
-    },
-    {
-        "count": 3,
-        "name": "Sam Gambit - 5-{count} Complete",
-        "region": "Sam Gambit - Stage 5",
-        "tags": [ "Sam Gambit" ]
-    },
-    {
-        "count": 3,
-        "name": "Octacles - 1-{count} Complete",
-        "region": "Octacles - Stage 1",
-        "tags": [ "Octacles" ]
-    },
-    {
-        "count": 3,
-        "name": "Octacles - 2-{count} Complete",
-        "region": "Octacles - Stage 2",
-        "tags": [ "Octacles" ]
-    },
-    {
-        "count": 3,
-        "name": "Octacles - 3-{count} Complete",
-        "region": "Octacles - Stage 3",
-        "tags": [ "Octacles" ]
-    },
-    {
-        "count": 3,
-        "name": "Octacles - 4-{count} Complete",
-        "region": "Octacles - Stage 4",
-        "tags": [ "Octacles" ]
-    },
-    {
-        "count": 3,
-        "name": "Octacles - 5-{count} Complete",
-        "region": "Octacles - Stage 5",
-        "tags": [ "Octacles" ]
-    },
-    {
-        "name": "Skip a Grid",
-        "region": "Encounters"
+        "count": 5,
+        "count_start": 600,
+        "count_step": 100,
+        "name": "Earn ${count} in a Run",
+        "region": "Stage 5"
     },
     {
         "name": "Place a Consumable Tile",
-        "region": "Encounters"
+        "region": "Stage 1"
     },
     {
-        "name": "Earn $10",
-        "region": "Money"
-    },
-    {
-        "name": "Earn $25",
-        "region": "Money"
-    },
-    {
-        "name": "Earn $50",
-        "region": "Money"
-    },
-    {
-        "name": "Earn $75",
-        "region": "Money Medium"
-    },
-    {
-        "name": "Earn $100",
-        "region": "Money Medium"
-    },
-    {
-        "name": "Earn $250",
-        "region": "Money High"
-    },
-    {
-        "name": "Earn $500",
-        "region": "Money High"
+        "name": "Skip a Grid",
+        "region": "Stage 1"
     },
     {
         "name": "Buy a Sticker",
-        "region": "Shop",
+        "region": "Stage 1",
         "access_rule": {
             "rule": "HasGroup",
-            "args" : {
+            "options": [
+                {
+                    "option": "worlds.cursed_words.Options.ShuffleInventorySlots",
+                    "value": 1,
+                    "operator": "eq"
+                }
+            ],
+            "args": {
                 "item_name_group": "Sticker Slots",
                 "count": 1
-            }
+            },
+            "filtered_resolution": true
         }
     },
     {
-        "name": "Buy a Stamp",
-        "region": "Shop",
+        "name": "Buy a Foil Sticker",
+        "region": "Stage 1",
         "access_rule": {
             "rule": "HasGroup",
-            "args" : {
+            "options": [
+                {
+                    "option": "worlds.cursed_words.Options.ShuffleInventorySlots",
+                    "value": 1,
+                    "operator": "eq"
+                }
+            ],
+            "args": {
+                "item_name_group": "Sticker Slots",
+                "count": 1
+            },
+            "filtered_resolution": true
+        }
+    },
+    {
+        "name": "Upgrade a Sticker to {level}",
+        "region": "Stage 1",
+        "access_rule": {
+            "rule": "HasGroup",
+            "options": [
+                {
+                    "option": "worlds.cursed_words.Options.ShuffleInventorySlots",
+                    "value": 1,
+                    "operator": "eq"
+                }
+            ],
+            "args": {
+                "item_name_group": "Sticker Slots",
+                "count": 1
+            },
+            "filtered_resolution": true
+        },
+        "iterate": [
+            {
+                "placeholder": "level",
+                "range": {
+                    "start": 2,
+                    "count": 2
+                },
+                "format": "Level {value}"
+            }
+        ]
+    },
+    {
+        "name": "Buy a Stamp",
+        "region": "Stage 1",
+        "access_rule": {
+            "rule": "HasGroup",
+            "options": [
+                {
+                    "option": "worlds.cursed_words.Options.ShuffleInventorySlots",
+                    "value": 1,
+                    "operator": "eq"
+                }
+            ],
+            "args": {
                 "item_name_group": "Stamp Slots",
                 "count": 1
-            }
+            },
+            "filtered_resolution": true
         }
     },
     {
         "name": "Buy a Consumable Tile",
-        "region": "Shop"
+        "region": "Stage 1"
     },
     {
-        "name": "Destroy a Consumable Tile",
-        "region": "Shop"
-    },
-    {
-        "name": "Freeze a Stamp",
-        "region": "Shop"
-    },
-    {
-        "name": "Freeze a Sticker",
-        "region": "Shop"
-    },
-    {
-        "name": "Restock the Shop",
-        "region": "Shop"
-    },
-    {
-        "name": "Sell a Sticker",
-        "region": "Shop",
-        "access_rule": {
-            "rule": "HasGroup",
-            "args" : {
-                "item_name_group": "Sticker Slots",
-                "count": 1
+        "name": "Buy a {colour} Tile",
+        "region": "Stage 1",
+        "option_tags": [ "Tilesanity" ],
+        "iterate": [
+            {
+                "placeholder": "colour",
+                "values": "tile_colours"
             }
-        }
+        ]
     },
     {
-        "name": "Sell a Stamp",
-        "region": "Shop",
-        "access_rule": {
-            "rule": "HasGroup",
-            "args" : {
-                "item_name_group": "Stamp Slots",
-                "count": 1
+        "name": "Buy a {glyph} Tile",
+        "region": "Stage 1",
+        "option_tags": [ "Tilesanity" ],
+        "iterate": [
+            {
+                "placeholder": "glyph",
+                "values": "tile_glyphs"
             }
-        }
+        ]
     },
     {
         "count": 30,
-        "name": "Shop Item {count}",
-        "region": "Shop",
+        "name": "Buy Shopsanity Item {count}",
+        "region": "Stage 1",
         "access_rule": {
             "rule": "And",
             "children": [
                 {
                     "rule": "HasGroup",
+                    "options": [
+                        {
+                            "option": "worlds.cursed_words.Options.ShuffleInventorySlots",
+                            "value": 1,
+                            "operator": "eq"
+                        }
+                    ],
                     "args": {
                         "item_name_group": "Stamp Slots",
                         "count": 1
-                    }
+                    },
+                    "filtered_resolution": true
                 },
                 {
                     "rule": "HasGroup",
+                    "options": [
+                        {
+                            "option": "worlds.cursed_words.Options.ShuffleInventorySlots",
+                            "value": 1,
+                            "operator": "eq"
+                        }
+                    ],
                     "args": {
                         "item_name_group": "Sticker Slots",
                         "count": 1
-                    }
+                    },
+                    "filtered_resolution": true
                 }
             ]
         },
-        "tags": [ "Shopsanity" ]
+        "option_tags": [
+            "Shopsanity"
+        ]
+    },
+    {
+        "name": "Freeze a {item}",
+        "region": "Stage 1",
+        "iterate": [
+            {
+                "placeholder": "item",
+                "values": [
+                    "Sticker",
+                    "Stamp"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Restock the Shop",
+        "region": "Stage 1"
+    },
+    {
+        "name": "Sell a Sticker",
+        "region": "Stage 1",
+        "access_rule": {
+            "rule": "HasGroup",
+            "options": [
+                {
+                    "option": "worlds.cursed_words.Options.ShuffleInventorySlots",
+                    "value": 1,
+                    "operator": "eq"
+                }
+            ],
+            "args": {
+                "item_name_group": "Sticker Slots",
+                "count": 1
+            },
+            "filtered_resolution": true
+        }
+    },
+    {
+        "name": "Sell a Stamp",
+        "region": "Stage 1",
+        "access_rule": {
+            "rule": "HasGroup",
+            "options": [
+                {
+                    "option": "worlds.cursed_words.Options.ShuffleInventorySlots",
+                    "value": 1,
+                    "operator": "eq"
+                }
+            ],
+            "args": {
+                "item_name_group": "Stamp Slots",
+                "count": 1
+            },
+            "filtered_resolution": true
+        }
+    },
+    {
+        "count": 3,
+        "name": "Word Length: {count} Tiles",
+        "region": "Stage 1"
+    },
+    {
+        "count": 3,
+        "count_start": 4,
+        "name": "Word Length: {count} Tiles",
+        "region": "Stage 2"
+    },
+    {
+        "count": 3,
+        "count_start": 7,
+        "name": "Word Length: {count} Tiles",
+        "region": "Stage 3"
+    },
+    {
+        "count": 3,
+        "count_start": 10,
+        "name": "Word Length: {count} Tiles",
+        "region": "Stage 4"
+    },
+    {
+        "count": 3,
+        "count_start": 5,
+        "count_step": 5,
+        "name": "Word Score: {count}+",
+        "region": "Stage 1"
+    },
+    {
+        "count": 4,
+        "count_start": 20,
+        "count_step": 10,
+        "name": "Word Score: {count}+",
+        "region": "Stage 2"
+    },
+    {
+        "count": 8,
+        "count_start": 75,
+        "count_step": 25,
+        "name": "Word Score: {count}+",
+        "region": "Stage 3"
     },
     {
         "count": 5,
-        "name": "Word Length {count}",
-        "region": "Words"
+        "count_start": 300,
+        "count_step": 50,
+        "name": "Word Score: {count}+",
+        "region": "Stage 4"
     },
     {
-        "name": "Word Length 6",
-        "region": "Words Medium"
+        "count": 5,
+        "count_start": 600,
+        "count_step": 100,
+        "name": "Word Score: {count}+",
+        "region": "Stage 5"
     },
     {
-        "name": "Word Length 7",
-        "region": "Words Medium"
+        "count": 6,
+        "count_start": 1250,
+        "count_step": 250,
+        "name": "Word Score: {count}+",
+        "region": "Stage 5"
     },
     {
-        "name": "Word Length 8",
-        "region": "Words Medium"
+        "name": "Submit a Consumable Tile",
+        "region": "Stage 1"
     },
     {
-        "name": "Word Length 9",
-        "region": "Words High"
+        "name": "Submit a {colour} Tile",
+        "region": "Stage 1",
+        "option_tags": [ "Tilesanity" ],
+        "iterate": [
+            {
+                "placeholder": "colour",
+                "values": "tile_colours"
+            }
+        ]
     },
     {
-        "name": "Word Length 10",
-        "region": "Words High"
+        "name": "Submit a {glyph} Tile",
+        "region": "Stage 1",
+        "option_tags": [ "Tilesanity" ],
+        "iterate": [
+            {
+                "placeholder": "glyph",
+                "values": "tile_glyphs"
+            }
+        ]
     },
     {
-        "name": "Word Score > 5",
-        "region": "Words"
+        "name": "Defeat {boss}",
+        "region": "Stage 1",
+        "option_tags": [
+            "Boss-sanity"
+        ],
+        "iterate": [
+            {
+                "placeholder": "boss",
+                "values": "boss_names_stage_1"
+            }
+        ]
     },
     {
-        "name": "Word Score > 10",
-        "region": "Words"
-    },
-    {
-        "name": "Word Score > 25",
-        "region": "Words"
-    },
-    {
-        "name": "Word Score > 50",
-        "region": "Words Medium"
-    },
-    {
-        "name": "Word Score > 75",
-        "region": "Words Medium"
-    },
-    {
-        "name": "Word Score > 100",
-        "region": "Words Medium"
-    },
-    {
-        "name": "Word Score > 250",
-        "region": "Words Medium"
-    },
-    {
-        "name": "Word Score > 500",
-        "region": "Words High"
-    },
-    {
-        "name": "Word Score > 750",
-        "region": "Words High"
-    },
-    {
-        "name": "Word Score > 1000",
-        "region": "Words High"
+        "name": "Defeat {boss}",
+        "region": "Stage 2",
+        "option_tags": [
+            "Boss-sanity"
+        ],
+        "iterate": [
+            {
+                "placeholder": "boss",
+                "values": "boss_names_stage_2"
+            }
+        ]
     }
 ]

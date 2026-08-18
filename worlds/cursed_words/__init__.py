@@ -1,25 +1,58 @@
 from worlds.AutoWorld import World, WebWorld
-from BaseClasses import Item, ItemClassification, Tutorial
+from BaseClasses import Item, Tutorial
 from .Items import CursedWordsItem, item_name_groups_lookup, item_name_to_id_lookup, item_table, generate_items, generate_filler_items
-from .Locations import location_name_to_id_lookup, location_table
+from .Locations import location_name_to_id_lookup
 from .Options import CursedWordsOptions
-from .Regions import CursedWordsRegion, region_table, generate_regions
-from .Rules import generate_goal_events, generate_goal
+from .Regions import generate_regions
+from .Rules import generate_all_group_thresholds, CROWN_NAMES, generate_goal_events, generate_goal
 import logging
 import math
-from typing import Any, Dict, List
+from Options import OptionGroup
+from typing import Any, Dict, List, Set, Tuple
 
 class CursedWordsWeb(WebWorld):
 
     tutorials = [Tutorial(
         "Multiworld Setup Guide",
-        "A guide to setting up the Cursed Worlds randomizer connected to an Archipelago Multiworld",
+        "A guide to setting up the Cursed Words randomizer connected to an Archipelago Multiworld",
         "English",
         "setup_en.md",
         "setup\en",
         ["JammyGeeza"]
     )]
     theme = "jungle"
+
+    option_groups = [
+        OptionGroup("Character Selection", [
+            Options.Characters,
+            Options.StartingCharacter,
+        ]),
+        OptionGroup("Run Difficulty", [
+            Options.Michael,
+            Options.Crowns
+        ]),
+        OptionGroup("Goal", [
+            Options.Goal,
+            Options.GoalCharacters
+        ]),
+        OptionGroup("Items", [
+            Options.GuaranteedStickers,
+            Options.GuaranteedStamps
+        ]),
+        OptionGroup("Shuffle", [
+            Options.ShuffleGridSize,
+            Options.ShuffleInventorySlots,
+            Options.ShuffleItemRarities,
+            Options.ShuffleLockedTilePositions
+        ]),
+        OptionGroup("Sanities", [
+            Options.Bosssanity,
+            Options.Shopsanity,
+            Options.ShopsanityCost,
+            Options.ShopsanityLimit,
+            Options.Tilesanity
+        ])
+    ]
 
 
 class CursedWordsWorld(World):
@@ -46,15 +79,25 @@ class CursedWordsWorld(World):
         self.options.resolve_options()
 
         # Gather tags for run (determines what items/locations/regions to include in the run)
-        self.tags: List[str] = [
-            *self.options.characters.value,
-            *([self.options.progressive_grid_size.display_name] if self.options.progressive_grid_size.value else []),
-            *([self.options.progressive_tile_positions.display_name] if self.options.progressive_tile_positions.value else []),
-            *([self.options.shopsanity.display_name] if self.options.shopsanity.value else [])
-            # Additional tag inclusions go here...
+        self.character_tags: List[str] = [
+            *self.options.characters.value
         ]
 
-        # logging.info(f"Selecting starting character ...")
+        self.option_tags: List[str] = [
+            *(["Crowns"] + list(CROWN_NAMES[:self.options.crowns.value]) if self.options.crowns.value else []),
+            *(["Michael"] if self.options.michael.value else []),
+            *([self.options.shuffle_grid_size.display_name] if self.options.shuffle_grid_size.value else []),
+            *([self.options.shuffle_inventory_slots.display_name] if self.options.shuffle_inventory_slots.value else []),
+            *([self.options.shuffle_item_rarities.display_name] if self.options.shuffle_item_rarities.value else []),
+            *([self.options.shuffle_locked_tile_positions.display_name] if self.options.shuffle_locked_tile_positions.value else []),
+            *([self.options.bosssanity.display_name] if self.options.bosssanity.value else []),
+            *([self.options.shopsanity.display_name] if self.options.shopsanity.value else []),
+            *([self.options.tilesanity.display_name] if self.options.tilesanity.value else []),
+            
+            # Additional tag inclusions go here
+        ]
+
+        logging.info(f"Selected option tags: {self.option_tags}")
 
         # Randomly select starting character
         self.start_character: str = self.random.choice(
@@ -65,12 +108,39 @@ class CursedWordsWorld(World):
 
         # Pre-collect starting character so it's always in the initial state
         self.multiworld.push_precollected(self.create_item(self.start_character))
+        
+        # Pre-collect 12 common, generic starting stamps
+        eligible_starting_stamps: List[str] = [
+            stamp.name for stamp in item_table
+            if len(stamp.character_tags) == 0
+            and len(stamp.option_tags) == 0
+            and "Stamps" in stamp.groups
+            and stamp.metadata.get("rarity", 0) == 0
+        ]
+
+        for stamp in self.random.sample(eligible_starting_stamps, 12):
+            self.multiworld.push_precollected(self.create_item(stamp))
+
+        # Pre-collect 12 common, generic starting stickers
+        eligible_starting_stickers: List[str] = [
+            sticker.name for sticker in item_table
+            if len(sticker.character_tags) == 0
+            and len(sticker.option_tags) == 0
+            and "Stickers" in sticker.groups
+            and sticker.metadata.get("rarity", 0) == 0
+        ]
+
+        for sticker in self.random.sample(eligible_starting_stickers, 12):
+            self.multiworld.push_precollected(self.create_item(sticker))
 
         # logging.info(f"Starting inventory from pool: {self.options.start_inventory_from_pool.value}")
 
+        # Calculate the "critical" Character/Crown/Stage/Sticker-Stamp thresholds
+        self.group_thresholds: Dict[str, Dict[str, int]] = generate_all_group_thresholds(item_name_groups_lookup)
+
         # If 'Progressive Tile Positions' is enabled, generate tile positions
         self.selected_tile_positions = []
-        if self.options.progressive_tile_positions.value:
+        if self.options.shuffle_locked_tile_positions.value:
             # To attempt to evenly spread locked tiles, split 5x5 grid into concentric 'L' shapes and randomly select
             # more from each larger 'L' shape - this should also mean a 3x3 starting grid from 'Progressive Grid Size'
             # will only ever contain 3 locked tile positions
@@ -110,15 +180,20 @@ class CursedWordsWorld(World):
 
         # Add required options data
         slot_data: Dict[str, any] = self.options.as_dict(
+            "crowns",
             "deathlink",
             "goal",
-            "progressive_grid_size",
-            "shopsanity_location_count",
-            "shopsanity_location_cost"
+            "goal_characters",
+            "shuffle_grid_size",
+            "shuffle_inventory_slots",
+            "shuffle_item_rarities",
+            "shuffle_locked_tile_positions",
+            "shopsanity",
+            "shopsanity_cost",
         )
 
         slot_data.update({
-            "progressive_tile_positions": self.selected_tile_positions
+            "shuffle_locked_tile_positions_coords": self.selected_tile_positions,
         })
 
         return slot_data
