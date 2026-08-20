@@ -193,6 +193,10 @@
         }
     },
     {
+        "name": "Upgrade a Pin",
+        "region": "Stage 1"
+    },
+    {
         "name": "Upgrade a Sticker to {level}",
         "region": "Stage 1",
         "access_rule": {
@@ -478,6 +482,35 @@
             {
                 "placeholder": "boss",
                 "values": "boss_names_stage_2"
+            }
+        ]
+    },
+    {
+        "_comment": "----- Pinsanity -----",
+        "name": "{character}: Upgrade Pin - {side} {stage}",
+        "region": "{character}: Stage {stage}",
+        "option_tags": [
+            "Pinsanity"
+        ],
+        "iterate": [
+            {
+                "placeholder": "character",
+                "values": "character_names",
+                "tag": "character_tags"
+            },
+            {
+                "placeholder": "side",
+                "values": [
+                    "Left",
+                    "Right"
+                ]
+            },
+            {
+                "placeholder": "stage",
+                "range": {
+                    "start": 1,
+                    "count": 4
+                }
             }
         ]
     }

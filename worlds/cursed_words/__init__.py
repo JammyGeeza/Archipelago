@@ -91,6 +91,7 @@ class CursedWordsWorld(World):
             *([self.options.shuffle_item_rarities.display_name] if self.options.shuffle_item_rarities.value else []),
             *([self.options.shuffle_locked_tile_positions.display_name] if self.options.shuffle_locked_tile_positions.value else []),
             *([self.options.bosssanity.display_name] if self.options.bosssanity.value else []),
+            *([self.options.pinsanity.display_name] if self.options.pinsanity.value else []),
             *([self.options.shopsanity.display_name] if self.options.shopsanity.value else []),
             *([self.options.tilesanity.display_name] if self.options.tilesanity.value else []),
             

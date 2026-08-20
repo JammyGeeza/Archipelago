@@ -205,6 +205,15 @@ class Bosssanity(Toggle):
     display_name = "Boss-sanity"
     default = False
 
+class Pinsanity(Toggle):
+    """
+    Add locations for upgrading the Left and Right sides of each <Characters> Pin
+
+    NOTE: Toggling this setting to 'True' will add (<Characters> * 8) locations to the pool.
+    """
+    display_name = "Pinsanity"
+    default = False
+
 class Shopsanity(Toggle):
     """
     Add locations which can be checked by buying special 'Shopsanity' items in the shop.
@@ -261,6 +270,7 @@ class CursedWordsOptions(PerGameCommonOptions):
     shuffle_item_rarities: ShuffleItemRarities
     shuffle_locked_tile_positions: ShuffleLockedTilePositions
     bosssanity: Bosssanity
+    pinsanity: Pinsanity
     shopsanity: Shopsanity
     shopsanity_limit: ShopsanityLimit
     shopsanity_cost: ShopsanityCost
