@@ -27,17 +27,13 @@ class CursedWordsWeb(WebWorld):
             Options.Characters,
             Options.StartingCharacter,
         ]),
-        OptionGroup("Run Difficulty", [
+        OptionGroup("Run Options", [
             Options.Michael,
             Options.Crowns
         ]),
         OptionGroup("Goal", [
             Options.Goal,
             Options.GoalCharacters
-        ]),
-        OptionGroup("Items", [
-            Options.GuaranteedStickers,
-            Options.GuaranteedStamps
         ]),
         OptionGroup("Shuffle", [
             Options.ShuffleGridSize,
@@ -47,10 +43,16 @@ class CursedWordsWeb(WebWorld):
         ]),
         OptionGroup("Sanities", [
             Options.Bosssanity,
+            Options.Pinsanity,
             Options.Shopsanity,
             Options.ShopsanityCost,
             Options.ShopsanityLimit,
             Options.Tilesanity
+        ]),
+        OptionGroup("Weighting", [
+            Options.GuaranteedStickers,
+            Options.GuaranteedStamps,
+            Options.FillerWeighting,
         ])
     ]
 

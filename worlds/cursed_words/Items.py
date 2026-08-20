@@ -222,9 +222,16 @@ def generate_filler_items(world: World, amount: int) -> List[Item]:
         and item.is_classification(ItemClassification.filler)
     ]
 
+    # Get filler item weighting from YAML options
+    weights = [
+        world.options.filler_weighting.value.get(item.name, 1)
+        for item in enabled_filler_items
+    ]
+
     # Randomly select from filler items
     selected_filler = world.random.choices(
         enabled_filler_items,
+        weights=weights,
         k=amount
     )
 

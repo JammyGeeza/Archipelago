@@ -2,16 +2,15 @@ from dataclasses import dataclass
 from BaseClasses import ItemClassification
 from .classes.Constants import CHARACTER_NAMES
 from .Items import item_table
-from Options import Choice, DeathLink, ItemSet, OptionList, OptionSet, PerGameCommonOptions, Range, StartInventoryPool, Toggle
+from Options import Choice, DeathLink, ItemSet, OptionDict, OptionError, OptionList, OptionSet, PerGameCommonOptions, Range, StartInventoryPool, Toggle
 from .Regions import region_table
 from typing import List
 
 # Pre-defined keys
 _character_names = list(CHARACTER_NAMES)
-# _filler_item_names: List[str] = [ item.name for item in item_table if item.classification == ItemClassification.filler.value ]
-
 _stamp_names: List[str] = [ item.name for item in item_table if "Stamps" in item.groups ]
 _sticker_names: List[str] = [ item.name for item in item_table if "Stickers" in item.groups ]
+_filler_item_names: List[str] = [ item.name for item in item_table if item.classification == ItemClassification.filler.value ]
 
 class Characters(OptionList):
     """
@@ -252,6 +251,40 @@ class Tilesanity(Toggle):
     display_name = "Tilesanity"
     default = False
 
+class FillerWeighting(OptionDict):
+    """
+    Customise how often each filler item can appear in the item pool, relative to the other filler items.
+    
+    Higher numbers appear more often, lower numbers appear less often, '0' will exclude it entirely.
+    Items removed from the list will default to '1'.
+
+    At least one item must have a value greater than '0'.
+    
+    E.g: { "$1": 3, "Consumable Tile": 1, "Extra Re-Roll": 0 }
+         Makes '$1' three times more likely to appear than 'Consumable Tile' and 'Extra-Re-Roll' is excluded entirely.
+         All unlisted items will be equally as likely to appear as 'Consumable Tile'.
+    """
+    display_name = "Filler Weighting"
+    valid_keys = frozenset(_filler_item_names)
+    default = {
+        "$1": 1,
+        "$2": 1,
+        "$3": 1,
+        "Consumable Tile": 1,
+        "Extra Re-roll": 1,
+        "Random Tile Boost": 1
+    }
+
+    def verify(self, world, player_name, plando_options):
+        super().verify(world, player_name, plando_options)
+
+        # Check that no values are below 0
+        if self.value and any(weight < 0 for weight in self.value.values()):
+            raise OptionError(f"{player_name}: Filler Weighting values cannot be set to a negative number.")
+
+        # Check that at least one value is above 0
+        if self.value and not any(weight > 0 for weight in self.value.values()):
+            raise OptionError(f"{player_name}: Filler Weighting values cannot all be set to 0.")
 
 @dataclass
 class CursedWordsOptions(PerGameCommonOptions):
@@ -275,6 +308,7 @@ class CursedWordsOptions(PerGameCommonOptions):
     shopsanity_limit: ShopsanityLimit
     shopsanity_cost: ShopsanityCost
     tilesanity: Tilesanity
+    filler_weighting: FillerWeighting
 
     # Built-in
     start_inventory_from_pool: StartInventoryPool
