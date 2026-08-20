@@ -1,6 +1,6 @@
 [
     {
-        "name": "{character}: {stage}-{encounter} Complete",
+        "name": "{character}: {stage}-{encounter} Cleared",
         "region": "{character}: {stage}",
         "iterate": [
             {
@@ -26,7 +26,7 @@
         ]
     },
     {
-        "name": "{character}: {stage}-{encounter} Complete",
+        "name": "{character}: {stage}-{encounter} Cleared",
         "region": "{character}: Michael",
         "option_tags": [
             "Michael"
@@ -54,7 +54,7 @@
         ]
     },
     {
-        "name": "{character}: {crown} {stage}-{encounter} Complete",
+        "name": "{character}: {crown} - {stage}-{encounter} Cleared",
         "region": "{character}: {crown} - {stage}",
         "iterate": [
             {
@@ -145,6 +145,26 @@
         "count_step": 100,
         "name": "Earn ${count} in a Run",
         "region": "Stage 5"
+    },
+    {
+        "name": "Clear {event} with {grids} Grids Unused",
+        "region": "Stage 1",
+        "iterate": [
+            {
+                "placeholder": "event",
+                "values": [
+                    "an Encounter",
+                    "a Boss"
+                ]
+            },
+            {
+                "placeholder": "grids",
+                "range": {
+                    "start": 0,
+                    "count": 5
+                }
+            }
+        ]
     },
     {
         "name": "Place a Consumable Tile",
