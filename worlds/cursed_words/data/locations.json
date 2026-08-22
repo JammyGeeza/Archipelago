@@ -294,41 +294,6 @@
         "count": 30,
         "name": "Buy Shopsanity Item {count}",
         "region": "Stage 1",
-        "access_rule": {
-            "rule": "And",
-            "children": [
-                {
-                    "rule": "HasGroup",
-                    "options": [
-                        {
-                            "option": "worlds.cursed_words.Options.ShuffleInventorySlots",
-                            "value": 1,
-                            "operator": "eq"
-                        }
-                    ],
-                    "args": {
-                        "item_name_group": "Stamp Slots",
-                        "count": 1
-                    },
-                    "filtered_resolution": true
-                },
-                {
-                    "rule": "HasGroup",
-                    "options": [
-                        {
-                            "option": "worlds.cursed_words.Options.ShuffleInventorySlots",
-                            "value": 1,
-                            "operator": "eq"
-                        }
-                    ],
-                    "args": {
-                        "item_name_group": "Sticker Slots",
-                        "count": 1
-                    },
-                    "filtered_resolution": true
-                }
-            ]
-        },
         "option_tags": [
             "Shopsanity"
         ]
