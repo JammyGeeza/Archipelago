@@ -239,6 +239,18 @@
         "name": "Random Tile Boost",
         "classification": 0
     },
+
+    
+    {
+        "_comment": "========== Traps ==========",
+        "name": "Force Grid Re-roll",
+        "classification": 4
+    },
+    {
+        "name": "Lose Money",
+        "classification": 4
+    },
+
     {
         "name": "April Shower",
         "classification": 1,

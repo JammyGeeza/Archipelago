@@ -107,10 +107,11 @@ def generate_items(world: World):
         and item.name not in precollected_item_names
     ]
 
-    # Clamp possible 'Progressive Crown' item count to the <Crowns> YAML value
+    # Clamp possible 'Progressive Crown' item count to the <Crowns> YAML value (per-player)
+    resolved_counts: Dict[str, int] = {}
     for item_data in eligible_items:
         if item_data.name.endswith(": Progressive Crown"):
-            item_data.count = world.options.crowns.value
+            resolved_counts[item_data.name] = world.options.crowns.value
     
     # Shuffle all eligible items
     world.random.shuffle(eligible_items)
@@ -149,6 +150,9 @@ def generate_items(world: World):
             or item_data.name.endswith(": Progressive Crown")
         )
 
+        # Get amount of times to apply item per-player or revert to global count if not a counted item
+        item_count = resolved_counts.get(item_data.name, item_data.count)
+
         # Check if still below threshold for item group(s)
         item_groups = item_name_to_groups_lookup.get(item_data.name, item_data.groups)
         below_threshold = any(
@@ -161,7 +165,7 @@ def generate_items(world: World):
             critical_items.append(item_data)
             for group in item_groups:
                 if group in running_totals:
-                    running_totals[group] += item_data.count
+                    running_totals[group] += item_count
         else:
             optional_items.append(item_data)
 
@@ -169,14 +173,14 @@ def generate_items(world: World):
 
     # Calculate how many slots there are to fill
     unfilled_location_count = len(world.multiworld.get_unfilled_locations(world.player))
-    critical_copy_count = sum(item_data.count for item_data in critical_items)
+    critical_count = sum(resolved_counts.get(item_data.name, item_data.count) for item_data in critical_items)
 
     # Check if this will exceed the location count before creating
-    if critical_copy_count > unfilled_location_count:
-        raise Exception(f"Critical items count {critical_copy_count} will exceed location count ({unfilled_location_count}) for player {world.player} - thresholds may be too aggressive or not enough locations.")
+    if critical_count > unfilled_location_count:
+        raise Exception(f"Critical items count {critical_count} will exceed location count ({unfilled_location_count}) for player {world.player} - thresholds may be too aggressive or not enough locations.")
 
     # Calculate any remaining un-filled locations
-    remaining_slots = unfilled_location_count - critical_copy_count
+    remaining_slots = unfilled_location_count - critical_count
     selected_optional: List[CursedWordsItem] = []
     populated_slots = 0
 
@@ -193,7 +197,8 @@ def generate_items(world: World):
 
     # Add 'critical' items to the pool
     for item_data in critical_items:
-        for _ in range(item_data.count):
+        item_count = resolved_counts.get(item_data.name, item_data.count)
+        for _ in range(item_count):
             item = Item(item_data.name, item_data.classification, item_data.id, world.player)
             world.multiworld.itempool.append(item)
 
@@ -206,13 +211,59 @@ def generate_items(world: World):
     # Check if any locations remain un-filled, if so, populate with filler
     remaining_slots = remaining_slots - populated_slots
     if remaining_slots > 0:
-        # logging.info(f"Adding {remaining_slots} filler items")
-        world.multiworld.itempool += generate_filler_items(world, remaining_slots)
+        
+        # If traps required, generate them first and add to pool
+        trap_count = round(remaining_slots * world.options.trap_percentage.value / 100) if world.options.trap_percentage.value > 0 else 0
+        traps = generate_trap_items(world, trap_count)
+        world.multiworld.itempool += traps
+
+        # Fill remaining item slots with filler
+        filler_count = remaining_slots - len(traps)
+        world.multiworld.itempool += generate_filler_items(world, filler_count)
+
+def generate_trap_items(world: World, amount: int) -> List[Item]:
+    """Randomly select an {amount} of trap items."""
+
+    # If invalid amount, return none
+    if amount <= 0:
+        return []
+
+    # Get applicable trap items based on player YAML options
+    enabled_trap_items = [
+        item for item in item_table
+        if item.has_character_tags(world.character_tags)
+        and item.has_option_tags(world.option_tags)
+        and item.is_classification(ItemClassification.trap)
+    ]
+
+    # If no enabled trap items, return none
+    if len(enabled_trap_items) == 0:
+        return []
+
+    # Get trap item weighting from YAML options
+    weights = [
+        world.options.trap_weighting.value.get(item.name, 1)
+        for item in enabled_trap_items
+    ]
+
+    # Randomly select from trap items
+    selected_traps = world.random.choices(
+        enabled_trap_items,
+        weights=weights,
+        k=amount
+    )
+
+    return [ Item(item.name, item.classification, item.id, world.player) for item in selected_traps ]
+
 
 def generate_filler_items(world: World, amount: int) -> List[Item]:
     """Randomly select an {amount} of filler items."""
 
     # logging.info(f"Generating {amount} filler item(s)...")
+
+    # If invalid number, return none
+    if amount <= 0:
+        return []
 
     # Get applicable filler items based on player YAML options
     enabled_filler_items = [
@@ -221,6 +272,10 @@ def generate_filler_items(world: World, amount: int) -> List[Item]:
         and item.has_option_tags(world.option_tags)
         and item.is_classification(ItemClassification.filler)
     ]
+
+    # If no enabled filler items, return none
+    if len(enabled_filler_items) == 0:
+        return []
 
     # Get filler item weighting from YAML options
     weights = [

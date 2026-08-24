@@ -27,21 +27,24 @@ class CursedWordsWeb(WebWorld):
             Options.Characters,
             Options.StartingCharacter,
         ]),
-        OptionGroup("Run Options", [
-            Options.Michael,
-            Options.Crowns
-        ]),
         OptionGroup("Goal", [
             Options.Goal,
             Options.GoalCharacters
         ]),
-        OptionGroup("Shuffle", [
+        OptionGroup("Run Options", [
+            Options.Crowns,
+            Options.Michael,
             Options.ShuffleGridSize,
             Options.ShuffleInventorySlots,
             Options.ShuffleItemRarities,
-            Options.ShuffleLockedTilePositions
+            Options.ShuffleLockedTilePositions,
+            Options.DeathLink
         ]),
-        OptionGroup("Sanities", [
+        OptionGroup("Stickers / Stamps", [
+            Options.GuaranteedStickers,
+            Options.GuaranteedStamps,
+        ]),
+        OptionGroup("Extra Locations", [
             Options.Bosssanity,
             Options.Pinsanity,
             Options.Shopsanity,
@@ -49,9 +52,9 @@ class CursedWordsWeb(WebWorld):
             Options.ShopsanityLimit,
             Options.Tilesanity
         ]),
-        OptionGroup("Weighting", [
-            Options.GuaranteedStickers,
-            Options.GuaranteedStamps,
+        OptionGroup("Traps and Filler", [
+            Options.TrapPercentage,
+            Options.TrapWeighting,
             Options.FillerWeighting,
         ])
     ]
