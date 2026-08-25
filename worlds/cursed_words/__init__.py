@@ -4,7 +4,7 @@ from .Items import CursedWordsItem, item_name_groups_lookup, item_name_to_id_loo
 from .Locations import location_name_to_id_lookup
 from .Options import CursedWordsOptions
 from .Regions import generate_regions
-from .Rules import generate_all_group_thresholds, CROWN_NAMES, generate_goal_events, generate_goal
+from .Rules import generate_all_group_thresholds, CROWN_NAMES, MONEY_EARNED_THRESHOLDS, WORD_SCORE_THRESHOLDS, generate_goal_events, generate_goal
 import logging
 import math
 from Options import OptionGroup
@@ -31,18 +31,15 @@ class CursedWordsWeb(WebWorld):
             Options.Goal,
             Options.GoalCharacters
         ]),
-        OptionGroup("Run Options", [
-            Options.Crowns,
-            Options.Michael,
-            Options.ShuffleGridSize,
-            Options.ShuffleInventorySlots,
-            Options.ShuffleItemRarities,
-            Options.ShuffleLockedTilePositions,
+        OptionGroup("Deathlink", [
             Options.DeathLink
         ]),
-        OptionGroup("Stickers / Stamps", [
-            Options.GuaranteedStickers,
-            Options.GuaranteedStamps,
+        OptionGroup("Core Locations", [
+            Options.Crowns,
+            Options.Michael,
+            Options.MoneyEarned,
+            Options.WordLengths,
+            Options.WordScores,
         ]),
         OptionGroup("Extra Locations", [
             Options.Bosssanity,
@@ -51,6 +48,16 @@ class CursedWordsWeb(WebWorld):
             Options.ShopsanityCost,
             Options.ShopsanityLimit,
             Options.Tilesanity
+        ]),
+        OptionGroup("Extra Shuffling", [
+            Options.ShuffleGridSize,
+            Options.ShuffleInventorySlots,
+            Options.ShuffleItemRarities,
+            Options.ShuffleLockedTilePositions,
+        ]),
+        OptionGroup("Stickers / Stamps", [
+            Options.GuaranteedStickers,
+            Options.GuaranteedStamps,
         ]),
         OptionGroup("Traps and Filler", [
             Options.TrapPercentage,
@@ -91,6 +98,9 @@ class CursedWordsWorld(World):
         self.option_tags: List[str] = [
             *(["Crowns"] + list(CROWN_NAMES[:self.options.crowns.value]) if self.options.crowns.value else []),
             *(["Michael"] if self.options.michael.value else []),
+            *([f"MoneyEarned{v}" for v in MONEY_EARNED_THRESHOLDS if v <= self.options.money_earned.value]),
+            *([f"WordLength{v}" for v in range(1, self.options.word_lengths.value + 1)] if self.options.word_lengths > 0 else []),
+            *([f"WordScore{v}" for v in WORD_SCORE_THRESHOLDS if v <= self.options.word_scores.value]),
             *([self.options.shuffle_grid_size.display_name] if self.options.shuffle_grid_size.value else []),
             *([self.options.shuffle_inventory_slots.display_name] if self.options.shuffle_inventory_slots.value else []),
             *([self.options.shuffle_item_rarities.display_name] if self.options.shuffle_item_rarities.value else []),
@@ -103,7 +113,7 @@ class CursedWordsWorld(World):
             # Additional tag inclusions go here
         ]
 
-        logging.info(f"Selected option tags: {self.option_tags}")
+        # logging.info(f"Selected option tags: {self.option_tags}")
 
         # Randomly select starting character
         self.start_character: str = self.random.choice(
@@ -186,16 +196,25 @@ class CursedWordsWorld(World):
 
         # Add required options data
         slot_data: Dict[str, any] = self.options.as_dict(
-            "crowns",
-            "deathlink",
+
+            # Goal
             "goal",
             "goal_characters",
+
+            # Run Options
+            "crowns",
+            "michael",
             "shuffle_grid_size",
             "shuffle_inventory_slots",
             "shuffle_item_rarities",
             "shuffle_locked_tile_positions",
+            "deathlink",
+
+            # Sanities
+            "bosssanity",
             "shopsanity",
             "shopsanity_cost",
+            "tilesanity",
         )
 
         slot_data.update({

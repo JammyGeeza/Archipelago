@@ -2,11 +2,13 @@ from BaseClasses import Item, ItemClassification
 from dataclasses import dataclass
 import json, logging
 import pkgutil
-from typing import Dict, List
+from typing import Dict, List, Tuple
 from worlds.AutoWorld import World
 from .classes.Constants import CHARACTER_NAMES
 from .Locations import location_table, CursedWordsLocation
 from .Regions import region_table, CursedWordsRegion
+
+
 
 @dataclass
 class CursedWordsItem:

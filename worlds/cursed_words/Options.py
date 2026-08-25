@@ -172,6 +172,62 @@ class Michael(Toggle):
     display_name = "Include Michael"
     default = False
 
+class MoneyEarned(Range):
+    """
+    Sets the highest 'Money Earned' amount to include as locations from a pre-defined scaling curve.
+    Value is clamped to the closest location value (equal to or less than) in the curve - e.g. 387 is clamped to 350.
+
+    Locations are checked when the total money gained during a single run is equal to or greater than the required amount.
+
+    DIFFICULTY GUIDE:
+    The higher the value, the less 'guarantee' there is of being able to check the locations, so please choose carefully.
+    0 - 9       -> Excludes these locations entirely (minimum location is 10)
+    10 - 200    -> Comfortably reachable
+    201 - 350   -> May be trickier
+    351 - 500   -> Likely quite challenging
+    """
+    display_name = "Money Earned Locations"
+    range_start = 0
+    range_end = 500
+    default = 200
+
+class WordLengths(Range):
+    """
+    Sets the highest 'Word Length' amount to include as locations.
+
+    Locations are checked when a submitted Word's tile length exactly matches the required amount.
+
+    DIFFICULTY GUIDE:
+    The higher the value, the less 'guarantee' there is of being able to check the locations, so please choose carefully.
+    0       -> Excludes these locations entirely
+    1 - 10  -> Comfortably reachable
+    11 - 15 -> May be trickier
+    16 - 20 -> Likely quite challenging
+    """
+    display_name = "Word Length Locations"
+    range_start = 0
+    range_end = 20
+    default = 10
+
+class WordScores(Range):
+    """
+    Sets the highest 'Word Score' amount to include as locations from a pre-defined scaling curve.
+    Value is clamped to the closest location value (equal to or less than) in the curve - e.g. 1689 is clamped to 1500.
+
+    Locations are checked when a submitted Word's score is equal to or greater than the required amount.
+
+    DIFFICULTY GUIDE:
+    The higher the value, the less 'guarantee' there is of being able to check the locations, so please choose carefully.
+    0 - 4           -> Excludes these locations entirely (minimum location is 5)
+    5 - 2500        -> Comfortably reachable
+    2501 - 5000     -> May be trickier
+    5001 - 10000    -> Likely quite challenging
+    """
+    display_name = "Word Score Locations"
+    range_start = 0
+    range_end = 10000
+    default = 2500
+
 class ShuffleGridSize(Toggle):
     """
     Grid are reduced to 3x3 Tiles.
@@ -338,8 +394,8 @@ class TrapPercentage(Range):
          filler items will be replaced with trap items.
     """
     display_name = "Trap Percentage"
-    min = 0
-    max = 100
+    range_start = 0
+    range_end = 100
     default = 20
 
 class TrapWeighting(OptionDict):
@@ -410,6 +466,9 @@ class CursedWordsOptions(PerGameCommonOptions):
 
     michael: Michael
     crowns: Crowns
+    money_earned: MoneyEarned
+    word_lengths: WordLengths
+    word_scores: WordScores
     shuffle_grid_size: ShuffleGridSize
     shuffle_inventory_slots: ShuffleInventorySlots
     shuffle_item_rarities: ShuffleItemRarities

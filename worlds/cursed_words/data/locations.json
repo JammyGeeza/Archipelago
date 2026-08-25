@@ -1,178 +1,27 @@
 [
     {
-        "name": "{character}: {stage}-{encounter} Cleared",
-        "region": "{character}: {stage}",
-        "iterate": [
-            {
-                "placeholder": "character",
-                "values": "character_names",
-                "tag": "character_tags"
-            },
-            {
-                "placeholder": "stage",
-                "range": {
-                    "start": 1,
-                    "count": 5
-                },
-                "format": "Stage {value}"
-            },
-            {
-                "placeholder": "encounter",
-                "range": {
-                    "start": 1,
-                    "count": 3
-                }
-            }
-        ]
-    },
-    {
-        "name": "{character}: {stage}-{encounter} Cleared",
-        "region": "{character}: Michael",
-        "option_tags": [
-            "Michael"
-        ],
-        "iterate": [
-            {
-                "placeholder": "character",
-                "values": "character_names",
-                "tag": "character_tags"
-            },
-            {
-                "placeholder": "stage",
-                "range": {
-                    "start": 6
-                },
-                "format": "Stage {value}"
-            },
-            {
-                "placeholder": "encounter",
-                "range": {
-                    "start": 1,
-                    "count": 3
-                }
-            }
-        ]
-    },
-    {
-        "name": "{character}: {crown} - {stage}-{encounter} Cleared",
-        "region": "{character}: {crown} - {stage}",
-        "iterate": [
-            {
-                "placeholder": "character",
-                "values": "character_names",
-                "tag": "character_tags"
-            },
-            {
-                "placeholder": "crown",
-                "values": "crown_names",
-                "format": "{value} Crown",
-                "tag": "option_tags"
-            },
-            {
-                "placeholder": "stage",
-                "range": {
-                    "start": 1,
-                    "count": 5
-                },
-                "format": "Stage {value}"
-            },
-            {
-                "placeholder": "encounter",
-                "range": {
-                    "start": 1,
-                    "count": 3
-                }
-            }
-        ]
-    },
-    {
-        "name": "{character}: {stage} Fairy",
-        "region": "{character}: Purple Crown - {stage}",
-        "option_tags": [
-            "Fairies"
-        ],
-        "iterate": [
-            {
-                "placeholder": "character",
-                "values": "character_names",
-                "tag": "character_tags"
-            },
-            {
-                "placeholder": "stage",
-                "range": {
-                    "start": 1,
-                    "count": 5
-                },
-                "format": "Stage {value}"
-            }
-        ]
-    },
-    {
-        "name": "Destroy a Consumable Tile",
+        "_comment": "========== Generic ===========",
+        "name": "Buy a Consumable Tile",
         "region": "Stage 1"
     },
     {
-        "count": 3,
-        "count_start": 5,
-        "count_step": 5,
-        "name": "Earn ${count} in a Run",
-        "region": "Stage 1"
-    },
-    {
-        "count": 4,
-        "count_start": 20,
-        "count_step": 10,
-        "name": "Earn ${count} in a Run",
-        "region": "Stage 2"
-    },
-    {
-        "count": 8,
-        "count_start": 75,
-        "count_step": 25,
-        "name": "Earn ${count} in a Run",
-        "region": "Stage 3"
-    },
-    {
-        "count": 5,
-        "count_start": 300,
-        "count_step": 50,
-        "name": "Earn ${count} in a Run",
-        "region": "Stage 4"
-    },
-    {
-        "count": 5,
-        "count_start": 600,
-        "count_step": 100,
-        "name": "Earn ${count} in a Run",
-        "region": "Stage 5"
-    },
-    {
-        "name": "Clear {event} with {grids} Grids Unused",
+        "name": "Buy a Stamp",
         "region": "Stage 1",
-        "iterate": [
-            {
-                "placeholder": "event",
-                "values": [
-                    "an Encounter",
-                    "a Boss"
-                ]
-            },
-            {
-                "placeholder": "grids",
-                "range": {
-                    "start": 0,
-                    "count": 5
+        "access_rule": {
+            "rule": "HasGroup",
+            "options": [
+                {
+                    "option": "worlds.cursed_words.Options.ShuffleInventorySlots",
+                    "value": 1,
+                    "operator": "eq"
                 }
-            }
-        ]
-    },
-    {
-        "name": "Place a Consumable Tile",
-        "region": "Stage 1"
-    },
-    {
-        "name": "Skip a Grid",
-        "region": "Stage 1"
+            ],
+            "args": {
+                "item_name_group": "Stamp Slots",
+                "count": 1
+            },
+            "filtered_resolution": true
+        }
     },
     {
         "name": "Buy a Sticker",
@@ -213,6 +62,97 @@
         }
     },
     {
+        "name": "Clear {event} with {grids} Grids Unused",
+        "region": "Stage 1",
+        "iterate": [
+            {
+                "placeholder": "event",
+                "values": [
+                    "an Encounter",
+                    "a Boss"
+                ]
+            },
+            {
+                "placeholder": "grids",
+                "range": {
+                    "start": 0,
+                    "count": 5
+                }
+            }
+        ]
+    },
+    {
+        "name": "Destroy a Consumable Tile",
+        "region": "Stage 1"
+    },
+    {
+        "name": "Freeze a {item}",
+        "region": "Stage 1",
+        "iterate": [
+            {
+                "placeholder": "item",
+                "values": [
+                    "Sticker",
+                    "Stamp"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Place a Consumable Tile",
+        "region": "Stage 1"
+    },
+    {
+        "name": "Restock the Shop",
+        "region": "Stage 1"
+    },
+    {
+        "name": "Sell a Stamp",
+        "region": "Stage 1",
+        "access_rule": {
+            "rule": "HasGroup",
+            "options": [
+                {
+                    "option": "worlds.cursed_words.Options.ShuffleInventorySlots",
+                    "value": 1,
+                    "operator": "eq"
+                }
+            ],
+            "args": {
+                "item_name_group": "Stamp Slots",
+                "count": 1
+            },
+            "filtered_resolution": true
+        }
+    },
+    {
+        "name": "Sell a Sticker",
+        "region": "Stage 1",
+        "access_rule": {
+            "rule": "HasGroup",
+            "options": [
+                {
+                    "option": "worlds.cursed_words.Options.ShuffleInventorySlots",
+                    "value": 1,
+                    "operator": "eq"
+                }
+            ],
+            "args": {
+                "item_name_group": "Sticker Slots",
+                "count": 1
+            },
+            "filtered_resolution": true
+        }
+    },
+    {
+        "name": "Skip a Grid",
+        "region": "Stage 1"
+    },
+    {
+        "name": "Submit a Consumable Tile",
+        "region": "Stage 1"
+    },
+    {
         "name": "Upgrade a Pin",
         "region": "Stage 1"
     },
@@ -245,207 +185,385 @@
             }
         ]
     },
+
     {
-        "name": "Buy a Stamp",
-        "region": "Stage 1",
-        "access_rule": {
-            "rule": "HasGroup",
-            "options": [
-                {
-                    "option": "worlds.cursed_words.Options.ShuffleInventorySlots",
-                    "value": 1,
-                    "operator": "eq"
-                }
-            ],
-            "args": {
-                "item_name_group": "Stamp Slots",
-                "count": 1
+        "_comment": "========== Characters ==========",
+        "name": "{character}: {stage}-{encounter} Cleared",
+        "region": "{character}: {stage}",
+        "iterate": [
+            {
+                "placeholder": "character",
+                "values": "character_names",
+                "tag": "character_tags"
             },
-            "filtered_resolution": true
-        }
-    },
-    {
-        "name": "Buy a Consumable Tile",
-        "region": "Stage 1"
-    },
-    {
-        "name": "Buy a {colour} Tile",
-        "region": "Stage 1",
-        "option_tags": [ "Tilesanity" ],
-        "iterate": [
             {
-                "placeholder": "colour",
-                "values": "tile_colours"
+                "placeholder": "stage",
+                "range": {
+                    "start": 1,
+                    "count": 5
+                },
+                "format": "Stage {value}"
+            },
+            {
+                "placeholder": "encounter",
+                "range": {
+                    "start": 1,
+                    "count": 3
+                }
             }
         ]
     },
+
     {
-        "name": "Buy a {glyph} Tile",
-        "region": "Stage 1",
-        "option_tags": [ "Tilesanity" ],
+        "_comment": "========== Crowns ==========",
+        "name": "{character}: {crown} - {stage}-{encounter} Cleared",
+        "region": "{character}: {crown} - {stage}",
         "iterate": [
             {
-                "placeholder": "glyph",
-                "values": "tile_glyphs"
+                "placeholder": "character",
+                "values": "character_names",
+                "tag": "character_tags"
+            },
+            {
+                "placeholder": "crown",
+                "values": "crown_names",
+                "format": "{value} Crown",
+                "tag": "option_tags"
+            },
+            {
+                "placeholder": "stage",
+                "range": {
+                    "start": 1,
+                    "count": 5
+                },
+                "format": "Stage {value}"
+            },
+            {
+                "placeholder": "encounter",
+                "range": {
+                    "start": 1,
+                    "count": 3
+                }
             }
         ]
     },
+
     {
-        "count": 30,
-        "name": "Buy Shopsanity Item {count}",
-        "region": "Stage 1",
+        "_comment": "========== Michael ==========",
+        "name": "{character}: {stage}-{encounter} Cleared",
+        "region": "{character}: Michael",
         "option_tags": [
-            "Shopsanity"
+            "Michael"
+        ],
+        "iterate": [
+            {
+                "placeholder": "character",
+                "values": "character_names",
+                "tag": "character_tags"
+            },
+            {
+                "placeholder": "stage",
+                "range": {
+                    "start": 6
+                },
+                "format": "Stage {value}"
+            },
+            {
+                "placeholder": "encounter",
+                "range": {
+                    "start": 1,
+                    "count": 3
+                }
+            }
         ]
     },
     {
-        "name": "Freeze a {item}",
+        "name": "{character}: {stage} Fairy",
+        "region": "{character}: Purple Crown - {stage}",
+        "option_tags": [
+            "Fairies"
+        ],
+        "iterate": [
+            {
+                "placeholder": "character",
+                "values": "character_names",
+                "tag": "character_tags"
+            },
+            {
+                "placeholder": "stage",
+                "range": {
+                    "start": 1,
+                    "count": 5
+                },
+                "format": "Stage {value}"
+            }
+        ]
+    },
+
+    {
+        "_comment": "========== Money Earned ==========",
+        "name": "Money Earned: ${amount}+",
         "region": "Stage 1",
         "iterate": [
             {
-                "placeholder": "item",
+                "placeholder": "amount",
+                "range": {
+                    "start": 10,
+                    "step": 5,
+                    "count": 4
+                },
+                "tags": "option_tags",
+                "tag_format": "MoneyEarned{value}"
+            }
+        ]
+    },
+    {
+        "name": "Money Earned: ${amount}+",
+        "region": "Stage 2",
+        "iterate": [
+            {
+                "placeholder": "amount",
+                "range": {
+                    "start": 30,
+                    "step": 10,
+                    "count": 4
+                },
+                "tags": "option_tags",
+                "tag_format": "MoneyEarned{value}"
+            }
+        ]
+    },
+    {
+        "name": "Money Earned: ${amount}+",
+        "region": "Stage 3",
+        "iterate": [
+            {
+                "placeholder": "amount",
+                "range": {
+                    "start": 70,
+                    "step": 10,
+                    "count": 3
+                },
+                "tags": "option_tags",
+                "tag_format": "MoneyEarned{value}"
+            }
+        ]
+    },
+    {
+        "name": "Money Earned: ${amount}+",
+        "region": "Stage 4",
+        "iterate": [
+            {
+                "placeholder": "amount",
+                "range": {
+                    "start": 100,
+                    "step": 25,
+                    "count": 3
+                },
+                "tags": "option_tags",
+                "tag_format": "MoneyEarned{value}"
+            }
+        ]
+    },
+    {
+        "name": "Money Earned: ${amount}+",
+        "region": "Stage 5",
+        "iterate": [
+            {
+                "placeholder": "amount",
                 "values": [
-                    "Sticker",
-                    "Stamp"
-                ]
+                    175,
+                    200,
+                    225,
+                    250,
+                    275,
+                    300,
+                    350,
+                    400,
+                    450,
+                    500
+                ],
+                "tags": "option_tags",
+                "tag_format": "MoneyEarned{value}"
             }
         ]
     },
+
     {
-        "name": "Restock the Shop",
-        "region": "Stage 1"
-    },
-    {
-        "name": "Sell a Sticker",
+        "_comment": "========== Word Lengths ==========",
+        "name": "Word Length: {count} Tiles",
         "region": "Stage 1",
-        "access_rule": {
-            "rule": "HasGroup",
-            "options": [
-                {
-                    "option": "worlds.cursed_words.Options.ShuffleInventorySlots",
-                    "value": 1,
-                    "operator": "eq"
-                }
-            ],
-            "args": {
-                "item_name_group": "Sticker Slots",
-                "count": 1
-            },
-            "filtered_resolution": true
-        }
-    },
-    {
-        "name": "Sell a Stamp",
-        "region": "Stage 1",
-        "access_rule": {
-            "rule": "HasGroup",
-            "options": [
-                {
-                    "option": "worlds.cursed_words.Options.ShuffleInventorySlots",
-                    "value": 1,
-                    "operator": "eq"
-                }
-            ],
-            "args": {
-                "item_name_group": "Stamp Slots",
-                "count": 1
-            },
-            "filtered_resolution": true
-        }
-    },
-    {
-        "count": 3,
-        "name": "Word Length: {count} Tiles",
-        "region": "Stage 1"
-    },
-    {
-        "count": 3,
-        "count_start": 4,
-        "name": "Word Length: {count} Tiles",
-        "region": "Stage 2"
-    },
-    {
-        "count": 3,
-        "count_start": 7,
-        "name": "Word Length: {count} Tiles",
-        "region": "Stage 3"
-    },
-    {
-        "count": 3,
-        "count_start": 10,
-        "name": "Word Length: {count} Tiles",
-        "region": "Stage 4"
-    },
-    {
-        "count": 3,
-        "count_start": 5,
-        "count_step": 5,
-        "name": "Word Score: {count}+",
-        "region": "Stage 1"
-    },
-    {
-        "count": 4,
-        "count_start": 20,
-        "count_step": 10,
-        "name": "Word Score: {count}+",
-        "region": "Stage 2"
-    },
-    {
-        "count": 8,
-        "count_start": 75,
-        "count_step": 25,
-        "name": "Word Score: {count}+",
-        "region": "Stage 3"
-    },
-    {
-        "count": 5,
-        "count_start": 300,
-        "count_step": 50,
-        "name": "Word Score: {count}+",
-        "region": "Stage 4"
-    },
-    {
-        "count": 5,
-        "count_start": 600,
-        "count_step": 100,
-        "name": "Word Score: {count}+",
-        "region": "Stage 5"
-    },
-    {
-        "count": 6,
-        "count_start": 1250,
-        "count_step": 250,
-        "name": "Word Score: {count}+",
-        "region": "Stage 5"
-    },
-    {
-        "name": "Submit a Consumable Tile",
-        "region": "Stage 1"
-    },
-    {
-        "name": "Submit a {colour} Tile",
-        "region": "Stage 1",
-        "option_tags": [ "Tilesanity" ],
         "iterate": [
             {
-                "placeholder": "colour",
-                "values": "tile_colours"
+                "placeholder": "count",
+                "range": {
+                    "start": 1,
+                    "count": 4
+                },
+                "tag": "option_tags",
+                "tag_format": "WordLength{value}"
             }
         ]
     },
     {
-        "name": "Submit a {glyph} Tile",
-        "region": "Stage 1",
-        "option_tags": [ "Tilesanity" ],
+        "name": "Word Length: {count} Tiles",
+        "region": "Stage 2",
         "iterate": [
             {
-                "placeholder": "glyph",
-                "values": "tile_glyphs"
+                "placeholder": "count",
+                "range": {
+                    "start": 5,
+                    "count": 4
+                },
+                "tag": "option_tags",
+                "tag_format": "WordLength{value}"
             }
         ]
     },
     {
-        "name": "Defeat {boss}",
+        "name": "Word Length: {count} Tiles",
+        "region": "Stage 3",
+        "iterate": [
+            {
+                "placeholder": "count",
+                "range": {
+                    "start": 9,
+                    "count": 4
+                },
+                "tag": "option_tags",
+                "tag_format": "WordLength{value}"
+            }
+        ]
+    },
+    {
+        "name": "Word Length: {count} Tiles",
+        "region": "Stage 4",
+        "iterate": [
+            {
+                "placeholder": "count",
+                "range": {
+                    "start": 13,
+                    "count": 4
+                },
+                "tag": "option_tags",
+                "tag_format": "WordLength{value}"
+            }
+        ]
+    },
+    {
+        "name": "Word Length: {count} Tiles",
+        "region": "Stage 5",
+        "iterate": [
+            {
+                "placeholder": "count",
+                "range": {
+                    "start": 17,
+                    "count": 4
+                },
+                "tag": "option_tags",
+                "tag_format": "WordLength{value}"
+            }
+        ]
+    },
+
+    {
+        "_comment": "========== Word Scores ==========",
+        "name": "Word Score: {count}+",
+        "region": "Stage 1",
+        "iterate": [
+            {
+                "placeholder": "count",
+                "range": {
+                    "start": 5,
+                    "step": 5,
+                    "count": 5
+                },
+                "tag": "option_tags",
+                "tag_format": "WordScore{value}"
+            }
+        ]
+    },
+    {
+        "name": "Word Score: {count}+",
+        "region": "Stage 2",
+        "iterate": [
+            {
+                "placeholder":"count",
+                "range": {
+                    "start": 50,
+                    "step": 25,
+                    "count": 7
+                },
+                "tag": "option_tags",
+                "tag_format": "WordScore{value}"
+            }
+        ]
+    },
+    {
+        "name": "Word Score: {count}+",
+        "region": "Stage 3",
+        "iterate": [
+            {
+                "placeholder": "count",
+                "range": {
+                    "start": 250,
+                    "step": 50,
+                    "count": 6
+                },
+                "tag": "option_tags",
+                "tag_format": "WordScore{value}"
+            }
+        ]
+    },
+    {
+        "name": "Word Score: {count}+",
+        "region": "Stage 4",
+        "iterate": [
+            {
+                "placeholder": "count",
+                "range": {
+                    "start": 600,
+                    "step": 100,
+                    "count": 5
+                },
+                "tag": "option_tags",
+                "tag_format": "WordScore{value}"
+            }
+        ]
+    },
+    {
+        "name": "Word Score: {count}+",
+        "region": "Stage 5",
+        "iterate": [
+            {
+                "placeholder": "count",
+                "values": [
+                    1250,
+                    1500,
+                    1750,
+                    2000,
+                    2250,
+                    2500,
+                    3000,
+                    3500,
+                    4000,
+                    4500,
+                    5000,
+                    6000,
+                    7000,
+                    8000,
+                    9000,
+                    10000
+                ],
+                "tag": "option_tags",
+                "tag_format": "WordScore{value}"
+            }
+        ]
+    },
+
+    {
+        "_comment": "========== Boss-sanity ==========",
+        "name": "Boss-sanity: Defeat {boss}",
         "region": "Stage 1",
         "option_tags": [
             "Boss-sanity"
@@ -458,7 +576,7 @@
         ]
     },
     {
-        "name": "Defeat {boss}",
+        "name": "Boss-sanity: Defeat {boss}",
         "region": "Stage 2",
         "option_tags": [
             "Boss-sanity"
@@ -470,9 +588,10 @@
             }
         ]
     },
+
     {
-        "_comment": "----- Pinsanity -----",
-        "name": "{character}: Upgrade Pin - {side} {stage}",
+        "_comment": "========== Pinsanity ==========",
+        "name": "Pinsanity: {character} - {side} {stage}",
         "region": "{character}: Stage {stage}",
         "option_tags": [
             "Pinsanity"
@@ -496,6 +615,62 @@
                     "start": 1,
                     "count": 4
                 }
+            }
+        ]
+    },
+
+    {
+        "_comment": "========== Shopsanity ==========",
+        "name": "Shopsanity: Item {number}",
+        "region": "Stage 1",
+        "option_tags": [
+            "Shopsanity"
+        ],
+        "iterate": [
+            {
+                "placeholder": "number",
+                "range": {
+                    "start": 1,
+                    "count": 30
+                }
+            }
+        ]
+    },
+
+    {
+        "_comment": "========== Tilesanity ==========",
+        "name": "Tilesanity: {action} a {colour} Tile",
+        "region": "Stage 1",
+        "option_tags": [ "Tilesanity" ],
+        "iterate": [
+            {
+                "placeholder": "action",
+                "values": [
+                    "Buy",
+                    "Submit"
+                ]
+            },
+            {
+                "placeholder": "colour",
+                "values": "tile_colours"
+            }
+        ]
+    },
+    {
+        "name": "Tilesanity: {action} a {glyph} Tile",
+        "region": "Stage 1",
+        "option_tags": [ "Tilesanity" ],
+        "iterate": [
+            {
+                "placeholder": "action",
+                "values": [
+                    "Buy",
+                    "Submit"
+                ]
+            },
+            {
+                "placeholder": "glyph",
+                "values": "tile_glyphs"
             }
         ]
     }

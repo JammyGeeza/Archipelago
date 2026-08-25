@@ -63,6 +63,27 @@ STAGE_PERCENTAGES: Dict[Tuple[str, str], Tuple[float, float, float, float, float
     ("Octacles", "Red"): (0.3, 0.45, 0.6, 0.75, 0.90),
 }
 
+MONEY_EARNED_THRESHOLDS: Tuple[int, ...] = [
+    10, 15, 20, 25,     # Stage One, increments of 5
+    30, 40, 50, 60,     # Stage Two, increments of 10
+    70, 80, 90,         # Stage Three, increments of 10
+    100, 125, 150,      # Stage Four, increments of 25
+    175, 200, 225,      # Stage Five, increments of 25
+    250, 275, 300,      #             increments of 25 (advanced)
+    350, 400, 450, 500  #             increments of 50 (expert)
+]
+
+# Thresholds for word score locations
+WORD_SCORE_THRESHOLDS: Tuple[int, ...] = [
+    5, 10, 15, 20, 25,                  # Stage One, increments of 5
+    50, 75, 100, 125, 150, 175, 200,    # Stage Two, increments of 25
+    250, 300, 350, 400, 450, 500,       # Stage Three, increments of 50
+    600, 700, 800, 900, 1000,           # Stage Four, increments of 100
+    1250, 1500, 1750, 2000, 2250, 2500, # Stage Five, increments of 250
+    3000, 3500, 4000, 4500, 5000,       #             increments of 500 (advanced)
+    6000, 7000, 8000, 9000, 10000       #             increments of 1000 (expert)
+]
+
 
 def generate_stage_thresholds(percentages: Tuple[float, ...], total: int) -> Dict[str, int]:
     """Create the Stage 1-5 'critical' item thresholds, resolved in the access rules."""
