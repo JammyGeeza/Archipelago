@@ -2,11 +2,13 @@ from BaseClasses import Item, ItemClassification
 from dataclasses import dataclass
 import json, logging
 import pkgutil
-from typing import Dict, List
+from typing import Dict, List, Tuple
 from worlds.AutoWorld import World
 from .classes.Constants import CHARACTER_NAMES
 from .Locations import location_table, CursedWordsLocation
 from .Regions import region_table, CursedWordsRegion
+
+
 
 @dataclass
 class CursedWordsItem:
@@ -65,7 +67,7 @@ CHARACTER_ITEM_NAMES = set(CHARACTER_NAMES)
 # Create the base sticker/stamp item group threshold names for each character
 for character in CHARACTER_NAMES:
     for kind in ("Stickers", "Stamps"):
-        item_name_groups_lookup.setdefault(f"{character}: Base {kind}", set())
+        item_name_groups_lookup.setdefault(f"{character}: {kind} Synergy", set())
 
 # Set the sticker/stamp threshold names
 for item in item_table:
@@ -77,7 +79,7 @@ for item in item_table:
 
         for character in item.character_tags:
             if not item.option_tags:
-                item_name_groups_lookup.setdefault(f"{character}: Base {kind}", set()).add(item.name)
+                item_name_groups_lookup.setdefault(f"{character}: {kind} Synergy", set()).add(item.name)
 
 # 
 item_name_to_groups_lookup: Dict[str, List[str]] = {}
@@ -93,29 +95,31 @@ def generate_items(world: World):
         item.name for item in world.multiworld.precollected_items[world.player]
     ]
 
-    # Get player-selected 'guaranteed' stickers and stamps
-    guaranteed_stickers = set(world.options.guaranteed_stickers.value)
-    guaranteed_stamps = set(world.options.guaranteed_stamps.value)
-    guaranteed_names = guaranteed_stickers | guaranteed_stamps
+    # Get all stickers and stamps from character synergies
+    selected_synergy_items: set = {
+        name
+        for character in world.character_tags
+        for kind in ("Stickers", "Stamps")
+        for name in world.character_synergies[(character, kind)]
+    }
 
-    # Get all progression/useful items this seed could possibly need based on YAML options
+    # Get all progression/useful items this seed could possibly need based on player YAML options
     eligible_items: List[CursedWordsItem] = [
         item for item in item_table
-        if (item.has_character_tags(world.character_tags) or item.name in guaranteed_names)
+        if (item.has_character_tags(world.character_tags) or item.name in selected_synergy_items)
         and item.has_option_tags(world.option_tags)
         and item.is_classification(ItemClassification.progression | ItemClassification.useful)
         and item.name not in precollected_item_names
     ]
 
-    # Clamp possible 'Progressive Crown' item count to the <Crowns> YAML value
+    # Clamp possible 'Progressive Crown' item count to the <Crowns> YAML value (per-player)
+    resolved_counts: Dict[str, int] = {}
     for item_data in eligible_items:
         if item_data.name.endswith(": Progressive Crown"):
-            item_data.count = world.options.crowns.value
+            resolved_counts[item_data.name] = world.options.crowns.value
     
     # Shuffle all eligible items
     world.random.shuffle(eligible_items)
-
-    # logging.info(f"Found {len(eligible_items)} eligible items")
 
     # Get applicable regions based on player YAML options
     enabled_regions = [
@@ -133,58 +137,62 @@ def generate_items(world: World):
 
     # Calculate required item counts based on thresholds from Rules.py
     required_counts = generate_required_group_counts(enabled_regions, enabled_locations, world.group_thresholds, world.character_tags, world.option_tags)
-    # logging.info(f"Required counts: {required_counts}")
 
-    # Sort items into 'critical' (needed to reach minimum required counts) and 'optional' (can be dropped if item pool too large) piles
+    # Sort items into:
+    # Critical  -> Required to progress based on access rules and/or other factors
+    # Optional  -> Not essential, can be dropped if item pool is full
     critical_items: List[CursedWordsItem] = []
     optional_items: List[CursedWordsItem] = []
-    running_totals: Dict[str, int] = {group: 0 for group in required_counts}
+    item_totals: Dict[str, int] = {group: 0 for group in required_counts}
 
     for item_data in eligible_items:
-        # Always protect character items, progressive crown items and 'guaranteed' items.
-        # (items that are not part of a 'HasGroup' access rule but need to be guaranteed in the pool)
+        # Protect 'critical' items such as Characters and Progressive Crowns
         item_is_protected: bool = (
             item_data.name in CHARACTER_ITEM_NAMES 
-            or item_data.name in guaranteed_names
             or item_data.name.endswith(": Progressive Crown")
         )
 
-        # Check if still below threshold for item group(s)
-        item_groups = item_name_to_groups_lookup.get(item_data.name, item_data.groups)
+        # Get amount of times to apply item per-player or revert to global count if not a counted item
+        item_count = resolved_counts.get(item_data.name, item_data.count)
+
+        # Check if this item's current count is below the required 'critical' threshold
+        item_groups = world.item_name_to_groups_lookup.get(item_data.name, item_data.groups)
         below_threshold = any(
-            running_totals.get(group, 0) < required_counts[group]
+            item_totals.get(group, 0) < required_counts[group]
             for group in item_groups if group in required_counts
         )
 
-        # If character, crown, guaranteed or below threshold, treat item as 'critical', otherwise optional
+        # If protected item or currently below threshold, treat item as 'critical', otherwise treat as optional
         if item_is_protected or below_threshold:
             critical_items.append(item_data)
             for group in item_groups:
-                if group in running_totals:
-                    running_totals[group] += item_data.count
+                if group in item_totals:
+                    item_totals[group] += item_count
         else:
             optional_items.append(item_data)
 
-    # logging.info(f"Critical items: {len(critical)}, optional items: {len(optional)}")
-
     # Calculate how many slots there are to fill
     unfilled_location_count = len(world.multiworld.get_unfilled_locations(world.player))
-    critical_copy_count = sum(item_data.count for item_data in critical_items)
+    critical_count = sum(resolved_counts.get(item_data.name, item_data.count) for item_data in critical_items)
 
     # Check if this will exceed the location count before creating
-    if critical_copy_count > unfilled_location_count:
-        raise Exception(f"Critical items count {critical_copy_count} will exceed location count ({unfilled_location_count}) for player {world.player} - thresholds may be too aggressive or not enough locations.")
+    if critical_count > unfilled_location_count:
+        raise Exception(f"Required progression items count {critical_count} will exceed location count ({unfilled_location_count}) for player {world.player} - thresholds may be too aggressive or not enough locations to accommodate all items.")
 
     # Calculate any remaining un-filled locations
-    remaining_slots = unfilled_location_count - critical_copy_count
+    remaining_slots = unfilled_location_count - critical_count
     selected_optional: List[CursedWordsItem] = []
     populated_slots = 0
 
-    # Shuffle optional items (In fairness, the original list was already shuffled so this might not be necessary)
-    world.random.shuffle(optional_items)
+    # Get and shuffle optional items that are both tagged and untagged for characters
+    character_tagged_items = [item for item in optional_items if item.character_tags]
+    world.random.shuffle(character_tagged_items)
 
-    # Select required amount of optional items
-    for item_data in optional_items:
+    untagged_items = [item for item in optional_items if not item.character_tags]
+    world.random.shuffle(untagged_items)
+
+    # Select required amount of optional items - character-relevant first, untagged as fallback
+    for item_data in character_tagged_items + untagged_items:
         if populated_slots + item_data.count > remaining_slots:
             continue
         
@@ -193,7 +201,8 @@ def generate_items(world: World):
 
     # Add 'critical' items to the pool
     for item_data in critical_items:
-        for _ in range(item_data.count):
+        item_count = resolved_counts.get(item_data.name, item_data.count)
+        for _ in range(item_count):
             item = Item(item_data.name, item_data.classification, item_data.id, world.player)
             world.multiworld.itempool.append(item)
 
@@ -206,13 +215,59 @@ def generate_items(world: World):
     # Check if any locations remain un-filled, if so, populate with filler
     remaining_slots = remaining_slots - populated_slots
     if remaining_slots > 0:
-        # logging.info(f"Adding {remaining_slots} filler items")
-        world.multiworld.itempool += generate_filler_items(world, remaining_slots)
+        
+        # If traps required, generate them first and add to pool
+        trap_count = round(remaining_slots * world.options.trap_percentage.value / 100) if world.options.trap_percentage.value > 0 else 0
+        traps = generate_trap_items(world, trap_count)
+        world.multiworld.itempool += traps
+
+        # Fill remaining item slots with filler
+        filler_count = remaining_slots - len(traps)
+        world.multiworld.itempool += generate_filler_items(world, filler_count)
+
+def generate_trap_items(world: World, amount: int) -> List[Item]:
+    """Randomly select an {amount} of trap items."""
+
+    # If invalid amount, return none
+    if amount <= 0:
+        return []
+
+    # Get applicable trap items based on player YAML options
+    enabled_trap_items = [
+        item for item in item_table
+        if item.has_character_tags(world.character_tags)
+        and item.has_option_tags(world.option_tags)
+        and item.is_classification(ItemClassification.trap)
+    ]
+
+    # If no enabled trap items, return none
+    if len(enabled_trap_items) == 0:
+        return []
+
+    # Get trap item weighting from YAML options
+    weights = [
+        world.options.trap_weighting.value.get(item.name, 1)
+        for item in enabled_trap_items
+    ]
+
+    # Randomly select from trap items
+    selected_traps = world.random.choices(
+        enabled_trap_items,
+        weights=weights,
+        k=amount
+    )
+
+    return [ Item(item.name, item.classification, item.id, world.player) for item in selected_traps ]
+
 
 def generate_filler_items(world: World, amount: int) -> List[Item]:
     """Randomly select an {amount} of filler items."""
 
     # logging.info(f"Generating {amount} filler item(s)...")
+
+    # If invalid number, return none
+    if amount <= 0:
+        return []
 
     # Get applicable filler items based on player YAML options
     enabled_filler_items = [
@@ -222,9 +277,20 @@ def generate_filler_items(world: World, amount: int) -> List[Item]:
         and item.is_classification(ItemClassification.filler)
     ]
 
+    # If no enabled filler items, return none
+    if len(enabled_filler_items) == 0:
+        return []
+
+    # Get filler item weighting from YAML options
+    weights = [
+        world.options.filler_weighting.value.get(item.name, 1)
+        for item in enabled_filler_items
+    ]
+
     # Randomly select from filler items
     selected_filler = world.random.choices(
         enabled_filler_items,
+        weights=weights,
         k=amount
     )
 

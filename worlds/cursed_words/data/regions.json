@@ -225,20 +225,20 @@
                         {
                             "rule": "HasGroup",
                             "args": {
-                                "item_name_group": "{character}: Base Stickers",
+                                "item_name_group": "{character}: Stickers Synergy",
                                 "count": {
                                     "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.{character}: Base Stickers.stage_2"
+                                    "name": "group_thresholds.{character}: Stickers Synergy.stage_2"
                                 }
                             }
                         },
                         {
                             "rule": "HasGroup",
                             "args": {
-                                "item_name_group": "{character}: Base Stamps",
+                                "item_name_group": "{character}: Stamps Synergy",
                                 "count": {
                                     "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.{character}: Base Stamps.stage_2"
+                                    "name": "group_thresholds.{character}: Stamps Synergy.stage_2"
                                 }
                             }
                         }
@@ -357,20 +357,20 @@
                         {
                             "rule": "HasGroup",
                             "args": {
-                                "item_name_group": "{character}: Base Stickers",
+                                "item_name_group": "{character}: Stickers Synergy",
                                 "count": {
                                     "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.{character}: Base Stickers.stage_3"
+                                    "name": "group_thresholds.{character}: Stickers Synergy.stage_3"
                                 }
                             }
                         },
                         {
                             "rule": "HasGroup",
                             "args": {
-                                "item_name_group": "{character}: Base Stamps",
+                                "item_name_group": "{character}: Stamps Synergy",
                                 "count": {
                                     "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.{character}: Base Stamps.stage_3"
+                                    "name": "group_thresholds.{character}: Stamps Synergy.stage_3"
                                 }
                             }
                         }
@@ -489,20 +489,20 @@
                         {
                             "rule": "HasGroup",
                             "args": {
-                                "item_name_group": "{character}: Base Stickers",
+                                "item_name_group": "{character}: Stickers Synergy",
                                 "count": {
                                     "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.{character}: Base Stickers.stage_4"
+                                    "name": "group_thresholds.{character}: Stickers Synergy.stage_4"
                                 }
                             }
                         },
                         {
                             "rule": "HasGroup",
                             "args": {
-                                "item_name_group": "{character}: Base Stamps",
+                                "item_name_group": "{character}: Stamps Synergy",
                                 "count": {
                                     "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.{character}: Base Stamps.stage_4"
+                                    "name": "group_thresholds.{character}: Stamps Synergy.stage_4"
                                 }
                             }
                         }
@@ -536,20 +536,20 @@
                         {
                             "rule": "HasGroup",
                             "args": {
-                                "item_name_group": "{character}: Base Stickers",
+                                "item_name_group": "{character}: Stickers Synergy",
                                 "count": {
                                     "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.{character}: Base Stickers.stage_5"
+                                    "name": "group_thresholds.{character}: Stickers Synergy.stage_5"
                                 }
                             }
                         },
                         {
                             "rule": "HasGroup",
                             "args": {
-                                "item_name_group": "{character}: Base Stamps",
+                                "item_name_group": "{character}: Stamps Synergy",
                                 "count": {
                                     "resolver": "FromWorldAttr",
-                                    "name": "group_thresholds.{character}: Base Stamps.stage_5"
+                                    "name": "group_thresholds.{character}: Stamps Synergy.stage_5"
                                 }
                             }
                         }
@@ -642,20 +642,20 @@
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stickers",
+                                        "item_name_group": "{character}: Stickers Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stickers.purple_stage_1"
+                                            "name": "group_thresholds.{character}: Stickers Synergy.stage_1"
                                         }
                                     }
                                 },
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stamps",
+                                        "item_name_group": "{character}: Stamps Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stamps.purple_stage_1"
+                                            "name": "group_thresholds.{character}: Stamps Synergy.stage_1"
                                         }
                                     }
                                 }
@@ -707,20 +707,20 @@
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stickers",
+                                        "item_name_group": "{character}: Stickers Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stickers.purple_stage_2"
+                                            "name": "group_thresholds.{character}: Stickers Synergy.stage_2"
                                         }
                                     }
                                 },
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stamps",
+                                        "item_name_group": "{character}: Stamps Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stamps.purple_stage_2"
+                                            "name": "group_thresholds.{character}: Stamps Synergy.stage_2"
                                         }
                                     }
                                 }
@@ -772,20 +772,20 @@
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stickers",
+                                        "item_name_group": "{character}: Stickers Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stickers.purple_stage_3"
+                                            "name": "group_thresholds.{character}: Stickers Synergy.stage_3"
                                         }
                                     }
                                 },
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stamps",
+                                        "item_name_group": "{character}: Stamps Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stamps.purple_stage_3"
+                                            "name": "group_thresholds.{character}: Stamps Synergy.stage_3"
                                         }
                                     }
                                 }
@@ -837,20 +837,20 @@
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stickers",
+                                        "item_name_group": "{character}: Stickers Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stickers.purple_stage_4"
+                                            "name": "group_thresholds.{character}: Stickers Synergy.stage_4"
                                         }
                                     }
                                 },
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stamps",
+                                        "item_name_group": "{character}: Stamps Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stamps.purple_stage_4"
+                                            "name": "group_thresholds.{character}: Stamps Synergy.stage_4"
                                         }
                                     }
                                 }
@@ -895,20 +895,20 @@
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stickers",
+                                        "item_name_group": "{character}: Stickers Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stickers.purple_stage_5"
+                                            "name": "group_thresholds.{character}: Stickers Synergy.stage_5"
                                         }
                                     }
                                 },
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stamps",
+                                        "item_name_group": "{character}: Stamps Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stamps.purple_stage_5"
+                                            "name": "group_thresholds.{character}: Stamps Synergy.stage_5"
                                         }
                                     }
                                 }
@@ -960,20 +960,20 @@
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stickers",
+                                        "item_name_group": "{character}: Stickers Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stickers.yellow_stage_1"
+                                            "name": "group_thresholds.{character}: Stickers Synergy.stage_1"
                                         }
                                     }
                                 },
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stamps",
+                                        "item_name_group": "{character}: Stamps Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stamps.yellow_stage_1"
+                                            "name": "group_thresholds.{character}: Stamps Synergy.stage_1"
                                         }
                                     }
                                 }
@@ -1025,20 +1025,20 @@
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stickers",
+                                        "item_name_group": "{character}: Stickers Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stickers.yellow_stage_2"
+                                            "name": "group_thresholds.{character}: Stickers Synergy.stage_2"
                                         }
                                     }
                                 },
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stamps",
+                                        "item_name_group": "{character}: Stamps Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stamps.yellow_stage_2"
+                                            "name": "group_thresholds.{character}: Stamps Synergy.stage_2"
                                         }
                                     }
                                 }
@@ -1090,20 +1090,20 @@
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stickers",
+                                        "item_name_group": "{character}: Stickers Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stickers.yellow_stage_3"
+                                            "name": "group_thresholds.{character}: Stickers Synergy.stage_3"
                                         }
                                     }
                                 },
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stamps",
+                                        "item_name_group": "{character}: Stamps Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stamps.yellow_stage_3"
+                                            "name": "group_thresholds.{character}: Stamps Synergy.stage_3"
                                         }
                                     }
                                 }
@@ -1155,20 +1155,20 @@
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stickers",
+                                        "item_name_group": "{character}: Stickers Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stickers.yellow_stage_4"
+                                            "name": "group_thresholds.{character}: Stickers Synergy.stage_4"
                                         }
                                     }
                                 },
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stamps",
+                                        "item_name_group": "{character}: Stamps Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stamps.yellow_stage_4"
+                                            "name": "group_thresholds.{character}: Stamps Synergy.stage_4"
                                         }
                                     }
                                 }
@@ -1213,20 +1213,20 @@
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stickers",
+                                        "item_name_group": "{character}: Stickers Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stickers.yellow_stage_5"
+                                            "name": "group_thresholds.{character}: Stickers Synergy.stage_5"
                                         }
                                     }
                                 },
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stamps",
+                                        "item_name_group": "{character}: Stamps Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stamps.yellow_stage_5"
+                                            "name": "group_thresholds.{character}: Stamps Synergy.stage_5"
                                         }
                                     }
                                 }
@@ -1278,20 +1278,20 @@
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stickers",
+                                        "item_name_group": "{character}: Stickers Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stickers.orange_stage_1"
+                                            "name": "group_thresholds.{character}: Stickers Synergy.stage_1"
                                         }
                                     }
                                 },
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stamps",
+                                        "item_name_group": "{character}: Stamps Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stamps.orange_stage_1"
+                                            "name": "group_thresholds.{character}: Stamps Synergy.stage_1"
                                         }
                                     }
                                 }
@@ -1343,20 +1343,20 @@
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stickers",
+                                        "item_name_group": "{character}: Stickers Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stickers.orange_stage_2"
+                                            "name": "group_thresholds.{character}: Stickers Synergy.stage_2"
                                         }
                                     }
                                 },
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stamps",
+                                        "item_name_group": "{character}: Stamps Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stamps.orange_stage_2"
+                                            "name": "group_thresholds.{character}: Stamps Synergy.stage_2"
                                         }
                                     }
                                 }
@@ -1408,20 +1408,20 @@
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stickers",
+                                        "item_name_group": "{character}: Stickers Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stickers.orange_stage_3"
+                                            "name": "group_thresholds.{character}: Stickers Synergy.stage_3"
                                         }
                                     }
                                 },
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stamps",
+                                        "item_name_group": "{character}: Stamps Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stamps.orange_stage_3"
+                                            "name": "group_thresholds.{character}: Stamps Synergy.stage_3"
                                         }
                                     }
                                 }
@@ -1473,20 +1473,20 @@
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stickers",
+                                        "item_name_group": "{character}: Stickers Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stickers.orange_stage_4"
+                                            "name": "group_thresholds.{character}: Stickers Synergy.stage_4"
                                         }
                                     }
                                 },
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stamps",
+                                        "item_name_group": "{character}: Stamps Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stamps.orange_stage_4"
+                                            "name": "group_thresholds.{character}: Stamps Synergy.stage_4"
                                         }
                                     }
                                 }
@@ -1531,20 +1531,20 @@
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stickers",
+                                        "item_name_group": "{character}: Stickers Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stickers.orange_stage_5"
+                                            "name": "group_thresholds.{character}: Stickers Synergy.stage_5"
                                         }
                                     }
                                 },
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stamps",
+                                        "item_name_group": "{character}: Stamps Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stamps.orange_stage_5"
+                                            "name": "group_thresholds.{character}: Stamps Synergy.stage_5"
                                         }
                                     }
                                 }
@@ -1596,20 +1596,20 @@
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stickers",
+                                        "item_name_group": "{character}: Stickers Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stickers.pink_stage_1"
+                                            "name": "group_thresholds.{character}: Stickers Synergy.stage_1"
                                         }
                                     }
                                 },
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stamps",
+                                        "item_name_group": "{character}: Stamps Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stamps.pink_stage_1"
+                                            "name": "group_thresholds.{character}: Stamps Synergy.stage_1"
                                         }
                                     }
                                 }
@@ -1661,20 +1661,20 @@
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stickers",
+                                        "item_name_group": "{character}: Stickers Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stickers.pink_stage_2"
+                                            "name": "group_thresholds.{character}: Stickers Synergy.stage_2"
                                         }
                                     }
                                 },
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stamps",
+                                        "item_name_group": "{character}: Stamps Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stamps.pink_stage_2"
+                                            "name": "group_thresholds.{character}: Stamps Synergy.stage_2"
                                         }
                                     }
                                 }
@@ -1726,20 +1726,20 @@
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stickers",
+                                        "item_name_group": "{character}: Stickers Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stickers.pink_stage_3"
+                                            "name": "group_thresholds.{character}: Stickers Synergy.stage_3"
                                         }
                                     }
                                 },
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stamps",
+                                        "item_name_group": "{character}: Stamps Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stamps.pink_stage_3"
+                                            "name": "group_thresholds.{character}: Stamps Synergy.stage_3"
                                         }
                                     }
                                 }
@@ -1791,20 +1791,20 @@
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stickers",
+                                        "item_name_group": "{character}: Stickers Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stickers.pink_stage_4"
+                                            "name": "group_thresholds.{character}: Stickers Synergy.stage_4"
                                         }
                                     }
                                 },
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stamps",
+                                        "item_name_group": "{character}: Stamps Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stamps.pink_stage_4"
+                                            "name": "group_thresholds.{character}: Stamps Synergy.stage_4"
                                         }
                                     }
                                 }
@@ -1849,20 +1849,20 @@
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stickers",
+                                        "item_name_group": "{character}: Stickers Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stickers.pink_stage_5"
+                                            "name": "group_thresholds.{character}: Stickers Synergy.stage_5"
                                         }
                                     }
                                 },
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stamps",
+                                        "item_name_group": "{character}: Stamps Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stamps.pink_stage_5"
+                                            "name": "group_thresholds.{character}: Stamps Synergy.stage_5"
                                         }
                                     }
                                 }
@@ -1914,20 +1914,20 @@
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stickers",
+                                        "item_name_group": "{character}: Stickers Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stickers.green_stage_1"
+                                            "name": "group_thresholds.{character}: Stickers Synergy.stage_1"
                                         }
                                     }
                                 },
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stamps",
+                                        "item_name_group": "{character}: Stamps Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stamps.green_stage_1"
+                                            "name": "group_thresholds.{character}: Stamps Synergy.stage_1"
                                         }
                                     }
                                 }
@@ -1979,20 +1979,20 @@
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stickers",
+                                        "item_name_group": "{character}: Stickers Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stickers.green_stage_2"
+                                            "name": "group_thresholds.{character}: Stickers Synergy.stage_2"
                                         }
                                     }
                                 },
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stamps",
+                                        "item_name_group": "{character}: Stamps Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stamps.green_stage_2"
+                                            "name": "group_thresholds.{character}: Stamps Synergy.stage_2"
                                         }
                                     }
                                 }
@@ -2044,20 +2044,20 @@
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stickers",
+                                        "item_name_group": "{character}: Stickers Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stickers.green_stage_3"
+                                            "name": "group_thresholds.{character}: Stickers Synergy.stage_3"
                                         }
                                     }
                                 },
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stamps",
+                                        "item_name_group": "{character}: Stamps Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stamps.green_stage_3"
+                                            "name": "group_thresholds.{character}: Stamps Synergy.stage_3"
                                         }
                                     }
                                 }
@@ -2109,20 +2109,20 @@
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stickers",
+                                        "item_name_group": "{character}: Stickers Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stickers.green_stage_4"
+                                            "name": "group_thresholds.{character}: Stickers Synergy.stage_4"
                                         }
                                     }
                                 },
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stamps",
+                                        "item_name_group": "{character}: Stamps Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stamps.green_stage_4"
+                                            "name": "group_thresholds.{character}: Stamps Synergy.stage_4"
                                         }
                                     }
                                 }
@@ -2167,20 +2167,20 @@
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stickers",
+                                        "item_name_group": "{character}: Stickers Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stickers.green_stage_5"
+                                            "name": "group_thresholds.{character}: Stickers Synergy.stage_5"
                                         }
                                     }
                                 },
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stamps",
+                                        "item_name_group": "{character}: Stamps Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stamps.green_stage_5"
+                                            "name": "group_thresholds.{character}: Stamps Synergy.stage_5"
                                         }
                                     }
                                 }
@@ -2232,20 +2232,20 @@
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stickers",
+                                        "item_name_group": "{character}: Stickers Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stickers.blue_stage_1"
+                                            "name": "group_thresholds.{character}: Stickers Synergy.stage_1"
                                         }
                                     }
                                 },
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stamps",
+                                        "item_name_group": "{character}: Stamps Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stamps.blue_stage_1"
+                                            "name": "group_thresholds.{character}: Stamps Synergy.stage_1"
                                         }
                                     }
                                 }
@@ -2297,20 +2297,20 @@
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stickers",
+                                        "item_name_group": "{character}: Stickers Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stickers.blue_stage_2"
+                                            "name": "group_thresholds.{character}: Stickers Synergy.stage_2"
                                         }
                                     }
                                 },
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stamps",
+                                        "item_name_group": "{character}: Stamps Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stamps.blue_stage_2"
+                                            "name": "group_thresholds.{character}: Stamps Synergy.stage_2"
                                         }
                                     }
                                 }
@@ -2362,20 +2362,20 @@
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stickers",
+                                        "item_name_group": "{character}: Stickers Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stickers.blue_stage_3"
+                                            "name": "group_thresholds.{character}: Stickers Synergy.stage_3"
                                         }
                                     }
                                 },
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stamps",
+                                        "item_name_group": "{character}: Stamps Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stamps.blue_stage_3"
+                                            "name": "group_thresholds.{character}: Stamps Synergy.stage_3"
                                         }
                                     }
                                 }
@@ -2427,20 +2427,20 @@
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stickers",
+                                        "item_name_group": "{character}: Stickers Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stickers.blue_stage_4"
+                                            "name": "group_thresholds.{character}: Stickers Synergy.stage_4"
                                         }
                                     }
                                 },
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stamps",
+                                        "item_name_group": "{character}: Stamps Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stamps.blue_stage_4"
+                                            "name": "group_thresholds.{character}: Stamps Synergy.stage_4"
                                         }
                                     }
                                 }
@@ -2485,20 +2485,20 @@
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stickers",
+                                        "item_name_group": "{character}: Stickers Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stickers.blue_stage_5"
+                                            "name": "group_thresholds.{character}: Stickers Synergy.stage_5"
                                         }
                                     }
                                 },
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stamps",
+                                        "item_name_group": "{character}: Stamps Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stamps.blue_stage_5"
+                                            "name": "group_thresholds.{character}: Stamps Synergy.stage_5"
                                         }
                                     }
                                 }
@@ -2550,20 +2550,20 @@
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stickers",
+                                        "item_name_group": "{character}: Stickers Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stickers.red_stage_1"
+                                            "name": "group_thresholds.{character}: Stickers Synergy.stage_1"
                                         }
                                     }
                                 },
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stamps",
+                                        "item_name_group": "{character}: Stamps Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stamps.red_stage_1"
+                                            "name": "group_thresholds.{character}: Stamps Synergy.stage_1"
                                         }
                                     }
                                 }
@@ -2615,20 +2615,20 @@
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stickers",
+                                        "item_name_group": "{character}: Stickers Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stickers.red_stage_2"
+                                            "name": "group_thresholds.{character}: Stickers Synergy.stage_2"
                                         }
                                     }
                                 },
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stamps",
+                                        "item_name_group": "{character}: Stamps Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stamps.red_stage_2"
+                                            "name": "group_thresholds.{character}: Stamps Synergy.stage_2"
                                         }
                                     }
                                 }
@@ -2680,20 +2680,20 @@
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stickers",
+                                        "item_name_group": "{character}: Stickers Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stickers.red_stage_3"
+                                            "name": "group_thresholds.{character}: Stickers Synergy.stage_3"
                                         }
                                     }
                                 },
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stamps",
+                                        "item_name_group": "{character}: Stamps Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stamps.red_stage_3"
+                                            "name": "group_thresholds.{character}: Stamps Synergy.stage_3"
                                         }
                                     }
                                 }
@@ -2745,20 +2745,20 @@
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stickers",
+                                        "item_name_group": "{character}: Stickers Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stickers.red_stage_4"
+                                            "name": "group_thresholds.{character}: Stickers Synergy.stage_4"
                                         }
                                     }
                                 },
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stamps",
+                                        "item_name_group": "{character}: Stamps Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stamps.red_stage_4"
+                                            "name": "group_thresholds.{character}: Stamps Synergy.stage_4"
                                         }
                                     }
                                 }
@@ -2803,20 +2803,20 @@
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stickers",
+                                        "item_name_group": "{character}: Stickers Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stickers.red_stage_5"
+                                            "name": "group_thresholds.{character}: Stickers Synergy.stage_5"
                                         }
                                     }
                                 },
                                 {
                                     "rule": "HasGroup",
                                     "args": {
-                                        "item_name_group": "{character}: Base Stamps",
+                                        "item_name_group": "{character}: Stamps Synergy",
                                         "count": {
                                             "resolver": "FromWorldAttr",
-                                            "name": "group_thresholds.{character}: Base Stamps.red_stage_5"
+                                            "name": "group_thresholds.{character}: Stamps Synergy.stage_5"
                                         }
                                     }
                                 }
