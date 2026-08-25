@@ -42,12 +42,12 @@ MONEY_EARNED_THRESHOLDS: Tuple[int, ...] = [
 
 # Required Sticker/Stamp item percentages for each stage.
 STAGE_PERCENTAGES: Dict[str, Tuple[float, float, float, float, float]] = {
-    "Rodman": (0.2, 0.4, 0.6, 0.8, 1.0),
-    "Nina Nix": (0.2, 0.4, 0.6, 0.8, 1.0),
-    "Hayley Bayles": (0.2, 0.4, 0.6, 0.8, 1.0),
-    "Bones the Dog": (0.2, 0.4, 0.6, 0.8, 1.0),
-    "Sam Gambit": (0.2, 0.4, 0.6, 0.8, 1.0),
-    "Octacles": (0.2, 0.4, 0.6, 0.8, 1.0),
+    "Rodman": (0.0, 0.2, 0.4, 0.8, 1.0),
+    "Nina Nix": (0.0, 0.2, 0.4, 0.8, 1.0),
+    "Hayley Bayles": (0.0, 0.2, 0.4, 0.8, 1.0),
+    "Bones the Dog": (0.0, 0.2, 0.4, 0.8, 1.0),
+    "Sam Gambit": (0.0, 0.2, 0.4, 0.8, 1.0),
+    "Octacles": (0.0, 0.2, 0.4, 0.8, 1.0),
 }
 
 # # Required Sticker/Stamp item percentages for each stage.
