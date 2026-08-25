@@ -1,14 +1,15 @@
 from worlds.AutoWorld import World, WebWorld
 from BaseClasses import Item, Tutorial
+from .classes.Constants import CHARACTER_NAMES, CROWN_NAMES, MONEY_EARNED_THRESHOLDS, WORD_SCORE_THRESHOLDS
 from .Items import CursedWordsItem, item_name_groups_lookup, item_name_to_id_lookup, item_table, generate_items, generate_filler_items
 from .Locations import location_name_to_id_lookup
 from .Options import CursedWordsOptions
 from .Regions import generate_regions
-from .Rules import generate_all_group_thresholds, CROWN_NAMES, MONEY_EARNED_THRESHOLDS, WORD_SCORE_THRESHOLDS, generate_goal_events, generate_goal
+from .Rules import generate_all_group_thresholds, generate_goal_events, generate_goal
 import logging
 import math
 from Options import OptionGroup
-from typing import Any, Dict, List, Set, Tuple
+from typing import Any, Dict, List, Tuple
 
 class CursedWordsWeb(WebWorld):
 
@@ -17,7 +18,7 @@ class CursedWordsWeb(WebWorld):
         "A guide to setting up the Cursed Words randomizer connected to an Archipelago Multiworld",
         "English",
         "setup_en.md",
-        "setup\en",
+        "setup\\en",
         ["JammyGeeza"]
     )]
     theme = "jungle"
@@ -26,6 +27,8 @@ class CursedWordsWeb(WebWorld):
         OptionGroup("Character Selection", [
             Options.Characters,
             Options.StartingCharacter,
+            Options.StickerSynergies,
+            Options.StampSynergies,
         ]),
         OptionGroup("Goal", [
             Options.Goal,
@@ -54,10 +57,6 @@ class CursedWordsWeb(WebWorld):
             Options.ShuffleInventorySlots,
             Options.ShuffleItemRarities,
             Options.ShuffleLockedTilePositions,
-        ]),
-        OptionGroup("Stickers / Stamps", [
-            Options.GuaranteedStickers,
-            Options.GuaranteedStamps,
         ]),
         OptionGroup("Traps and Filler", [
             Options.TrapPercentage,
@@ -113,46 +112,68 @@ class CursedWordsWorld(World):
             # Additional tag inclusions go here
         ]
 
-        # logging.info(f"Selected option tags: {self.option_tags}")
-
         # Randomly select starting character
         self.start_character: str = self.random.choice(
             self.options.starting_character.value
         )
 
-        # logging.info(f"Randomly selected '{self.start_character}' as starting character")
-
         # Pre-collect starting character so it's always in the initial state
         self.multiworld.push_precollected(self.create_item(self.start_character))
-        
-        # Pre-collect 12 common, generic starting stamps
+
+        # Compile character synergies
+        self.character_synergies: Dict[Tuple[str, str], Tuple[str, ...]] = {}
+        for character in CHARACTER_NAMES:
+            self.character_synergies[(character, "Stickers")] = tuple(self.options.sticker_synergies[character])
+            self.character_synergies[(character, "Stamps")] = tuple(self.options.stamp_synergies[character])
+
+        # Create character sticker / stamp synergy groups
+        self.item_name_groups: Dict[str, set] = dict(item_name_groups_lookup)
+        for character in CHARACTER_NAMES:
+            for kind in ("Stickers", "Stamps"):
+                self.item_name_groups[f"{character}: {kind} Synergy"] = set(self.character_synergies[(character, kind)])
+
+        # Create backwards lookup for synergy groups
+        self.item_name_to_groups_lookup: Dict[str, List[str]] = {}
+        for group_name, member_names in self.item_name_groups.items():
+            for member_name in member_names:
+                self.item_name_to_groups_lookup.setdefault(member_name, []).append(group_name)
+
+        # Get names of all items from character builds
+        selected_character_synergy_names: set = {
+            name
+            for character in self.character_tags
+            for kind in ("Stickers", "Stamps")
+            for name in self.character_synergies[(character, kind)]
+        }
+
+        # Pre-collect 10 common, generic starting stamps that aren't in the builds
         eligible_starting_stamps: List[str] = [
             stamp.name for stamp in item_table
             if len(stamp.character_tags) == 0
             and len(stamp.option_tags) == 0
             and "Stamps" in stamp.groups
             and stamp.metadata.get("rarity", 0) == 0
+            and stamp.name not in selected_character_synergy_names
         ]
 
-        for stamp in self.random.sample(eligible_starting_stamps, 12):
+        for stamp in self.random.sample(eligible_starting_stamps, 10):
             self.multiworld.push_precollected(self.create_item(stamp))
 
-        # Pre-collect 12 common, generic starting stickers
+        # Pre-collect 10 common, generic starting stickers that aren't in the builds
         eligible_starting_stickers: List[str] = [
             sticker.name for sticker in item_table
             if len(sticker.character_tags) == 0
             and len(sticker.option_tags) == 0
             and "Stickers" in sticker.groups
             and sticker.metadata.get("rarity", 0) == 0
+            and sticker.name not in selected_character_synergy_names
         ]
 
-        for sticker in self.random.sample(eligible_starting_stickers, 12):
+        for sticker in self.random.sample(eligible_starting_stickers, 10):
             self.multiworld.push_precollected(self.create_item(sticker))
 
-        # logging.info(f"Starting inventory from pool: {self.options.start_inventory_from_pool.value}")
-
         # Calculate the "critical" Character/Crown/Stage/Sticker-Stamp thresholds
-        self.group_thresholds: Dict[str, Dict[str, int]] = generate_all_group_thresholds(item_name_groups_lookup)
+        self.group_thresholds: Dict[str, Dict[str, int]] = generate_all_group_thresholds(self.item_name_groups)
 
         # If 'Progressive Tile Positions' is enabled, generate tile positions
         self.selected_tile_positions = []

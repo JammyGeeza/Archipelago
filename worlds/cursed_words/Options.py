@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 from BaseClasses import ItemClassification
-from .classes.Constants import CHARACTER_NAMES
+from .classes.Constants import CHARACTER_NAMES, CHARACTER_BUILDS
 from .Items import item_table
 from Options import Choice, DeathLink, ItemSet, OptionDict, OptionError, OptionList, OptionSet, PerGameCommonOptions, Range, StartInventoryPool, Toggle
 from .Regions import region_table
-from typing import List
+from typing import Dict, List
 import logging
 
 # Pre-defined keys
@@ -16,15 +16,11 @@ _trap_item_names: List[str] = [ item.name for item in item_table if item.classif
 
 class Characters(OptionList):
     """
-    Select the character(s) to include - characters are 'unlocked' by receiving each character as an item.
+    Select the character(s) to include.
+
+    To include all supported characters, set to [ "All" ] or [].
+    To select specific characters, set to a list of supported character names.
     
-    EXAMPLES:
-    [ "Bones the Dog" ] will only include Bones the Dog as a playable character.
-    [ "Rodman", "Nina Nix", "Hayley Bayles" ] will include only Rodman, Nina Nix and Hayley Bayles as playable characters.
-    [ "All" ] will include all supported characters as playable characters.
-
-    If an empty list is provided, it will be treated as [ "All" ].
-
     NOTE: Currently only supports Rodman, Nina Nix, Hayley Bayles, Sam Gambit, Bones the Dog and Octacles.
           Additional characters will be supported in a future update.
     """
@@ -36,12 +32,8 @@ class Characters(OptionList):
     def verify(self, world, player_name, plando_options):
         super().verify(world, player_name, plando_options)
 
-        # If empty list, replace with 'All'
-        if len(self.value) == 0:
-            self.value = [ "All" ]
-
-        # If 'All' is present, replace with all supported characters
-        if "All" in self.value:
+        # If list contains 'All' or is empty, default to all character names
+        if "All" in self.value or len(self.value) == 0:
             self.value = list(_character_names)
 
         # Remove any duplicate names
@@ -49,18 +41,12 @@ class Characters(OptionList):
 
 class StartingCharacter(OptionList):
     """
-    Select which of your selected <Characters> to start with.
+    Select the character (from the <Characters> option) to start with.
 
-    EXAMPLES:
-    [ "Octacles" ] will guarantee Octacles as the starting character.
-    [ "Nina Mix", "Hayley Bayles", "Bones the Dog" ] will randomly select one of Nina Nix, Hayley Bayles or Bones the Dog as the starting character.
-    [ "Random" ] will randomly select one character from the <Characters> option as the starting character.
+    To select a random character from the <Characters> option, set to [ "Random" ] or []
+    To select a random character from a specific set, set to a list of one or more names from the <Characters> option.
 
-    Any names that do not match the characters selected in the <Characters> option will be ignored.
-    If an empty list is provided or no characters match, it will be treated as [ "Random" ]
-    
-    NOTE: Currently only supports Rodman, Nina Nix, Hayley Bayles, Sam Gambit, Bones the Dog and Octacles.
-          Additional characters will be supported in a future update.
+    Names in the list that do not match those selected from <Characters> are ignored.
     """
     display_name = "Starting Character"
     valid_keys_casefold = False
@@ -70,16 +56,100 @@ class StartingCharacter(OptionList):
     def verify(self, world, player_name, plando_options):
         super().verify(world, player_name, plando_options)
 
-        # If empty list, replace with 'Random'
-        if len(self.value) == 0:
-            self.value = [ "Random" ]
-
-        # If 'Random' is present, switch to all supported characters
-        if "Random" in self.value:
+        # If list contains 'Random' or is empty, default to all characters
+        if "Random" in self.value or len(self.value) == 0:
             self.value = list(_character_names)
 
         # Remove any duplicate names
         self.value = list(set(self.value) & set(_character_names))
+
+class StickerSynergies(OptionDict):
+    """
+    Each character logically requires 5 Stickers that synergise to 'reasonably' beat Stage 5.
+
+    To use the preset synergy, leave a character as [ "Default" ] or [].
+    To use a custom synergy, set a character to a list of exactly 5 Sticker names.
+
+    Stickers in the synergy will be guaranteed in the item pool and treated as progression items.
+    """
+    display_name = "Required Sticker Synergies"
+    valid_keys = frozenset(_character_names)
+    default = { n: [ "Default" ] for n in _character_names }
+
+    def verify(self, world, player_name, plando_options):
+        super().verify(world, player_name, plando_options)
+
+        # Loop valid keys
+        for character in self.valid_keys:
+
+            # Get user input or replace with default build
+            build = self.value.get(character,  list(CHARACTER_BUILDS[(character, "Stickers")]))
+
+            # Check value format
+            if not isinstance(build, List):
+                raise OptionError(f"Required Sticker Synergy for {character} is in an invalid format.")
+            
+            # If 'Default' is present or the build is blank, replace with default build
+            if "Default" in build or len(build) == 0:
+                build = list(CHARACTER_BUILDS[(character, "Stickers")])
+
+            # Strip duplicates
+            build = list(set(build))
+
+            # Check value 
+            if len(build) != 5:
+                raise OptionError(f"Required Sticker Synergy for {character} : {build} must contain 5 unique sticker names.")
+            
+            # Check sticker names exist
+            invalid_stickers = [ s for s in build if s not in _sticker_names ]
+            if len(invalid_stickers) > 0:
+                raise OptionError(f"Required Sticker Synergy for {character} contains unrecognised sticker names: {invalid_stickers}")
+            
+            # Set to store adjustments
+            self.value[character] = build
+
+class StampSynergies(OptionDict):
+    """
+    Each character logically requires 5 Stamps that synergise to 'reasonably' beat Stage 5.
+
+    To use the preset synergy, leave a character as [ "Default" ] or [].
+    To use a custom synergy, set a character to a list of exactly 5 Stamp names.
+
+    Stamps in the synergy will be guaranteed in the item pool and treated as progression items.
+    """
+    display_name = "Required Stamp Synergies"
+    valid_keys = frozenset(_character_names)
+    default = { n: [ "Default" ] for n in _character_names }
+
+    def verify(self, world, player_name, plando_options):
+        super().verify(world, player_name, plando_options)
+
+        for character in self.valid_keys:
+            # Get user input or replace with default build
+            build = self.value.get(character,  list(CHARACTER_BUILDS[(character, "Stamps")]))
+
+            # Check value format
+            if not isinstance(build, List):
+                raise OptionError(f"Required Stamp Synergy for {character} is in an invalid format.")
+            
+            # If 'Default' is present or the build is blank, replace with default build
+            if "Default" in build or len(build) == 0:
+                build = list(CHARACTER_BUILDS[(character, "Stamps")])
+
+            # Strip duplicates
+            build = list(set(build))
+
+            # Check value 
+            if len(build) != 5:
+                raise OptionError(f"Required Stamp Synergy for {character} : {build} must contain 5 unique stamp names.")
+            
+            # Check stamp names exist
+            invalid_stickers = [ s for s in build if s not in _stamp_names ]
+            if len(invalid_stickers) > 0:
+                raise OptionError(f"Required Stamp Synergy for {character} contains unrecognised stamp names: {invalid_stickers}")
+            
+            # Set to store adjustments
+            self.value[character] = build
 
 class Goal(Choice):
     """
@@ -101,18 +171,12 @@ class Goal(Choice):
 
 class GoalCharacters(OptionList):
     """
-    Select which of your selected <Characters> must complete the <Goal> condition to goal.
+    Select the <Characters> that are required to complete the <Goal> condition to reach the goal.
 
-    EXAMPLES:
-    [ "Sam Gambit" ] will require only Sam Gambit to complete the condition to goal.
-    [ "Nina Mix", "Hayley Bayles", "Bones the Dog" ] will require Nina Nix, Hayley Bayles and Bones the Dog to complete the condition to goal.
-    [ "All" ] will require all characters selected in the <Characters> option to complete the condition to goal.
-
-    Any names that do not match the characters selected in the <Characters> option will be ignored.
-    If an empty list is provided or no characters match, it will be treated as [ "All" ]
-
-    NOTE: Currently only supports Rodman, Nina Nix, Hayley Bayles, Sam Gambit, Bones the Dog and Octacles.
-          Additional characters will be supported in a future update.
+    To select all characters from the <Characters> option, set to [ "All" ] or []
+    To select characters from a specific set, set to a list of one or more names from the <Characters> option.
+    
+    Names in the list that do not match those selected from <Characters> are ignored.
     """
     display_name = "Goal Characters"
     valid_keys_casefold = False
@@ -263,60 +327,6 @@ class ShuffleLockedTilePositions(Toggle):
     display_name = "Shuffle Locked Tile Positions"
     default = False
 
-class GuaranteedStickers(ItemSet):
-    """
-    Due to the large number of available stickers, most stickers are attributed to specific <Characters> to help ensure that
-    stickers in the pool will synergise with the selected characters. This means that some stickers may not appear in the
-    item pool if its character(s) have not been selected in the <Characters> option.
-
-    If there are any stickers you want to guarantee are in the item pool please add them here.
-    You can select a maximum of 10 Stickers, any stickers after the 10th will not be guaranteed.
-    """
-    display_name = "Guaranteed Stickers"
-    valid_keys = frozenset(_sticker_names)
-    convert_name_groups = False
-
-    def verify(self, world, player_name, plando_options):
-        super().verify(world, player_name, plando_options)
-
-        # Remove duplicates, if any
-        seen = []
-        for name in self.value:
-            if name not in seen:
-                seen.append(name)
-        self.value = seen
-
-        # Trim any stickers over the 10 limit
-        if len(self.value) > 10:
-            self.value = seen[:10]
-
-class GuaranteedStamps(OptionSet):
-    """
-    Due to the large number of available stamps, most stamps are attributed to specific <Characters> to help ensure that
-    stamps in the pool will synergise with the selected characters. This means that some stamps may not appear in the
-    item pool if its character(s) have not been selected in the <Characters> option.
-
-    If there are any stamps you want to guarantee are in the item pool please add them here.
-    You can select a maximum of 10 Stickers, any stamps after the 10th will not be guaranteed.
-    """
-    display_name = "Guaranteed Stamps"
-    valid_keys = frozenset(_stamp_names)
-    convert_name_groups = False
-
-    def verify(self, world, player_name, plando_options):
-        super().verify(world, player_name, plando_options)
-
-        # Remove duplicates, if any
-        seen = []
-        for name in self.value:
-            if name not in seen:
-                seen.append(name)
-        self.value = seen
-
-        # Trim any stamps over the 10 limit
-        if len(self.value) > 10:
-            self.value = seen[:10]
-
 class Bosssanity(Toggle):
     """
     Add locations for defeating each "standard" boss type (Axolotl, Badger, Bat etc.)
@@ -460,6 +470,8 @@ class CursedWordsOptions(PerGameCommonOptions):
     """"""
     characters: Characters
     starting_character: StartingCharacter
+    sticker_synergies: StickerSynergies
+    stamp_synergies: StampSynergies
 
     goal: Goal
     goal_characters: GoalCharacters
@@ -474,9 +486,6 @@ class CursedWordsOptions(PerGameCommonOptions):
     shuffle_item_rarities: ShuffleItemRarities
     shuffle_locked_tile_positions: ShuffleLockedTilePositions
     deathlink: DeathLink
-    
-    guaranteed_stamps: GuaranteedStamps
-    guaranteed_stickers: GuaranteedStickers
     
     bosssanity: Bosssanity
     pinsanity: Pinsanity
