@@ -8,8 +8,6 @@ from .classes.Constants import CHARACTER_NAMES
 from .Locations import location_table, CursedWordsLocation
 from .Regions import region_table, CursedWordsRegion
 
-
-
 @dataclass
 class CursedWordsItem:
     """Data class for Cursed World items from JSON configuration"""

@@ -1,5 +1,6 @@
 [
     {
+        "_comment": "========== Characters ==========",
         "name": "Rodman",
         "classification": 1,
         "groups": [
@@ -59,6 +60,17 @@
             "Octacles"
         ]
     },
+    {
+        "name": "Nat-H4",
+        "classification": 1,
+        "groups": [
+            "Characters"
+        ],
+        "character_tags": [
+            "Nat-H4"
+        ]
+    },
+
     {
         "name": "Rodman: Progressive Crown",
         "classification": 1,
@@ -143,6 +155,21 @@
         ],
         "count": 7
     },
+    {
+        "name": "Nat-H4: Progressive Crown",
+        "classification": 1,
+        "groups": [
+            "Crowns"
+        ],
+        "character_tags": [
+            "Nat-H4"
+        ],
+        "option_tags": [
+            "Crowns"
+        ],
+        "count": 7
+    },
+
     {
         "count": 5,
         "name": "Progressive Encounter Re-roll",
@@ -1287,6 +1314,7 @@
     {
         "_comment": "========== Nat-H4 Stickers ==========",
         "name": "Burrito",
+        "classification": 1,
         "groups": [
             "Stickers"
         ],
@@ -1296,6 +1324,7 @@
     },
     {
         "name": "Printer",
+        "classification": 1,
         "groups": [
             "Stickers"
         ],
@@ -1308,6 +1337,7 @@
     },
     {
         "name": "Retro Raider",
+        "classification": 1,
         "groups": [
             "Stickers"
         ],
@@ -1320,6 +1350,7 @@
     },
     {
         "name": "Signal Receiver",
+        "classification": 1,
         "groups": [
             "Stickers"
         ],
@@ -1333,6 +1364,7 @@
     },
     {
         "name": "Stamp Album",
+        "classification": 1,
         "groups": [
             "Stickers"
         ],
@@ -1342,6 +1374,7 @@
     },
     {
         "name": "Toolbox",
+        "classification": 1,
         "groups": [
             "Stickers"
         ],
@@ -2551,6 +2584,7 @@
     {
         "_comment": "========== Nat-H4 Unlocked Stickers ==========",
         "name": "Delivery Truck",
+        "classification": 1,
         "groups": [
             "Stamps"
         ],
@@ -2563,6 +2597,7 @@
     },
     {
         "name": "Filing Cabinet",
+        "classification": 1,
         "groups": [
             "Stamps"
         ],
@@ -2577,6 +2612,7 @@
     },
     {
         "name": "Steak",
+        "classification": 1,
         "groups": [
             "Stamps"
         ],
