@@ -24,7 +24,8 @@
         "Hayley Bayles",
         "Bones the Dog",
         "Sam Gambit",
-        "Octacles"
+        "Octacles",
+        "Nat-H4"
     ],
     "crown_names": [
         "Purple",
@@ -48,6 +49,7 @@
         "Chess Piece",
         "Currency",
         "Fraction",
+        "Item",
         "Joker",
         "Letter",
         "Number"

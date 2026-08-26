@@ -1283,6 +1283,77 @@
             "rarity": 0
         }
     },
+
+    {
+        "_comment": "========== Nat-H4 Stickers ==========",
+        "name": "Burrito",
+        "groups": [
+            "Stickers"
+        ],
+        "metadata": {
+            "rarity": 0
+        }
+    },
+    {
+        "name": "Printer",
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Nat-H4"
+        ],
+        "metadata": {
+            "rarity": 0
+        }
+    },
+    {
+        "name": "Retro Raider",
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Nat-H4"
+        ],
+        "metadata": {
+            "rarity": 0
+        }
+    },
+    {
+        "name": "Signal Receiver",
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Nat-H4"
+        ],
+        "metadata": {
+            "rarity": 1
+        }
+    },
+    {
+        "name": "Stamp Album",
+        "groups": [
+            "Stickers"
+        ],
+        "metadata": {
+            "rarity": 1
+        }
+    },
+    {
+        "name": "Toolbox",
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Nat-H4"
+        ],
+        "metadata": {
+            "rarity": 0
+        }
+    },
+
     {
         "name": "Arrivals",
         "classification": 1,
@@ -1418,7 +1489,8 @@
             "Stickers"
         ],
         "character_tags": [
-            "Octacles"
+            "Octacles",
+            "Nat-H4"
         ],
         "metadata": {
             "rarity": 0
@@ -1535,6 +1607,9 @@
         "groups": [
             "Stickers"
         ],
+        "character_tags": [
+            "Nat-H4"
+        ],
         "metadata": {
             "rarity": 0
         }
@@ -1557,7 +1632,8 @@
         ],
         "character_tags": [
             "Bones the Dog",
-            "Octacles"
+            "Octacles",
+            "Nat-H4"
         ],
         "metadata": {
             "rarity": 0
@@ -2471,6 +2547,44 @@
             "rarity": 1
         }
     },
+
+    {
+        "_comment": "========== Nat-H4 Unlocked Stickers ==========",
+        "name": "Delivery Truck",
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Nat-H4"
+        ],
+        "metadata": {
+            "rarity": 1
+        }
+    },
+    {
+        "name": "Filing Cabinet",
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Nina Nix",
+            "Nat-H4"
+        ],
+        "metadata": {
+            "rarity": 1
+        }
+    },
+    {
+        "name": "Steak",
+        "groups": [
+            "Stamps"
+        ],
+        "metadata": {
+            "rarity": 1
+        }
+    },
+
     {
         "name": "Bar Chart",
         "classification": 1,
@@ -2531,6 +2645,9 @@
         "classification": 1,
         "groups": [
             "Stamps"
+        ],
+        "character_tags": [
+            "Nat-H4"
         ],
         "metadata": {
             "rarity": 0
@@ -3140,7 +3257,7 @@
         }
     },
     {
-        "name": "Tin of Beans",
+        "name": "Tin Of Beans",
         "classification": 1,
         "groups": [
             "Stamps"
@@ -3503,7 +3620,8 @@
         ],
         "character_tags": [
             "Sam Gambit",
-            "Octacles"
+            "Octacles",
+            "Nat-H4"
         ],
         "metadata": {
             "rarity": 0

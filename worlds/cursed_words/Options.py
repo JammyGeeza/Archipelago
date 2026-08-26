@@ -21,7 +21,7 @@ class Characters(OptionList):
     To include all supported characters, set to [ "All" ] or [].
     To select specific characters, set to a list of supported character names.
     
-    NOTE: Currently only supports Rodman, Nina Nix, Hayley Bayles, Sam Gambit, Bones the Dog and Octacles.
+    NOTE: Currently only supports Rodman, Nina Nix, Hayley Bayles, Sam Gambit, Bones the Dog, Octacles and Nat-H4.
           Additional characters will be supported in a future update.
     """
     display_name = "Characters"

@@ -1,13 +1,13 @@
 from typing import Dict, Tuple
 
 # All available character names, in order
-CHARACTER_NAMES: Tuple[str, ...] = ("Rodman", "Nina Nix", "Hayley Bayles", "Bones the Dog", "Sam Gambit", "Octacles")
+CHARACTER_NAMES: Tuple[str, ...] = ("Rodman", "Nina Nix", "Hayley Bayles", "Bones the Dog", "Sam Gambit", "Octacles", "Nat-H4")
 
 # All crown colours, in unlock order
 CROWN_NAMES: Tuple[str, ...] = ("Purple", "Yellow", "Orange", "Pink", "Green", "Blue", "Red")
 
 # 'Bare Minimum' builds for characters for stage access rule gating
-# Can be overridden with 'Stamp Builds' and 'Sticker Builds' player options
+# Can be overridden with 'Stamp Synergies' and 'Sticker Synergies' player options
 CHARACTER_BUILDS: Dict[Tuple[str, str], Tuple[str, str, str, str, str]] = {
 
     ("Rodman", "Stickers"): ("Fountain", "Worn-out Jeans", "Glass of Milk", "Stilton", "Blueberries"),
@@ -27,6 +27,9 @@ CHARACTER_BUILDS: Dict[Tuple[str, str], Tuple[str, str, str, str, str]] = {
 
     ("Octacles", "Stickers"): ("Amphora", "Ghost", "Moai", "Mischievous Imp", "Creaky Chair"),
     ("Octacles", "Stamps"): ("Haunted House", "Supervillain", "Giraffe", "Bubble Tea", "Oden"),
+
+    ("Nat-H4", "Stickers"): ("Printer", "Retro Raider", "Toolbox", "Ferris Wheel", "Burrito"),
+    ("Nat-H4", "Stamps"): ("Delivery Truck", "Filing Cabinet", "Briefcase", "Golden Record", "Dango"),
 }
 
 # Money earned location mapping
@@ -48,6 +51,7 @@ STAGE_PERCENTAGES: Dict[str, Tuple[float, float, float, float, float]] = {
     "Bones the Dog": (0.0, 0.2, 0.4, 0.8, 1.0),
     "Sam Gambit": (0.0, 0.2, 0.4, 0.8, 1.0),
     "Octacles": (0.0, 0.2, 0.4, 0.8, 1.0),
+    "Nat-H4": (0.0, 0.2, 0.4, 0.8, 1.0),
 }
 
 # # Required Sticker/Stamp item percentages for each stage.
