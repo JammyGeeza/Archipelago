@@ -1,6 +1,6 @@
 from worlds.AutoWorld import World, WebWorld
 from BaseClasses import Item, Tutorial
-from .classes.Constants import CHARACTER_NAMES, CROWN_NAMES, MONEY_EARNED_THRESHOLDS, WORD_SCORE_THRESHOLDS
+from .classes.Constants import CHARACTER_BUILDS, CHARACTER_NAMES, CROWN_NAMES, MONEY_EARNED_THRESHOLDS, WORD_SCORE_THRESHOLDS
 from .Items import CursedWordsItem, item_name_groups_lookup, item_name_to_id_lookup, item_table, generate_items, generate_filler_items
 from .Locations import location_name_to_id_lookup
 from .Options import CursedWordsOptions
@@ -121,10 +121,18 @@ class CursedWordsWorld(World):
         self.multiworld.push_precollected(self.create_item(self.start_character))
 
         # Compile character synergies
+        # NOTE: This is pretty much only here to stop the unit-tests failing, because it seems to bypass the verify step and use YAML
+        #       defaults which happens to be [ "Default" ] instead of the actual resolved synergy items...
+        def resolve_synergy(character: str, kind: str, raw: Dict[str, List[str]]) -> Tuple[str, ...]:
+            build = raw.get(character, ["Default"])
+            if "Default" in build or len(build) == 0:
+                return tuple(CHARACTER_BUILDS[(character, kind)])
+            return tuple(build)
+
         self.character_synergies: Dict[Tuple[str, str], Tuple[str, ...]] = {}
         for character in CHARACTER_NAMES:
-            self.character_synergies[(character, "Stickers")] = tuple(self.options.sticker_synergies[character])
-            self.character_synergies[(character, "Stamps")] = tuple(self.options.stamp_synergies[character])
+            self.character_synergies[(character, "Stickers")] = resolve_synergy(character, "Stickers", self.options.sticker_synergies.value)
+            self.character_synergies[(character, "Stamps")] = resolve_synergy(character, "Stamps", self.options.stamp_synergies.value)
 
         # Create character sticker / stamp synergy groups
         self.item_name_groups: Dict[str, set] = dict(item_name_groups_lookup)
