@@ -1,14 +1,21 @@
 from worlds.AutoWorld import World, WebWorld
 from BaseClasses import Item, Tutorial
-from .classes.Constants import CHARACTER_NAMES, CROWN_NAMES, MONEY_EARNED_THRESHOLDS, WORD_SCORE_THRESHOLDS
+from .classes.Constants import CHARACTER_BUILDS, CHARACTER_NAMES, CROWN_NAMES, MONEY_EARNED_THRESHOLDS, WORD_SCORE_THRESHOLDS
 from .Items import CursedWordsItem, item_name_groups_lookup, item_name_to_id_lookup, item_table, generate_items, generate_filler_items
 from .Locations import location_name_to_id_lookup
-from .Options import CursedWordsOptions
+from .Options import (
+    Bosssanity, Characters, Crowns, CursedWordsOptions, DeathLink, FillerWeighting,
+    Goal, GoalCharacters, Michael, MoneyEarned, Pinsanity, ShuffleGridSize,
+    ShuffleInventorySlots, ShuffleItemRarities, ShuffleLockedTilePositions,
+    Shopsanity, ShopsanityCost, ShopsanityLimit, StampSynergies, StartingCharacter,
+    StickerSynergies, Tilesanity, TrapPercentage, TrapWeighting, WordLengths,
+    WordScores
+)
 from .Regions import generate_regions
 from .Rules import generate_all_group_thresholds, generate_goal_events, generate_goal
 import logging
 import math
-from Options import OptionGroup
+from Options import OptionGroup # <- Stupid, but stops the conflict for unit tests
 from typing import Any, Dict, List, Tuple
 
 class CursedWordsWeb(WebWorld):
@@ -25,43 +32,43 @@ class CursedWordsWeb(WebWorld):
 
     option_groups = [
         OptionGroup("Character Selection", [
-            Options.Characters,
-            Options.StartingCharacter,
-            Options.StickerSynergies,
-            Options.StampSynergies,
+            Characters,
+            StartingCharacter,
+            StickerSynergies,
+            StampSynergies,
         ]),
         OptionGroup("Goal", [
-            Options.Goal,
-            Options.GoalCharacters
+            Goal,
+            GoalCharacters
         ]),
         OptionGroup("Deathlink", [
-            Options.DeathLink
+            DeathLink
         ]),
         OptionGroup("Core Locations", [
-            Options.Crowns,
-            Options.Michael,
-            Options.MoneyEarned,
-            Options.WordLengths,
-            Options.WordScores,
+            Crowns,
+            Michael,
+            MoneyEarned,
+            WordLengths,
+            WordScores,
         ]),
         OptionGroup("Extra Locations", [
-            Options.Bosssanity,
-            Options.Pinsanity,
-            Options.Shopsanity,
-            Options.ShopsanityCost,
-            Options.ShopsanityLimit,
-            Options.Tilesanity
+            Bosssanity,
+            Pinsanity,
+            Shopsanity,
+            ShopsanityCost,
+            ShopsanityLimit,
+            Tilesanity
         ]),
         OptionGroup("Extra Shuffling", [
-            Options.ShuffleGridSize,
-            Options.ShuffleInventorySlots,
-            Options.ShuffleItemRarities,
-            Options.ShuffleLockedTilePositions,
+            ShuffleGridSize,
+            ShuffleInventorySlots,
+            ShuffleItemRarities,
+            ShuffleLockedTilePositions,
         ]),
         OptionGroup("Traps and Filler", [
-            Options.TrapPercentage,
-            Options.TrapWeighting,
-            Options.FillerWeighting,
+            TrapPercentage,
+            TrapWeighting,
+            FillerWeighting,
         ])
     ]
 
@@ -98,7 +105,7 @@ class CursedWordsWorld(World):
             *(["Crowns"] + list(CROWN_NAMES[:self.options.crowns.value]) if self.options.crowns.value else []),
             *(["Michael"] if self.options.michael.value else []),
             *([f"MoneyEarned{v}" for v in MONEY_EARNED_THRESHOLDS if v <= self.options.money_earned.value]),
-            *([f"WordLength{v}" for v in range(1, self.options.word_lengths.value + 1)] if self.options.word_lengths > 0 else []),
+            *([f"WordLength{v+1}" for v in range(0, self.options.word_lengths.value)]),
             *([f"WordScore{v}" for v in WORD_SCORE_THRESHOLDS if v <= self.options.word_scores.value]),
             *([self.options.shuffle_grid_size.display_name] if self.options.shuffle_grid_size.value else []),
             *([self.options.shuffle_inventory_slots.display_name] if self.options.shuffle_inventory_slots.value else []),
@@ -121,10 +128,18 @@ class CursedWordsWorld(World):
         self.multiworld.push_precollected(self.create_item(self.start_character))
 
         # Compile character synergies
+        # NOTE: This is pretty much only here to stop the unit-tests failing, because it seems to bypass the verify step and use YAML
+        #       defaults which happens to be [ "Default" ] instead of the actual resolved synergy items...
+        def resolve_synergy(character: str, kind: str, raw: Dict[str, List[str]]) -> Tuple[str, ...]:
+            build = raw.get(character, ["Default"])
+            if "Default" in build or len(build) == 0:
+                return tuple(CHARACTER_BUILDS[(character, kind)])
+            return tuple(build)
+
         self.character_synergies: Dict[Tuple[str, str], Tuple[str, ...]] = {}
         for character in CHARACTER_NAMES:
-            self.character_synergies[(character, "Stickers")] = tuple(self.options.sticker_synergies[character])
-            self.character_synergies[(character, "Stamps")] = tuple(self.options.stamp_synergies[character])
+            self.character_synergies[(character, "Stickers")] = resolve_synergy(character, "Stickers", self.options.sticker_synergies.value)
+            self.character_synergies[(character, "Stamps")] = resolve_synergy(character, "Stamps", self.options.stamp_synergies.value)
 
         # Create character sticker / stamp synergy groups
         self.item_name_groups: Dict[str, set] = dict(item_name_groups_lookup)
