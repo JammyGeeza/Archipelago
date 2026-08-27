@@ -98,7 +98,7 @@ class CursedWordsWorld(World):
             *(["Crowns"] + list(CROWN_NAMES[:self.options.crowns.value]) if self.options.crowns.value else []),
             *(["Michael"] if self.options.michael.value else []),
             *([f"MoneyEarned{v}" for v in MONEY_EARNED_THRESHOLDS if v <= self.options.money_earned.value]),
-            *([f"WordLength{v}" for v in range(1, self.options.word_lengths.value + 1)] if self.options.word_lengths > 0 else []),
+            *([f"WordLength{v+1}" for v in range(0, self.options.word_lengths.value)]),
             *([f"WordScore{v}" for v in WORD_SCORE_THRESHOLDS if v <= self.options.word_scores.value]),
             *([self.options.shuffle_grid_size.display_name] if self.options.shuffle_grid_size.value else []),
             *([self.options.shuffle_inventory_slots.display_name] if self.options.shuffle_inventory_slots.value else []),

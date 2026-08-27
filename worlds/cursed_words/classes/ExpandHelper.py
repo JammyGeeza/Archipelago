@@ -68,7 +68,8 @@ def _expand(entry: Dict[any, any], axes: List[Dict[any, any]], placeholder_value
 
         next_tags = dict(tags)
         if "tag" in axis:
-            next_tags[axis["tag"]] = tags.get(axis["tag"], []) + [str(raw_value)]
+            tag_fmt = axis.get("tag_format", "{value}")
+            next_tags[axis["tag"]] = tags.get(axis["tag"], []) + [tag_fmt.format(value=raw_value)]
 
         results += _expand(entry, remaining, next_placeholder_values, next_tags, shared_lookups)
 
