@@ -279,12 +279,17 @@ def generate_filler_items(world: World, amount: int) -> List[Item]:
     # If invalid number, return none
     if amount <= 0:
         return []
+    
+    # This is only here to, again, prevent the unit tests failing as it subverts
+    # going through generate_early...
+    character_tags = getattr(world, "character_tags", [])
+    option_tags = getattr(world, "option_tags", [])
 
     # Get applicable filler items based on player YAML options
     enabled_filler_items = [
         item for item in item_table 
-        if item.has_character_tags(world.character_tags)
-        and item.has_option_tags(world.option_tags)
+        if item.has_character_tags(character_tags)
+        and item.has_option_tags(option_tags)
         and item.is_classification(ItemClassification.filler)
     ]
 
