@@ -312,7 +312,7 @@
                     "step": 5,
                     "count": 4
                 },
-                "tags": "option_tags",
+                "tag": "option_tags",
                 "tag_format": "MoneyEarned{value}"
             }
         ]
@@ -328,7 +328,7 @@
                     "step": 10,
                     "count": 4
                 },
-                "tags": "option_tags",
+                "tag": "option_tags",
                 "tag_format": "MoneyEarned{value}"
             }
         ]
@@ -344,7 +344,7 @@
                     "step": 10,
                     "count": 3
                 },
-                "tags": "option_tags",
+                "tag": "option_tags",
                 "tag_format": "MoneyEarned{value}"
             }
         ]
@@ -360,7 +360,7 @@
                     "step": 25,
                     "count": 3
                 },
-                "tags": "option_tags",
+                "tag": "option_tags",
                 "tag_format": "MoneyEarned{value}"
             }
         ]
@@ -383,7 +383,7 @@
                     450,
                     500
                 ],
-                "tags": "option_tags",
+                "tag": "option_tags",
                 "tag_format": "MoneyEarned{value}"
             }
         ]
