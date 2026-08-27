@@ -135,7 +135,7 @@ def generate_items(world: World):
         and location.has_option_tags(world.option_tags)
     ]
 
-    # Calculate required item counts based on thresholds from Rules.py
+    # Calc how many items from each item group will be required based on the access rules
     required_counts = generate_required_group_counts(enabled_regions, enabled_locations, world.group_thresholds, world.character_tags, world.option_tags)
 
     # Sort items into:
@@ -143,9 +143,20 @@ def generate_items(world: World):
     # Optional  -> Not essential, can be dropped if item pool is full
     critical_items: List[CursedWordsItem] = []
     optional_items: List[CursedWordsItem] = []
-    item_totals: Dict[str, int] = {group: 0 for group in required_counts}
 
-    for item_data in eligible_items:
+    # Get item totals and account for pre-collected items and synergy item overlap with Sticker/Stamp group
+    item_totals: Dict[str, int] = {group: 0 for group in required_counts}
+    for name in precollected_item_names:
+        for group in world.item_name_to_groups_lookup.get(name, []):
+            if group in item_totals:
+                item_totals[group] += 1
+
+    # Split into synergy and other - need to evaluate the synery items first
+    synergy_items = [item for item in eligible_items if item.name in selected_synergy_items]
+    other_items = [item for item in eligible_items if item.name not in selected_synergy_items]
+    world.random.shuffle(other_items)
+
+    for item_data in synergy_items + other_items:
         # Protect 'critical' items such as Characters and Progressive Crowns
         item_is_protected: bool = (
             item_data.name in CHARACTER_ITEM_NAMES 
