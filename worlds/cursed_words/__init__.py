@@ -3,12 +3,19 @@ from BaseClasses import Item, Tutorial
 from .classes.Constants import CHARACTER_BUILDS, CHARACTER_NAMES, CROWN_NAMES, MONEY_EARNED_THRESHOLDS, WORD_SCORE_THRESHOLDS
 from .Items import CursedWordsItem, item_name_groups_lookup, item_name_to_id_lookup, item_table, generate_items, generate_filler_items
 from .Locations import location_name_to_id_lookup
-from .Options import CursedWordsOptions
+from .Options import (
+    Bosssanity, Characters, Crowns, CursedWordsOptions, DeathLink, FillerWeighting,
+    Goal, GoalCharacters, Michael, MoneyEarned, Pinsanity, ShuffleGridSize,
+    ShuffleInventorySlots, ShuffleItemRarities, ShuffleLockedTilePositions,
+    Shopsanity, ShopsanityCost, ShopsanityLimit, StampSynergies, StartingCharacter,
+    StickerSynergies, Tilesanity, TrapPercentage, TrapWeighting, WordLengths,
+    WordScores
+)
 from .Regions import generate_regions
 from .Rules import generate_all_group_thresholds, generate_goal_events, generate_goal
 import logging
 import math
-from Options import OptionGroup
+from Options import OptionGroup # <- Stupid, but stops the conflict for unit tests
 from typing import Any, Dict, List, Tuple
 
 class CursedWordsWeb(WebWorld):
@@ -25,43 +32,43 @@ class CursedWordsWeb(WebWorld):
 
     option_groups = [
         OptionGroup("Character Selection", [
-            Options.Characters,
-            Options.StartingCharacter,
-            Options.StickerSynergies,
-            Options.StampSynergies,
+            Characters,
+            StartingCharacter,
+            StickerSynergies,
+            StampSynergies,
         ]),
         OptionGroup("Goal", [
-            Options.Goal,
-            Options.GoalCharacters
+            Goal,
+            GoalCharacters
         ]),
         OptionGroup("Deathlink", [
-            Options.DeathLink
+            DeathLink
         ]),
         OptionGroup("Core Locations", [
-            Options.Crowns,
-            Options.Michael,
-            Options.MoneyEarned,
-            Options.WordLengths,
-            Options.WordScores,
+            Crowns,
+            Michael,
+            MoneyEarned,
+            WordLengths,
+            WordScores,
         ]),
         OptionGroup("Extra Locations", [
-            Options.Bosssanity,
-            Options.Pinsanity,
-            Options.Shopsanity,
-            Options.ShopsanityCost,
-            Options.ShopsanityLimit,
-            Options.Tilesanity
+            Bosssanity,
+            Pinsanity,
+            Shopsanity,
+            ShopsanityCost,
+            ShopsanityLimit,
+            Tilesanity
         ]),
         OptionGroup("Extra Shuffling", [
-            Options.ShuffleGridSize,
-            Options.ShuffleInventorySlots,
-            Options.ShuffleItemRarities,
-            Options.ShuffleLockedTilePositions,
+            ShuffleGridSize,
+            ShuffleInventorySlots,
+            ShuffleItemRarities,
+            ShuffleLockedTilePositions,
         ]),
         OptionGroup("Traps and Filler", [
-            Options.TrapPercentage,
-            Options.TrapWeighting,
-            Options.FillerWeighting,
+            TrapPercentage,
+            TrapWeighting,
+            FillerWeighting,
         ])
     ]
 
