@@ -10,7 +10,7 @@ CROWN_NAMES: Tuple[str, ...] = ("Purple", "Yellow", "Orange", "Pink", "Green", "
 # Can be overridden with 'Stamp Builds' and 'Sticker Builds' player options
 CHARACTER_BUILDS: Dict[Tuple[str, str], Tuple[str, str, str, str, str]] = {
 
-    ("Rodman", "Stickers"): ("Fountain", "Worn-out Jeans", "Glass of Milk", "Stilton", "Blueberries"),
+    ("Rodman", "Stickers"): ("Fountain", "Worn-out Jeans", "Glass Of Milk", "Stilton", "Blueberries"),
     ("Rodman", "Stamps"): ("Kimono", "Xray", "Bubble Tea", "Shaved Ice", "Dango"),
 
     ("Nina Nix", "Stickers"): ("Game Pad", "Magic Wand", "Fish Cake", "Dusty Coffin", "Ornate Key"),
@@ -20,7 +20,7 @@ CHARACTER_BUILDS: Dict[Tuple[str, str], Tuple[str, str, str, str, str]] = {
     ("Hayley Bayles", "Stamps"): ("Magnet", "Go Fish!", "Test Tube", "Giraffe", "Full Battery"),
 
     ("Sam Gambit", "Stickers"): ("Raccoon", "Carousel Horse", "Moai", "Zebra", "Footprints"),
-    ("Sam Gambit", "Stamps"): ("King of the Bridge", "Business Goose", "Jolly Roger", "Bento Box", "Banana"),
+    ("Sam Gambit", "Stamps"): ("King Of The Bridge", "Business Goose", "Jolly Roger", "Bento Box", "Banana"),
 
     ("Bones the Dog", "Stickers"): ("Postal Horn", "Celestial Body", "Rolodex", "Las Vegas", "Peacock"),
     ("Bones the Dog", "Stamps"): ("Martini", "Card Shark", "Four Leaf Clover", "Go Fish!", "Oden"),

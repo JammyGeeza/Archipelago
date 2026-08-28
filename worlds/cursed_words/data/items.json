@@ -1,5 +1,6 @@
 [
     {
+        "_comment": "========== Characters ==========",
         "name": "Rodman",
         "classification": 1,
         "groups": [
@@ -60,6 +61,7 @@
         ]
     },
     {
+        "_comment": "========== Crowns ==========",
         "name": "Rodman: Progressive Crown",
         "classification": 1,
         "groups": [
@@ -144,6 +146,7 @@
         "count": 7
     },
     {
+        "_comment": "========== Progressives / Shuffles ==========",
         "count": 5,
         "name": "Progressive Encounter Re-roll",
         "classification": 2,
@@ -207,6 +210,4450 @@
         ]
     },
     {
+        "_comment": "========== Stickers ==========",
+        "name": "Alembic Flask",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Hayley Bayles"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "NumbersBuild"
+            ]
+        }
+    },
+    {
+        "name": "Ambulance",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "VoidBuild"
+            ]
+        }
+    },
+    {
+        "name": "Amphora",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Octacles"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "CurseBuild"
+            ]
+        }
+    },
+    {
+        "name": "April Shower",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "BlueBuild"
+            ]
+        }
+    },
+    {
+        "name": "Arrivals",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 0,
+            "builds": []
+        }
+    },
+    {
+        "name": "Artist's Palette",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "RainbowBuild",
+                "BlueBuild",
+                "RedBuild",
+                "ShinyBuild",
+                "VoidBuild"
+            ]
+        }
+    },
+    {
+        "name": "Axe",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 0,
+            "builds": []
+        }
+    },
+    {
+        "name": "Baby Bottle",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Octacles"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "BlankBuild"
+            ]
+        }
+    },
+    {
+        "name": "Backpack",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Sam Gambit"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "ChessBuild",
+                "RedBuild"
+            ]
+        }
+    },
+    {
+        "name": "Base Camp",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 1,
+            "builds": []
+        }
+    },
+    {
+        "name": "Birthday Cake",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Hayley Bayles"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "NumbersBuild"
+            ]
+        }
+    },
+    {
+        "name": "Blueberries",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "BlueBuild"
+            ]
+        }
+    },
+    {
+        "name": "Boomerang",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Hayley Bayles"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "NumbersBuild"
+            ]
+        }
+    },
+    {
+        "name": "Brain",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Hayley Bayles"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "NumbersBuild"
+            ]
+        }
+    },
+    {
+        "name": "Brick",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "N/A"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "ConsumableBuild"
+            ]
+        }
+    },
+    {
+        "name": "Broom",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Octacles"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "CurseBuild"
+            ]
+        }
+    },
+    {
+        "name": "Burrito",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "ScatteredItemsBuild"
+            ]
+        }
+    },
+    {
+        "name": "Candle",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "CashBuild",
+                "VoidBuild"
+            ]
+        }
+    },
+    {
+        "name": "Carousel Horse",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Sam Gambit"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "ChessBuild"
+            ]
+        }
+    },
+    {
+        "name": "Castle",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Sam Gambit"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "ChessBuild"
+            ]
+        }
+    },
+    {
+        "name": "Celestial Body",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Bones the Dog"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "CardsBuild"
+            ]
+        }
+    },
+    {
+        "name": "Champagne",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "ShinyBuild"
+            ]
+        }
+    },
+    {
+        "name": "Chequered Flag",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 1,
+            "builds": []
+        }
+    },
+    {
+        "name": "Cherries",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "RedBuild"
+            ]
+        }
+    },
+    {
+        "name": "Cherry Pie",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "RedBuild"
+            ]
+        }
+    },
+    {
+        "name": "Chips",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 0,
+            "builds": []
+        }
+    },
+    {
+        "name": "Circus Tent",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "RainbowBuild",
+                "RedBuild",
+                "BlueBuild"
+            ]
+        }
+    },
+    {
+        "name": "Clapper Board",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Sam Gambit"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "ChessBuild"
+            ]
+        }
+    },
+    {
+        "name": "Cocktail",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "RainbowBuild"
+            ]
+        }
+    },
+    {
+        "name": "Coin Purse",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "CashBuild"
+            ]
+        }
+    },
+    {
+        "name": "Confetti",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "RainbowBuild"
+            ]
+        }
+    },
+    {
+        "name": "Creaky Chair",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Octacles"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "CurseBuild"
+            ]
+        }
+    },
+    {
+        "name": "Credit Card",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "N/A"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "CashBuild"
+            ]
+        }
+    },
+    {
+        "name": "Crystal Ball",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Octacles"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "CurseBuild"
+            ]
+        }
+    },
+    {
+        "name": "Cursed VHS",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Octacles"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "CurseBuild",
+                "ScatteredItemsBuild"
+            ]
+        }
+    },
+    {
+        "name": "Dagger",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Sam Gambit"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "ChessBuild"
+            ]
+        }
+    },
+    {
+        "name": "Dancer",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Sam Gambit",
+            "Bones the Dog"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "ChessBuild",
+                "CardsBuild"
+            ]
+        }
+    },
+    {
+        "name": "Dartboard",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 0,
+            "builds": []
+        }
+    },
+    {
+        "name": "Deep Sea Horror",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "VoidBuild"
+            ]
+        }
+    },
+    {
+        "name": "Departures",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 1,
+            "builds": []
+        }
+    },
+    {
+        "name": "Diving Mask",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 1,
+            "builds": []
+        }
+    },
+    {
+        "name": "Doughnut",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "RainbowBuild"
+            ]
+        }
+    },
+    {
+        "name": "Down Under",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "VoidBuild"
+            ]
+        }
+    },
+    {
+        "name": "Dusty Coffin",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "VoidBuild"
+            ]
+        }
+    },
+    {
+        "name": "Egg",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 0,
+            "builds": []
+        }
+    },
+    {
+        "name": "Electric Guitar",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "RedBuild"
+            ]
+        }
+    },
+    {
+        "name": "Ferris Wheel",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "RainbowBuild"
+            ]
+        }
+    },
+    {
+        "name": "Fire Extinguisher",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "ColourlessBuild",
+                "RedBuild"
+            ]
+        }
+    },
+    {
+        "name": "Fireworks",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "ShinyBuild"
+            ]
+        }
+    },
+    {
+        "name": "Fish Cake",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "ShinyBuild"
+            ]
+        }
+    },
+    {
+        "name": "Footprints",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Sam Gambit"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "ChessBuild"
+            ]
+        }
+    },
+    {
+        "name": "Fountain",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "BlueBuild"
+            ]
+        }
+    },
+    {
+        "name": "Game Pad",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "VoidBuild",
+                "RainbowBuild"
+            ]
+        }
+    },
+    {
+        "name": "Ghost",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Octacles"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "CurseBuild"
+            ]
+        }
+    },
+    {
+        "name": "Glass Of Milk",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Octacles"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "BlankBuild"
+            ]
+        }
+    },
+    {
+        "name": "Gold Fish",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "N/A"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "CashBuild",
+                "ConsumableBuild"
+            ]
+        }
+    },
+    {
+        "name": "Gorilla",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Nina Nix",
+            "Sam Gambit"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "ChessBuild",
+                "VoidBuild"
+            ]
+        }
+    },
+    {
+        "name": "Graduation Cap",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 0,
+            "builds": []
+        }
+    },
+    {
+        "name": "Ham Sandwich",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Octacles"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "BlankBuild"
+            ]
+        }
+    },
+    {
+        "name": "Hanafuda",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Bones the Dog"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "CardsBuild"
+            ]
+        }
+    },
+    {
+        "name": "Hi Vis Jacket",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "N/A"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "ConsumableBuild"
+            ]
+        }
+    },
+    {
+        "name": "Hungry Hippo",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "CashBuild"
+            ]
+        }
+    },
+    {
+        "name": "Jack-o'-Lantern",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Octacles"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "CashBuild",
+                "CurseBuild"
+            ]
+        }
+    },
+    {
+        "name": "Jigsaw Piece",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "BlankBuild",
+                "VoidBuild"
+            ]
+        }
+    },
+    {
+        "name": "Joker",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Bones the Dog"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "CardsBuild"
+            ]
+        }
+    },
+    {
+        "name": "Kadomatsu",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Bones the Dog"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "CardsBuild"
+            ]
+        }
+    },
+    {
+        "name": "Kangaroo",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Sam Gambit"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "ChessBuild"
+            ]
+        }
+    },
+    {
+        "name": "Lab Coat",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Hayley Bayles"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "NumbersBuild"
+            ]
+        }
+    },
+    {
+        "name": "Ladybird",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Nina Nix",
+            "Hayley Bayles"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "NumbersBuild",
+                "RedBuild",
+                "VoidBuild"
+            ]
+        }
+    },
+    {
+        "name": "Las Vegas",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Bones the Dog"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "CardsBuild"
+            ]
+        }
+    },
+    {
+        "name": "Lipstick",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "RedBuild"
+            ]
+        }
+    },
+    {
+        "name": "Lollipop",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "CashBuild"
+            ]
+        }
+    },
+    {
+        "name": "Lucky Dice",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Hayley Bayles"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "NumbersBuild"
+            ]
+        }
+    },
+    {
+        "name": "Lucky Scarf",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "RedBuild"
+            ]
+        }
+    },
+    {
+        "name": "Luffing Jib Crane",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "N/A"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "ConsumableBuild"
+            ]
+        }
+    },
+    {
+        "name": "Magic 8 Ball",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Sam Gambit"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "ChessBuild"
+            ]
+        }
+    },
+    {
+        "name": "Magic Wand",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "ShinyBuild",
+                "RainbowBuild"
+            ]
+        }
+    },
+    {
+        "name": "Maple Leaf",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "RedBuild"
+            ]
+        }
+    },
+    {
+        "name": "Maracas",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "RainbowBuild"
+            ]
+        }
+    },
+    {
+        "name": "Michael's Book",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Octacles"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "CurseBuild",
+                "BlankBuild"
+            ]
+        }
+    },
+    {
+        "name": "Mischievous Imp",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Octacles"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "CurseBuild"
+            ]
+        }
+    },
+    {
+        "name": "Moai",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Octacles"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "CurseBuild",
+                "ColourlessBuild"
+            ]
+        }
+    },
+    {
+        "name": "Movie Camera",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Sam Gambit"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "ChessBuild"
+            ]
+        }
+    },
+    {
+        "name": "Musical Notes",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Bones the Dog"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "CardsBuild"
+            ]
+        }
+    },
+    {
+        "name": "Mysterious Amulet",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Octacles"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "CurseBuild"
+            ]
+        }
+    },
+    {
+        "name": "Mystery Gift",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 0,
+            "builds": []
+        }
+    },
+    {
+        "name": "Newspaper",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "ColourlessBuild"
+            ]
+        }
+    },
+    {
+        "name": "Onigiri",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "ColourlessBuild"
+            ]
+        }
+    },
+    {
+        "name": "Ornate Key",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "RedBuild",
+                "BlueBuild",
+                "VoidBuild",
+                "ShinyBuild",
+                "RainbowBuild"
+            ]
+        }
+    },
+    {
+        "name": "Overhand",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 1,
+            "builds": []
+        }
+    },
+    {
+        "name": "Pair Of Socks",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "BlueBuild",
+                "RainbowBuild"
+            ]
+        }
+    },
+    {
+        "name": "Parrot",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "ColourlessBuild"
+            ]
+        }
+    },
+    {
+        "name": "Peacock",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Bones the Dog"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "CardsBuild"
+            ]
+        }
+    },
+    {
+        "name": "Pear",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Bones the Dog"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "CashBuild",
+                "CardsBuild"
+            ]
+        }
+    },
+    {
+        "name": "Peas Of A Pod",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Bones the Dog"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "CardsBuild"
+            ]
+        }
+    },
+    {
+        "name": "Petri Dish",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Hayley Bayles"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "NumbersBuild"
+            ]
+        }
+    },
+    {
+        "name": "Pneumonia",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 0,
+            "builds": []
+        }
+    },
+    {
+        "name": "Poker Face",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Bones the Dog"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "CardsBuild"
+            ]
+        }
+    },
+    {
+        "name": "Postal Horn",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Bones the Dog"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "CardsBuild"
+            ]
+        }
+    },
+    {
+        "name": "Postbox",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 1,
+            "builds": []
+        }
+    },
+    {
+        "name": "Printer",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "BlueBuild",
+                "ScatteredItemsBuild"
+            ]
+        }
+    },
+    {
+        "name": "Raccoon",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Sam Gambit"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "ChessBuild"
+            ]
+        }
+    },
+    {
+        "name": "Radio",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "ColourlessBuild",
+                "ScatteredItemsBuild"
+            ]
+        }
+    },
+    {
+        "name": "Rainbow Sprinkles",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "RainbowBuild",
+                "ShinyBuild"
+            ]
+        }
+    },
+    {
+        "name": "Retro Raider",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "VoidBuild",
+                "ScatteredItemsBuild"
+            ]
+        }
+    },
+    {
+        "name": "Rex",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "N/A"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "ScatteredItemsBuild"
+            ]
+        }
+    },
+    {
+        "name": "Roller Skate",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "N/A"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "CashBuild"
+            ]
+        }
+    },
+    {
+        "name": "Rolodex",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Bones the Dog"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "CardsBuild",
+                "ScatteredItemsBuild"
+            ]
+        }
+    },
+    {
+        "name": "Scissors",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Bones the Dog"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "CardsBuild"
+            ]
+        }
+    },
+    {
+        "name": "Sequoia Sapling",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 1,
+            "builds": []
+        }
+    },
+    {
+        "name": "Shield",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "BlueBuild"
+            ]
+        }
+    },
+    {
+        "name": "Signal Receiver",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "N/A"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "ScatteredItemsBuild"
+            ]
+        }
+    },
+    {
+        "name": "Slide",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Bones the Dog"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "CardsBuild"
+            ]
+        }
+    },
+    {
+        "name": "Sly Spy",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 1,
+            "builds": []
+        }
+    },
+    {
+        "name": "Snapshot",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "N/A"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "ScatteredItemsBuild"
+            ]
+        }
+    },
+    {
+        "name": "Snowman",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "N/A"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "CashBuild"
+            ]
+        }
+    },
+    {
+        "name": "Soaring Kite",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Hayley Bayles"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "BlueBuild",
+                "NumbersBuild"
+            ]
+        }
+    },
+    {
+        "name": "Stamp Album",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "N/A"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "ScatteredItemsBuild"
+            ]
+        }
+    },
+    {
+        "name": "Sticky Plaster",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Hayley Bayles"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "NumbersBuild"
+            ]
+        }
+    },
+    {
+        "name": "Stilton",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "BlueBuild"
+            ]
+        }
+    },
+    {
+        "name": "Storm Cloud",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Octacles"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "CurseBuild",
+                "ConsumableBuild"
+            ]
+        }
+    },
+    {
+        "name": "Suitcase",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Sam Gambit"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "ChessBuild",
+                "BlueBuild"
+            ]
+        }
+    },
+    {
+        "name": "Sunflower",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "N/A"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "CashBuild"
+            ]
+        }
+    },
+    {
+        "name": "Sushi",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "ColourlessBuild"
+            ]
+        }
+    },
+    {
+        "name": "Telescope",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "RedBuild"
+            ]
+        }
+    },
+    {
+        "name": "Ten Pin Bowling",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Nina Nix",
+            "Hayley Bayles"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "NumbersBuild",
+                "VoidBuild"
+            ]
+        }
+    },
+    {
+        "name": "Tombstone",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "VoidBuild"
+            ]
+        }
+    },
+    {
+        "name": "Toolbox",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "RedBuild",
+                "ScatteredItemsBuild"
+            ]
+        }
+    },
+    {
+        "name": "Traffic Lights",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Nina Nix",
+            "Hayley Bayles"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "NumbersBuild",
+                "RainbowBuild"
+            ]
+        }
+    },
+    {
+        "name": "Under Construction",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "N/A"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "ConsumableBuild"
+            ]
+        }
+    },
+    {
+        "name": "Wheezy Vixen",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 0,
+            "builds": []
+        }
+    },
+    {
+        "name": "Wind Chime",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Bones the Dog"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "CardsBuild"
+            ]
+        }
+    },
+    {
+        "name": "Worn-out Jeans",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Rodman"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "BlueBuild",
+                "BlankBuild"
+            ]
+        }
+    },
+    {
+        "name": "Wrestlers",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Bones the Dog"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "CardsBuild"
+            ]
+        }
+    },
+    {
+        "name": "Wriggly Worm",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Sam Gambit"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "ChessBuild",
+                "BlankBuild"
+            ]
+        }
+    },
+    {
+        "name": "Yellow Glasses",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "BlankBuild"
+            ]
+        }
+    },
+    {
+        "name": "Zebra",
+        "classification": 1,
+        "groups": [
+            "Stickers"
+        ],
+        "character_tags": [
+            "Sam Gambit"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "ChessBuild"
+            ]
+        }
+    },
+    {
+        "_comment": "========== Stamps ==========",
+        "name": "Akoya Pearl",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "ShinyBuild"
+            ]
+        }
+    },
+    {
+        "name": "Angel Investment",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "CashBuild"
+            ]
+        }
+    },
+    {
+        "name": "Avocado",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 1,
+            "builds": []
+        }
+    },
+    {
+        "name": "Banana",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "BlankBuild"
+            ]
+        }
+    },
+    {
+        "name": "Bank",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "N/A"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "CashBuild"
+            ]
+        }
+    },
+    {
+        "name": "Bar Chart",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Hayley Bayles"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "NumbersBuild"
+            ]
+        }
+    },
+    {
+        "name": "Bar Of Soap",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 2,
+            "builds": [
+                "ConsumableBuild"
+            ]
+        }
+    },
+    {
+        "name": "Beam Me Up",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "N/A"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "ConsumableBuild"
+            ]
+        }
+    },
+    {
+        "name": "Beefeater",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Bones the Dog"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "CardsBuild",
+                "RedBuild"
+            ]
+        }
+    },
+    {
+        "name": "Bento Box",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "BlankBuild"
+            ]
+        }
+    },
+    {
+        "name": "Big Bang",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "RedBuild"
+            ]
+        }
+    },
+    {
+        "name": "Black Hole",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "VoidBuild"
+            ]
+        }
+    },
+    {
+        "name": "Blessing of the Fairies",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "option_tags": [
+            "Crowns",
+            "Michael"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": []
+        }
+    },
+    {
+        "name": "Blessing Of The Shopkeeper",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "CashBuild"
+            ]
+        }
+    },
+    {
+        "name": "Bomb",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "VoidBuild"
+            ]
+        }
+    },
+    {
+        "name": "Book Of Openings",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Sam Gambit"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "ChessBuild"
+            ]
+        }
+    },
+    {
+        "name": "Briefcase",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "ScatteredItemsBuild"
+            ]
+        }
+    },
+    {
+        "name": "Bubble Tea",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "BlankBuild"
+            ]
+        }
+    },
+    {
+        "name": "Builder",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "N/A"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "ConsumableBuild"
+            ]
+        }
+    },
+    {
+        "name": "Bunch Of Grapes",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Hayley Bayles"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "NumbersBuild"
+            ]
+        }
+    },
+    {
+        "name": "Business Goose",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Sam Gambit"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "ChessBuild"
+            ]
+        }
+    },
+    {
+        "name": "Busy Schedule",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Hayley Bayles"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "NumbersBuild",
+                "BigNumbersBuild"
+            ]
+        }
+    },
+    {
+        "name": "Cable Car",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "N/A"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "ScatteredItemsBuild"
+            ]
+        }
+    },
+    {
+        "name": "Card Shark",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Bones the Dog"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "CardsBuild"
+            ]
+        }
+    },
+    {
+        "name": "Cartwheeler",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "BlankBuild",
+                "VoidBuild"
+            ]
+        }
+    },
+    {
+        "name": "Chess Board",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 2,
+            "builds": [
+                "VoidBuild",
+                "RainbowBuild"
+            ]
+        }
+    },
+    {
+        "name": "Chick",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 0,
+            "builds": []
+        }
+    },
+    {
+        "name": "Chocolate Candy",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "RainbowBuild"
+            ]
+        }
+    },
+    {
+        "name": "Christmas Tree",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "RainbowBuild"
+            ]
+        }
+    },
+    {
+        "name": "Dangerous Summit",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "VoidBuild"
+            ]
+        }
+    },
+    {
+        "name": "Dango",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "BlueBuild",
+                "RedBuild",
+                "ShinyBuild",
+                "VoidBuild",
+                "RainbowBuild"
+            ]
+        }
+    },
+    {
+        "name": "Delivery Truck",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "N/A"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "ConsumableBuild",
+                "ScatteredItemsBuild"
+            ]
+        }
+    },
+    {
+        "name": "Disco Ball",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "ShinyBuild"
+            ]
+        }
+    },
+    {
+        "name": "Diya",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "RedBuild"
+            ]
+        }
+    },
+    {
+        "name": "Dove",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Sam Gambit"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "ChessBuild"
+            ]
+        }
+    },
+    {
+        "name": "Downward Trending Chart",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 0,
+            "builds": []
+        }
+    },
+    {
+        "name": "Dragon",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "N/A"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "CashBuild"
+            ]
+        }
+    },
+    {
+        "name": "Eclipse",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "VoidBuild",
+                "ShinyBuild"
+            ]
+        }
+    },
+    {
+        "name": "Efficient Recycler",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "CashBuild"
+            ]
+        }
+    },
+    {
+        "name": "Empty Jar",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 1,
+            "builds": []
+        }
+    },
+    {
+        "name": "Eraser",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 1,
+            "builds": []
+        }
+    },
+    {
+        "name": "Error",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "RainbowBuild"
+            ]
+        }
+    },
+    {
+        "name": "Erupting Volcano",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "CashBuild"
+            ]
+        }
+    },
+    {
+        "name": "Falling Leaf",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "ConsumableBuild"
+            ]
+        }
+    },
+    {
+        "name": "Family Ticket",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "RedBuild"
+            ]
+        }
+    },
+    {
+        "name": "Fan",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "ShinyBuild"
+            ]
+        }
+    },
+    {
+        "name": "Filing Cabinet",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "RainbowBuild",
+                "ScatteredItemsBuild"
+            ]
+        }
+    },
+    {
+        "name": "Flamingo",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "ShinyBuild"
+            ]
+        }
+    },
+    {
+        "name": "Flashy Fountain Pen",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 1,
+            "builds": []
+        }
+    },
+    {
+        "name": "Fleur De Lis",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "RedBuild",
+                "BlueBuild"
+            ]
+        }
+    },
+    {
+        "name": "Food Poisoning",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Octacles"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "CurseBuild"
+            ]
+        }
+    },
+    {
+        "name": "Fortune Cookie",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 1,
+            "builds": []
+        }
+    },
+    {
+        "name": "Four Leaf Clover",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Nina Nix",
+            "Bones the Dog"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "CardsBuild",
+                "RainbowBuild"
+            ]
+        }
+    },
+    {
+        "name": "Fraction Frog",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Hayley Bayles"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "ConsumableBuild",
+                "NumbersBuild"
+            ]
+        }
+    },
+    {
+        "name": "Fried Shrimp",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "CashBuild"
+            ]
+        }
+    },
+    {
+        "name": "Full Battery",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Hayley Bayles"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "NumbersBuild"
+            ]
+        }
+    },
+    {
+        "name": "Full Moon",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Sam Gambit"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "BlankBuild",
+                "ChessBuild"
+            ]
+        }
+    },
+    {
+        "name": "Genie",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 0,
+            "builds": []
+        }
+    },
+    {
+        "name": "Giraffe",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Hayley Bayles"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "NumbersBuild"
+            ]
+        }
+    },
+    {
+        "name": "Globe Trotter",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "N/A"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "CashBuild"
+            ]
+        }
+    },
+    {
+        "name": "Go Fish!",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Hayley Bayles",
+            "Bones the Dog"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "CardsBuild",
+                "BlueBuild",
+                "NumbersBuild"
+            ]
+        }
+    },
+    {
+        "name": "Golden Record",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "N/A"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "ConsumableBuild"
+            ]
+        }
+    },
+    {
+        "name": "Golden Scales",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "CashBuild"
+            ]
+        }
+    },
+    {
+        "name": "Haunted House",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Bones the Dog",
+            "Octacles"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "CardsBuild",
+                "CurseBuild"
+            ]
+        }
+    },
+    {
+        "name": "Haunted Mirror",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Nina Nix",
+            "Octacles"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "RainbowBuild",
+                "CurseBuild"
+            ]
+        }
+    },
+    {
+        "name": "Head In The Clouds",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Nina Nix",
+            "Sam Gambit"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "RainbowBuild",
+                "ChessBuild"
+            ]
+        }
+    },
+    {
+        "name": "Head Trauma",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "VoidBuild",
+                "BlueBuild",
+                "BlankBuild",
+                "RainbowBuild"
+            ]
+        }
+    },
+    {
+        "name": "Heart On Fire",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman"
+        ],
+        "metadata": {
+            "rarity": 2,
+            "builds": [
+                "RedBuild"
+            ]
+        }
+    },
+    {
+        "name": "Honeypot",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 1,
+            "builds": []
+        }
+    },
+    {
+        "name": "Hourglass",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 1,
+            "builds": []
+        }
+    },
+    {
+        "name": "Hungry Snake",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 0,
+            "builds": []
+        }
+    },
+    {
+        "name": "ID Card",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 1,
+            "builds": []
+        }
+    },
+    {
+        "name": "Jellyfish",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "ShinyBuild"
+            ]
+        }
+    },
+    {
+        "name": "Jolly Roger",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Sam Gambit"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "ChessBuild",
+                "ConsumableBuild"
+            ]
+        }
+    },
+    {
+        "name": "Juice Box",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 1,
+            "builds": []
+        }
+    },
+    {
+        "name": "Kimono",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "BlueBuild",
+                "BlankBuild"
+            ]
+        }
+    },
+    {
+        "name": "King Of The Bridge",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Sam Gambit"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "ChessBuild"
+            ]
+        }
+    },
+    {
+        "name": "Kokeshi Dolls",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "N/A"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "CashBuild"
+            ]
+        }
+    },
+    {
+        "name": "Limnophila",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 0,
+            "builds": []
+        }
+    },
+    {
+        "name": "Magician's Hat",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Nina Nix",
+            "Bones the Dog"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "CardsBuild",
+                "VoidBuild"
+            ]
+        }
+    },
+    {
+        "name": "Magnet",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Hayley Bayles"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "NumbersBuild"
+            ]
+        }
+    },
+    {
+        "name": "Martini",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Bones the Dog"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "CardsBuild"
+            ]
+        }
+    },
+    {
+        "name": "Microphone",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 2,
+            "builds": []
+        }
+    },
+    {
+        "name": "Microscope",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 1,
+            "builds": []
+        }
+    },
+    {
+        "name": "Mushroom Upgrade",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "RedBuild"
+            ]
+        }
+    },
+    {
+        "name": "Mutating DNA",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 2,
+            "builds": []
+        }
+    },
+    {
+        "name": "Neapolitan",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "RainbowBuild"
+            ]
+        }
+    },
+    {
+        "name": "Nest Egg",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "BlueBuild",
+                "CashBuild"
+            ]
+        }
+    },
+    {
+        "name": "Number Factory",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Hayley Bayles"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "NumbersBuild",
+                "ConsumableBuild"
+            ]
+        }
+    },
+    {
+        "name": "Number Go Up",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Hayley Bayles"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "NumbersBuild",
+                "BigNumbersBuild"
+            ]
+        }
+    },
+    {
+        "name": "Oden",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Octacles"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "CurseBuild"
+            ]
+        }
+    },
+    {
+        "name": "Ogre",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "CashBuild"
+            ]
+        }
+    },
+    {
+        "name": "Paper Lantern",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "RedBuild"
+            ]
+        }
+    },
+    {
+        "name": "Parachute",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "RainbowBuild"
+            ]
+        }
+    },
+    {
+        "name": "Piece of Cake",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "N/A"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "ConsumableBuild"
+            ]
+        }
+    },
+    {
+        "name": "Piggy Bank",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "RainbowBuild",
+                "CashBuild"
+            ]
+        }
+    },
+    {
+        "name": "Pizza Slice",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Hayley Bayles"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "NumbersBuild"
+            ]
+        }
+    },
+    {
+        "name": "Pi\u00f1ata",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "ShinyBuild"
+            ]
+        }
+    },
+    {
+        "name": "Pocket Money",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Hayley Bayles"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "NumbersBuild"
+            ]
+        }
+    },
+    {
+        "name": "Queen Bee",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Sam Gambit"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "ChessBuild"
+            ]
+        }
+    },
+    {
+        "name": "Queenie",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 1,
+            "builds": []
+        }
+    },
+    {
+        "name": "Receipt",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "N/A"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "CashBuild"
+            ]
+        }
+    },
+    {
+        "name": "Red Balloon",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Hayley Bayles"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "RedBuild",
+                "NumbersBuild",
+                "BigNumbersBuild"
+            ]
+        }
+    },
+    {
+        "name": "Red Envelope",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "RedBuild"
+            ]
+        }
+    },
+    {
+        "name": "Rollercoaster",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 1,
+            "builds": []
+        }
+    },
+    {
+        "name": "Rosebud",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "RedBuild",
+                "ConsumableBuild"
+            ]
+        }
+    },
+    {
+        "name": "Ruler",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Sam Gambit"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "ChessBuild"
+            ]
+        }
+    },
+    {
+        "name": "Saguaro Seedling",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "RainbowBuild"
+            ]
+        }
+    },
+    {
+        "name": "Saxophone",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "BlueBuild"
+            ]
+        }
+    },
+    {
+        "name": "Sewing Needle",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 2,
+            "builds": []
+        }
+    },
+    {
+        "name": "Shaved Ice",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 0,
+            "builds": []
+        }
+    },
+    {
+        "name": "Silly Puppy",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 1,
+            "builds": []
+        }
+    },
+    {
+        "name": "Slot Machine",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "VoidBuild"
+            ]
+        }
+    },
+    {
+        "name": "Sluggish Zombie",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 0,
+            "builds": []
+        }
+    },
+    {
+        "name": "Smart Shirt",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Nina Nix",
+            "Bones the Dog"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "CardsBuild",
+                "RainbowBuild"
+            ]
+        }
+    },
+    {
+        "name": "Snail",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 0,
+            "builds": []
+        }
+    },
+    {
+        "name": "Spicy Pepper",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "RedBuild"
+            ]
+        }
+    },
+    {
+        "name": "Spouting Whale",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "BlueBuild",
+                "BlankBuild",
+                "ConsumableBuild"
+            ]
+        }
+    },
+    {
+        "name": "Stack Of Pancakes",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 2,
+            "builds": []
+        }
+    },
+    {
+        "name": "Stadium",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "N/A"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "ConsumableBuild"
+            ]
+        }
+    },
+    {
+        "name": "Statue Of Liberty",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman"
+        ],
+        "metadata": {
+            "rarity": 2,
+            "builds": [
+                "BlueBuild"
+            ]
+        }
+    },
+    {
+        "name": "Steak",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "ScatteredItemsBuild"
+            ]
+        }
+    },
+    {
+        "name": "Stethoscope",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Hayley Bayles"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "NumbersBuild",
+                "ScatteredItemsBuild"
+            ]
+        }
+    },
+    {
+        "name": "Stiletto",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "RedBuild"
+            ]
+        }
+    },
+    {
+        "name": "Supervillain",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Octacles"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "CurseBuild"
+            ]
+        }
+    },
+    {
+        "name": "Surprise Delivery",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 0,
+            "builds": []
+        }
+    },
+    {
+        "name": "Suspension Bridge",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "RedBuild"
+            ]
+        }
+    },
+    {
+        "name": "Takeout Box",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "N/A"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "ConsumableBuild"
+            ]
+        }
+    },
+    {
+        "name": "Teapot",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "BlueBuild"
+            ]
+        }
+    },
+    {
+        "name": "Television",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Sam Gambit"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "ChessBuild",
+                "ScatteredItemsBuild"
+            ]
+        }
+    },
+    {
+        "name": "Test Tube",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Hayley Bayles"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "NumbersBuild"
+            ]
+        }
+    },
+    {
+        "name": "Tile Ninja",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "N/A"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "ConsumableBuild"
+            ]
+        }
+    },
+    {
+        "name": "Tin Of Beans",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "RainbowBuild",
+                "ShinyBuild"
+            ]
+        }
+    },
+    {
+        "name": "Torii Gate",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "RedBuild"
+            ]
+        }
+    },
+    {
+        "name": "Trophy Of Wealth",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Nina Nix"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "RainbowBuild",
+                "CashBuild"
+            ]
+        }
+    },
+    {
+        "name": "Twinkle Toes",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 1,
+            "builds": []
+        }
+    },
+    {
+        "name": "Underhand",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 2,
+            "builds": []
+        }
+    },
+    {
+        "name": "Unicorn",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 0,
+            "builds": []
+        }
+    },
+    {
+        "name": "Valentine's Day Card",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Bones the Dog"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "CardsBuild",
+                "RedBuild"
+            ]
+        }
+    },
+    {
+        "name": "Waxy Vizor",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "BlueBuild"
+            ]
+        }
+    },
+    {
+        "name": "Weekly Shop",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "N/A"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "ColourlessBuild",
+                "ConsumableBuild"
+            ]
+        }
+    },
+    {
+        "name": "Wheel",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [],
+        "metadata": {
+            "rarity": 0,
+            "builds": []
+        }
+    },
+    {
+        "name": "Window",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "BlueBuild"
+            ]
+        }
+    },
+    {
+        "name": "Work of Art",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman",
+            "Nina Nix",
+            "Bones the Dog"
+        ],
+        "metadata": {
+            "rarity": 1,
+            "builds": [
+                "CardsBuild",
+                "RainbowBuild"
+            ]
+        }
+    },
+    {
+        "name": "Xray",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "BlueBuild",
+                "BlankBuild"
+            ]
+        }
+    },
+    {
+        "name": "Young Cardinal",
+        "classification": 1,
+        "groups": [
+            "Stamps"
+        ],
+        "character_tags": [
+            "Rodman"
+        ],
+        "metadata": {
+            "rarity": 0,
+            "builds": [
+                "RedBuild"
+            ]
+        }
+    },
+    {
+        "_comment": "========== Filler ==========",
         "name": "$1",
         "classification": 0,
         "groups": [
@@ -239,8 +4686,6 @@
         "name": "Random Tile Boost",
         "classification": 0
     },
-
-    
     {
         "_comment": "========== Traps ==========",
         "name": "Force Grid Re-roll",
@@ -249,3287 +4694,5 @@
     {
         "name": "Lose Money",
         "classification": 4
-    },
-
-    {
-        "name": "April Shower",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Rodman"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Artist's Palette",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Rodman",
-            "Nina Nix"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Blueberries",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Rodman"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Chequered Flag",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Cherries",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Rodman"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Cherry Pie",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Rodman"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Chips",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Credit Card",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Dusty Coffin",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Nina Nix"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Egg",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Electric Guitar",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Rodman"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Fire Extinguisher",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Rodman"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Fountain",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Rodman"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Glass of Milk",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Rodman",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Graduation Cap",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Ham Sandwich",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Hi Vis Jacket",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Lipstick",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Rodman"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Lucky Scarf",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Rodman"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Magic Wand",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Rodman",
-            "Nina Nix"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Maple Leaf",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Rodman"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Ornate Key",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Rodman",
-            "Nina Nix"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Pair of Socks",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Rodman"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Pneumonia",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Sequoia Sapking",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Sly Spy",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Stilton",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Rodman"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Sunflower",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Telescope",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Rodman"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Wheezy Vixen",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Worn-out Jeans",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Rodman",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Yellow Glasses",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Deep Sea Horror",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Nina Nix"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Doughnut",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Rodman",
-            "Nina Nix"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Ferris Wheel",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Rodman",
-            "Nina Nix"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Fish Cake",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Nina Nix"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Game Pad",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Rodman",
-            "Nina Nix"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Jigsaw Piece",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Nina Nix"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Maracas",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Rodman",
-            "Nina Nix"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Rainbow Sprinkles",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Nina Nix"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Tombstone",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Nina Nix"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Alembic Flask",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Hayley Bayles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Birthday Cake",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Hayley Bayles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Boomerang",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Hayley Bayles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Brain",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Hayley Bayles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Lab Coat",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Hayley Bayles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Ladybird",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Rodman",
-            "Nina Nix",
-            "Hayley Bayles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Lucky Dice",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Hayley Bayles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Petri Dish",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Hayley Bayles",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Soaring Kite",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Rodman",
-            "Hayley Bayles",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Ten Pin Bowling",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Nina Nix",
-            "Hayley Bayles",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Traffic Lights",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Rodman",
-            "Nina Nix",
-            "Hayley Bayles",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Backpack",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Rodman",
-            "Sam Gambit",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Carousel Horse",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Sam Gambit",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Clapper Board",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Sam Gambit"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Gorilla",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Nina Nix",
-            "Sam Gambit",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Movie Camera",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Sam Gambit"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Raccoon",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Sam Gambit",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Suitcase",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Rodman",
-            "Sam Gambit",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Zebra",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Sam Gambit"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Celestial Body",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Bones the Dog"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Hanafuda",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Bones the Dog"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Joker",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Bones the Dog",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Kadomatsu",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Bones the Dog"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Musical Notes",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Rodman",
-            "Bones the Dog",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Peacock",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Bones the Dog"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Pear",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Bones the Dog"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Peas Of A Pod",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Bones the Dog"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Poker Face",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Sam Gambit",
-            "Bones the Dog"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Postal Horn",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Bones the Dog",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Slide",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Bones the Dog"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Wrestlers",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Bones the Dog"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Amphora",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Broom",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Ghost",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Jack-o'-Lantern",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Hayley Bayles",
-            "Sam Gambit",
-            "Bones the Dog",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Mischievous Imp",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Hayley Bayles",
-            "Sam Gambit",
-            "Bones the Dog",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Moai",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Hayley Bayles",
-            "Sam Gambit",
-            "Bones the Dog",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Mysterious Amulet",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Hayley Bayles",
-            "Sam Gambit",
-            "Bones the Dog",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Arrivals",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Baby Bottle",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Brick",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Castle",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Sam Gambit",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Circus Tent",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Rodman"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Cocktail",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Rodman",
-            "Nina Nix"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Coin Purse",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Nina Nix",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Confetti",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Rodman",
-            "Nina Nix"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Creaky Chair",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Crystal Ball",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Cursed VHS",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Dagger",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Sam Gambit"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Dancer",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Bones the Dog",
-            "Sam Gambit",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Departures",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Footprints",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Gold Fish",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Las Vegas",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Bones the Dog",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Lollipop",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Overhand",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Postbox",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Radio",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Rex",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Rolodex",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Bones the Dog",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Scissors",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Bones the Dog",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Shield",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Rodman"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Sticky Plaster",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Hayley Bayles",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Storm Cloud",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Wriggly Worm",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Mystery Gift",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Hungry Hippo",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Sushi",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Ambulance",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Dartboard",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Magic 8 Ball",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Sam Gambit"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Wind Chime",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Bones the Dog"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Michael's Book",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Luffing Jib Crane",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Base Camp",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Axe",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Candle",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Nina Nix",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Champagne",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Nina Nix"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Diving Mask",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Down Under",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Fireworks",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Nina Nix"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Kangaroo",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Sam Gambit"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Newspaper",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Onigiri",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Parrot",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Rodman",
-            "Nina Nix"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Roller Skate",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Snapshot",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Snowman",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "character_tags": [
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Under Construction",
-        "classification": 1,
-        "groups": [
-            "Stickers"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Avocado",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Bento Box",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Bubble Tea",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Downward Trending Chart",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Efficient Recycler",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Family Ticket",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Rodman"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Full Moon",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Golden Record",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Golden Scales",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Hungry Snake",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Kimono",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Rodman",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Limnophila",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Nest Egg",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Rodman"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Paper Lantern",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Rodman"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Parachute",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Rodman"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Pi\u00f1ata",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Nina Nix"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Queenie",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Red Envelope",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Rodman"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Saxophone",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Rodman"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Slot Machine",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Nina Nix"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Sluggish Zombie",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Teapot",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Rodman"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Tile Ninja",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Waxy Vizor",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Rodman"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Weekly Shop",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Window",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Rodman"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Xray",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Rodman",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Young Cardinal",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Chocolate Candy",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Rodman",
-            "Nina Nix"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Dangerous Summit",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Nina Nix"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Dango",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Rodman",
-            "Nina Nix"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Flamingo",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Nina Nix",
-            "Hayley Bayles",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Full Battery",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Hayley Bayles",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Microscope",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Hayley Bayles",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Test Tube",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Hayley Bayles",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Business Goose",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Sam Gambit",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Queen Bee",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Sam Gambit",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Card Shark",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Bones the Dog"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Four Leaf Clover",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Rodman",
-            "Nina Nix",
-            "Bones the Dog",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Go Fish!",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Rodman",
-            "Hayley Bayles",
-            "Bones the Dog",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Magician's Hat",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Bones the Dog",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Martini",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Bones the Dog"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Smart Shirt",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Bones the Dog",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Valentine's Day Card",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Bones the Dog",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Haunted Mirror",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Rodman",
-            "Nina Nix",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Oden",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Bar Chart",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Hayley Bayles",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Beefeater",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Rodman",
-            "Bones the Dog",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Black Hole",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Nina Nix"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Bomb",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Nina Nix"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Briefcase",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Builder",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Bunch Of Grapes",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Hayley Bayles",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Cartwheeler",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Diya",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Dove",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Sam Gambit",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Dragon",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Erupting Volcano",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Falling Leaf",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Fan",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Nina Nix"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Fortune Cookie",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Fried Shrimp",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Genie",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Giraffe",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Hayley Bayles",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Haunted House",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Bones the Dog",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Hourglass",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "ID Card",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Jolly Roger",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Sam Gambit",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "King of the Bridge",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Sam Gambit",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Magnet",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Hayley Bayles",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Microphone",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 2
-        }
-    },
-    {
-        "name": "Mushroom Upgrade",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Rodman"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Neapolitan",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Rodman",
-            "Nina Nix"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Ogre",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Piece of Cake",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Pocket Money",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Hayley Bayles",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Receipt",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Red Balloon",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Rodman",
-            "Hayley Bayles",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Sewing Needle",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 2
-        }
-    },
-    {
-        "name": "Shaved Ice",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Snail",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Stadium",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Stiletto",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Rodman"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Supervillain",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Takeout Box",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Underhand",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 2
-        }
-    },
-    {
-        "name": "Unicorn",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Wheel",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Work of Art",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Rodman",
-            "Sam Gambit"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Banana",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Head Trauma",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Rodman",
-            "Nina Nix",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Busy Schedule",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Hayley Bayles",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Number Go Up",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Hayley Bayles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Bar of Soap",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Nina Nix",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 2
-        }
-    },
-    {
-        "name": "Honeypot",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Ruler",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Christmas Tree",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Rodman",
-            "Nina Nix"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Juice Box",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Chick",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Spicy Pepper",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Rodman"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Rosebud",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Rodman"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Angel Investment",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Eraser",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Tin of Beans",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Rodman",
-            "Nina Nix"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Akoya Pearl",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Nina Nix"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Bank",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Beam Me Up",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Big Bang",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Rodman"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Blessing of the Shopkeeper",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Book of Openings",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Sam Gambit",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Cable Car",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Chess Board",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Rodman",
-            "Nina Nix"
-        ],
-        "metadata": {
-            "rarity": 2
-        }
-    },
-    {
-        "name": "Disco Ball",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Nina Nix"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Eclipse",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Nina Nix"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Empty Jar",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Flashy Fountain Pen",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Rodman",
-            "Nina Nix"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Fraction Frog",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Hayley Bayles",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Globe Trotter",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Heart on Fire",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Rodman"
-        ],
-        "metadata": {
-            "rarity": 2
-        }
-    },
-    {
-        "name": "Jellyfish",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Nina Nix"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Kokeshi Dolls",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Mutating DNA",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 2
-        }
-    },
-    {
-        "name": "Number Factory",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Hayley Bayles",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Pizza Slice",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Hayley Bayles",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Rollercoaster",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Silly Puppy",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Spouting Whale",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Rodman",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Stack Of Pancakes",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 2
-        }
-    },
-    {
-        "name": "Statue of Liberty",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Rodman",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 2
-        }
-    },
-    {
-        "name": "Stethoscope",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Surprise Delivery",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Suspension Bridge",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Rodman"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Television",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Sam Gambit",
-            "Octacles"
-        ],
-        "metadata": {
-            "rarity": 0
-        }
-    },
-    {
-        "name": "Torii Gate",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "character_tags": [
-            "Rodman"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
-    },
-    {
-        "name": "Twinkle Toes",
-        "classification": 1,
-        "groups": [
-            "Stamps"
-        ],
-        "metadata": {
-            "rarity": 1
-        }
     }
 ]
