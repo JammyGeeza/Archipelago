@@ -1,6 +1,6 @@
 from pony.orm import Database, PrimaryKey, Required, Optional
  
-from .. import app
+from . import app
  
 db = Database()
  
