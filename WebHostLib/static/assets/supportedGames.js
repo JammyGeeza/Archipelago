@@ -1,4 +1,5 @@
 const STEAM_COOKIE_NAME = 'ap_steam_id';
+const GROUP_BY_CATEGORY_COOKIE = 'ap_group_by_category';
 
 // The five sort/display groups, top to bottom. Uncatalogued (no row
 // in the backend's game table at all) always sorts last, and is
@@ -112,6 +113,23 @@ window.addEventListener('load', () => {
   document.getElementById('collapse-all').addEventListener('click', collapseAll);
 
   // ----------------------------------------------------
+  // Group by Category toggle
+  // ----------------------------------------------------
+
+  const groupToggle = document.getElementById('group-by-category');
+  const savedGroupPref = getCookie(GROUP_BY_CATEGORY_COOKIE);
+  // Default to OFF. Disabled until a Steam check actually succeeds -
+  // with no ownership data there are no categories to group by, so
+  // the toggle has nothing to do yet.
+  groupToggle.checked = savedGroupPref === 'true';
+  groupToggle.disabled = true;
+
+  groupToggle.addEventListener('change', () => {
+    setCookie(GROUP_BY_CATEGORY_COOKIE, groupToggle.checked ? 'true' : 'false', 365);
+    renderList();
+  });
+
+  // ----------------------------------------------------
   // Steam ownership feature
   // ----------------------------------------------------
 
@@ -212,7 +230,8 @@ function runSteamCheck(user) {
       }
 
       applyOwnershipData(data.games);
-      sortGames();
+      document.getElementById('group-by-category').disabled = false;
+      renderList();
     })
     .catch(() => {
       showSteamError('Something went wrong checking your Steam library. Please try again.');
@@ -277,6 +296,20 @@ function applyOwnershipData(gamesData) {
   });
 }
 
+// Dispatches to the right ordering based on the Group by Category
+// toggle. Called both right after a fresh ownership check and
+// whenever the toggle itself is flipped - reordering is instant,
+// no re-fetch, since it only ever rearranges DOM nodes already
+// annotated with dataset.tier/sortPrice from the last check.
+function renderList() {
+  const groupToggle = document.getElementById('group-by-category');
+  if (groupToggle && groupToggle.checked) {
+    sortGames();
+  } else {
+    sortAlphabeticalOnly();
+  }
+}
+
 // Five groups, in tier order: owned -> emulator -> itch -> not owned
 // (cheapest first) -> uncatalogued (alphabetical, untouched).
 function sortGames() {
@@ -301,10 +334,27 @@ function sortGames() {
   details.forEach((el) => container.appendChild(el));
 }
 
+// Plain alphabetical order, completely ignoring tier/ownership -
+// used when Group by Category is switched off. Annotations
+// (emoji/price/store link) are left in place; only the ORDER changes.
+function sortAlphabeticalOnly() {
+  const container = document.getElementById('games');
+  const details = Array.from(document.querySelectorAll('#games details'));
+
+  details.sort((a, b) =>
+    titleSortKey(a.getAttribute('data-game')).localeCompare(titleSortKey(b.getAttribute('data-game')))
+  );
+
+  details.forEach((el) => container.appendChild(el));
+}
+
 // Strip all annotations and restore the default, alphabetical,
-// un-checked list.
+// un-checked list. Also disables the Group by Category toggle,
+// since without ownership data there's nothing to group by.
 function resetOwnership() {
   const container = document.getElementById('games');
+
+  document.getElementById('group-by-category').disabled = true;
 
   originalOrder.forEach((details) => {
     details.dataset.tier = '';

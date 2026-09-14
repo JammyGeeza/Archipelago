@@ -90,6 +90,75 @@
     opacity: 0.75;
 }
 
+/* Group by Category toggle switch (styled checkbox) */
+#games .toggle-switch{
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 14px;
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+    margin-bottom: 0;
+}
+
+#games .toggle-switch input[type="checkbox"]{
+    /* visually hidden, but still focusable/clickable via the label */
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+#games .toggle-switch .toggle-slider{
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 22px;
+    flex-shrink: 0;
+    background: #55606b;
+    border-radius: 22px;
+    transition: background-color 0.2s ease;
+}
+
+#games .toggle-switch .toggle-slider::before{
+    content: "";
+    position: absolute;
+    left: 2px;
+    top: 2px;
+    width: 18px;
+    height: 18px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.2s ease;
+}
+
+#games .toggle-switch input:checked + .toggle-slider{
+    background: #4caf50;
+}
+
+#games .toggle-switch input:checked + .toggle-slider::before{
+    transform: translateX(18px);
+}
+
+#games .toggle-switch input:focus-visible + .toggle-slider{
+    outline: 2px solid #93dcff;
+    outline-offset: 2px;
+}
+
+#games .toggle-switch input:disabled + .toggle-slider{
+    opacity: 0.4;
+}
+
+#games .toggle-switch input:disabled ~ *{
+    cursor: not-allowed;
+}
+
+#games .toggle-switch:has(input:disabled){
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
 #games .steam-error{
     color: #ff6b6b;
     font-size: 14px;
