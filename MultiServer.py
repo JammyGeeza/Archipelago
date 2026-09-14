@@ -49,6 +49,14 @@ from NetUtils import Endpoint, ClientStatus, NetworkItem, decode, encode, Networ
     SlotType, LocationStore, MultiData, Hint, HintStatus
 from BaseClasses import ItemClassification
 
+import os
+import yaml
+
+configpath = os.path.abspath("config.yaml")
+with open(configpath) as f:
+    _config = yaml.safe_load(f)
+
+
 min_client_version = Version(0, 5, 0)
 colorama.just_fix_windows_console()
 
@@ -64,10 +72,10 @@ server_per_message_deflate_factory = ServerPerMessageDeflateFactory(
 db = Database()
 
 db.bind(
-    provider='postgres',
+    provider="postgres",
     host="host.docker.internal",
-    user="multiserver",
-    password="strongpassword",
+    user=_config.get("PG_USER"),
+    password=_config.get("PG_PASSWORD"),
     database="hetzner",
     connect_timeout=10,
     sslmode="require",

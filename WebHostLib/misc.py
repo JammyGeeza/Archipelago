@@ -18,12 +18,17 @@ from Utils import title_sorted
 ### SQL LOGGING
 from pony.orm import Database, Required, db_session, PrimaryKey, Optional
 
+#from .. import app
+
 db = Database()
 
 db.bind(
     provider='postgres',
-    host="host.docker.internal",
+    #host="host.docker.internal",
+    host="gregipelago.com",
+    #user=app.config.get("PG_USER"),
     user="multiserver",
+    #password=app.config.get("PG_PASSWORD"),
     password="strongpassword",
     database="hetzner",
     connect_timeout=10,

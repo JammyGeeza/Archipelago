@@ -42,3 +42,72 @@
 #games .page-controls button{
     margin-left: 0.5rem;
 }
+
+/* ============================================================
+   Steam ownership controls
+   ============================================================ */
+
+#games .steam-controls{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+#games .steam-controls label[for="steam-user"]{
+    font-size: 16px;
+    margin-bottom: 0;
+}
+
+#games .steam-controls input#steam-user{
+    flex: 1 1 220px;
+    min-width: 180px;
+}
+
+#games .steam-controls .remember-wrap{
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 14px;
+    cursor: help;
+    margin-bottom: 0;
+    white-space: nowrap;
+}
+
+#games .steam-controls .remember-wrap input[type="checkbox"]{
+    cursor: help;
+    margin: 0;
+}
+
+#games .steam-controls button{
+    white-space: nowrap;
+}
+
+#games .steam-controls .steam-forget{
+    opacity: 0.75;
+}
+
+#games .steam-error{
+    color: #ff6b6b;
+    font-size: 14px;
+    min-height: 1.2em;
+    margin: 0.25rem 0 0.5rem;
+    display: none;
+}
+
+#games .steam-error.visible{
+    display: block;
+}
+
+/* Store link injected at the top of a game's expanded body */
+#games .steam-store-link{
+    margin: 4px 0 10px;
+    font-weight: bold;
+}
+
+#games .steam-store-link a{
+    color: #fffc95;
+}
