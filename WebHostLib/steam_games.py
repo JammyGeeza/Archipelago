@@ -1,7 +1,10 @@
+import os
+ 
+import yaml
 from pony.orm import Database, Optional, PrimaryKey, Required
-
-from . import app
-
+ 
+import Utils
+ 
 # ------------------------------------------------------------------
 # Dedicated connection to your Postgres server.
 #
@@ -11,12 +14,27 @@ from . import app
 # opens - that's a different OS process and can't share this one
 # regardless. Same shape as your CompleteSend connection.
 #
-# Credentials come from config.yaml (same mechanism as STEAM_API_KEY)
-# instead of being hardcoded here, so the password isn't sitting in
-# a source file if this fork is ever pushed anywhere.
+# Deliberately reads config.yaml directly here, rather than via
+# app.config, because this module can get imported through more
+# than one path at startup (e.g. via WebHostLib.options -> misc ->
+# here, which happens BEFORE app.config.from_file() has run inside
+# get_app()). A plain YAML read has no dependency on Flask's own
+# bootstrap order, so it works no matter which path gets here first.
 #
+# Mirrors WebHost.py's own config.yaml lookup exactly, including its
+# fallback to Utils.user_path() if the file isn't found relative to
+# the current working directory.
 # ------------------------------------------------------------------
-
+ 
+_configpath = os.path.abspath("config.yaml")
+if not os.path.exists(_configpath):
+    _configpath = os.path.abspath(Utils.user_path("config.yaml"))
+ 
+_config = {}
+if os.path.exists(_configpath):
+    with open(_configpath) as _f:
+        _config = yaml.safe_load(_f) or {}
+ 
 db = Database()
 
 db.bind(
@@ -33,15 +51,15 @@ db.bind(
     options='-c search_path=gregipelago',
     )
 
-print("PG_PASSWORD from config:", repr(app.config.get("PG_PASSWORD")))
+
 
 class SteamGame(db.Entity):
     """Maps an Archipelago world's display name (exactly as it
     appears in the supported-games list) to how it should be checked.
-
+ 
     Deliberately keyed by game name, not AppID, because some AppIDs
     cover multiple AP games (e.g. DOOM 1993 and DOOM II share 2280).
-
+ 
     platform is one of:
       'steam'    - steam_appid is required, checked live against Steam
       'emulator' - not purchasable/ownable, no steam_appid
@@ -51,13 +69,13 @@ class SteamGame(db.Entity):
                    steam_appid - gets its own category, distinct
                    from an owned Steam game
     """
-
+ 
     _table_ = ("gregipelago", "steam_games")
-
+ 
     id = PrimaryKey(int, auto=True)
     game_name = Required(str, unique=True)
     steam_appid = Optional(int, index=True)
     platform = Required(str, default="steam")
-
-
+ 
+ 
 db.generate_mapping(create_tables=False)
