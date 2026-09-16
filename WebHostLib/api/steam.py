@@ -194,8 +194,7 @@ def get_game_records():
 
 @api_endpoints.route("/steam_ownership", methods=["POST"])
 def steam_ownership():
-    #api_key = current_app.config.get("STEAM_API_KEY")
-    api_key = "F5371450CA06C68C808E5D96B2A45CDA"
+    api_key = current_app.config.get("STEAM_API_KEY")
     if not api_key:
         return jsonify(success=False, error="Steam integration is not configured on this server."), 500
 
@@ -208,7 +207,7 @@ def steam_ownership():
     game_records = get_game_records()
 
     # Only 'steam' platform rows ever need a live Steam call -
-    # emulator/itch rows are resolved from the DB alone.
+    # emulator/native/other rows are resolved from the DB alone.
     unique_appids = {
         record["steam_appid"]
         for record in game_records.values()
