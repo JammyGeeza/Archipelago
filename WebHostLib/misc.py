@@ -20,7 +20,7 @@ from .steam_games import SteamGame
 ### SQL LOGGING
 from pony.orm import Database, Required, db_session, PrimaryKey, Optional
 
-from .. import app
+from . import app, cache
 
 db = Database()
 
