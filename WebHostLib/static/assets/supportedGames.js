@@ -13,12 +13,12 @@ const PRE_CHECK_TIER = {
 };
 const POST_CHECK_TIER = {
   owned: 0,
-  native: 1,
-  emulator: 2,
-  other: 3,
-  not_owned: 4,
+  native: 0,
+  emulator: 1,
+  other: 2,
+  not_owned: 3,
 };
-const UNCATALOGUED_TIER = 5;
+const UNCATALOGUED_TIER = 4;
 
 // URLs for each icon, read once on load from data attributes on
 // #games (rendered server-side via url_for, so JS never hardcodes
