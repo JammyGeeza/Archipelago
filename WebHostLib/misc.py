@@ -6,7 +6,7 @@ from typing import Any, IO, Dict, Iterator, List, Tuple, Union
 
 import jinja2.exceptions
 from flask import current_app, request, redirect, url_for, render_template, Response, session, abort, send_from_directory
-from pony.orm import count, commit, db_session
+from pony.orm import count, commit, db_session, select
 from werkzeug.utils import secure_filename
 
 from worlds.AutoWorld import AutoWorldRegister, World
@@ -15,21 +15,23 @@ from .markdown import render_markdown
 from .models import Seed, Room, Command, UUID, uuid4
 from Utils import title_sorted
 
+from .steam_games import SteamGame
+
 ### SQL LOGGING
 from pony.orm import Database, Required, db_session, PrimaryKey, Optional
 
-#from .. import app
+from .. import app
 
 db = Database()
 
 db.bind(
     provider='postgres',
-    #host="host.docker.internal",
-    host="gregipelago.com",
-    #user=app.config.get("PG_USER"),
-    user="multiserver",
-    #password=app.config.get("PG_PASSWORD"),
-    password="strongpassword",
+    host="host.docker.internal",
+    #host="gregipelago.com",
+    user=app.config.get("PG_USER"),
+    #user="multiserver",
+    password=app.config.get("PG_PASSWORD"),
+    #password="strongpassword",
     database="hetzner",
     connect_timeout=10,
     sslmode="require",
@@ -117,7 +119,9 @@ def game_info(game, lang):
 @cache.cached()
 def games():
     """List of supported games"""
-    return render_template("supportedGames.html", worlds=get_visible_worlds())
+    with db_session:
+        game_platforms = {row.game_name: row.platform for row in select(g for g in SteamGame)}
+    return render_template("supportedGames.html", worlds=get_visible_worlds(), game_platforms=game_platforms)
 
 @app.route('/dev-games')
 @cache.cached()

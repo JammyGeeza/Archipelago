@@ -1,23 +1,41 @@
 const STEAM_COOKIE_NAME = 'ap_steam_id';
 const GROUP_BY_CATEGORY_COOKIE = 'ap_group_by_category';
 
-// The five sort/display groups, top to bottom. Uncatalogued (no row
-// in the backend's game table at all) always sorts last, and is
-// deliberately a full tier beyond "not owned" - not lumped in with it.
-const STATUS_TIER = {
+// Two tier maps, used depending on whether an ownership check has
+// happened yet. Before a check, only platform is known (rendered
+// server-side into data-platform). After a check, dataset.tier gets
+// set explicitly from the backend's status - see getEffectiveTier().
+const PRE_CHECK_TIER = {
+  steam: 0,
+  native: 1,
+  emulator: 2,
+  other: 3,
+};
+const POST_CHECK_TIER = {
   owned: 0,
-  emulator: 1,
-  itch: 2,
-  not_owned: 3,
+  native: 1,
+  emulator: 2,
+  other: 3,
+  not_owned: 4,
 };
-const UNCATALOGUED_TIER = 4;
+const UNCATALOGUED_TIER = 5;
 
-const STATUS_EMOJI = {
-  owned: '✅',
-  emulator: '💿',
-  itch: '❔',
-  not_owned: '❌',
-};
+// URLs for each icon, read once on load from data attributes on
+// #games (rendered server-side via url_for, so JS never hardcodes
+// a static path). See loadIconUrls().
+let ICON_URLS = {};
+
+function loadIconUrls() {
+  const gamesEl = document.getElementById('games');
+  ICON_URLS = {
+    steam: gamesEl.dataset.iconSteam,
+    steamGreen: gamesEl.dataset.iconSteamGreen,
+    steamRed: gamesEl.dataset.iconSteamRed,
+    native: gamesEl.dataset.iconNative,
+    emulator: gamesEl.dataset.iconEmulator,
+    other: gamesEl.dataset.iconOther,
+  };
+}
 
 // Mirrors Utils.title_sorted() in the Python codebase - sorts
 // ignoring a leading "a" or "the" so e.g. "The Legend of Zelda"
@@ -60,17 +78,13 @@ function deleteCookie(name) {
 // STATE
 // ============================================================
 
-// Captured once on load. This is the original alphabetical
-// order the Jinja template already renders (via title_sorted),
-// so it doubles as our "reset to default" order.
+// Captured once on load. Used for iterating every game's <details>
+// element when applying/resetting ownership data.
 let originalOrder = [];
 
-// Original summary text for each <details>, keyed by element,
-// so we can restore "Aquaria" after it's been rewritten to
-// "✅ Aquaria" or "❌ Aquaria - £9.99".
-const originalSummaryText = new Map();
-
 window.addEventListener('load', () => {
+  loadIconUrls();
+
   // ----------------------------------------------------
   // Existing behaviour (search, expand/collapse) - unchanged
   // ----------------------------------------------------
@@ -78,12 +92,6 @@ window.addEventListener('load', () => {
   const toggleButtons = document.querySelectorAll('details');
 
   originalOrder = Array.from(toggleButtons);
-  originalOrder.forEach((details) => {
-    const summary = details.querySelector('summary');
-    if (summary) {
-      originalSummaryText.set(details, summary.textContent);
-    }
-  });
 
   const gameSearch = document.getElementById('game-search');
   gameSearch.value = '';
@@ -118,16 +126,19 @@ window.addEventListener('load', () => {
 
   const groupToggle = document.getElementById('group-by-category');
   const savedGroupPref = getCookie(GROUP_BY_CATEGORY_COOKIE);
-  // Default to OFF. Disabled until a Steam check actually succeeds -
-  // with no ownership data there are no categories to group by, so
-  // the toggle has nothing to do yet.
+  // Default OFF. Always usable - platform categories (Steam/native/
+  // emulator/other) exist from page load, before any Steam check.
   groupToggle.checked = savedGroupPref === 'true';
-  groupToggle.disabled = true;
 
   groupToggle.addEventListener('change', () => {
     setCookie(GROUP_BY_CATEGORY_COOKIE, groupToggle.checked ? 'true' : 'false', 365);
     renderList();
   });
+
+  // Apply the saved preference immediately - pre-check categories
+  // (Steam/native/emulator/other) already exist from the server
+  // render, so this can group without waiting on any Steam check.
+  renderList();
 
   // ----------------------------------------------------
   // Steam ownership feature
@@ -230,7 +241,6 @@ function runSteamCheck(user) {
       }
 
       applyOwnershipData(data.games);
-      document.getElementById('group-by-category').disabled = false;
       renderList();
     })
     .catch(() => {
@@ -243,9 +253,10 @@ function runSteamCheck(user) {
     });
 }
 
-// Rewrite each <details> summary/body based on the status data
-// returned from the backend, keyed by game name. Games absent from
-// the response (uncatalogued) are left completely untouched.
+// Update each <details> based on the status data returned from the
+// backend, keyed by game name. Games absent from the response
+// (uncatalogued - shouldn't happen in practice) are left completely
+// untouched, same as before any check.
 function applyOwnershipData(gamesData) {
   originalOrder.forEach((details) => {
     const gameName = details.getAttribute('data-game');
@@ -257,26 +268,42 @@ function applyOwnershipData(gamesData) {
       existingLink.remove();
     }
 
-    const summary = details.querySelector('summary');
-
     if (!info) {
-      // Uncatalogued - no annotation, sits at the very bottom.
-      details.dataset.tier = String(UNCATALOGUED_TIER);
+      details.dataset.tier = '';
       details.dataset.sortPrice = '';
-      if (summary) {
-        summary.textContent = originalSummaryText.get(details);
-      }
       return;
     }
 
-    const tier = STATUS_TIER[info.status];
-    const emoji = STATUS_EMOJI[info.status];
-    details.dataset.tier = String(tier);
+    details.dataset.tier = String(POST_CHECK_TIER[info.status]);
 
-    if (info.status === 'not_owned') {
+    if (info.status !== 'owned' && info.status !== 'not_owned') {
+      // native / emulator / other - icon and name never change,
+      // only the sort tier does.
+      details.dataset.sortPrice = '';
+      return;
+    }
+
+    const icon = details.querySelector('.game-icon');
+    const nameSpan = details.querySelector('.game-name-text');
+
+    if (info.status === 'owned') {
+      details.dataset.sortPrice = '';
+      if (icon) {
+        icon.src = ICON_URLS.steamGreen;
+        icon.alt = 'Owned on Steam';
+      }
+      if (nameSpan) {
+        nameSpan.textContent = gameName;
+      }
+    } else {
+      // not_owned
       details.dataset.sortPrice = typeof info.sortPrice === 'number' ? String(info.sortPrice) : '';
-      if (summary) {
-        summary.textContent = `${emoji} ${gameName} - ${info.price}`;
+      if (icon) {
+        icon.src = ICON_URLS.steamRed;
+        icon.alt = 'Not owned on Steam';
+      }
+      if (nameSpan) {
+        nameSpan.textContent = `${gameName} - ${info.price}`;
       }
 
       if (info.url) {
@@ -284,16 +311,26 @@ function applyOwnershipData(gamesData) {
         link.className = 'steam-store-link';
         link.innerHTML = `<a href="${info.url}" target="_blank" rel="noopener noreferrer">View on Steam Store</a>`;
         // Insert right after the summary, as the first line of the expanded body.
-        summary.insertAdjacentElement('afterend', link);
-      }
-    } else {
-      // owned / emulator / itch - just the emoji, no price line.
-      details.dataset.sortPrice = '';
-      if (summary) {
-        summary.textContent = `${emoji} ${gameName}`;
+        details.querySelector('summary').insertAdjacentElement('afterend', link);
       }
     }
   });
+}
+
+// Resolves the current sort tier for a game, whether or not an
+// ownership check has happened yet. Post-check (dataset.tier set)
+// takes priority; otherwise falls back to the pre-check platform tier.
+function getEffectiveTier(details) {
+  if (details.dataset.tier !== undefined && details.dataset.tier !== '') {
+    return parseInt(details.dataset.tier, 10);
+  }
+
+  const platform = details.dataset.platform;
+  if (platform && PRE_CHECK_TIER[platform] !== undefined) {
+    return PRE_CHECK_TIER[platform];
+  }
+
+  return UNCATALOGUED_TIER;
 }
 
 // Dispatches to the right ordering based on the Group by Category
@@ -310,21 +347,21 @@ function renderList() {
   }
 }
 
-// Five groups, in tier order: owned -> emulator -> itch -> not owned
-// (cheapest first) -> uncatalogued (alphabetical, untouched).
+// Six possible tiers depending on check state - see PRE_CHECK_TIER/
+// POST_CHECK_TIER/getEffectiveTier above.
 function sortGames() {
   const container = document.getElementById('games');
   const details = Array.from(document.querySelectorAll('#games details'));
 
   details.sort((a, b) => {
-    const tierA = a.dataset.tier === undefined || a.dataset.tier === '' ? UNCATALOGUED_TIER : parseInt(a.dataset.tier, 10);
-    const tierB = b.dataset.tier === undefined || b.dataset.tier === '' ? UNCATALOGUED_TIER : parseInt(b.dataset.tier, 10);
+    const tierA = getEffectiveTier(a);
+    const tierB = getEffectiveTier(b);
 
     if (tierA !== tierB) return tierA - tierB;
 
-    if (tierA === STATUS_TIER.not_owned) {
-      const aPrice = a.dataset.sortPrice === '' ? Infinity : parseFloat(a.dataset.sortPrice);
-      const bPrice = b.dataset.sortPrice === '' ? Infinity : parseFloat(b.dataset.sortPrice);
+    if (tierA === POST_CHECK_TIER.not_owned) {
+      const aPrice = a.dataset.sortPrice === '' || a.dataset.sortPrice === undefined ? Infinity : parseFloat(a.dataset.sortPrice);
+      const bPrice = b.dataset.sortPrice === '' || b.dataset.sortPrice === undefined ? Infinity : parseFloat(b.dataset.sortPrice);
       if (aPrice !== bPrice) return aPrice - bPrice;
     }
 
@@ -348,21 +385,26 @@ function sortAlphabeticalOnly() {
   details.forEach((el) => container.appendChild(el));
 }
 
-// Strip all annotations and restore the default, alphabetical,
-// un-checked list. Also disables the Group by Category toggle,
-// since without ownership data there's nothing to group by.
+// Strip all ownership annotations, restoring each game to its
+// pre-check state (neutral Steam icon where applicable; native/
+// emulator/other/uncatalogued never changed in the first place),
+// then re-render using whatever the Group by Category toggle is
+// currently set to.
 function resetOwnership() {
-  const container = document.getElementById('games');
-
-  document.getElementById('group-by-category').disabled = true;
-
   originalOrder.forEach((details) => {
     details.dataset.tier = '';
     details.dataset.sortPrice = '';
 
-    const summary = details.querySelector('summary');
-    if (summary) {
-      summary.textContent = originalSummaryText.get(details);
+    if (details.dataset.platform === 'steam') {
+      const icon = details.querySelector('.game-icon');
+      const nameSpan = details.querySelector('.game-name-text');
+      if (icon) {
+        icon.src = ICON_URLS.steam;
+        icon.alt = 'Steam';
+      }
+      if (nameSpan) {
+        nameSpan.textContent = details.getAttribute('data-game');
+      }
     }
 
     const existingLink = details.querySelector('.steam-store-link');
@@ -371,5 +413,5 @@ function resetOwnership() {
     }
   });
 
-  originalOrder.forEach((el) => container.appendChild(el));
+  renderList();
 }

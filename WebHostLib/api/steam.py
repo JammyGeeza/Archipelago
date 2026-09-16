@@ -143,7 +143,14 @@ def format_price_and_sort_value(price_info):
     ("£19.99", 19.99)
     ("£19.99 — SALE! (-50%)", 19.99)
     ("£0.00", 0.0)
-    ("Price unavailable", float("inf"))
+    ("Price unavailable", None)
+
+    sort_price is None (not float("inf")) whenever a price can't be
+    determined - Python's json module will happily emit the literal
+    token `Infinity`, which is NOT valid JSON and makes the browser's
+    strict JSON parser throw. The frontend already treats a non-number
+    sortPrice as "sort last", so None round-trips correctly as JSON
+    null and gets the same end result safely.
     """
 
     if price_info.get("is_free"):
@@ -151,15 +158,15 @@ def format_price_and_sort_value(price_info):
 
     price = price_info.get("price_overview")
     if not price:
-        return "Price unavailable", float("inf")
+        return "Price unavailable", None
 
     if price.get("currency") != "GBP":
         currency = price.get("currency") or "unknown currency"
-        return f"Price unavailable (Steam returned {currency})", float("inf")
+        return f"Price unavailable (Steam returned {currency})", None
 
     final_price = price.get("final")
     if final_price is None:
-        return "Price unavailable", float("inf")
+        return "Price unavailable", None
 
     pounds = final_price / 100
     display = f"£{pounds:,.2f}"
@@ -178,7 +185,7 @@ def steam_store_url(appid):
 @db_session
 def get_game_records():
     """Returns {game_name: {"platform": ..., "steam_appid": ...}} for
-    every mapped AP world (Steam, emulator, or itch.io)."""
+    every mapped AP world (Steam, native, emulator, or other)."""
     return {
         row.game_name: {"platform": row.platform, "steam_appid": row.steam_appid}
         for row in select(g for g in SteamGame)
@@ -187,7 +194,8 @@ def get_game_records():
 
 @api_endpoints.route("/steam_ownership", methods=["POST"])
 def steam_ownership():
-    api_key = current_app.config.get("STEAM_API_KEY")
+    #api_key = current_app.config.get("STEAM_API_KEY")
+    api_key = "F5371450CA06C68C808E5D96B2A45CDA"
     if not api_key:
         return jsonify(success=False, error="Steam integration is not configured on this server."), 500
 
@@ -216,25 +224,39 @@ def steam_ownership():
     results = {}
 
     for game_name, record in game_records.items():
-        platform = record["platform"]
+        platform = (record["platform"] or "").strip().lower()
 
         if platform == "emulator":
             results[game_name] = {"status": "emulator"}
             continue
 
-        if platform == "itch":
-            results[game_name] = {"status": "itch"}
+        if platform == "other":
+            # itch.io / GOG / Battle.net / etc - can't verify ownership
+            results[game_name] = {"status": "other"}
             continue
 
         if platform == "native":
             # Free AP-community download (e.g. APdoku) - anyone can
-            # grab it, so it belongs in the same group as owned/
-            # free-to-play Steam games, not its own tier.
-            results[game_name] = {"status": "owned"}
+            # grab it, but it gets its own group/icon rather than
+            # being merged into "owned".
+            results[game_name] = {"status": "native"}
             continue
 
         # platform == "steam"
         appid = record["steam_appid"]
+
+        if appid is None:
+            # Data issue: marked as a Steam game but no AppID set.
+            # Don't crash the whole request over one bad row - show
+            # it as unavailable so it's still visible (and obviously
+            # wrong) rather than taking down everyone else's results.
+            results[game_name] = {
+                "status": "not_owned",
+                "price": "Price unavailable (no Steam AppID set)",
+                "sortPrice": None,
+                "url": None,
+            }
+            continue
 
         if appid in owned_appids:
             results[game_name] = {"status": "owned"}
