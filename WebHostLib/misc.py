@@ -15,28 +15,7 @@ from .markdown import render_markdown
 from .models import Seed, Room, Command, UUID, uuid4
 from Utils import title_sorted
 
-from .steam_games import SteamGame
-
-### SQL LOGGING
-from pony.orm import Database, Required, db_session, PrimaryKey, Optional
-
-from . import app, cache
-
-db = Database()
-
-db.bind(
-    provider='postgres',
-    host="host.docker.internal",
-    #host="gregipelago.com",
-    user=app.config.get("PG_USER"),
-    #user="multiserver",
-    password=app.config.get("PG_PASSWORD"),
-    #password="strongpassword",
-    database="hetzner",
-    connect_timeout=10,
-    sslmode="require",
-    options='-c search_path=gregipelago'
-)
+from .steam_games import SteamGame, NewroomSend, send_newroom
 
 class WebWorldTheme(StrEnum):
     DIRT = "dirt"
@@ -47,20 +26,6 @@ class WebWorldTheme(StrEnum):
     OCEAN = "ocean"
     PARTY_TIME = "partyTime"
     STONE = "stone"
-
-class NewroomSend(db.Entity):
-    _table_ = "roomdata"
-    _schema_ = "gregipelago"
-
-    id = PrimaryKey(int, auto=True)
-    roomid = Required(str)
-    timestamp = Required(datetime.datetime, default=lambda: datetime.datetime.now(datetime.UTC))
-
-db.generate_mapping(create_tables=False)
-
-@db_session
-def send_newroom(roomid):
-    NewroomSend(roomid=roomid)
 
 def get_world_theme(game_name: str) -> str:
     if game_name not in AutoWorldRegister.world_types:

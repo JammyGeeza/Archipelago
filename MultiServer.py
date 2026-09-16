@@ -74,11 +74,8 @@ db = Database()
 db.bind(
     provider="postgres",
     host="host.docker.internal",
-    #host="gregipelago.com",
     user=_config.get("PG_USER"),
-    #user="multiserver",
     password=_config.get("PG_PASSWORD"),
-    #password="strongpassword",
     database="hetzner",
     connect_timeout=10,
     sslmode="require",
