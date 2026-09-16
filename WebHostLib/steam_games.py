@@ -33,6 +33,7 @@ db.bind(
     options='-c search_path=gregipelago',
     )
 
+print("PG_PASSWORD from config:", repr(app.config.get("PG_PASSWORD")))
 
 class SteamGame(db.Entity):
     """Maps an Archipelago world's display name (exactly as it
