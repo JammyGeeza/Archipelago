@@ -5,8 +5,7 @@
 
 window.addEventListener('load', () => {
     const viewToggle = document.getElementById('view-toggle');
-    const listView = document.getElementById('dev-games-list-view');
-    const spreadsheetView = document.getElementById('dev-games-spreadsheet-view');
+    const gamesEl = document.getElementById('games');
     const listLabel = document.getElementById('view-toggle-list-label');
     const spreadsheetLabel = document.getElementById('view-toggle-spreadsheet-label');
   
@@ -19,8 +18,10 @@ window.addEventListener('load', () => {
   
     const applyView = () => {
       const showSpreadsheet = viewToggle.checked;
-      listView.classList.toggle('hidden', showSpreadsheet);
-      spreadsheetView.classList.toggle('hidden', !showSpreadsheet);
+      // Toggling a class on #games itself (rather than a wrapper div)
+      // survives supportedGames.js re-parenting every <details> to be
+      // a direct child of #games on every sort - see playableWorlds.css.
+      gamesEl.classList.toggle('spreadsheet-mode', showSpreadsheet);
       listLabel.classList.toggle('inactive', showSpreadsheet);
       spreadsheetLabel.classList.toggle('inactive', !showSpreadsheet);
     };

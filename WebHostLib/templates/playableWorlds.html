@@ -66,61 +66,59 @@
         </div>
         {% endif %}
 
-        <div id="dev-games-list-view">
-            <div class="js-only">
-                <div class="steam-controls">
-                    <label for="steam-user">Steam User:</label>
-                    <input id="steam-user" placeholder="UserID or Vanity name" autocomplete="off" />
-                    <label class="remember-wrap" title="This will store a userID cookie on your system">
-                        <input type="checkbox" id="remember-id" />
-                        Remember my ID
-                    </label>
-                    <button id="steam-check">Check My Games</button>
-                    <button id="steam-forget" class="steam-forget" type="button">Clear</button>
-                    <label class="toggle-switch" title="When off, the list stays alphabetical even after checking your Steam ID">
-                        <input type="checkbox" id="group-by-category" />
-                        <span class="toggle-slider"></span>
-                        Group by Category
-                    </label>
-                </div>
-                <p id="steam-error" class="steam-error"></p>
-                <label for="game-search">Search for your game below!</label><br />
-                <div class="page-controls">
-                    <input id="game-search" placeholder="Search by title..." autofocus />
-                    <button id="expand-all">Expand All</button>
-                    <button id="collapse-all">Collapse All</button>
-                </div>
+        <div class="js-only">
+            <div class="steam-controls">
+                <label for="steam-user">Steam User:</label>
+                <input id="steam-user" placeholder="UserID or Vanity name" autocomplete="off" />
+                <label class="remember-wrap" title="This will store a userID cookie on your system">
+                    <input type="checkbox" id="remember-id" />
+                    Remember my ID
+                </label>
+                <button id="steam-check">Check My Games</button>
+                <button id="steam-forget" class="steam-forget" type="button">Clear</button>
+                <label class="toggle-switch" title="When off, the list stays alphabetical even after checking your Steam ID">
+                    <input type="checkbox" id="group-by-category" />
+                    <span class="toggle-slider"></span>
+                    Group by Category
+                </label>
             </div>
-
-            {% for game in games %}
-            {% set platform = game_platforms.get(game.name) %}
-            <details data-game="{{ game.name }}" data-platform="{{ platform or '' }}">
-                <summary class="h2">
-                    {% if platform == 'steam' %}
-                    <img src="{{ url_for('static', filename='assets/images/game-icons/steam.png') }}" alt="Steam" class="game-icon" width="30" height="30" />
-                    {% elif platform == 'native' %}
-                    <img src="{{ url_for('static', filename='assets/images/game-icons/native.png') }}" alt="Native AP download" class="game-icon" width="30" height="30" />
-                    {% elif platform == 'emulator' %}
-                    <img src="{{ url_for('static', filename='assets/images/game-icons/gamepad.png') }}" alt="Emulator" class="game-icon" width="30" height="30" />
-                    {% elif platform == 'other' %}
-                    <img src="{{ url_for('static', filename='assets/images/game-icons/other.png') }}" alt="Other platform" class="game-icon" width="30" height="30" />
-                    {% endif %}
-                    {% if game.is_18_plus %}
-                    <img src="{{ url_for('static', filename='assets/images/game-icons/18.png') }}" alt="18+" class="rating-badge" width="22" height="22" />
-                    {% endif %}
-                    <span class="game-name-text">{{ game.name }}</span>
-                </summary>
-                {{ game.stability }}<br />
-                {{ game.notes }}<br />
-                {% for label, url in game.links %}
-                {% if not loop.first %}<span class="link-spacer">|</span>{% endif %}
-                <a href="{{ url }}" target="_blank" rel="noopener noreferrer">{{ label }}</a>
-                {% endfor %}
-            </details>
-            {% endfor %}
+            <p id="steam-error" class="steam-error"></p>
+            <label for="game-search">Search for your game below!</label><br />
+            <div class="page-controls">
+                <input id="game-search" placeholder="Search by title..." autofocus />
+                <button id="expand-all">Expand All</button>
+                <button id="collapse-all">Collapse All</button>
+            </div>
         </div>
 
-        <div id="dev-games-spreadsheet-view" class="hidden">
+        {% for game in games %}
+        {% set platform = game_platforms.get(game.name) %}
+        <details data-game="{{ game.name }}" data-platform="{{ platform or '' }}">
+            <summary class="h2">
+                {% if platform == 'steam' %}
+                <img src="{{ url_for('static', filename='assets/images/game-icons/steam.png') }}" alt="Steam" class="game-icon" width="30" height="30" />
+                {% elif platform == 'native' %}
+                <img src="{{ url_for('static', filename='assets/images/game-icons/native.png') }}" alt="Native AP download" class="game-icon" width="30" height="30" />
+                {% elif platform == 'emulator' %}
+                <img src="{{ url_for('static', filename='assets/images/game-icons/gamepad.png') }}" alt="Emulator" class="game-icon" width="30" height="30" />
+                {% elif platform == 'other' %}
+                <img src="{{ url_for('static', filename='assets/images/game-icons/other.png') }}" alt="Other platform" class="game-icon" width="30" height="30" />
+                {% endif %}
+                {% if game.is_18_plus %}
+                <img src="{{ url_for('static', filename='assets/images/game-icons/18.png') }}" alt="18+" class="rating-badge" width="22" height="22" />
+                {% endif %}
+                <span class="game-name-text">{{ game.name }}</span>
+            </summary>
+            {{ game.stability }}<br />
+            {{ game.notes }}<br />
+            {% for label, url in game.links %}
+            {% if not loop.first %}<span class="link-spacer">|</span>{% endif %}
+            <a href="{{ url }}" target="_blank" rel="noopener noreferrer">{{ label }}</a>
+            {% endfor %}
+        </details>
+        {% endfor %}
+
+        <div id="dev-games-spreadsheet-view">
             <iframe src="https://docs.google.com/spreadsheets/d/1iuzDTOAvdoNe8Ne8i461qGNucg5OuEoF-Ikqs8aUQZw/preview?gid=58422002#gid=58422002" height="800px" width="100%"></iframe>
         </div>
     </div>

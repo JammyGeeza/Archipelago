@@ -31,9 +31,18 @@
     opacity: 0.7;
 }
 
-/* The two swappable bodies */
-#dev-games-list-view.hidden,
-#dev-games-spreadsheet-view.hidden{
+/* The List View / Spreadsheet View swap. Deliberately NOT based on
+   a wrapper div around the list - supportedGames.js's sort functions
+   re-parent every <details> to be a direct child of #games on every
+   sort, which would silently escape any wrapper. Instead, toggle a
+   class on #games itself and use child selectors, which still work
+   correctly no matter how many times things get re-sorted. */
+#games.spreadsheet-mode > .js-only,
+#games.spreadsheet-mode > details{
+    display: none;
+}
+
+#games:not(.spreadsheet-mode) #dev-games-spreadsheet-view{
     display: none;
 }
 

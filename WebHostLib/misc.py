@@ -92,8 +92,7 @@ def games():
 @app.route('/dev-games')
 def devgames():
     """List of in-development games, pulled live from the community spreadsheet."""
-    #api_key = current_app.config.get("GOOGLE_SHEETS_API_KEY")
-    api_key = "AIzaSyDLmF0sJuT3UUF6dqyUnALBCOMjILQ2c2Q"
+    api_key = current_app.config.get("GOOGLE_SHEETS_API_KEY")
 
     try:
         dev_games = fetch_dev_games(api_key)
