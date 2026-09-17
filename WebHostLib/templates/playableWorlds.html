@@ -109,11 +109,11 @@
                 {% endif %}
                 <span class="game-name-text">{{ game.name }}</span>
                 {% if game.stability == 'Stable' %}
-                <span style="background:#d4edbc; color:#11734b; border-radius:10px; padding:1px 12px; font-size:12px;">Stable</span>
+                    <span class="stability-pill stable-pill">Stable</span>
                 {% elif game.stability == 'Unstable' %}
-                <span style="background:#ffcfc9; color:#b10202; border-radius:10px; padding:1px 12px; font-size:12px;">Unstable</span>
+                    <span class="stability-pill unstable-pill">Unstable</span>
                 {% elif game.stability == 'Broken on Main' %}
-                <span style="background:#b10202; color:#ffcfc9; border-radius:10px; padding:1px 12px; font-size:12px;">Broken in Main</span>
+                    <span class="stability-pill broken-pill">Broken on Main</span>
                 {% endif %}
 
             </summary>

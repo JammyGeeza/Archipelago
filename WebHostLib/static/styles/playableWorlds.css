@@ -59,3 +59,24 @@
     padding: 0.75rem 1rem;
     margin-bottom: 1rem;
 }
+
+#games .stability-pill{
+    border-radius: 20px;
+    padding: 1px 12px;
+    font-size: 26px;
+}
+
+#games .stable-pill{
+    background: #d4edbc;
+    color: #11734b;
+}
+
+#games .unstable-pill{
+    background: #ffcfc9;
+    color: #b10202;
+}
+
+#games .broken-pill{
+    background: #b10202;
+    color: #ffcfc9;
+}
