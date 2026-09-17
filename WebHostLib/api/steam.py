@@ -141,7 +141,7 @@ def format_price_and_sort_value(price_info):
     """
     Returns (display_price, sort_price) e.g.
     ("£19.99", 19.99)
-    ("£19.99 — SALE! (-50%)", 19.99)
+    ("£19.99 - SALE! (-50%)", 19.99)
     ("£0.00", 0.0)
     ("Price unavailable", None)
 
@@ -173,7 +173,7 @@ def format_price_and_sort_value(price_info):
 
     discount = price.get("discount_percent", 0)
     if discount and discount > 0:
-        display += f" — SALE! (-{discount}%)"
+        display += f" - SALE! (-{discount}%)"
 
     return display, pounds
 
@@ -194,7 +194,8 @@ def get_game_records():
 
 @api_endpoints.route("/steam_ownership", methods=["POST"])
 def steam_ownership():
-    api_key = current_app.config.get("STEAM_API_KEY")
+    #api_key = current_app.config.get("STEAM_API_KEY")
+    api_key = "F5371450CA06C68C808E5D96B2A45CDA"
     if not api_key:
         return jsonify(success=False, error="Steam integration is not configured on this server."), 500
 
