@@ -89,6 +89,17 @@ def fetch_dev_games(api_key: str) -> list[dict]:
     try:
         response = requests.get(url, params=params, timeout=20)
         response.raise_for_status()
+    except requests.HTTPError as e:
+        # Google's actual JSON error body has a specific reason
+        # (SERVICE_DISABLED, API_KEY_SERVICE_BLOCKED, PERMISSION_DENIED,
+        # etc.) - surface that instead of just the generic HTTP status,
+        # which tells us nothing on its own.
+        detail = None
+        try:
+            detail = e.response.json().get("error", {}).get("message")
+        except Exception:
+            pass
+        raise SheetFetchError(detail or f"Could not reach Google Sheets API: {e}")
     except requests.RequestException as e:
         raise SheetFetchError(f"Could not reach Google Sheets API: {e}")
 
@@ -120,9 +131,20 @@ def fetch_dev_games(api_key: str) -> list[dict]:
         is_18_plus = rating_text.strip().upper() == "TRUE"
 
         links: list[tuple[str, str]] = []
-        for col_index in (4, 5, 6):  # E, F, G
-            _, cell_links = _extract_cell(cells[col_index])
-            links.extend(cell_links)
+
+        # Column E - Links & Downloads: keep the cell's own label(s).
+        _, e_links = _extract_cell(cells[4])
+        links.extend(e_links)
+
+        # Column F - Setup Guide(s): always shown as "Setup Guide",
+        # regardless of the cell's actual visible text (e.g. "Github",
+        # "Website", "AP.gg").
+        _, f_links = _extract_cell(cells[5])
+        links.extend([("Setup Guide", url) for _, url in f_links])
+
+        # Column G - Support: keep the cell's own label(s).
+        _, g_links = _extract_cell(cells[6])
+        links.extend(g_links)
 
         games.append({
             "name": name,
