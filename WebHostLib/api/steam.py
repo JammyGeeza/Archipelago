@@ -16,6 +16,9 @@ STEAM_COUNTRY_CODE = "gb"
 # How long a game's price/discount info is cached for, in seconds.
 # This is *pricing only* - ownership is always checked live, never cached.
 PRICE_CACHE_SECONDS = 1800
+# Much shorter than the success TTL - a failure (e.g. rate limit)
+# should get retried again soon, not treated as settled for 30 min.
+PRICE_FAILURE_CACHE_SECONDS = 60
 
 
 class SteamLookupError(Exception):
@@ -125,14 +128,27 @@ def _fetch_app_price_info(appid):
 
 def get_app_price_info(appid):
     """Cached wrapper - pricing is identical for every visitor, so
-    there's no reason to hit Steam's Store API on every single request."""
+    there's no reason to hit Steam's Store API on every single request.
+
+    On failure (e.g. Steam's Store API rate-limiting us), caches a
+    short-lived "unavailable" result instead of nothing - without
+    this, a burst of concurrent requests during a rate-limit window
+    would all immediately retry the same call and get rate-limited
+    again, rather than backing off for a bit.
+    """
 
     cache_key = f"steam_price_info_{appid}"
     cached = cache.get(cache_key)
     if cached is not None:
         return cached
 
-    info = _fetch_app_price_info(appid)
+    try:
+        info = _fetch_app_price_info(appid)
+    except SteamLookupError:
+        info = {"is_free": False, "price_overview": None, "fetch_failed": True}
+        cache.set(cache_key, info, timeout=PRICE_FAILURE_CACHE_SECONDS)
+        return info
+
     cache.set(cache_key, info, timeout=PRICE_CACHE_SECONDS)
     return info
 
@@ -141,7 +157,7 @@ def format_price_and_sort_value(price_info):
     """
     Returns (display_price, sort_price) e.g.
     ("£19.99", 19.99)
-    ("£19.99 - SALE! (-50%)", 19.99)
+    ("£19.99 — SALE! (-50%)", 19.99)
     ("£0.00", 0.0)
     ("Price unavailable", None)
 
@@ -152,6 +168,9 @@ def format_price_and_sort_value(price_info):
     sortPrice as "sort last", so None round-trips correctly as JSON
     null and gets the same end result safely.
     """
+
+    if price_info.get("fetch_failed"):
+        return "Price unavailable (Steam is rate-limiting us, try again shortly)", None
 
     if price_info.get("is_free"):
         return "£0.00", 0.0
@@ -194,8 +213,7 @@ def get_game_records():
 
 @api_endpoints.route("/steam_ownership", methods=["POST"])
 def steam_ownership():
-    #api_key = current_app.config.get("STEAM_API_KEY")
-    api_key = "F5371450CA06C68C808E5D96B2A45CDA"
+    api_key = current_app.config.get("STEAM_API_KEY")
     if not api_key:
         return jsonify(success=False, error="Steam integration is not configured on this server."), 500
 
