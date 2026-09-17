@@ -91,35 +91,37 @@
             </div>
         </div>
 
-        {% for stability_label, group_games in stability_groups %}
-        <details class="stability-group" open>
-            <summary class="h2 stability-summary">{{ stability_label }}</summary>
+        {% for game in games %}
+        {% set platform = game_platforms.get(game.name) %}
+        <details data-game="{{ game.name }}" data-platform="{{ platform or '' }}">
+            <summary class="h2">
+                {% if platform == 'steam' %}
+                <img src="{{ url_for('static', filename='assets/images/game-icons/steam.png') }}" alt="Steam" class="game-icon" width="30" height="30" />
+                {% elif platform == 'native' %}
+                <img src="{{ url_for('static', filename='assets/images/game-icons/native.png') }}" alt="Native AP download" class="game-icon" width="30" height="30" />
+                {% elif platform == 'emulator' %}
+                <img src="{{ url_for('static', filename='assets/images/game-icons/gamepad.png') }}" alt="Emulator" class="game-icon" width="30" height="30" />
+                {% elif platform == 'other' %}
+                <img src="{{ url_for('static', filename='assets/images/game-icons/other.png') }}" alt="Other platform" class="game-icon" width="30" height="30" />
+                {% endif %}
+                {% if game.is_18_plus %}
+                <img src="{{ url_for('static', filename='assets/images/game-icons/18.png') }}" alt="18+" class="rating-badge" width="22" height="22" />
+                {% endif %}
+                <span class="game-name-text">{{ game.name }}</span>
+                {% if game.stability == 'Stable' %}
+                <span style="background:#d4edbc; color:#11734b; border-radius:10px; padding:1px 12px; font-size:12px;">Stable</span>
+                {% elif game.stability == 'Unstable' %}
+                <span style="background:#ffcfc9; color:#b10202; border-radius:10px; padding:1px 12px; font-size:12px;">Unstable</span>
+                {% elif game.stability == 'Broken on Main' %}
+                <span style="background:#b10202; color:#ffcfc9; border-radius:10px; padding:1px 12px; font-size:12px;">Broken in Main</span>
+                {% endif %}
 
-            {% for game in group_games %}
-            {% set platform = game_platforms.get(game.name) %}
-            <details data-game="{{ game.name }}" data-platform="{{ platform or '' }}">
-                <summary class="h2">
-                    {% if platform == 'steam' %}
-                    <img src="{{ url_for('static', filename='assets/images/game-icons/steam.png') }}" alt="Steam" class="game-icon" width="30" height="30" />
-                    {% elif platform == 'native' %}
-                    <img src="{{ url_for('static', filename='assets/images/game-icons/native.png') }}" alt="Native AP download" class="game-icon" width="30" height="30" />
-                    {% elif platform == 'emulator' %}
-                    <img src="{{ url_for('static', filename='assets/images/game-icons/gamepad.png') }}" alt="Emulator" class="game-icon" width="30" height="30" />
-                    {% elif platform == 'other' %}
-                    <img src="{{ url_for('static', filename='assets/images/game-icons/other.png') }}" alt="Other platform" class="game-icon" width="30" height="30" />
-                    {% endif %}
-                    {% if game.is_18_plus %}
-                    <img src="{{ url_for('static', filename='assets/images/game-icons/18.png') }}" alt="18+" class="rating-badge" width="22" height="22" />
-                    {% endif %}
-                    <span class="game-name-text">{{ game.name }}</span>
-                </summary>
-                {{ game.stability }}<br />
-                {{ game.notes }}<br />
-                {% for label, url in game.links %}
-                {% if not loop.first %}<span class="link-spacer">|</span>{% endif %}
-                <a href="{{ url }}" target="_blank" rel="noopener noreferrer">{{ label }}</a>
-                {% endfor %}
-            </details>
+            </summary>
+            {{ game.stability }}<br />
+            {{ game.notes }}<br />
+            {% for label, url in game.links %}
+            {% if not loop.first %}<span class="link-spacer">|</span>{% endif %}
+            <a href="{{ url }}" target="_blank" rel="noopener noreferrer">{{ label }}</a>
             {% endfor %}
         </details>
         {% endfor %}

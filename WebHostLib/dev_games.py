@@ -146,12 +146,13 @@ def fetch_dev_games(api_key: str) -> list[dict]:
         _, g_links = _extract_cell(cells[6])
         links.extend(g_links)
 
-        games.append({
-            "name": name,
-            "stability": stability.strip(),
-            "notes": notes.strip(),
-            "is_18_plus": is_18_plus,
-            "links": links,
-        })
+        if name != "Stacklands":
+            games.append({
+                "name": name,
+                "stability": stability.strip(),
+                "notes": notes.strip(),
+                "is_18_plus": is_18_plus,
+                "links": links,
+            })
 
     return games
