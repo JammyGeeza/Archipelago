@@ -59,3 +59,21 @@
     padding: 0.75rem 1rem;
     margin-bottom: 1rem;
 }
+
+/* Stability grouping (Stable / Unstable / Broken on Main) */
+#games details.stability-group{
+    margin-bottom: 1.5rem;
+    border-left: 3px solid #93dcff;
+    padding-left: 1rem;
+}
+
+#games .stability-summary{
+    font-size: 28px;
+    color: #fffc95;
+    margin-bottom: 0.5rem;
+}
+
+/* Individual games sit indented under their stability heading */
+#games details.stability-group > details{
+    margin-left: 0.5rem;
+}

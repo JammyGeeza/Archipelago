@@ -89,10 +89,32 @@ def games():
         game_platforms = {row.game_name: row.platform for row in select(g for g in SteamGame)}
     return render_template("supportedGames.html", worlds=get_visible_worlds(), game_platforms=game_platforms)
 
+STABILITY_ORDER = ["Stable", "Unstable", "Broken on Main"]
+
+
+def group_by_stability(games: list[dict]) -> list[tuple[str, list[dict]]]:
+    """
+    Buckets games into fixed-order stability sections. Anything whose
+    stability value isn't one of the three known labels lands in a
+    trailing "Other" bucket instead of silently vanishing. Empty
+    buckets are dropped entirely - games list is assumed already
+    alphabetically sorted, so each bucket stays sorted too.
+    """
+    buckets: dict[str, list[dict]] = {label: [] for label in STABILITY_ORDER}
+    buckets["Other"] = []
+
+    for game in games:
+        label = game["stability"] if game["stability"] in STABILITY_ORDER else "Other"
+        buckets[label].append(game)
+
+    return [(label, buckets[label]) for label in STABILITY_ORDER + ["Other"] if buckets[label]]
+
+
 @app.route('/dev-games')
 def devgames():
     """List of in-development games, pulled live from the community spreadsheet."""
-    api_key = current_app.config.get("GOOGLE_SHEETS_API_KEY")
+    #api_key = current_app.config.get("GOOGLE_SHEETS_API_KEY")
+    api_key = "AIzaSyC8ws-kTMASzVqK32Ppw4FCY6E1hBUQGMU"
 
     try:
         dev_games = fetch_dev_games(api_key)
@@ -103,13 +125,14 @@ def devgames():
 
     # Same ignore-"a"/"the" convention used everywhere else on the site.
     dev_games = title_sorted(dev_games, key=lambda g: g["name"])
+    stability_groups = group_by_stability(dev_games)
 
     with db_session:
         game_platforms = {row.game_name: row.platform for row in select(g for g in SteamGame)}
 
     return render_template(
         "playableWorlds.html",
-        games=dev_games,
+        stability_groups=stability_groups,
         game_platforms=game_platforms,
         sheet_error=sheet_error,
     )
