@@ -4,7 +4,9 @@
     <title>Playable Worlds</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename="styles/markdown.css") }}" />
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename="styles/supportedGames.css") }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename="styles/playableWorlds.css") }}" />
     <script type="application/ecmascript" src="{{ url_for('static', filename="assets/supportedGames.js") }}"></script>
+    <script type="application/ecmascript" src="{{ url_for('static', filename="assets/playableWorlds.js") }}"></script>
     <noscript>
     <style>
         /* always un-collapse all and hide arrow and search bar */
@@ -23,19 +25,103 @@
         #games .collapse-toggle{
           cursor: unset;
         }
+
+        /* no JS = no toggle logic, so just always show the list and
+           hide the spreadsheet iframe rather than showing both */
+        #dev-games-spreadsheet-view{
+          display: none;
+        }
     </style>
     </noscript>
 {% endblock %}
 
 {% block body %}
     {% include 'header/oceanHeader.html' %}
-    <div id="games" class="markdown">
+    <div id="games" class="markdown"
+         data-icon-steam="{{ url_for('static', filename='assets/images/game-icons/steam.png') }}"
+         data-icon-steam-green="{{ url_for('static', filename='assets/images/game-icons/steam-green.png') }}"
+         data-icon-steam-red="{{ url_for('static', filename='assets/images/game-icons/steam-red.png') }}"
+         data-icon-native="{{ url_for('static', filename='assets/images/game-icons/native.png') }}"
+         data-icon-emulator="{{ url_for('static', filename='assets/images/game-icons/gamepad.png') }}"
+         data-icon-other="{{ url_for('static', filename='assets/images/game-icons/other.png') }}">
         <h1>In Development Games</h1>
+
+        <div class="view-toggle-row">
+            <span id="view-toggle-list-label" class="view-label">List View</span>
+            <label class="toggle-switch" title="Switch between the interactive list and the raw spreadsheet embed">
+                <input type="checkbox" id="view-toggle" />
+                <span class="toggle-slider"></span>
+            </label>
+            <span id="view-toggle-spreadsheet-label" class="view-label inactive">Spreadsheet View</span>
+        </div>
+
         <p>Below are the games that are currently being developed. To play a game that is on
         this page, please refer to the <a href="/tutorial/Archipelago/setup/en#playing-with-custom-worlds">playing with
-        custom worlds</a> section of the setup guide. As a general rule, when playing one of these games, please update 
+        custom worlds</a> section of the setup guide. As a general rule, when playing one of these games, please update
         to the latest version and communicate to your host player which APWorld version you used.</p>
-        <p></p>
-        <iframe src="https://docs.google.com/spreadsheets/d/1iuzDTOAvdoNe8Ne8i461qGNucg5OuEoF-Ikqs8aUQZw/preview?gid=58422002#gid=58422002" height="800px" width="100%"></iframe>
+
+        {% if sheet_error %}
+        <div class="sheet-error-banner">
+            Could not load the live game list ({{ sheet_error }}). You can still use Spreadsheet View above.
+        </div>
+        {% endif %}
+
+        <div id="dev-games-list-view">
+            <div class="js-only">
+                <div class="steam-controls">
+                    <label for="steam-user">Steam User:</label>
+                    <input id="steam-user" placeholder="UserID or Vanity name" autocomplete="off" />
+                    <label class="remember-wrap" title="This will store a userID cookie on your system">
+                        <input type="checkbox" id="remember-id" />
+                        Remember my ID
+                    </label>
+                    <button id="steam-check">Check My Games</button>
+                    <button id="steam-forget" class="steam-forget" type="button">Clear</button>
+                    <label class="toggle-switch" title="When off, the list stays alphabetical even after checking your Steam ID">
+                        <input type="checkbox" id="group-by-category" />
+                        <span class="toggle-slider"></span>
+                        Group by Category
+                    </label>
+                </div>
+                <p id="steam-error" class="steam-error"></p>
+                <label for="game-search">Search for your game below!</label><br />
+                <div class="page-controls">
+                    <input id="game-search" placeholder="Search by title..." autofocus />
+                    <button id="expand-all">Expand All</button>
+                    <button id="collapse-all">Collapse All</button>
+                </div>
+            </div>
+
+            {% for game in games %}
+            {% set platform = game_platforms.get(game.name) %}
+            <details data-game="{{ game.name }}" data-platform="{{ platform or '' }}">
+                <summary class="h2">
+                    {% if platform == 'steam' %}
+                    <img src="{{ url_for('static', filename='assets/images/game-icons/steam.png') }}" alt="Steam" class="game-icon" width="30" height="30" />
+                    {% elif platform == 'native' %}
+                    <img src="{{ url_for('static', filename='assets/images/game-icons/native.png') }}" alt="Native AP download" class="game-icon" width="30" height="30" />
+                    {% elif platform == 'emulator' %}
+                    <img src="{{ url_for('static', filename='assets/images/game-icons/gamepad.png') }}" alt="Emulator" class="game-icon" width="30" height="30" />
+                    {% elif platform == 'other' %}
+                    <img src="{{ url_for('static', filename='assets/images/game-icons/other.png') }}" alt="Other platform" class="game-icon" width="30" height="30" />
+                    {% endif %}
+                    {% if game.is_18_plus %}
+                    <img src="{{ url_for('static', filename='assets/images/game-icons/18.png') }}" alt="18+" class="rating-badge" width="22" height="22" />
+                    {% endif %}
+                    <span class="game-name-text">{{ game.name }}</span>
+                </summary>
+                {{ game.stability }}<br />
+                {{ game.notes }}<br />
+                {% for label, url in game.links %}
+                {% if not loop.first %}<span class="link-spacer">|</span>{% endif %}
+                <a href="{{ url }}" target="_blank" rel="noopener noreferrer">{{ label }}</a>
+                {% endfor %}
+            </details>
+            {% endfor %}
+        </div>
+
+        <div id="dev-games-spreadsheet-view" class="hidden">
+            <iframe src="https://docs.google.com/spreadsheets/d/1iuzDTOAvdoNe8Ne8i461qGNucg5OuEoF-Ikqs8aUQZw/preview?gid=58422002#gid=58422002" height="800px" width="100%"></iframe>
+        </div>
     </div>
 {% endblock %}

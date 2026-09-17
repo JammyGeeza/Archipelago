@@ -1,0 +1,52 @@
+/* Loaded alongside supportedGames.css - that file still provides
+   .game-icon, .toggle-switch, .steam-controls, .steam-error, etc.
+   This file only adds what's specific to the dev-games page. */
+
+/* 18+ rating badge - sits after the category icon, before the title */
+#games .rating-badge{
+    width: 22px;
+    height: 22px;
+    vertical-align: middle;
+    margin-right: 8px;
+    border-radius: 4px;
+}
+
+/* List View / Spreadsheet View toggle, placed directly under the H1 */
+#games .view-toggle-row{
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0.5rem 0 1rem;
+    font-size: 15px;
+}
+
+#games .view-toggle-row .view-label{
+    color: #93dcff;
+    font-weight: bold;
+}
+
+#games .view-toggle-row .view-label.inactive{
+    color: inherit;
+    font-weight: normal;
+    opacity: 0.7;
+}
+
+/* The two swappable bodies */
+#dev-games-list-view.hidden,
+#dev-games-spreadsheet-view.hidden{
+    display: none;
+}
+
+#dev-games-spreadsheet-view iframe{
+    border: none;
+}
+
+/* Banner shown if the live spreadsheet fetch fails */
+#games .sheet-error-banner{
+    color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.1);
+    border: 1px solid #ff6b6b;
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+}

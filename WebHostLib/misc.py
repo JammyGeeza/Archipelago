@@ -16,6 +16,7 @@ from .models import Seed, Room, Command, UUID, uuid4
 from Utils import title_sorted
 
 from .steam_games import SteamGame, NewroomSend, send_newroom
+from .dev_games import fetch_dev_games, SheetFetchError
 
 class WebWorldTheme(StrEnum):
     DIRT = "dirt"
@@ -89,10 +90,30 @@ def games():
     return render_template("supportedGames.html", worlds=get_visible_worlds(), game_platforms=game_platforms)
 
 @app.route('/dev-games')
-@cache.cached()
 def devgames():
-    """List of in-development games"""
-    return render_template("playableWorlds.html", worlds=get_visible_worlds())
+    """List of in-development games, pulled live from the community spreadsheet."""
+    #api_key = current_app.config.get("GOOGLE_SHEETS_API_KEY")
+    api_key = "AIzaSyDLmF0sJuT3UUF6dqyUnALBCOMjILQ2c2Q"
+
+    try:
+        dev_games = fetch_dev_games(api_key)
+        sheet_error = None
+    except SheetFetchError as e:
+        dev_games = []
+        sheet_error = str(e)
+
+    # Same ignore-"a"/"the" convention used everywhere else on the site.
+    dev_games = title_sorted(dev_games, key=lambda g: g["name"])
+
+    with db_session:
+        game_platforms = {row.game_name: row.platform for row in select(g for g in SteamGame)}
+
+    return render_template(
+        "playableWorlds.html",
+        games=dev_games,
+        game_platforms=game_platforms,
+        sheet_error=sheet_error,
+    )
 
 
 @app.route('/tutorial/<string:game>/<string:file>')
