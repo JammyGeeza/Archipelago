@@ -6,7 +6,7 @@ from typing import Any, IO, Dict, Iterator, List, Tuple, Union
 
 import jinja2.exceptions
 from flask import current_app, request, redirect, url_for, render_template, Response, session, abort, send_from_directory
-from pony.orm import count, commit, db_session
+from pony.orm import count, commit, db_session, select
 from werkzeug.utils import secure_filename
 
 from worlds.AutoWorld import AutoWorldRegister, World
@@ -15,21 +15,8 @@ from .markdown import render_markdown
 from .models import Seed, Room, Command, UUID, uuid4
 from Utils import title_sorted
 
-### SQL LOGGING
-from pony.orm import Database, Required, db_session, PrimaryKey, Optional
-
-db = Database()
-
-db.bind(
-    provider='postgres',
-    host="host.docker.internal",
-    user="multiserver",
-    password="strongpassword",
-    database="hetzner",
-    connect_timeout=10,
-    sslmode="require",
-    options='-c search_path=gregipelago'
-)
+from .steam_games import SteamGame, NewroomSend, send_newroom
+from .dev_games import fetch_dev_games, SheetFetchError
 
 class WebWorldTheme(StrEnum):
     DIRT = "dirt"
@@ -40,20 +27,6 @@ class WebWorldTheme(StrEnum):
     OCEAN = "ocean"
     PARTY_TIME = "partyTime"
     STONE = "stone"
-
-class NewroomSend(db.Entity):
-    _table_ = "roomdata"
-    _schema_ = "gregipelago"
-
-    id = PrimaryKey(int, auto=True)
-    roomid = Required(str)
-    timestamp = Required(datetime.datetime, default=lambda: datetime.datetime.now(datetime.UTC))
-
-db.generate_mapping(create_tables=False)
-
-@db_session
-def send_newroom(roomid):
-    NewroomSend(roomid=roomid)
 
 def get_world_theme(game_name: str) -> str:
     if game_name not in AutoWorldRegister.world_types:
@@ -112,13 +85,35 @@ def game_info(game, lang):
 @cache.cached()
 def games():
     """List of supported games"""
-    return render_template("supportedGames.html", worlds=get_visible_worlds())
+    with db_session:
+        game_platforms = {row.game_name: row.platform for row in select(g for g in SteamGame)}
+    return render_template("supportedGames.html", worlds=get_visible_worlds(), game_platforms=game_platforms)
 
 @app.route('/dev-games')
-@cache.cached()
 def devgames():
-    """List of in-development games"""
-    return render_template("playableWorlds.html", worlds=get_visible_worlds())
+    """List of in-development games, pulled live from the community spreadsheet."""
+    #api_key = current_app.config.get("GOOGLE_SHEETS_API_KEY")
+    api_key = "AIzaSyC8ws-kTMASzVqK32Ppw4FCY6E1hBUQGMU"
+
+    try:
+        dev_games = fetch_dev_games(api_key)
+        sheet_error = None
+    except SheetFetchError as e:
+        dev_games = []
+        sheet_error = str(e)
+
+    # Same ignore-"a"/"the" convention used everywhere else on the site.
+    dev_games = title_sorted(dev_games, key=lambda g: g["name"])
+
+    with db_session:
+        game_platforms = {row.game_name: row.platform for row in select(g for g in SteamGame)}
+
+    return render_template(
+        "playableWorlds.html",
+        games=dev_games,
+        game_platforms=game_platforms,
+        sheet_error=sheet_error,
+    )
 
 
 @app.route('/tutorial/<string:game>/<string:file>')

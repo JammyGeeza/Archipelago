@@ -107,3 +107,4 @@ def register() -> None:
 
     from . import api
     app.register_blueprint(api.api_endpoints)
+    

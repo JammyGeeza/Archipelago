@@ -18,6 +18,8 @@
     src: url("../../static/static/fonts/LexendDeca-Medium.ttf");
 }
 
+/* TITLES */
+
 @font-face{
     font-family: LondrinaSolid-Regular;
     src: url("../../static/static/fonts/LondrinaSolid-Regular.ttf");
@@ -28,10 +30,56 @@
     src: url("../../static/static/fonts/LondrinaSolid-Light.ttf");
 }
 
+/* NEW */
+
+@font-face{
+    font-family: Audiowide-Regular;
+    src: url("../../static/static/fonts/Audiowide-Regular.ttf");
+}
+
+@font-face{
+    font-family: PressStart2P-Regular;
+    src: url("../../static/static/fonts/PressStart2P-Regular.ttf");
+}
+
+/* ============================================================
+   ARCADE THEME TOKENS
+   One place to change the whole site's palette and type.
+   ------------------------------------------------------------
+   PressStart2P-Regular  headings, buttons        (pixel)
+   Audiowide-Regular     labels, nav, small caps  (arcade sans)
+   LexendDeca-*          body copy                (readable)
+   ============================================================ */
+
+:root{
+    --ink:          #07090c;  /* page ground        */
+    --ink-2:        #0d1117;  /* header / inset     */
+    --panel:        #0d141d;  /* content panels     */
+    --panel-2:      #131c28;  /* raised buttons     */
+    --line:         #293a4d;  /* borders, dividers  */
+
+    --cyan:         #3ef2d8;  /* primary action     */
+    --cyan-dark:    #17a99a;  /* primary keycap     */
+    --magenta:      #ff3ea5;  /* accent action      */
+    --magenta-dark: #a8206a;  /* accent keycap      */
+    --amber:        #ffd447;  /* highlight, headers */
+    --green:        #5fd39a;  /* ok / online        */
+    --red:          #ff5f4d;  /* error / full       */
+
+    --text:         #c8dae8;  /* body copy          */
+    --text-dim:     #8098ab;  /* labels, meta       */
+
+    --font-display: PressStart2P-Regular, monospace;
+    --font-label:   Audiowide-Regular, monospace;
+    --font-body:    LexendDeca-Light, sans-serif;
+    --font-body-md: LexendDeca-Regular, sans-serif;
+}
+
 html{
-    font-family: LexendDeca-ExtraLight, sans-serif;
+    font-family: var(--font-body);
     font-size: 1.1rem;
-    color: #000000;
+    color: var(--text);
+    background-color: var(--ink);
 }
 
 body{
@@ -39,6 +87,8 @@ body{
     display: flex;
     flex-direction: column;
     min-height: calc(100vh - 110px);
+    background-color: var(--ink);
+    color: var(--text);
 }
 
 main {
@@ -46,76 +96,195 @@ main {
 }
 
 a{
-    color: #ffef00;
+    color: var(--cyan);
     text-decoration: none;
-    font-family: LexendDeca-Regular, sans-serif;
+    font-family: var(--font-body-md);
 }
 
+a:hover{
+    color: #ffffff;
+}
+
+/* ---------- buttons: arcade keycaps ----------
+   Same box model as before (so existing pages don't reflow), but the
+   bevel is now a hard drop shadow that the button presses down onto. */
+
 button, input[type=submit]{
-    font-weight: 500;
-    font-size: 0.9rem;
-    padding: 10px 17px 11px 16px; /* top right bottom left */
-    border-radius: 4px;
-    border-top: 1px solid rgba(0, 0, 0, 0.5);
-    border-left: 1px solid rgba(0, 0, 0, 0.5);
-    border-right: 2px solid rgba(0, 0, 0, 0.5);
-    border-bottom: 2px solid rgba(0, 0, 0, 0.5);
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 0.72rem;
+    line-height: 1.5;
+    padding: 12px 16px;
+    color: var(--text);
+    background-color: var(--panel-2);
+    border: 2px solid var(--line);
+    border-radius: 0;
+    box-shadow: 0 4px 0 #0c131b;
     font-kerning: auto;
     cursor: pointer;
+    transition: transform .06s linear, box-shadow .06s linear, background-color .12s linear;
+}
+
+button:hover, input[type=submit]:hover,
+button:focus-visible, input[type=submit]:focus-visible{
+    color: #ffffff;
+    background-color: #1a2634;
+    border-color: var(--cyan);
+    outline: none;
 }
 
 button:active, input[type=submit]:active{
-    border-right: 1px solid rgba(0, 0, 0, 0.5);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.5);
-    padding-right: 16px;
-    margin-right: 2px;
-    padding-bottom: 10px;
-    margin-bottom: 2px;
+    transform: translateY(4px);
+    box-shadow: 0 0 0 #0c131b;
+    /* the old rule nudged padding/margin to fake a press; the transform
+       does it without shifting surrounding layout */
+    padding: 12px 16px;
+    margin: 0;
+    border-width: 2px;
 }
 
-button.button-grass, input[type=submit].button-grass{
-    border: 1px solid black;
+/* primary / accent keycaps.
+   .button-grass and .button-dirt are kept as aliases so existing
+   templates keep working without edits — grass maps to primary,
+   dirt to the neutral raised cap. */
+
+button.button-primary, input[type=submit].button-primary,
+button.button-grass,   input[type=submit].button-grass{
+    color: var(--ink);
+    background-color: var(--cyan);
+    border: 2px solid var(--cyan);
+    box-shadow: 0 4px 0 var(--cyan-dark);
+}
+
+button.button-primary:hover, input[type=submit].button-primary:hover,
+button.button-grass:hover,   input[type=submit].button-grass:hover{
+    color: var(--ink);
+    background-color: #6cf7e3;
+    border-color: #6cf7e3;
+}
+
+button.button-primary:active, input[type=submit].button-primary:active,
+button.button-grass:active,   input[type=submit].button-grass:active{
+    box-shadow: 0 0 0 var(--cyan-dark);
+}
+
+button.button-accent, input[type=submit].button-accent{
+    color: var(--ink);
+    background-color: var(--magenta);
+    border: 2px solid var(--magenta);
+    box-shadow: 0 4px 0 var(--magenta-dark);
+}
+
+button.button-accent:active, input[type=submit].button-accent:active{
+    box-shadow: 0 0 0 var(--magenta-dark);
 }
 
 button.button-dirt, input[type=submit].button-dirt{
-    border: 1px solid black;
+    color: var(--text);
+    background-color: var(--panel-2);
+    border: 2px solid var(--line);
 }
+
+/* ---------- form fields ---------- */
+
+input[type=text], input[type=number], input[type=password],
+input[type=email], input[type=url], select, textarea{
+    font-family: var(--font-body-md);
+    font-size: 0.9rem;
+    padding: 9px 11px;
+    color: var(--text);
+    background-color: var(--ink-2);
+    border: 2px solid var(--line);
+    border-radius: 0;
+}
+
+input:focus, select:focus, textarea:focus{
+    outline: none;
+    border-color: var(--cyan);
+}
+
+::placeholder{ color: var(--text-dim); }
+
+/* ---------- headings: pixel display type ----------
+   Press Start 2P has no lowercase-versus-caps contrast and sets very wide,
+   so every level is stepped down hard from the old Lexend sizes. */
 
 h1, h2, h3, h4, h5, h6{
+    font-family: var(--font-display);
     font-weight: normal;
     margin: 0;
-    color: #032605;
+    color: #ffffff;
+    letter-spacing: .01em;
+    line-height: 1.35;
 }
 
-h1{ font-size: 3rem; }
-h2{ font-size: 2rem; }
-h3{ font-size: 1.75rem; }
+h1{ font-size: 1.85rem; }
+h2{ font-size: 1.3rem; }
+h3{ font-size: 1.05rem; }
 h4{
-    font-size: 1.5rem;
-    margin-bottom:0.5rem;
+    font-size: 0.9rem;
+    margin-bottom: 0.6rem;
+    color: var(--amber);
 }
 h5, h6{
-    font-size: 1.25rem;
-    margin-bottom: 0.5rem;
+    font-size: 0.78rem;
+    margin-bottom: 0.6rem;
+    color: var(--amber);
 }
+
+/* Section labels / eyebrows — use on small caps runs above a heading */
+.label{
+    font-family: var(--font-label);
+    font-size: 0.72rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+}
+
+/* ---------- flashed messages ---------- */
 
 .user-message{
     width: 50%;
     min-width: 500px;
-    padding-top: 5px;
-    padding-bottom: 5px;
+    padding-top: 9px;
+    padding-bottom: 9px;
     text-align: center;
     margin-left: auto;
     margin-right: auto;
-    color: #000000;
-    border-radius: 4px;
+    font-family: var(--font-label);
+    font-size: 0.8rem;
+    letter-spacing: .04em;
+    color: var(--ink);
+    border-radius: 0;
+    border: 2px solid var(--amber);
     margin-bottom: 20px;
-    background-color: #ffff00;
+    background-color: var(--amber);
 }
 .user-message a{
-    color: #ff7700;
+    color: var(--ink);
+    border-bottom: 2px solid rgba(7, 9, 12, .45);
+}
+.user-message a:hover{
+    color: var(--ink);
+    border-bottom-color: var(--ink);
 }
 
 .interactive{
-    color: #ffef00;
+    color: var(--cyan);
+}
+
+/* ---------- scrollbars (dark UI needs these set explicitly) ---------- */
+
+* {
+    scrollbar-color: var(--line) var(--ink);
+}
+
+::-webkit-scrollbar{ width: 12px; height: 12px; }
+::-webkit-scrollbar-track{ background: var(--ink); }
+::-webkit-scrollbar-thumb{ background: var(--line); border: 3px solid var(--ink); }
+::-webkit-scrollbar-thumb:hover{ background: #3c5468; }
+
+::selection{
+    background: var(--magenta);
+    color: var(--ink);
 }
