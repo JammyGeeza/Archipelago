@@ -255,6 +255,8 @@ class CursedWordsWorld(World):
 
         slot_data.update({
             "shuffle_locked_tile_positions_coords": self.selected_tile_positions,
+            "min_client_version": "0.5.6",
+            "version": self.world_version.as_simple_string(),
         })
 
         return slot_data

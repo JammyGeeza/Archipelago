@@ -1,7 +1,7 @@
 from typing import Dict, Tuple
 
 # All available character names, in order
-CHARACTER_NAMES: Tuple[str, ...] = ("Rodman", "Nina Nix", "Hayley Bayles", "Bones the Dog", "Sam Gambit", "Octacles")
+CHARACTER_NAMES: Tuple[str, ...] = ("Rodman", "Nina Nix", "Hayley Bayles", "Bones The Dog", "Sam Gambit", "Octacles")
 
 # All crown colours, in unlock order
 CROWN_NAMES: Tuple[str, ...] = ("Purple", "Yellow", "Orange", "Pink", "Green", "Blue", "Red")
@@ -22,8 +22,8 @@ CHARACTER_BUILDS: Dict[Tuple[str, str], Tuple[str, str, str, str, str]] = {
     ("Sam Gambit", "Stickers"): ("Raccoon", "Carousel Horse", "Moai", "Zebra", "Footprints"),
     ("Sam Gambit", "Stamps"): ("King Of The Bridge", "Business Goose", "Jolly Roger", "Bento Box", "Banana"),
 
-    ("Bones the Dog", "Stickers"): ("Postal Horn", "Celestial Body", "Rolodex", "Las Vegas", "Peacock"),
-    ("Bones the Dog", "Stamps"): ("Martini", "Card Shark", "Four Leaf Clover", "Go Fish!", "Oden"),
+    ("Bones The Dog", "Stickers"): ("Postal Horn", "Celestial Body", "Rolodex", "Las Vegas", "Peacock"),
+    ("Bones The Dog", "Stamps"): ("Martini", "Card Shark", "Four Leaf Clover", "Go Fish!", "Oden"),
 
     ("Octacles", "Stickers"): ("Amphora", "Ghost", "Moai", "Mischievous Imp", "Creaky Chair"),
     ("Octacles", "Stamps"): ("Haunted House", "Supervillain", "Giraffe", "Bubble Tea", "Oden"),
@@ -45,7 +45,7 @@ STAGE_PERCENTAGES: Dict[str, Tuple[float, float, float, float, float]] = {
     "Rodman": (0.0, 0.2, 0.4, 0.8, 1.0),
     "Nina Nix": (0.0, 0.2, 0.4, 0.8, 1.0),
     "Hayley Bayles": (0.0, 0.2, 0.4, 0.8, 1.0),
-    "Bones the Dog": (0.0, 0.2, 0.4, 0.8, 1.0),
+    "Bones The Dog": (0.0, 0.2, 0.4, 0.8, 1.0),
     "Sam Gambit": (0.0, 0.2, 0.4, 0.8, 1.0),
     "Octacles": (0.0, 0.2, 0.4, 0.8, 1.0),
 }
@@ -90,14 +90,14 @@ STAGE_PERCENTAGES: Dict[str, Tuple[float, float, float, float, float]] = {
 #     ("Sam Gambit", "Blue"): (0.25, 0.4, 0.55, 0.7, 0.85),
 #     ("Sam Gambit", "Red"): (0.3, 0.45, 0.6, 0.75, 0.90),
 
-#     ("Bones the Dog", "Base"): (0.0, 0.1, 0.25, 0.4, 0.55),
-#     ("Bones the Dog", "Purple"): (0.0, 0.15, 0.3, 0.45, 0.6),
-#     ("Bones the Dog", "Yellow"): (0.05, 0.2, 0.35, 0.5, 0.65),
-#     ("Bones the Dog", "Orange"): (0.1, 0.25, 0.4, 0.55, 0.7),
-#     ("Bones the Dog", "Pink"): (0.15, 0.3, 0.45, 0.6, 0.75),
-#     ("Bones the Dog", "Green"): (0.2, 0.35, 0.5, 0.65, 0.8),
-#     ("Bones the Dog", "Blue"): (0.25, 0.4, 0.55, 0.7, 0.85),
-#     ("Bones the Dog", "Red"): (0.3, 0.45, 0.6, 0.75, 0.90),
+#     ("Bones The Dog", "Base"): (0.0, 0.1, 0.25, 0.4, 0.55),
+#     ("Bones The Dog", "Purple"): (0.0, 0.15, 0.3, 0.45, 0.6),
+#     ("Bones The Dog", "Yellow"): (0.05, 0.2, 0.35, 0.5, 0.65),
+#     ("Bones The Dog", "Orange"): (0.1, 0.25, 0.4, 0.55, 0.7),
+#     ("Bones The Dog", "Pink"): (0.15, 0.3, 0.45, 0.6, 0.75),
+#     ("Bones The Dog", "Green"): (0.2, 0.35, 0.5, 0.65, 0.8),
+#     ("Bones The Dog", "Blue"): (0.25, 0.4, 0.55, 0.7, 0.85),
+#     ("Bones The Dog", "Red"): (0.3, 0.45, 0.6, 0.75, 0.90),
 
 #     ("Octacles", "Base"): (0.0, 0.1, 0.25, 0.4, 0.55),
 #     ("Octacles", "Purple"): (0.0, 0.15, 0.3, 0.45, 0.6),
